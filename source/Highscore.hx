@@ -30,6 +30,22 @@ class Highscore
 		setWeekScore(daWeek, 0);
 	}
 
+	public static function floorDecimal(value:Float, decimals:Int):Float
+	{
+		if(decimals < 1)
+		{
+			return Math.floor(value);
+		}
+
+		var tempMult:Float = 1;
+		for (i in 0...decimals)
+		{
+			tempMult *= 10;
+		}
+		var newValue:Float = Math.floor(value * tempMult);
+		return newValue / tempMult;
+	}
+
 	public static function saveScore(song:String, score:Int = 0, ?diff:Int = 0, ?rating:Float = -1):Void
 	{
 		var daSong:String = formatSong(song, diff);
@@ -87,7 +103,7 @@ class Highscore
 
 	public static function formatSong(song:String, diff:Int):String
 	{
-		return song + CoolUtil.difficultyStuff[diff][1];
+		return song.toLowerCase().replace(' ', '-') + CoolUtil.difficultyStuff[diff][1];
 	}
 
 	public static function getScore(song:String, diff:Int):Int
@@ -131,21 +147,5 @@ class Highscore
 		{
 			songRating = FlxG.save.data.songRating;
 		}
-	}
-
-	public static function floorDecimal(value:Float, decimals:Int):Float
-	{
-		if(decimals < 1)
-		{
-			return Math.floor(value);
-		}
-
-		var tempMult:Float = 1;
-		for (i in 0...decimals)
-		{
-			tempMult *= 10;
-		}
-		var newValue:Float = Math.floor(value * tempMult);
-		return newValue / tempMult;
 	}
 }
