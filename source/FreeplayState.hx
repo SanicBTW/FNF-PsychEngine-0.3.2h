@@ -289,7 +289,6 @@ class FreeplayState extends MusicBeatState
 		}
 		else
 		{
-			curDifficulty = 2;
 			diffText.text = "HARD";
 		}
 
