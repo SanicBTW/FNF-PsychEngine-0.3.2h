@@ -285,10 +285,12 @@ class FreeplayState extends MusicBeatState
 
 		if(songs[curSelected].songName == "Betrayal")
 		{
+			curDifficulty = 3;
 			diffText.text = "BLACKOUT";
 		}
 		else
 		{
+			curDifficulty = 2;
 			diffText.text = "HARD";
 		}
 
