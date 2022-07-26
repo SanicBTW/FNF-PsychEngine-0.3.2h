@@ -2,7 +2,10 @@
 	"songs": [
 		["Fight-or-flight", "bf", [0, 0, 0]],
 		["Betrayal", "bf", [0, 0, 0]],
-		["OG", "bf", [0, 0, 0]]
+		["OG", "bf", [0, 0, 0]],
+		["Last-Stand", "bf", [0, 0, 0]],
+		["Bushwhack", "bf", [0, 0, 0]],
+		["Chirumiru", "bf", [0, 0, 0]]
 	],
 
 	"storyName": "",

@@ -27,6 +27,7 @@ class ClientPrefs {
 	public static var hideTime:Bool = false;
 
 	public static var showMemory:Bool = true;
+	public static var noteSkin:String = "NOTE_assets";
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -84,6 +85,7 @@ class ClientPrefs {
 		FlxG.save.data.hideTime = hideTime;
 		
 		FlxG.save.data.showMemory = showMemory;
+		FlxG.save.data.noteSkin = noteSkin;
 
 		var achieves:Array<String> = [];
 		for (i in 0...Achievements.achievementsUnlocked.length) {
@@ -168,6 +170,9 @@ class ClientPrefs {
 
 		if(FlxG.save.data.showMemory != null) {
 			showMemory = FlxG.save.data.showMemory;
+		}
+		if(FlxG.save.data.noteSkin != null) {
+			noteSkin = FlxG.save.data.noteSkin;
 		}
 
 		var save:FlxSave = new FlxSave();

@@ -49,9 +49,12 @@ class ChartingState extends MusicBeatState
 	private static var noteTypeList:Array<String> =
 	[
 		'',
-		'1 - Alt Animation',
-		'2 - Hey!',
-		'3 - Hurt Note'
+		'Alt Animation',
+		'Hey!',
+		'Hurt Note',
+		'GF Sing',
+		'No Animation',
+		'Cirno Note'
 	];
 
 	private static var eventStuff:Array<Dynamic> =
@@ -1450,7 +1453,7 @@ class ChartingState extends MusicBeatState
 				curRenderedNoteType.add(daText);
 				daText.sprTracker = note;
 			} else {
-				if(note.noteType != 0 && i[3] != null) {
+				if(i[3] != null && note.noteType != null && note.noteType.length > 0) {
 					var daText:AttachedFlxText = new AttachedFlxText(0, 0, 100, Std.string(note.noteType), 24);
 					daText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 					daText.xAdd = -32;
