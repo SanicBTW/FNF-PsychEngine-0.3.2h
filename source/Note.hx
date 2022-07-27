@@ -43,19 +43,15 @@ class Note extends FlxSprite
 	public var noAnimation:Bool = false;
 
 	private function set_noteType(value:String):String {
-		colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-		colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-		colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
-
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
 				case "Cirno Note":
-					reloadNote('CIRNONOTE_assets');
+					reloadNote('CIRNO');
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
 					colorSwap.brightness = 0;
 				case "Hurt Note": //Hurt note
-					reloadNote('HURTNOTE_assets');
+					reloadNote('HURT');
 					colorSwap.hue = 0;
 					colorSwap.saturation = 0;
 					colorSwap.brightness = 0;
@@ -63,7 +59,10 @@ class Note extends FlxSprite
 					noAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
-
+				default:
+					colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
+					colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
+					colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
 			}
 			noteType = value;
 		}
@@ -90,7 +89,7 @@ class Note extends FlxSprite
 
 		this.noteData = noteData;
 
-		frames = Paths.getSparrowAtlas(ClientPrefs.noteSkin);
+		frames = Paths.getSparrowAtlas("NOTE_assets");
 		loadNoteAnims();
 		antialiasing = ClientPrefs.globalAntialiasing;
 
@@ -116,8 +115,6 @@ class Note extends FlxSprite
 				animation.play(animToPlay + 'Scroll');
 			}
 		}
-
-		// trace(prevNote);
 
 		if (isSustainNote && prevNote != null)
 		{
@@ -160,18 +157,22 @@ class Note extends FlxSprite
 				prevNote.updateHitbox();
 			}
 		}
+
+		if(!isPixel && noteData > -1) reloadNote();
 	}
 
-	function reloadNote(texture:String) 
+	function reloadNote(?prefix:String = '', ?suffix:String = '') 
 	{
+		var skin:String = "NOTE_assets";
+
 		var animName:String = null;
 		if(animation.curAnim != null) {
 			animName = animation.curAnim.name;
 		}
 
-		frames = Paths.getSparrowAtlas(texture);
+		var blahblah:String = prefix + skin + suffix;
+		frames = Paths.getSparrowAtlas(blahblah);
 		loadNoteAnims();
-		antialiasing = ClientPrefs.globalAntialiasing;
 
 		animation.play(animName, true);
 
