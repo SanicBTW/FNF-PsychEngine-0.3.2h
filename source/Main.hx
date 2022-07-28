@@ -72,7 +72,6 @@ class Main extends Sprite
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
-		#if !mobile
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		if(fpsVar != null) {
@@ -84,7 +83,6 @@ class Main extends Sprite
 		if(memoryVar != null){
 			memoryVar.visible = ClientPrefs.showMemory;
 		}
-		#end
 
 		#if html5
 		FlxG.autoPause = false;

@@ -453,6 +453,11 @@ class PlayState extends MusicBeatState
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
 
+		#if android
+		addAndroidControls();
+		androidControls.visible = true;
+		#end
+
 		startingSong = true;
 		updateTime = true;
 
