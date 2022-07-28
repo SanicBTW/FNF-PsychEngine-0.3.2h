@@ -901,9 +901,10 @@ class PlayState extends MusicBeatState
 						oldNote = null;
 
 					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+					swagNote.mustPress = gottaHitNote;
 					swagNote.sustainLength = songNotes[2];
 					swagNote.noteType = songNotes[3];
-					swagNote.scrollFactor.set();
+					if(!Std.isOfType(songNotes[3], String)) swagNote.noteType = ChartingState.noteTypeList[songNotes[3]];
 
 					var susLength:Float = swagNote.sustainLength;
 
@@ -917,6 +918,7 @@ class PlayState extends MusicBeatState
 							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 
 							var sustainNote:Note = new Note(daStrumTime + (Conductor.stepCrochet * susNote) + (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData, oldNote, true);
+							sustainNote.mustPress = gottaHitNote;
 							sustainNote.noteType = swagNote.noteType;
 							sustainNote.scrollFactor.set();
 							unspawnNotes.push(sustainNote);
@@ -2363,40 +2365,49 @@ class PlayState extends MusicBeatState
 				}
 			});
 
-			combo = 0;
-			health -= 0.04;
-			if(!practiceMode) songScore -= 10;
-			if(!endingSong){
-				songMisses++;
-			}
-			vocals.volume = 0;
-			RecalculateRating();
-	
-			var char:Character = boyfriend;
-			if(daNote.gfNote) { char = gf; }
-			var animToPlay:String = '';
-
-			switch (Math.abs(daNote.noteData) % 4)
+			switch(daNote.noteType)
 			{
-				case 0:
-					animToPlay = 'singLEFTmiss';
-				case 1:
-					animToPlay = 'singDOWNmiss';
-				case 2:
-					animToPlay = 'singUPmiss';
-				case 3:
-					animToPlay = 'singRIGHTmiss';
+				case 'Cirno Note':
+					//nothing
+				case 'Hurt Note':
+					//nothin
+
+				default:
+					combo = 0;
+					health -= 0.04;
+					if(!practiceMode) songScore -= 10;
+					if(!endingSong){
+						songMisses++;
+					}
+					vocals.volume = 0;
+					RecalculateRating();
+
+					var char:Character = boyfriend;
+					if(daNote.gfNote) { char = gf; }
+					var animToPlay:String = '';
+		
+					switch (Math.abs(daNote.noteData) % 4)
+					{
+						case 0:
+							animToPlay = 'singLEFTmiss';
+						case 1:
+							animToPlay = 'singDOWNmiss';
+						case 2:
+							animToPlay = 'singUPmiss';
+						case 3:
+							animToPlay = 'singRIGHTmiss';
+					}
+		
+					if(char != null)
+					{
+						var daAlt = '';
+						if(daNote.noteType == "Alt Animation") daAlt = '-alt';
+		
+						char.playAnim(animToPlay, true);
+					}
+		
+					FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 			}
-
-			if(char != null)
-			{
-				var daAlt = '';
-				if(daNote.noteType == "Alt Animation") daAlt = '-alt';
-
-				char.playAnim(animToPlay, true);
-			}
-
-			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
 		}
 	}
 
@@ -2435,6 +2446,33 @@ class PlayState extends MusicBeatState
 		if (!note.wasGoodHit)
 		{
 			switch(note.noteType) {
+				case 'Cirno Note':
+					if(cpuControlled) return;
+
+					if(!boyfriend.stunned)
+					{
+						noteMiss(note);
+						if(!endingSong)
+						{
+							--songMisses;
+							RecalculateRating();
+							if(!note.isSustainNote) {
+								health -= 100;
+							}
+							else health -= 100;
+						}
+
+						note.wasGoodHit = true;
+						vocals.volume = 0;
+
+						if (!note.isSustainNote)
+						{
+							note.kill();
+							notes.remove(note, true);
+							note.destroy();
+						}
+					}
+					return;
 				case "Hurt Note": //Hurt note
 					if(cpuControlled) return;
 
@@ -2446,11 +2484,9 @@ class PlayState extends MusicBeatState
 							--songMisses;
 							RecalculateRating();
 							if(!note.isSustainNote) {
-								//health -= 0.26; //0.26 + 0.04 = -0.3 (-15%) of HP if you hit a hurt note
-								health -= 100;
+								health -= 0.3;
 							}
-							else health -= 100; //0.06 + 0.04 = -0.1 (-5%) of HP if you hit a hurt sustain note
-							//health -= 0.06; //0.06 + 0.04 = -0.1 (-5%) of HP if you hit a hurt sustain note
+							else health -= 0.1;
 	
 							if(boyfriend.animation.getByName('hurt') != null) {
 								boyfriend.playAnim('hurt', true);

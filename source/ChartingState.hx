@@ -46,7 +46,7 @@ using StringTools;
 
 class ChartingState extends MusicBeatState
 {
-	private static var noteTypeList:Array<String> =
+	public static var noteTypeList:Array<String> =
 	[
 		'',
 		'Alt Animation',
