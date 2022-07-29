@@ -708,9 +708,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Camera Zooms',
 		'FPS Counter',
 		'Memory Counter',
-		'Kade Engine Input',
 		'OPTIMIZATION',
-		'Max Optimization'
+		'Only Notes',
+		'Disable score tween',
+		'Hide Health Bar'
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -896,19 +897,17 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Hide Song Length':
 						ClientPrefs.hideTime = !ClientPrefs.hideTime;
 
-					case 'Kade Engine Input':
-						ClientPrefs.kadeEngineInput = !ClientPrefs.kadeEngineInput;
-
 					case 'Memory Counter':
 						ClientPrefs.showMemory = !ClientPrefs.showMemory;
 						if(Main.memoryVar != null)
 							Main.memoryVar.visible = ClientPrefs.showMemory;
 
-
-					case 'Max Optimization':
-						ClientPrefs.lowQuality = !ClientPrefs.lowQuality;
-						ClientPrefs.middleScroll = !ClientPrefs.middleScroll;
-						ClientPrefs.maxOptimization = !ClientPrefs.maxOptimization;
+					case 'Only Notes':
+						ClientPrefs.optOnlyNotes = !ClientPrefs.optOnlyNotes;
+					case 'Disable score tween':
+						ClientPrefs.optDisableScoreTween = !ClientPrefs.optDisableScoreTween;
+					case 'Hide Health Bar':
+						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1002,10 +1001,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "If checked, hides most HUD elements.";
 			case 'Hide Song Length':
 				daText = "If checked, the bar showing how much time is left\nwill be hidden.";
-			case 'Kade Engine Input':
-				daText = 'If checked, will use Kade Engine 1.5.3 Input\nMemory intensive? kind of';
 			case "Memory Counter":
 				daText = "Displays a memory counter";
+			
+			case 'Only Notes':
+				daText = 'Hides characters, and sets middlescroll';
+			case 'Disable score tween':
+				daText = 'Disables score bop on sick';
+			case 'Hide Health Bar':
+				daText = 'Hides health bar and replaces it with a percentage';
 		}
 		descText.text = daText;
 
@@ -1089,12 +1093,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.imagesPersist;
 					case 'Hide Song Length':
 						daValue = ClientPrefs.hideTime;
-					case 'Kade Engine Input':
-						daValue = ClientPrefs.kadeEngineInput;
 					case 'Memory Counter':
 						daValue = ClientPrefs.showMemory;
-					case 'Max Optimization':
-						daValue = ClientPrefs.maxOptimization;
+					case 'Only Notes':
+						daValue = ClientPrefs.optOnlyNotes;
+					case 'Disable score tween':
+						daValue = ClientPrefs.optDisableScoreTween;
+					case 'Hide Health Bar':
+						daValue = ClientPrefs.optHideHealthBar;
 				}
 				checkbox.daValue = daValue;
 			}

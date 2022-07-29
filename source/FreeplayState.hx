@@ -49,6 +49,7 @@ class FreeplayState extends MusicBeatState
 	{
 		openfl.Assets.cache.clear("songs");
 		openfl.Assets.cache.clear("images");
+		openfl.Assets.cache.clear("assets");
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
