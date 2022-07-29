@@ -1,5 +1,6 @@
 package;
 
+import flixel.ui.FlxButton;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -227,6 +228,8 @@ class PlayState extends MusicBeatState
 	public var goods:Int = 0;
 	public var bads:Int = 0;
     public var shits:Int = 0;
+
+	var pauseBtn:FlxButton;
 
 	override public function create()
 	{
@@ -457,6 +460,27 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
+		#if html5
+		pauseBtn = new FlxButton(FlxG.width - 200, 100, "Pause", function(){
+			var ret:Dynamic = callOnLuas('onPause', []);
+			if(ret != FunkinLua.Function_Stop) {
+				persistentUpdate = false;
+				persistentDraw = true;
+				paused = true;
+				if(FlxG.sound.music != null) {
+					FlxG.sound.music.pause();
+					vocals.pause();
+				}
+				openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			}
+		});
+		pauseBtn.setGraphicSize(Std.int(pauseBtn.width) * 2);
+		pauseBtn.label.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER);
+		pauseBtn.visible = true;
+		pauseBtn.scrollFactor.set();
+		add(pauseBtn);
+		#end
+
 		strumLineNotes.cameras = [camHUD];
 		//grpNoteSplashes.cameras = [camHUD];
 		notes.cameras = [camHUD];
@@ -473,7 +497,13 @@ class PlayState extends MusicBeatState
 		#if (android || html5)
 		addAndroidControls();
 		androidControls.visible = true;
+		addPadCamera();
 		#end
+
+		#if html5
+		pauseBtn.cameras = [camOther];
+		#end
+
 
 		startingSong = true;
 		updateTime = true;
@@ -1219,7 +1249,7 @@ class PlayState extends MusicBeatState
 		callOnLuas('onUpdate', [elapsed]);
 
 		super.update(elapsed);
-	
+
 		if(ClientPrefs.optHideHealthBar)
 		{
 			if(ratingString == 'N/A') {
