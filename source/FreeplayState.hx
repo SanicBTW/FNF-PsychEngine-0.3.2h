@@ -18,7 +18,6 @@ import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
-import com.akifox.asynchttp.*;
 
 using StringTools;
 
@@ -268,42 +267,37 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			trace(songs[curSelected].songName);
 			if(songs[curSelected].songName == "Mystical-Maiden")
 			{
-				var req = new HttpRequest({
-					url: 'https://sanicbtw.github.io/teesitn/mystical-maiden-hard.json',
-					contentType: 'application/json',
-					callback: function(response:HttpResponse){
-						if(response.isOK){
-							persistentUpdate = false;
+				var http = new haxe.Http('https://sanicbtw.github.io/teesitn/mystical-maiden-hard.json');
+				http.onData = function(data:String)
+				{
+					persistentUpdate = false;
 
-							var the = Song.parseJSONshit(response.content);
+					var the = Song.parseJSONshit(data);
+
+					PlayState.SONG = the;
+					PlayState.isStoryMode = false;
+					PlayState.storyDifficulty = curDifficulty;
 		
-							PlayState.SONG = the;
-							PlayState.isStoryMode = false;
-							PlayState.storyDifficulty = curDifficulty;
-				
-							trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-							if(colorTween != null) {
-								colorTween.cancel();
-							}
-							if(FlxG.keys.pressed.SHIFT)
-							{
-								LoadingState.loadAndSwitchState(new ChartingState());
-							}
-							else
-							{
-								LoadingState.loadAndSwitchState(new PlayState());
-							}
-				
-							FlxG.sound.music.volume = 0;
-				
-							destroyFreeplayVocals();
-						}
+					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+					if(colorTween != null) {
+						colorTween.cancel();
 					}
-				});
-				req.send();
+					if(FlxG.keys.pressed.SHIFT)
+					{
+						LoadingState.loadAndSwitchState(new ChartingState());
+					}
+					else
+					{
+						LoadingState.loadAndSwitchState(new PlayState());
+					}
+		
+					FlxG.sound.music.volume = 0;
+		
+					destroyFreeplayVocals();
+				}
+				http.request();
 				/*
 				var http = new haxe.Http();
 
