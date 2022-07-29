@@ -10,7 +10,7 @@ import flixel.input.actions.FlxActionSet;
 import flixel.input.gamepad.FlxGamepadButton;
 import flixel.input.gamepad.FlxGamepadInputID;
 import flixel.input.keyboard.FlxKey;
-#if android
+#if(android || html5)
 import android.flixel.FlxButton;
 import android.flixel.FlxHitbox;
 import android.flixel.FlxVirtualPad;
@@ -384,7 +384,7 @@ class Controls extends FlxActionSet
 	}
 	#end
 
-	#if android
+	#if (android || html5)
 	public var trackedinputsUI:Array<FlxActionInput> = [];
 	public var trackedinputsNOTES:Array<FlxActionInput> = [];
 
@@ -680,7 +680,7 @@ class Controls extends FlxActionSet
 				#else
 				for (gamepad in controls.gamepadsAdded)
 					if (gamepadsAdded.indexOf(gamepad) == -1)
-					  gamepadsAdded.push(gamepad);
+						gamepadsAdded.push(gamepad);
 				#end
 
 				mergeKeyboardScheme(controls.keyboardScheme);
@@ -711,7 +711,7 @@ class Controls extends FlxActionSet
 		}
 	}
 
-	#if !android
+	#if !(android || html5)
 	public function bindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
@@ -739,8 +739,7 @@ class Controls extends FlxActionSet
 		forEachBound(control, function(action, _) removeKeys(action, copyKeys));
 		#end
 	}
-	
-	#else
+	#elseif (android || html5)
 
 	public function bindKeys(control:Control, keys:Array<FlxKey>)
 	{

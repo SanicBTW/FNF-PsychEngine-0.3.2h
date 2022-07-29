@@ -314,8 +314,11 @@ class PlayState extends MusicBeatState
 		camPos.x += gf.cameraPosition[0];
 		camPos.y += gf.cameraPosition[1];
 
-		add(dadGroup);
-		add(boyfriendGroup);
+		if(!ClientPrefs.maxOptimization)
+		{
+			add(dadGroup);
+			add(boyfriendGroup);
+		}
 
 		var lowercaseSong:String = SONG.song.toLowerCase();
 
@@ -453,7 +456,7 @@ class PlayState extends MusicBeatState
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
 
-		#if android
+		#if (android || html5)
 		addAndroidControls();
 		androidControls.visible = true;
 		#end
@@ -1215,7 +1218,7 @@ class PlayState extends MusicBeatState
 		}
 		botplayTxt.visible = cpuControlled;
 
-		if (FlxG.keys.justPressed.ENTER && startedCountdown && canPause)
+		if (FlxG.keys.justPressed.ENTER #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
 		{
 			var ret:Dynamic = callOnLuas('onPause', []);
 			if(ret != FunkinLua.Function_Stop) {

@@ -33,6 +33,7 @@ class AndroidControlsSubState extends FlxSubState
 	var buttonBinded:Bool = false;
 	var bindButton:FlxButton;
 	var resetButton:FlxButton;
+	var applyButton:FlxButton;
 	final controlsItems:Array<String> = ['Pad-Right', 'Pad-Left', 'Pad-Custom', 'Pad-Duo', 'Hitbox', 'Keyboard'];
 
 	override function create()
@@ -63,6 +64,20 @@ class AndroidControlsSubState extends FlxSubState
 		resetButton.color = FlxColor.RED;
 		resetButton.visible = false;
 		add(resetButton);
+
+		applyButton = new FlxButton(FlxG.width - 200, 110, "Apply", function(){
+			AndroidControls.setMode(curSelected);
+
+			if (controlsItems[Math.floor(curSelected)] == 'Pad-Custom')
+				AndroidControls.setCustomMode(virtualPad);
+
+			FlxTransitionableState.skipNextTransOut = true;
+			FlxG.resetState();
+		});
+		applyButton.setGraphicSize(Std.int(applyButton.width) * 3);
+		applyButton.label.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, CENTER);
+		applyButton.visible = true;
+		add(applyButton);
 
 		virtualPad = new FlxVirtualPad(NONE, NONE);
 		virtualPad.visible = false;
@@ -99,12 +114,6 @@ class AndroidControlsSubState extends FlxSubState
 		rightArrow.animation.play('idle');
 		add(rightArrow);
 
-		var tipText:FlxText = new FlxText(10, FlxG.height - 24, 0, 'Press BACK on your phone to get back to the options menu', 16);
-		tipText.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		tipText.borderSize = 2.4;
-		tipText.scrollFactor.set();
-		add(tipText);
-
 		rightPozition = new FlxText(10, FlxG.height - 44, 0, '', 16);
 		rightPozition.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		rightPozition.borderSize = 2.4;
@@ -132,17 +141,6 @@ class AndroidControlsSubState extends FlxSubState
 
 	override function update(elapsed:Float)
 	{
-		if (FlxG.android.justPressed.BACK || FlxG.android.justReleased.BACK)
-		{
-			AndroidControls.setMode(curSelected);
-
-			if (controlsItems[Math.floor(curSelected)] == 'Pad-Custom')
-				AndroidControls.setCustomMode(virtualPad);
-
-			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-		}
-
 		super.update(elapsed);
 
 		inputvari.screenCenter(X);

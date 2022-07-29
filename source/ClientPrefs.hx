@@ -28,6 +28,7 @@ class ClientPrefs {
 
 	public static var showMemory:Bool = true;
 	public static var kadeEngineInput:Bool = false;
+	public static var maxOptimization:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -86,6 +87,7 @@ class ClientPrefs {
 		
 		FlxG.save.data.showMemory = showMemory;
 		FlxG.save.data.kadeEngineInput = kadeEngineInput;
+		FlxG.save.data.maxOptimization = maxOptimization;
 
 		var achieves:Array<String> = [];
 		for (i in 0...Achievements.achievementsUnlocked.length) {
@@ -173,6 +175,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.kadeEngineInput != null) {
 			kadeEngineInput = FlxG.save.data.kadeEngineInput;
+		}
+		if(FlxG.save.data.maxOptimization != null) {
+			maxOptimization = FlxG.save.data.maxOptimization;
 		}
 
 		var save:FlxSave = new FlxSave();

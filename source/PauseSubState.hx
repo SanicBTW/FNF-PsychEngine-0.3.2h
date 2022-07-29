@@ -48,6 +48,10 @@ class PauseSubState extends MusicBeatSubstate
 		bg.scrollFactor.set();
 		add(bg);
 
+		#if (android || html5)
+		addVirtualPad(UP_DOWN, A_B);
+		#end
+
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 		levelInfo.text += PlayState.displaySongName;
 		levelInfo.scrollFactor.set();
@@ -97,6 +101,7 @@ class PauseSubState extends MusicBeatSubstate
 		FlxTween.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
 		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
 		FlxTween.tween(blueballedTxt, {alpha: 1, y: blueballedTxt.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
+
 
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
@@ -188,6 +193,7 @@ class PauseSubState extends MusicBeatSubstate
 	override function destroy()
 	{
 		pauseMusic.destroy();
+		removeVirtualPad();
 
 		super.destroy();
 	}

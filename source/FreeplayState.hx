@@ -153,7 +153,7 @@ class FreeplayState extends MusicBeatState
 		text.scrollFactor.set();
 		add(text);
 
-		#if android
+		#if (android || html5)
 		addVirtualPad(UP_DOWN, A_B_C);
 		#end
 

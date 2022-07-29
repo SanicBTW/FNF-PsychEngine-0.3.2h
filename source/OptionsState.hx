@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.transition.FlxTransitionableState;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -59,7 +60,7 @@ class OptionsState extends MusicBeatState
 		}
 		changeSelection();
 
-		#if android
+		#if (android || html5)
 		addVirtualPad(LEFT_FULL, A_B);
 		#end
 
@@ -68,6 +69,8 @@ class OptionsState extends MusicBeatState
 
 	override function closeSubState() {
 		super.closeSubState();
+		FlxTransitionableState.skipNextTransOut = true;
+		FlxG.resetState();
 		ClientPrefs.saveSettings();
 		changeSelection();
 	}
@@ -88,6 +91,7 @@ class OptionsState extends MusicBeatState
 		}
 
 		if (controls.ACCEPT) {
+			removeVirtualPad();
 			for (item in grpOptions.members) {
 				item.alpha = 0;
 			}
@@ -186,6 +190,10 @@ class NotesSubstate extends MusicBeatSubstate
 		hsvText = new Alphabet(0, 0, "Hue    Saturation  Brightness", false, false, 0, 0.65);
 		add(hsvText);
 		changeSelection();
+
+		#if (android || html5)
+		addVirtualPad(LEFT_FULL, A_B);
+		#end
 	}
 
 	var changingNote:Bool = false;
@@ -461,6 +469,10 @@ class ControlsSubstate extends MusicBeatSubstate {
 			}
 		}
 		changeSelection();
+
+		#if (android || html5)
+		addVirtualPad(LEFT_FULL, A_B);
+		#end
 	}
 
 	var leaving:Bool = false;
@@ -670,7 +682,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 	private static var curSelected:Int = 0;
 	static var unselectableOptions:Array<String> = [
 		'GRAPHICS',
-		'GAMEPLAY'
+		'GAMEPLAY',
+		'OPTIMIZATION'
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
@@ -681,24 +694,23 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GRAPHICS',
 		'Low Quality',
 		'Anti-Aliasing',
-		'Persistent Cached Data',
 		#if !html5
 		'Framerate', //Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
 		'GAMEPLAY',
 		'Downscroll',
-		//'Middlescroll',
+		'Middlescroll',
 		'Ghost Tapping',
 		'Note Delay',
-		'Note Splashes',
 		'Hide HUD',
 		'Hide Song Length',
 		'Flashing Lights',
 		'Camera Zooms',
-		#if !mobile
 		'FPS Counter',
-		#end
-		'Kade Engine Input'
+		'Memory Counter',
+		'Kade Engine Input',
+		'OPTIMIZATION',
+		'Max Optimization'
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -777,6 +789,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 		}
 		changeSelection();
 		reloadValues();
+
+		#if (android || html5)
+		addVirtualPad(LEFT_FULL, A_B);
+		#end
 	}
 
 	var nextAccept:Int = 5;
@@ -882,6 +898,17 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 					case 'Kade Engine Input':
 						ClientPrefs.kadeEngineInput = !ClientPrefs.kadeEngineInput;
+
+					case 'Memory Counter':
+						ClientPrefs.showMemory = !ClientPrefs.showMemory;
+						if(Main.memoryVar != null)
+							Main.memoryVar.visible = ClientPrefs.showMemory;
+
+
+					case 'Max Optimization':
+						ClientPrefs.lowQuality = !ClientPrefs.lowQuality;
+						ClientPrefs.middleScroll = !ClientPrefs.middleScroll;
+						ClientPrefs.maxOptimization = !ClientPrefs.maxOptimization;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -976,7 +1003,9 @@ class PreferencesSubstate extends MusicBeatSubstate
 			case 'Hide Song Length':
 				daText = "If checked, the bar showing how much time is left\nwill be hidden.";
 			case 'Kade Engine Input':
-				daText = 'If chekced, will use Kade Engine 1.5.3 Input\nMemory intensive? kind of';
+				daText = 'If checked, will use Kade Engine 1.5.3 Input\nMemory intensive? kind of';
+			case "Memory Counter":
+				daText = "Displays a memory counter";
 		}
 		descText.text = daText;
 
@@ -1062,6 +1091,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.hideTime;
 					case 'Kade Engine Input':
 						daValue = ClientPrefs.kadeEngineInput;
+					case 'Memory Counter':
+						daValue = ClientPrefs.showMemory;
+					case 'Max Optimization':
+						daValue = ClientPrefs.maxOptimization;
 				}
 				checkbox.daValue = daValue;
 			}
