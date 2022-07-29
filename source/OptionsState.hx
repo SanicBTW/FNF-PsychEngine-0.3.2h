@@ -91,7 +91,9 @@ class OptionsState extends MusicBeatState
 		}
 
 		if (controls.ACCEPT) {
+			#if (android || html5)
 			removeVirtualPad();
+			#end
 			for (item in grpOptions.members) {
 				item.alpha = 0;
 			}
@@ -694,6 +696,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GRAPHICS',
 		'Low Quality',
 		'Anti-Aliasing',
+		'FPS Counter',
+		'Memory Counter',
 		#if !html5
 		'Framerate', //Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
@@ -706,8 +710,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Hide Song Length',
 		'Flashing Lights',
 		'Camera Zooms',
-		'FPS Counter',
-		'Memory Counter',
+		'Snap Camera on Note P',
 		'OPTIMIZATION',
 		'Only Notes',
 		'Disable score tween',
@@ -908,6 +911,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.optDisableScoreTween = !ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':
 						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
+					case 'Snap Camera on Note P':
+						ClientPrefs.snapCameraOnNote = !ClientPrefs.snapCameraOnNote;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1010,6 +1015,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Disables score bop on sick';
 			case 'Hide Health Bar':
 				daText = 'Hides health bar and replaces it with a percentage';
+			case 'Snap Camera on Note P':
+				daText = 'Snaps the camera on the note direction';
 		}
 		descText.text = daText;
 
@@ -1101,6 +1108,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':
 						daValue = ClientPrefs.optHideHealthBar;
+					case 'Snap Camera on Note P':
+						daValue = ClientPrefs.snapCameraOnNote;
 				}
 				checkbox.daValue = daValue;
 			}

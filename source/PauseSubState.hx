@@ -194,7 +194,9 @@ class PauseSubState extends MusicBeatSubstate
 	override function destroy()
 	{
 		pauseMusic.destroy();
+		#if (android || html5)
 		removeVirtualPad();
+		#end
 
 		super.destroy();
 	}

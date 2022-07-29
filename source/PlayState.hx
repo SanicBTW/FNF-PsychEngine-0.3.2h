@@ -230,6 +230,12 @@ class PlayState extends MusicBeatState
     public var shits:Int = 0;
 
 	var pauseBtn:FlxButton;
+	public static var inst:Dynamic;
+	public static var voices:Dynamic;
+	var campointX:Float = 0;
+	var campointY:Float = 0;
+	var bfturn:Bool = false;
+	var camMov:Int = 15;
 
 	override public function create()
 	{
@@ -856,7 +862,7 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		FlxG.sound.playMusic(inst, 1, false);
 		FlxG.sound.music.onComplete = finishSong;
 		vocals.play();
 
@@ -892,12 +898,12 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			vocals = new FlxSound().loadEmbedded(voices);
 		else
 			vocals = new FlxSound();
 
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
+		FlxG.sound.list.add(new FlxSound().loadEmbedded(inst));
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -1880,14 +1886,53 @@ class PlayState extends MusicBeatState
 		{
 			moveCamera(true);
 			callOnLuas('onMoveCamera', ['dad']);
+			campointX = camFollow.x;
+			campointY = camFollow.y;
+			bfturn = false;
 		}
 
 		if (SONG.notes[id] != null && SONG.notes[id].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
 		{
 			moveCamera(false);
 			callOnLuas('onMoveCamera', ['boyfriend']);
+			campointX = camFollow.x;
+			campointY = camFollow.y;
+			bfturn = true;
 		}
 	}
+
+	/**
+			function moveCameraSection(?id:Int = 0):Void {
+		if(SONG.notes[id] == null) return;
+
+		if (gf != null)
+		{
+			camFollow.set(gf.getMidpoint().x, gf.getMidpoint().y);
+			camFollow.x += gf.cameraPosition[0];// + girlfriendCameraOffset[0];
+			camFollow.y += gf.cameraPosition[1];// + girlfriendCameraOffset[1];
+			tweenCamIn();
+			callOnLuas('onMoveCamera', ['gf']);
+			return;
+		}
+
+		if (!SONG.notes[id].mustHitSection)
+		{
+			moveCamera(true);
+			callOnLuas('onMoveCamera', ['dad']);
+			campointX = camFollow.x;
+			campointY = camFollow.y;
+			bfturn = false;
+		}
+		else
+		{
+			moveCamera(false);
+			callOnLuas('onMoveCamera', ['boyfriend']);
+			campointX = camFollow.x;
+			campointY = camFollow.y;
+			bfturn = true;
+		}
+	}
+	**/
 
 	public function moveCamera(isDad:Bool) {
 		if(isDad) {
@@ -2461,12 +2506,42 @@ class PlayState extends MusicBeatState
 				{
 					if(gf != null)
 						{
+							switch(animToPlay)
+							{
+								case 'singLEFT':
+									if(bfturn && ClientPrefs.snapCameraOnNote)
+										snapCamFollowToPos(campointX - camMov, campointY);
+								case "singDOWN":
+									if(bfturn && ClientPrefs.snapCameraOnNote)
+										snapCamFollowToPos(campointX, campointY + camMov);	
+								case "singUP":
+									if(bfturn && ClientPrefs.snapCameraOnNote)
+										snapCamFollowToPos(campointX, campointY - camMov);
+								case "singRIGHT":
+									if(bfturn && ClientPrefs.snapCameraOnNote)
+										snapCamFollowToPos(campointX + camMov, campointY);
+							}
 							gf.playAnim(animToPlay + daAlt, true);
 							gf.holdTimer = 0;
 						}
 				}
 				else
 				{
+					switch(animToPlay)
+					{
+						case 'singLEFT':
+							if(bfturn && ClientPrefs.snapCameraOnNote)
+								snapCamFollowToPos(campointX - camMov, campointY);
+						case "singDOWN":
+							if(bfturn && ClientPrefs.snapCameraOnNote)
+								snapCamFollowToPos(campointX, campointY + camMov);	
+						case "singUP":
+							if(bfturn && ClientPrefs.snapCameraOnNote)
+								snapCamFollowToPos(campointX, campointY - camMov);
+						case "singRIGHT":
+							if(bfturn && ClientPrefs.snapCameraOnNote)
+								snapCamFollowToPos(campointX + camMov, campointY);
+					}
 					boyfriend.playAnim(animToPlay + daAlt, true);
 					boyfriend.holdTimer = 0;
 				}
@@ -2561,6 +2636,21 @@ class PlayState extends MusicBeatState
 
 			if(char != null)
 			{
+				switch(animToPlay)
+				{
+					case 'singLEFT':
+						if(!bfturn && ClientPrefs.snapCameraOnNote)
+							snapCamFollowToPos(campointX - camMov, campointY);
+					case "singDOWN":
+						if(!bfturn && ClientPrefs.snapCameraOnNote)
+							snapCamFollowToPos(campointX, campointY + camMov);	
+					case "singUP":
+						if(!bfturn && ClientPrefs.snapCameraOnNote)
+							snapCamFollowToPos(campointX, campointY - camMov);
+					case "singRIGHT":
+						if(!bfturn && ClientPrefs.snapCameraOnNote)
+							snapCamFollowToPos(campointX + camMov, campointY);
+				}
 				char.playAnim(animToPlay + altAnim, true);
 				char.holdTimer = 0;
 			}

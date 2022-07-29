@@ -72,7 +72,9 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		if (controls.ACCEPT)
 		{
+			#if (android || html5)
 			removeVirtualPad();
+			#end
 			endBullshit();
 		}
 
@@ -81,7 +83,9 @@ class GameOverSubstate extends MusicBeatSubstate
 			FlxG.sound.music.stop();
 			PlayState.deathCounter = 0;
 			PlayState.seenCutscene = false;
+			#if (android || html5)
 			removeVirtualPad();
+			#end
 
 			MusicBeatState.switchState(new FreeplayState());
 

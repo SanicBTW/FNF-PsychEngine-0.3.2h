@@ -1,5 +1,7 @@
 package;
 
+import openfl.net.URLRequest;
+import openfl.media.Sound;
 import haxe.Json;
 #if desktop
 import Discord.DiscordClient;
@@ -46,6 +48,8 @@ class FreeplayState extends MusicBeatState
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
+	public static var onlineSongs:Map<String, Array<String>> = new Map<String, Array<String>>();
+
 	override function create()
 	{
 		openfl.Assets.cache.clear("assets");
@@ -85,6 +89,24 @@ class FreeplayState extends MusicBeatState
 				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 			}
 		}
+
+		var http = new haxe.Http('https://0d0b-81-61-195-120.eu.ngrok.io/api/collections/fnf_charts/records');
+		http.onData = function(data:String)
+		{
+			var onlineSongItems = cast Json.parse(data).items;
+			for(i in 0...onlineSongItems.length)
+			{
+				var onlineSongItemName = onlineSongItems[i].chart_name;
+
+				var chartPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
+				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_inst;
+				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_voices;
+
+				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
+				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].chart_difficulty]);
+			}
+		}
+		http.request();
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -162,9 +184,9 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
+	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, onlineSong:Bool = false)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, onlineSong));
 	}
 
 	var instPlaying:Int = -1;
@@ -267,9 +289,9 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			if(songs[curSelected].songName == "Mystical-Maiden")
+			if(songs[curSelected].onlineSong)
 			{
-				var http = new haxe.Http('https://sanicbtw.github.io/teesitn/mystical-maiden-hard.json');
+				var http = new haxe.Http(onlineSongs[songs[curSelected].songName][0]);
 				http.onData = function(data:String)
 				{
 					persistentUpdate = false;
@@ -279,8 +301,9 @@ class FreeplayState extends MusicBeatState
 					PlayState.SONG = the;
 					PlayState.isStoryMode = false;
 					PlayState.storyDifficulty = curDifficulty;
+					PlayState.inst = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][1]));
+					PlayState.voices = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][2]));
 		
-					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 					if(colorTween != null) {
 						colorTween.cancel();
 					}
@@ -298,34 +321,6 @@ class FreeplayState extends MusicBeatState
 					destroyFreeplayVocals();
 				}
 				http.request();
-				/*
-				var http = new haxe.Http();
-
-				http.onData = function(data:String){
-					persistentUpdate = false;
-		
-					PlayState.SONG = Song.loadFromJson(data, true);
-					PlayState.isStoryMode = false;
-					PlayState.storyDifficulty = curDifficulty;
-		
-					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-					if(colorTween != null) {
-						colorTween.cancel();
-					}
-					if(FlxG.keys.pressed.SHIFT)
-					{
-						LoadingState.loadAndSwitchState(new ChartingState());
-					}
-					else
-					{
-						LoadingState.loadAndSwitchState(new PlayState());
-					}
-		
-					FlxG.sound.music.volume = 0;
-		
-					destroyFreeplayVocals();
-				}
-				http.request();*/
 			}
 			else
 			{
@@ -338,6 +333,8 @@ class FreeplayState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
+				PlayState.inst = Paths.inst(PlayState.SONG.song);
+				PlayState.voices = Paths.voices(PlayState.SONG.song);
 	
 				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 				if(colorTween != null) {
@@ -363,15 +360,23 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 
-		if(songs[curSelected].songName == "Betrayal")
+		if(songs[curSelected].onlineSong)
 		{
-			curDifficulty = 3;
-			diffText.text = "BLACKOUT";
+			curDifficulty = Std.parseInt(onlineSongs[songs[curSelected].songName][3]);
+			diffText.text = CoolUtil.difficultyStuff[curDifficulty][0].toUpperCase();
 		}
 		else
 		{
-			curDifficulty = 2;
-			diffText.text = "HARD";
+			if(songs[curSelected].songName == "Betrayal")
+				{
+					curDifficulty = 3;
+					diffText.text = "BLACKOUT";
+				}
+				else
+				{
+					curDifficulty = 2;
+					diffText.text = "HARD";
+				}
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -458,12 +463,14 @@ class SongMetadata
 	public var week:Int = 0;
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
+	public var onlineSong:Bool = false;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int)
+	public function new(song:String, week:Int, songCharacter:String, color:Int, onlineSong:Bool)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.color = color;
+		this.onlineSong = onlineSong;
 	}
 }

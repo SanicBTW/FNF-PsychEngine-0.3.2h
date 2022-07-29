@@ -30,6 +30,7 @@ class ClientPrefs {
 	public static var optOnlyNotes:Bool = false;
 	public static var optDisableScoreTween:Bool = false;
 	public static var optHideHealthBar:Bool = false;
+	public static var snapCameraOnNote:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -90,6 +91,7 @@ class ClientPrefs {
 		FlxG.save.data.optOnlyNotes = optOnlyNotes;
 		FlxG.save.data.optDisableScoreTween = optDisableScoreTween;
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
+		FlxG.save.data.snapCameraOnNote = snapCameraOnNote;
 
 		var achieves:Array<String> = [];
 		for (i in 0...Achievements.achievementsUnlocked.length) {
@@ -184,6 +186,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.optHideHealthBar != null) {
 			optHideHealthBar = FlxG.save.data.optHideHealthBar;
+		}
+		if(FlxG.save.data.snapCameraOnNote != null) {
+			snapCameraOnNote = FlxG.save.data.snapCameraOnNote;
 		}
 
 		var save:FlxSave = new FlxSave();
