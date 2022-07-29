@@ -1,5 +1,6 @@
 package;
 
+import haxe.Json;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -17,6 +18,7 @@ import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
+import com.akifox.asynchttp.*;
 
 using StringTools;
 
@@ -47,9 +49,9 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		openfl.Assets.cache.clear("assets");
 		openfl.Assets.cache.clear("songs");
 		openfl.Assets.cache.clear("images");
-		openfl.Assets.cache.clear("assets");
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -266,32 +268,100 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			persistentUpdate = false;
-			
-			var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-			trace(poop);
-
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
-
-			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-			if(colorTween != null) {
-				colorTween.cancel();
-			}
-			if(FlxG.keys.pressed.SHIFT)
+			trace(songs[curSelected].songName);
+			if(songs[curSelected].songName == "Mystical-Maiden")
 			{
-				LoadingState.loadAndSwitchState(new ChartingState());
+				var req = new HttpRequest({
+					url: 'https://sanicbtw.github.io/teesitn/mystical-maiden-hard.json',
+					contentType: 'application/json',
+					callback: function(response:HttpResponse){
+						if(response.isOK){
+							persistentUpdate = false;
+
+							var the = Song.parseJSONshit(response.content);
+		
+							PlayState.SONG = the;
+							PlayState.isStoryMode = false;
+							PlayState.storyDifficulty = curDifficulty;
+				
+							trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+							if(colorTween != null) {
+								colorTween.cancel();
+							}
+							if(FlxG.keys.pressed.SHIFT)
+							{
+								LoadingState.loadAndSwitchState(new ChartingState());
+							}
+							else
+							{
+								LoadingState.loadAndSwitchState(new PlayState());
+							}
+				
+							FlxG.sound.music.volume = 0;
+				
+							destroyFreeplayVocals();
+						}
+					}
+				});
+				req.send();
+				/*
+				var http = new haxe.Http();
+
+				http.onData = function(data:String){
+					persistentUpdate = false;
+		
+					PlayState.SONG = Song.loadFromJson(data, true);
+					PlayState.isStoryMode = false;
+					PlayState.storyDifficulty = curDifficulty;
+		
+					trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+					if(colorTween != null) {
+						colorTween.cancel();
+					}
+					if(FlxG.keys.pressed.SHIFT)
+					{
+						LoadingState.loadAndSwitchState(new ChartingState());
+					}
+					else
+					{
+						LoadingState.loadAndSwitchState(new PlayState());
+					}
+		
+					FlxG.sound.music.volume = 0;
+		
+					destroyFreeplayVocals();
+				}
+				http.request();*/
 			}
 			else
 			{
-				LoadingState.loadAndSwitchState(new PlayState());
+				persistentUpdate = false;
+			
+				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				trace(poop);
+	
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+	
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if(colorTween != null) {
+					colorTween.cancel();
+				}
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+	
+				FlxG.sound.music.volume = 0;
+	
+				destroyFreeplayVocals();
 			}
-
-			FlxG.sound.music.volume = 0;
-
-			destroyFreeplayVocals();
 		}
 		else if(controls.RESET)
 		{
