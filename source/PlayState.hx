@@ -44,6 +44,9 @@ import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 import openfl.media.Video;
 import openfl.utils.Assets as OpenFlAssets;
+#if sys
+import openfl.system.System;
+#end
 
 using StringTools;
 
@@ -820,6 +823,10 @@ class PlayState extends MusicBeatState
 
 	function startSong():Void
 	{
+		#if sys
+		System.gc();
+		#end
+
 		startingSong = false;
 
 		previousFrameTime = FlxG.game.ticks;
@@ -853,6 +860,9 @@ class PlayState extends MusicBeatState
 
 	private function generateSong(dataPath:String):Void
 	{
+		#if sys
+		System.gc();
+		#end
 		// FlxG.log.add(ChartParser.parse());
 
 		var songData = SONG;

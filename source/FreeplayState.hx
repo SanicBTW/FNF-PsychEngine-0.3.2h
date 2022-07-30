@@ -1,8 +1,5 @@
 package;
 
-import openfl.net.URLRequest;
-import openfl.media.Sound;
-import haxe.Json;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -20,6 +17,12 @@ import lime.utils.Assets;
 import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
+#if sys
+import openfl.system.System;
+#end
+import openfl.net.URLRequest;
+import openfl.media.Sound;
+import haxe.Json;
 
 using StringTools;
 
@@ -49,12 +52,20 @@ class FreeplayState extends MusicBeatState
 	var colorTween:FlxTween;
 
 	public static var onlineSongs:Map<String, Array<String>> = new Map<String, Array<String>>();
-
 	override function create()
 	{
+		songs = [];
 		openfl.Assets.cache.clear("assets");
 		openfl.Assets.cache.clear("songs");
 		openfl.Assets.cache.clear("images");
+
+		PlayState.inst = null;
+		PlayState.voices = null;
+		PlayState.SONG = null;
+
+		#if sys
+		System.gc();
+		#end
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -62,7 +73,7 @@ class FreeplayState extends MusicBeatState
 		PlayState.isStoryMode = false;
 		WeekData.reloadWeekFiles(false);
 
-		#if desktop
+		#if windows
 		// Updating Discord Rich Presence
 		DiscordClient.changePresence("In the Menus", null);
 		#end
@@ -90,7 +101,29 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		OnlineStuff.setSongs();
+		#if !html5
+		var http = new haxe.Http('https://0d0b-81-61-195-120.eu.ngrok.io/api/collections/fnf_charts/records');
+		http.onData = function(data:String)
+		{
+			var onlineSongItems = cast Json.parse(data).items;
+			for(i in 0...onlineSongItems.length)
+			{
+				var onlineSongItemName = onlineSongItems[i].chart_name;
+
+				var chartPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
+				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_inst;
+				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_voices;
+
+				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
+				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].chart_difficulty]);
+				
+				#if sys
+				System.gc();
+				#end
+			}
+		}
+		http.request();
+		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -303,6 +336,10 @@ class FreeplayState extends MusicBeatState
 					FlxG.sound.music.volume = 0;
 		
 					destroyFreeplayVocals();
+					
+					#if sys
+					System.gc();
+					#end
 				}
 				http.request();
 			}

@@ -71,8 +71,6 @@ class TitleState extends MusicBeatState
 
 		Highscore.load();
 
-		OnlineStuff.setupURL();
-
 		FlxG.mouse.visible = false;
 		#if FREEPLAY
 		MusicBeatState.switchState(new FreeplayState());

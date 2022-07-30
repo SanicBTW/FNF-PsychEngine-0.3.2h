@@ -131,6 +131,8 @@
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 
 	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
+	<haxedef name="HXCPP_GC_MOVING"/>
+	<haxedef name="HXCPP_GC_DYNAMIC_SIZE"/>
 
 	<!-- _________________________________ Custom _______________________________ -->
 
