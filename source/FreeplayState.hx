@@ -108,14 +108,14 @@ class FreeplayState extends MusicBeatState
 			var onlineSongItems = cast Json.parse(data).items;
 			for(i in 0...onlineSongItems.length)
 			{
-				var onlineSongItemName = onlineSongItems[i].chart_name;
+				var onlineSongItemName = onlineSongItems[i].song_name;
 
 				var chartPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_inst;
-				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_voices;
+				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
+				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
 
 				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
-				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].chart_difficulty]);
+				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
 				
 				#if sys
 				System.gc();
@@ -320,6 +320,7 @@ class FreeplayState extends MusicBeatState
 					PlayState.storyDifficulty = curDifficulty;
 					PlayState.inst = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][1]));
 					PlayState.voices = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][2]));
+					PlayState.onlineSong = true;
 		
 					if(colorTween != null) {
 						colorTween.cancel();
@@ -356,6 +357,7 @@ class FreeplayState extends MusicBeatState
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.inst = Paths.inst(PlayState.SONG.song);
 				PlayState.voices = Paths.voices(PlayState.SONG.song);
+				PlayState.onlineSong = false;
 	
 				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 				if(colorTween != null) {
@@ -383,8 +385,9 @@ class FreeplayState extends MusicBeatState
 
 		if(songs[curSelected].onlineSong)
 		{
-			curDifficulty = Std.parseInt(onlineSongs[songs[curSelected].songName][3]);
-			diffText.text = CoolUtil.difficultyStuff[curDifficulty][0].toUpperCase();
+			//hard code it even if its a different diff
+			curDifficulty = 2;
+			diffText.text = onlineSongs[songs[curSelected].songName][3].toUpperCase();
 		}
 		else
 		{

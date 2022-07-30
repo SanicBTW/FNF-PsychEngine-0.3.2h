@@ -211,6 +211,8 @@ class PlayState extends MusicBeatState
 	var campointY:Float = 0;
 	var bfturn:Bool = false;
 	var camMov:Int = 15;
+	var betterSongString:String;
+	public static var onlineSong:Bool = false;
 
 	override public function create()
 	{
@@ -260,12 +262,23 @@ class PlayState extends MusicBeatState
 		detailsPausedText = "Paused - " + detailsText;
 		#end
 
-		/*
-		switch (SONG.song.toLowerCase())
+		betterSongString = songName.replace("-", " ").toLowerCase();
+
+		switch (betterSongString)
 		{
 			case "fight-or-flight":
 				curStage = "starved";
-		}*/
+
+			case "defeat":
+				curStage = 'defeat';
+
+				defaultCamZoom = 0.9;
+				var defeat = new FlxSprite(0, 100, Paths.embMImages(betterSongString, 'defeatfnf'));
+				defeat.setGraphicSize(Std.int(defeat.width * 2));
+				defeat.scrollFactor.set(1, 1);
+				defeat.antialiasing = true;
+				add(defeat);
+		}
 
 		backgroundGroup = new FlxTypedGroup<FlxSprite>();
 		add(backgroundGroup);

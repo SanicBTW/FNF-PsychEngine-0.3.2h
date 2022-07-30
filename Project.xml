@@ -65,6 +65,7 @@
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3"/>
 	<assets path="assets/shared"        library="shared"        exclude="*.mp3"/>
 	<assets path="assets/android" if="android || web"/>
+	<assets path="assets/eMods" 								exclude="*.mp3"/>
 	
 	<!-- <template path='mods' /> -->
 	

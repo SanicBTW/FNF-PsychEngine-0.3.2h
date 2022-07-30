@@ -141,36 +141,28 @@ class Paths
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
 
-	static public function video(key:String)
+	inline static public function video(key:String)
 	{
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
-	
-	#if MODS_ALLOWED
-	static private function addCustomGraphic(key:String):FlxGraphic {
-		if(FileSystem.exists(modsImages(key))) {
-			if(!customImagesLoaded.exists(key)) {
-				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(BitmapData.fromFile(modsImages(key)));
-				newGraphic.persist = true;
-				customImagesLoaded.set(key, newGraphic);
-			}
-			return customImagesLoaded.get(key);
-		}
-		return null;
+
+	//todo, make it compatible with filesys
+	inline static public function embMods(key:String)
+	{
+		trace(Paths.getPreloadPath('eMods/$key'));
+		return Paths.getPreloadPath('eMods/$key');
 	}
 
-	inline static public function mods(key:String) {
-		return 'mods/' + key;
+	inline static public function embMImages(song:String, file:String)
+	{
+		return embMods(song + '_assets/images/$file.png');
 	}
-	inline static public function modsImages(key:String) {
-		return mods('images/' + key + '.png');
+
+	inline static public function embExists(key:String)
+	{
+		if(OpenFlAssets.exists(Paths.embMods(key))) {
+			return true;
+		}
+		return false;
 	}
-	
-	inline static public function modsXml(key:String) {
-		return mods('images/' + key + '.xml');
-	}
-	inline static public function modsTxt(key:String) {
-		return mods('images/' + key + '.xml');
-	}
-	#end
 }
