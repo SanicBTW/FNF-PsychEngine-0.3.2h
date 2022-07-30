@@ -32,6 +32,8 @@ class ClientPrefs {
 	public static var optHideHealthBar:Bool = false;
 	public static var snapCameraOnNote:Bool = true;
 
+	public static var serverURL:String = null; //dont save this one
+
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
 		S, DOWN,			//Note Down
@@ -93,14 +95,6 @@ class ClientPrefs {
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
 		FlxG.save.data.snapCameraOnNote = snapCameraOnNote;
 
-		var achieves:Array<String> = [];
-		for (i in 0...Achievements.achievementsUnlocked.length) {
-			if(Achievements.achievementsUnlocked[i][1]) {
-				achieves.push(Achievements.achievementsUnlocked[i][0]);
-			}
-		}
-		FlxG.save.data.achievementsUnlocked = achieves;
-		FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
 		FlxG.save.flush();
 
 		var save:FlxSave = new FlxSave();

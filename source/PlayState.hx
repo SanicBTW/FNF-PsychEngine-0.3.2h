@@ -43,7 +43,6 @@ import openfl.display.BlendMode;
 import openfl.display.StageQuality;
 import openfl.filters.ShaderFilter;
 import openfl.media.Video;
-import Achievements;
 import openfl.utils.Assets as OpenFlAssets;
 
 using StringTools;
@@ -154,36 +153,9 @@ class PlayState extends MusicBeatState
 
 	var dialogue:Array<String> = ['blah blah blah', 'coolswag'];
 
-	var halloweenBG:BGSprite;
-	var halloweenWhite:BGSprite;
-
-	var phillyCityLights:FlxTypedGroup<BGSprite>;
-	var phillyTrain:BGSprite;
-	var phillyBlack:BGSprite;
-	var phillyBlackTween:FlxTween;
-	var phillyCityLightsEvent:FlxTypedGroup<BGSprite>;
-	var phillyCityLightsEventTween:FlxTween;
-	var trainSound:FlxSound;
-
-	var limoKillingState:Int = 0;
-	var limo:BGSprite;
-	var limoMetalPole:BGSprite;
-	var limoLight:BGSprite;
-	var limoCorpse:BGSprite;
-	var limoCorpseTwo:BGSprite;
-	var bgLimo:BGSprite;
-	var grpLimoParticles:FlxTypedGroup<BGSprite>;
-	var grpLimoDancers:FlxTypedGroup<BackgroundDancer>;
-	var fastCar:BGSprite;
-
-	var upperBoppers:BGSprite;
-	var bottomBoppers:BGSprite;
-	var santa:BGSprite;
 	var heyTimer:Float;
 
-	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
-	var bgGhouls:BGSprite;
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
@@ -759,15 +731,6 @@ class PlayState extends MusicBeatState
 					}
 				}
 				switch(curStage) {
-					case 'school' | 'schoolEvil':
-						antialias = false;
-
-					case 'mall':
-						if(!ClientPrefs.lowQuality)
-							upperBoppers.dance(true);
-		
-						bottomBoppers.dance(true);
-						santa.dance(true);
 				}
 
 				switch (swagCounter)
@@ -1139,11 +1102,6 @@ class PlayState extends MusicBeatState
 			if (finishTimer != null && !finishTimer.finished)
 				finishTimer.active = false;
 
-			if(phillyBlackTween != null)
-				phillyBlackTween.active = false;
-			if(phillyCityLightsEventTween != null)
-				phillyCityLightsEventTween.active = false;
-
 			var chars:Array<Character> = [boyfriend, gf, dad];
 			for (i in 0...chars.length) {
 				if(chars[i].colorTween != null) {
@@ -1168,11 +1126,6 @@ class PlayState extends MusicBeatState
 				startTimer.active = true;
 			if (finishTimer != null && !finishTimer.finished)
 				finishTimer.active = true;
-
-			if(phillyBlackTween != null)
-				phillyBlackTween.active = true;
-			if(phillyCityLightsEventTween != null)
-				phillyCityLightsEventTween.active = true;
 
 			var chars:Array<Character> = [boyfriend, gf, dad];
 			for (i in 0...chars.length) {
@@ -1636,11 +1589,6 @@ class PlayState extends MusicBeatState
 						gf.specialAnim = true;
 						gf.heyTimer = time;
 					}
-
-					if(curStage == 'mall') {
-						bottomBoppers.animation.play('hey', true);
-						heyTimer = time;
-					}
 				}
 				if(value != 1) {
 					boyfriend.playAnim('hey', true);
@@ -1653,108 +1601,6 @@ class PlayState extends MusicBeatState
 				if(Math.isNaN(value)) value = 1;
 				gfSpeed = value;
 
-			case 'Blammed Lights':
-				if(curStage == 'philly') {
-					var lightId:Int = Std.parseInt(value1);
-					if(Math.isNaN(lightId)) lightId = 0;
-
-					if(lightId > 0 && curLightEvent != lightId) {
-						if(lightId > 5) lightId = FlxG.random.int(1, 5, [curLightEvent]);
-
-						var color:Int = 0xffffffff;
-						switch(lightId) {
-							case 1: //Blue
-								color = 0xff31a2fd;
-							case 2: //Green
-								color = 0xff31fd8c;
-							case 3: //Pink
-								color = 0xfff794f7;
-							case 4: //Red
-								color = 0xfff96d63;
-							case 5: //Orange
-								color = 0xfffba633;
-						}
-						curLightEvent = lightId;
-
-						if(phillyBlack.alpha != 1) {
-							if(phillyBlackTween != null) {
-								phillyBlackTween.cancel();
-							}
-							phillyBlackTween = FlxTween.tween(phillyBlack, {alpha: 1}, 1, {ease: FlxEase.quadInOut,
-								onComplete: function(twn:FlxTween) {
-									phillyBlackTween = null;
-								}
-							});
-
-							var chars:Array<Character> = [boyfriend, gf, dad];
-							for (i in 0...chars.length) {
-								if(chars[i].colorTween != null) {
-									chars[i].colorTween.cancel();
-								}
-								chars[i].colorTween = FlxTween.color(chars[i], 1, FlxColor.WHITE, color, {onComplete: function(twn:FlxTween) {
-									chars[i].colorTween = null;
-								}, ease: FlxEase.quadInOut});
-							}
-						} else {
-							dad.color = color;
-							boyfriend.color = color;
-							gf.color = color;
-						}
-
-						phillyCityLightsEvent.forEach(function(spr:BGSprite) {
-							spr.visible = false;
-						});
-						phillyCityLightsEvent.members[lightId - 1].visible = true;
-						phillyCityLightsEvent.members[lightId - 1].alpha = 1;
-					} else {
-						if(phillyBlack.alpha != 0) {
-							if(phillyBlackTween != null) {
-								phillyBlackTween.cancel();
-							}
-							phillyBlackTween = FlxTween.tween(phillyBlack, {alpha: 0}, 1, {ease: FlxEase.quadInOut,
-								onComplete: function(twn:FlxTween) {
-									phillyBlackTween = null;
-								}
-							});
-						}
-
-						phillyCityLights.forEach(function(spr:BGSprite) {
-							spr.visible = false;
-						});
-						phillyCityLightsEvent.forEach(function(spr:BGSprite) {
-							spr.visible = false;
-						});
-
-						var memb:FlxSprite = phillyCityLightsEvent.members[curLightEvent - 1];
-						if(memb != null) {
-							memb.visible = true;
-							memb.alpha = 1;
-							if(phillyCityLightsEventTween != null)
-								phillyCityLightsEventTween.cancel();
-
-							phillyCityLightsEventTween = FlxTween.tween(memb, {alpha: 0}, 1, {onComplete: function(twn:FlxTween) {
-								phillyCityLightsEventTween = null;
-							}, ease: FlxEase.quadInOut});
-						}
-
-						var chars:Array<Character> = [boyfriend, gf, dad];
-						for (i in 0...chars.length) {
-							if(chars[i].colorTween != null) {
-								chars[i].colorTween.cancel();
-							}
-							chars[i].colorTween = FlxTween.color(chars[i], 1, chars[i].color, FlxColor.WHITE, {onComplete: function(twn:FlxTween) {
-								chars[i].colorTween = null;
-							}, ease: FlxEase.quadInOut});
-						}
-
-						curLight = 0;
-						curLightEvent = 0;
-					}
-				}
-
-			case 'Kill Henchmen':
-				killHenchmen();
-
 			case 'Add Camera Zoom':
 				if(ClientPrefs.camZooms && FlxG.camera.zoom < 1.35) {
 					var camZoom:Float = Std.parseFloat(value1);
@@ -1764,12 +1610,6 @@ class PlayState extends MusicBeatState
 
 					FlxG.camera.zoom += camZoom;
 					camHUD.zoom += hudZoom;
-				}
-
-			case 'Trigger BG Ghouls':
-				if(curStage == 'schoolEvil' && !ClientPrefs.lowQuality) {
-					bgGhouls.dance(true);
-					bgGhouls.visible = true;
 				}
 
 			case 'Play Animation':
@@ -2674,157 +2514,6 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	var fastCarCanDrive:Bool = true;
-
-	function resetFastCar():Void
-	{
-		fastCar.x = -12600;
-		fastCar.y = FlxG.random.int(140, 250);
-		fastCar.velocity.x = 0;
-		fastCarCanDrive = true;
-	}
-
-	function fastCarDrive()
-	{
-		FlxG.sound.play(Paths.soundRandom('carPass', 0, 1), 0.7);
-
-		fastCar.velocity.x = (FlxG.random.int(170, 220) / FlxG.elapsed) * 3;
-		fastCarCanDrive = false;
-		new FlxTimer().start(2, function(tmr:FlxTimer)
-		{
-			resetFastCar();
-		});
-	}
-
-	var trainMoving:Bool = false;
-	var trainFrameTiming:Float = 0;
-
-	var trainCars:Int = 8;
-	var trainFinishing:Bool = false;
-	var trainCooldown:Int = 0;
-
-	function trainStart():Void
-	{
-		trainMoving = true;
-		if (!trainSound.playing)
-			trainSound.play(true);
-	}
-
-	var startedMoving:Bool = false;
-
-	function updateTrainPos():Void
-	{
-		if (trainSound.time >= 4700)
-		{
-			startedMoving = true;
-			gf.playAnim('hairBlow');
-			gf.specialAnim = true;
-		}
-
-		if (startedMoving)
-		{
-			phillyTrain.x -= 400;
-
-			if (phillyTrain.x < -2000 && !trainFinishing)
-			{
-				phillyTrain.x = -1150;
-				trainCars -= 1;
-
-				if (trainCars <= 0)
-					trainFinishing = true;
-			}
-
-			if (phillyTrain.x < -4000 && trainFinishing)
-				trainReset();
-		}
-	}
-
-	function trainReset():Void
-	{
-		gf.danced = false; //Sets head to the correct position once the animation ends
-		gf.playAnim('hairFall');
-		gf.specialAnim = true;
-		phillyTrain.x = FlxG.width + 200;
-		trainMoving = false;
-		// trainSound.stop();
-		// trainSound.time = 0;
-		trainCars = 8;
-		trainFinishing = false;
-		startedMoving = false;
-	}
-
-	function lightningStrikeShit():Void
-	{
-		FlxG.sound.play(Paths.soundRandom('thunder_', 1, 2));
-		if(!ClientPrefs.lowQuality) halloweenBG.animation.play('halloweem bg lightning strike');
-
-		lightningStrikeBeat = curBeat;
-		lightningOffset = FlxG.random.int(8, 24);
-
-		if(boyfriend.animOffsets.exists('scared')) {
-			boyfriend.playAnim('scared', true);
-		}
-		if(gf.animOffsets.exists('scared')) {
-			gf.playAnim('scared', true);
-		}
-
-		if(ClientPrefs.camZooms) {
-			FlxG.camera.zoom += 0.015;
-			camHUD.zoom += 0.03;
-
-			if(!camZooming) { //Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
-				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
-				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
-			}
-		}
-
-		if(ClientPrefs.flashing) {
-			halloweenWhite.alpha = 0.45;
-			FlxTween.tween(halloweenWhite, {alpha: 0.6}, 0.075);
-			FlxTween.tween(halloweenWhite, {alpha: 0}, 0.25, {startDelay: 0.15});
-		}
-	}
-
-	function killHenchmen():Void
-	{
-		if(!ClientPrefs.lowQuality && ClientPrefs.violence && curStage == 'limo') {
-			if(limoKillingState < 1) {
-				limoMetalPole.x = -400;
-				limoMetalPole.visible = true;
-				limoLight.visible = true;
-				limoCorpse.visible = false;
-				limoCorpseTwo.visible = false;
-				limoKillingState = 1;
-
-				#if ACHIEVEMENTS_ALLOWED
-				Achievements.henchmenDeath++;
-				var achieve:Int = checkForAchievement([10]);
-				if(achieve > -1) {
-					startAchievement(achieve);
-				} else {
-					FlxG.save.data.henchmenDeath = Achievements.henchmenDeath;
-					FlxG.save.flush();
-				}
-				FlxG.log.add('Deaths: ' + Achievements.henchmenDeath);
-				#end
-			}
-		}
-	}
-
-	function resetLimoKill():Void
-	{
-		if(curStage == 'limo') {
-			limoMetalPole.x = -500;
-			limoMetalPole.visible = false;
-			limoLight.x = -500;
-			limoLight.visible = false;
-			limoCorpse.x = -500;
-			limoCorpse.visible = false;
-			limoCorpseTwo.x = -500;
-			limoCorpseTwo.visible = false;
-		}
-	}
-
 	override function destroy() {
 		for (i in 0...luaArray.length) {
 			luaArray[i].call('onDestroy', []);
@@ -2917,56 +2606,7 @@ class PlayState extends MusicBeatState
 
 		switch (curStage)
 		{
-			case 'school':
-				if(!ClientPrefs.lowQuality) {
-					bgGirls.dance();
-				}
-
-			case 'mall':
-				if(!ClientPrefs.lowQuality) {
-					upperBoppers.dance(true);
-				}
-
-				if(heyTimer <= 0) bottomBoppers.dance(true);
-				santa.dance(true);
-
-			case 'limo':
-				if(!ClientPrefs.lowQuality) {
-					grpLimoDancers.forEach(function(dancer:BackgroundDancer)
-					{
-						dancer.dance();
-					});
-				}
-
-				if (FlxG.random.bool(10) && fastCarCanDrive)
-					fastCarDrive();
-			case "philly":
-				if (!trainMoving)
-					trainCooldown += 1;
-
-				if (curBeat % 4 == 0)
-				{
-					phillyCityLights.forEach(function(light:BGSprite)
-					{
-						light.visible = false;
-					});
-
-					curLight = FlxG.random.int(0, phillyCityLights.length - 1, [curLight]);
-
-					phillyCityLights.members[curLight].visible = true;
-					phillyCityLights.members[curLight].alpha = 1;
-				}
-
-				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
-				{
-					trainCooldown = FlxG.random.int(-4, 0);
-					trainStart();
-				}
-		}
-
-		if (curStage == 'spooky' && FlxG.random.bool(10) && curBeat > lightningStrikeBeat + lightningOffset)
-		{
-			lightningStrikeShit();
+			
 		}
 		lastBeatHit = curBeat;
 

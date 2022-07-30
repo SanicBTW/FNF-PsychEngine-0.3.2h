@@ -25,7 +25,7 @@ using StringTools;
 
 class FreeplayState extends MusicBeatState
 {
-	var songs:Array<SongMetadata> = [];
+	public static var songs:Array<SongMetadata> = [];
 
 	var selector:FlxText;
 	private static var curSelected:Int = 0;
@@ -90,23 +90,7 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		var http = new haxe.Http('https://0d0b-81-61-195-120.eu.ngrok.io/api/collections/fnf_charts/records');
-		http.onData = function(data:String)
-		{
-			var onlineSongItems = cast Json.parse(data).items;
-			for(i in 0...onlineSongItems.length)
-			{
-				var onlineSongItemName = onlineSongItems[i].chart_name;
-
-				var chartPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_inst;
-				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_voices;
-
-				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
-				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].chart_difficulty]);
-			}
-		}
-		http.request();
+		OnlineStuff.setSongs();
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -184,7 +168,7 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
-	public function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, onlineSong:Bool = false)
+	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, onlineSong:Bool = false)
 	{
 		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, onlineSong));
 	}
