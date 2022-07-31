@@ -1,6 +1,5 @@
 package;
 
-import js.html.audio.MediaStreamAudioDestinationNode;
 import flixel.ui.FlxButton;
 #if desktop
 import Discord.DiscordClient;
