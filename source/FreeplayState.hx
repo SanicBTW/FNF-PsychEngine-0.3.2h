@@ -102,7 +102,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		#if !html5
-		var http = new haxe.Http('https://0d0b-81-61-195-120.eu.ngrok.io/api/collections/fnf_charts/records');
+		var http = new haxe.Http('http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records');
 		http.onData = function(data:String)
 		{
 			var onlineSongItems = cast Json.parse(data).items;
@@ -110,9 +110,9 @@ class FreeplayState extends MusicBeatState
 			{
 				var onlineSongItemName = onlineSongItems[i].song_name;
 
-				var chartPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'https://0d0b-81-61-195-120.eu.ngrok.io/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
+				var instPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
+				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
 
 				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
 				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
