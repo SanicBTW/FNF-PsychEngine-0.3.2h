@@ -47,8 +47,6 @@ class FlxVideo extends FlxBasic {
 		netStream.play(name);
 
 		#elseif desktop
-		// by Polybius, check out PolyEngine! https://github.com/polybiusproxy/PolyEngine
-
 		vlcBitmap = new VlcBitmap();
 		vlcBitmap.set_height(FlxG.stage.stageHeight);
 		vlcBitmap.set_width(FlxG.stage.stageHeight * (16 / 9));

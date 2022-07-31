@@ -50,7 +50,7 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
-		FlxG.game.focusLostFramerate = 60;
+		FlxG.game.focusLostFramerate = 30;
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
