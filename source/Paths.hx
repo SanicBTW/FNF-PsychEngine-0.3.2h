@@ -145,24 +145,4 @@ class Paths
 	{
 		return 'assets/videos/$key.$VIDEO_EXT';
 	}
-
-	//todo, make it compatible with filesys
-	inline static public function embMods(key:String)
-	{
-		trace(Paths.getPreloadPath('eMods/$key'));
-		return Paths.getPreloadPath('eMods/$key');
-	}
-
-	inline static public function embMImages(song:String, file:String)
-	{
-		return embMods(song + '_assets/images/$file.png');
-	}
-
-	inline static public function embExists(key:String)
-	{
-		if(OpenFlAssets.exists(Paths.embMods(key))) {
-			return true;
-		}
-		return false;
-	}
 }
