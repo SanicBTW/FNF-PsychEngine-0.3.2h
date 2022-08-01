@@ -1353,7 +1353,7 @@ class PlayState extends MusicBeatState
 			dad.scale.set(zoomshit, zoomshit);
 			boyfriend.scale.set(zoomshit, zoomshit);
 
-			starvedFear += #if desktop 0.0020 #end #if html5 0.0050 #end #if android 0.2 #end;
+			starvedFear += #if desktop 0.0020 #end #if html5 0.0050 #end #if android 0.050 #end;
 
 			if(Math.round(starvedFear) == 100){
 				starvedFear = 0;
@@ -2343,7 +2343,7 @@ class PlayState extends MusicBeatState
 			if (note.noteData >= 0)
 			{
 				if(curStage == "starved"){
-					starvedFear -= #if desktop 0.0325 #end #if html5 0.00325 #end;
+					starvedFear -= #if desktop 0.0325 #end #if html5 0.00325 #end #if android 0.0325 #end;
 				}
 				health += 0.023;
 			}
