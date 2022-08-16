@@ -12,7 +12,7 @@ import haxe.io.Path;
 //made to access internal storage for platforms that support sys
 class StorageAccess
 {
-    private static var checkDirs:Map<String, String> = new Map();
+    public static var checkDirs:Map<String, String> = new Map();
 
     public static function checkStorage()
     {
