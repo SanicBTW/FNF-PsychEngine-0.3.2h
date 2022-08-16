@@ -29,7 +29,7 @@ class ClientPrefs {
 	public static var showMemory:Bool = true;
 	public static var optDisableScoreTween:Bool = false;
 	public static var optHideHealthBar:Bool = false;
-	public static var snapCameraOnNote:Bool = true;
+	public static var cameraMovOnNoteP:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -89,7 +89,7 @@ class ClientPrefs {
 		FlxG.save.data.showMemory = showMemory;
 		FlxG.save.data.optDisableScoreTween = optDisableScoreTween;
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
-		FlxG.save.data.snapCameraOnNote = snapCameraOnNote;
+		FlxG.save.data.cameraMovOnNoteP = cameraMovOnNoteP;
 
 		FlxG.save.flush();
 
@@ -174,8 +174,8 @@ class ClientPrefs {
 		if(FlxG.save.data.optHideHealthBar != null) {
 			optHideHealthBar = FlxG.save.data.optHideHealthBar;
 		}
-		if(FlxG.save.data.snapCameraOnNote != null) {
-			snapCameraOnNote = FlxG.save.data.snapCameraOnNote;
+		if(FlxG.save.data.cameraMovOnNoteP != null) {
+			cameraMovOnNoteP = FlxG.save.data.cameraMovOnNoteP;
 		}
 
 		var save:FlxSave = new FlxSave();

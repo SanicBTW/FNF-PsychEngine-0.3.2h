@@ -2266,25 +2266,25 @@ class PlayState extends MusicBeatState
 			switch(animToPlay)
 			{
 				case 'singLEFT':
-					if(!bfturn && ClientPrefs.snapCameraOnNote)
+					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX - mult;
 						//snapCamFollowToPos(campointX - camMov, campointY);
 					}
 				case "singDOWN":
-					if(!bfturn && ClientPrefs.snapCameraOnNote)
+					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY + mult;
 						//snapCamFollowToPos(campointX, campointY + camMov);
 					}
 				case "singUP":
-					if(!bfturn && ClientPrefs.snapCameraOnNote)
+					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY - mult;
 						//snapCamFollowToPos(campointX, campointY - camMov);
 					}
 				case "singRIGHT":
-					if(!bfturn && ClientPrefs.snapCameraOnNote)
+					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX + mult;
 						//snapCamFollowToPos(campointX + camMov, campointY);
@@ -2296,25 +2296,25 @@ class PlayState extends MusicBeatState
 			switch(animToPlay)
 			{
 				case 'singLEFT':
-					if(bfturn && ClientPrefs.snapCameraOnNote)
+					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX - mult;
 						//snapCamFollowToPos(campointX - camMov, campointY);
 					}
 				case "singDOWN":
-					if(bfturn && ClientPrefs.snapCameraOnNote)
+					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY + mult;
 						//snapCamFollowToPos(campointX, campointY + camMov);	
 					}
 				case "singUP":
-					if(bfturn && ClientPrefs.snapCameraOnNote)
+					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY - mult;
 						//snapCamFollowToPos(campointX, campointY - camMov);
 					}
 				case "singRIGHT":
-					if(bfturn && ClientPrefs.snapCameraOnNote)
+					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX + mult;
 						//snapCamFollowToPos(campointX + camMov, campointY);

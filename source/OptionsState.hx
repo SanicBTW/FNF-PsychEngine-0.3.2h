@@ -901,7 +901,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Hide Health Bar':
 						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
 					case 'Snap Camera on Note P':
-						ClientPrefs.snapCameraOnNote = !ClientPrefs.snapCameraOnNote;
+						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1078,7 +1078,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Hide Health Bar':
 						daValue = ClientPrefs.optHideHealthBar;
 					case 'Snap Camera on Note P':
-						daValue = ClientPrefs.snapCameraOnNote;
+						daValue = ClientPrefs.cameraMovOnNoteP;
 				}
 				checkbox.daValue = daValue;
 			}
