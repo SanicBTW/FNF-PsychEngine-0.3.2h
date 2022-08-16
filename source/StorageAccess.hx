@@ -23,12 +23,6 @@ class StorageAccess
         checkDirs.set("weeks", Path.join([checkDirs.get("main"), 'weeks']));
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
         checkDirs.set("songs", Path.join([checkDirs.get("main"), "songs"]));
-        checkDirs.set("settings", Path.join([checkDirs.get("data"), "settings"]));
-
-        checkFileDirs.set(Path.join([checkDirs.get("settings"), "showFPS"]), "true");
-        checkFileDirs.set(Path.join([checkDirs.get("settings"), "showMemory"]), "true");
-
-        var notsent = true;
 
         for (dirName => dirPath in checkDirs) 
         {
@@ -40,63 +34,15 @@ class StorageAccess
             if(!FileSystem.exists(filePath))
             {
                 File.saveContent(filePath, fileContent);
-                setupSettings(filePath);
             }
             else
             {
-                if(notsent){
-                    setupSettings(filePath);
-                }
-                notsent = false;
+
             }
         }
 
         FlxG.save.flush();
 
         openfl.system.System.gc();
-    }
-
-    //4th time creating the function :grin:
-    private static function setupSettings(path:String)
-    {
-        //LETS FUCKING GOOO I DONT HAVE TO HARD CODE EACH FUNCTION YESSSSSSSSSSSSSSS
-        var waytw = [Path.join([checkDirs.get("settings"), "showFPS"]), Path.join([checkDirs.get("settings"), "showMemory"])];
-        var settvartw = ["showFPS", "showMemory"];
-
-        for(i in 0...waytw.length)
-        {
-            if(path == waytw[i])
-            {
-                switch(File.getContent(path).toString())
-                {
-                    case "true":
-                        Reflect.setProperty(FlxG.save.data, settvartw[i], true);
-                    case "false":
-                        Reflect.setProperty(FlxG.save.data, settvartw[i], false);
-                }
-            }
-            FlxG.save.flush();
-            trace(Reflect.getProperty(FlxG.save.data, settvartw[i]));
-        }
-        /*
-        var settings:Map<String, String> = new Map();
-        settings.set(Path.join([checkDirs.get("settings"), "showFPS"]), "showFPS");
-        settings.set(Path.join([checkDirs.get("settings"), "showMemory"]), "showMemory");
-
-
-        for(filePath => settVar in settings)
-        {
-            trace(filePath, settVar);
-            if(path == filePath)
-            {
-                switch(File.getContent(path).toString())
-                {
-                    case "true":
-                        Reflect.setProperty(FlxG.save.data, settVar, true);
-                    case "false":
-                        Reflect.setProperty(FlxG.save.data, settVar, false);
-                }
-            }
-        }*/
     }
 }
