@@ -27,12 +27,9 @@ class ClientPrefs {
 	public static var hideTime:Bool = false;
 
 	public static var showMemory:Bool = true;
-	public static var optOnlyNotes:Bool = false;
 	public static var optDisableScoreTween:Bool = false;
 	public static var optHideHealthBar:Bool = false;
 	public static var snapCameraOnNote:Bool = true;
-
-	public static var serverURL:String = null; //dont save this one
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -90,7 +87,6 @@ class ClientPrefs {
 		FlxG.save.data.hideTime = hideTime;
 		
 		FlxG.save.data.showMemory = showMemory;
-		FlxG.save.data.optOnlyNotes = optOnlyNotes;
 		FlxG.save.data.optDisableScoreTween = optDisableScoreTween;
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
 		FlxG.save.data.snapCameraOnNote = snapCameraOnNote;
@@ -172,9 +168,6 @@ class ClientPrefs {
 			showMemory = FlxG.save.data.showMemory;
 		}
 
-		if(FlxG.save.data.optOnlyNotes != null) { 
-			optOnlyNotes = FlxG.save.data.optOnlyNotes;
-		}
 		if(FlxG.save.data.optDisableScoreTween != null) {
 			optDisableScoreTween = FlxG.save.data.optDisableScoreTween;
 		}

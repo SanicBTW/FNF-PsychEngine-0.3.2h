@@ -31,7 +31,7 @@ using StringTools;
 // TO DO: Redo the menu creation system for not being as dumb
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Notes', 'Mobile Controls' , 'Controls', 'Preferences'];
+	var options:Array<String> = ['Notes', #if android 'Mobile Controls' , #end 'Controls', 'Preferences'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -712,7 +712,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Camera Zooms',
 		'Snap Camera on Note P',
 		'OPTIMIZATION',
-		'Only Notes',
 		'Disable score tween',
 		'Hide Health Bar'
 	];
@@ -723,15 +722,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 	private var grpTexts:FlxTypedGroup<AttachedText>;
 	private var textNumber:Array<Int> = [];
 
-	private var characterLayer:FlxTypedGroup<Character>;
-	private var showCharacter:Character = null;
 	private var descText:FlxText;
 
 	public function new()
 	{
 		super();
-		characterLayer = new FlxTypedGroup<Character>();
-		add(characterLayer);
 
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
@@ -825,9 +820,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 					spr.alpha = 0;
 				}
 			}
-			if(showCharacter != null) {
-				showCharacter.alpha = 0;
-			}
 			descText.alpha = 0;
 			close();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -854,7 +846,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 					case 'Anti-Aliasing':
 						ClientPrefs.globalAntialiasing = !ClientPrefs.globalAntialiasing;
-						showCharacter.antialiasing = ClientPrefs.globalAntialiasing;
 						for (item in grpOptions) {
 							item.antialiasing = ClientPrefs.globalAntialiasing;
 						}
@@ -905,8 +896,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 						if(Main.memoryVar != null)
 							Main.memoryVar.visible = ClientPrefs.showMemory;
 
-					case 'Only Notes':
-						ClientPrefs.optOnlyNotes = !ClientPrefs.optOnlyNotes;
 					case 'Disable score tween':
 						ClientPrefs.optDisableScoreTween = !ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':
@@ -950,10 +939,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 			} else {
 				holdTime = 0;
 			}
-		}
-
-		if(showCharacter != null && showCharacter.animation.curAnim.finished) {
-			showCharacter.dance();
 		}
 
 		if(nextAccept > 0) {
@@ -1009,8 +994,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 			case "Memory Counter":
 				daText = "Displays a memory counter";
 			
-			case 'Only Notes':
-				daText = 'Hides characters, and sets middlescroll';
 			case 'Disable score tween':
 				daText = 'Disables score bop on sick';
 			case 'Hide Health Bar':
@@ -1051,18 +1034,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 			}
 		}
 
-		if(options[curSelected] == 'Anti-Aliasing') {
-			if(showCharacter == null) {
-				showCharacter = new Character(840, 170, 'bf', true);
-				showCharacter.setGraphicSize(Std.int(showCharacter.width * 0.8));
-				showCharacter.updateHitbox();
-				showCharacter.dance();
-				characterLayer.add(showCharacter);
-			}
-		} else if(showCharacter != null) {
-			characterLayer.clear();
-			showCharacter = null;
-		}
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
@@ -1102,8 +1073,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.hideTime;
 					case 'Memory Counter':
 						daValue = ClientPrefs.showMemory;
-					case 'Only Notes':
-						daValue = ClientPrefs.optOnlyNotes;
 					case 'Disable score tween':
 						daValue = ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':

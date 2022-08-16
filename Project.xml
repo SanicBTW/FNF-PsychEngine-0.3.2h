@@ -42,13 +42,9 @@
 
 	<assets path="assets/preload" rename="assets" exclude="*.mp3"/>
 	
-	<define name="VIDEOS_ALLOWED" if="web || windows" unless="32bits"/>
-
-	<!-- <define name="PRELOAD_ALL" /> -->
 	<define name="PRELOAD_ALL" unless="web"/>
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 	
-	<library name="videos"        preload="true" />
 	<section if="PRELOAD_ALL">
 		<library name="songs"         preload="true" />
 		<library name="shared"        preload="true" />
@@ -59,12 +55,9 @@
 		<library name="shared"        preload="false" />
 	</section>
 	
-	<assets path="plugins/"             rename=''               if="VIDEOS_ALLOWED windows" />
-	<assets path="dlls/"                rename=''               if="VIDEOS_ALLOWED windows" />
-	<assets path="assets/videos"        library="videos"        if="VIDEOS_ALLOWED"/>
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3"/>
 	<assets path="assets/shared"        library="shared"        exclude="*.mp3"/>
-	<assets path="assets/android" if="android || web"/>
+	<assets path="assets/android" if="android"/>
 	
 	<!-- <template path='mods' /> -->
 	
@@ -131,8 +124,6 @@
 	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
 
 	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
-	<haxedef name="HXCPP_GC_MOVING"/>
-	<haxedef name="HXCPP_GC_DYNAMIC_SIZE"/>
 
 	<!-- _________________________________ Custom _______________________________ -->
 

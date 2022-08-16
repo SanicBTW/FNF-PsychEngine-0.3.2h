@@ -20,9 +20,6 @@ import WeekData;
 #if sys
 import openfl.system.System;
 #end
-import openfl.net.URLRequest;
-import openfl.media.Sound;
-import haxe.Json;
 
 using StringTools;
 
@@ -51,7 +48,6 @@ class FreeplayState extends MusicBeatState
 	var intendedColor:Int;
 	var colorTween:FlxTween;
 
-	public static var onlineSongs:Map<String, Array<String>> = new Map<String, Array<String>>();
 	override function create()
 	{
 		songs = [];
@@ -100,30 +96,6 @@ class FreeplayState extends MusicBeatState
 				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 			}
 		}
-
-		#if !html5
-		var http = new haxe.Http('http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records');
-		http.onData = function(data:String)
-		{
-			var onlineSongItems = cast Json.parse(data).items;
-			for(i in 0...onlineSongItems.length)
-			{
-				var onlineSongItemName = onlineSongItems[i].song_name;
-
-				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
-
-				addSong(onlineSongItemName, i, "face", FlxColor.fromRGB(0, 0, 0), true);
-				onlineSongs.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
-				
-				#if sys
-				System.gc();
-				#end
-			}
-		}
-		http.request();
-		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -177,6 +149,7 @@ class FreeplayState extends MusicBeatState
 		intendedColor = bg.color;
 
 		changeSelection();
+		changeDiff();
 
 		var textBG:FlxSprite = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
 		textBG.alpha = 0.6;
@@ -194,16 +167,17 @@ class FreeplayState extends MusicBeatState
 		text.scrollFactor.set();
 		add(text);
 
+		//bro add functions on other buttons or smth
 		#if (android || html5)
-		addVirtualPad(UP_DOWN, A_B_C);
+		addVirtualPad(UP_DOWN, A_B);
 		#end
 
 		super.create();
 	}
 
-	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, onlineSong:Bool = false)
+	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, onlineSong));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
 	}
 
 	var instPlaying:Int = -1;
@@ -270,6 +244,12 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
+		if (controls.UI_LEFT_P)
+			changeDiff(-1);
+		else if (controls.UI_RIGHT_P)
+			changeDiff(1);
+		else if (upP || downP) changeDiff();
+
 		if (controls.BACK)
 		{
 			if(colorTween != null) {
@@ -306,101 +286,43 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			if(songs[curSelected].onlineSong)
+			persistentUpdate = false;
+			
+			var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+			trace(poop);
+
+			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+			PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = curDifficulty;
+			PlayState.inst = Paths.inst(PlayState.SONG.song);
+			PlayState.voices = Paths.voices(PlayState.SONG.song);
+
+			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+			if(colorTween != null) {
+				colorTween.cancel();
+			}
+			if(FlxG.keys.pressed.SHIFT)
 			{
-				var http = new haxe.Http(onlineSongs[songs[curSelected].songName][0]);
-				http.onData = function(data:String)
-				{
-					persistentUpdate = false;
-
-					var the = Song.parseJSONshit(data);
-
-					PlayState.SONG = the;
-					PlayState.isStoryMode = false;
-					PlayState.storyDifficulty = curDifficulty;
-					PlayState.inst = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][1]));
-					PlayState.voices = new Sound(new URLRequest(onlineSongs[songs[curSelected].songName][2]));
-					PlayState.onlineSong = true;
-		
-					if(colorTween != null) {
-						colorTween.cancel();
-					}
-					if(FlxG.keys.pressed.SHIFT)
-					{
-						LoadingState.loadAndSwitchState(new ChartingState());
-					}
-					else
-					{
-						LoadingState.loadAndSwitchState(new PlayState());
-					}
-		
-					FlxG.sound.music.volume = 0;
-		
-					destroyFreeplayVocals();
-					
-					#if sys
-					System.gc();
-					#end
-				}
-				http.request();
+				LoadingState.loadAndSwitchState(new ChartingState());
 			}
 			else
 			{
-				persistentUpdate = false;
-			
-				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
-				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-				trace(poop);
-	
-				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = curDifficulty;
-				PlayState.inst = Paths.inst(PlayState.SONG.song);
-				PlayState.voices = Paths.voices(PlayState.SONG.song);
-				PlayState.onlineSong = false;
-	
-				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-				if(colorTween != null) {
-					colorTween.cancel();
-				}
-				if(FlxG.keys.pressed.SHIFT)
-				{
-					LoadingState.loadAndSwitchState(new ChartingState());
-				}
-				else
-				{
-					LoadingState.loadAndSwitchState(new PlayState());
-				}
-	
-				FlxG.sound.music.volume = 0;
-	
-				destroyFreeplayVocals();
+				LoadingState.loadAndSwitchState(new PlayState());
 			}
+
+			FlxG.sound.music.volume = 0;
+
+			destroyFreeplayVocals();
+
+			#if sys
+			System.gc();
+			#end
 		}
 		else if(controls.RESET)
 		{
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}
-
-		if(songs[curSelected].onlineSong)
-		{
-			//hard code it even if its a different diff
-			curDifficulty = 2;
-			diffText.text = onlineSongs[songs[curSelected].songName][3].toUpperCase();
-		}
-		else
-		{
-			if(songs[curSelected].songName == "Betrayal")
-				{
-					curDifficulty = 3;
-					diffText.text = "BLACKOUT";
-				}
-				else
-				{
-					curDifficulty = 2;
-					diffText.text = "HARD";
-				}
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -415,6 +337,25 @@ class FreeplayState extends MusicBeatState
 			vocals.destroy();
 		}
 		vocals = null;
+	}
+
+	function changeDiff(change:Int = 0)
+	{
+		curDifficulty += change;
+
+		if (curDifficulty < 0)
+			curDifficulty = CoolUtil.difficultyStuff.length-1;
+		if (curDifficulty >= CoolUtil.difficultyStuff.length)
+			curDifficulty = 0;
+
+		#if !switch
+		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
+		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
+		#end
+
+		PlayState.storyDifficulty = curDifficulty;
+		diffText.text = '< ' + CoolUtil.difficultyString() + ' >';
+		positionHighscore();
 	}
 
 	function changeSelection(change:Int = 0, playSound:Bool = true)
@@ -487,14 +428,12 @@ class SongMetadata
 	public var week:Int = 0;
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
-	public var onlineSong:Bool = false;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int, onlineSong:Bool)
+	public function new(song:String, week:Int, songCharacter:String, color:Int)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.color = color;
-		this.onlineSong = onlineSong;
 	}
 }
