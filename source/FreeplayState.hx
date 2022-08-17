@@ -187,7 +187,7 @@ class FreeplayState extends MusicBeatState
 
 		//bro add functions on other buttons or smth
 		#if (android || html5)
-		addVirtualPad(UP_DOWN, A_B);
+		addVirtualPad(LEFT_FULL, A_B);
 		#end
 
 		super.create();
