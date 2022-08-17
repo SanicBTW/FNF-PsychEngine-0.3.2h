@@ -31,9 +31,16 @@ class MusicTState extends MusicBeatState
 
         var songsDropDown = new FlxUIDropDownMenuCustom(10, 10, FlxUIDropDownMenuCustom.makeStrIdLabelArray(daDirSongs, true), function(song:String){
             FlxG.sound.music.stop();
+            if(vocals != null && vocals.playing){
+                vocals.stop();
+            }
 
             inst = StorageAccess.getInst(daDirSongs[Std.parseInt(song)]);
             voices = StorageAccess.getVoices(daDirSongs[Std.parseInt(song)]);
+            var chart = StorageAccess.getChart(daDirSongs[Std.parseInt(song)], "-hard");
+            if(chart != null){
+                trace(chart);
+            }
 
             vocals = new FlxSound().loadEmbedded(voices);
 
@@ -45,6 +52,9 @@ class MusicTState extends MusicBeatState
         });
         songsDropDown.screenCenter();
         add(songsDropDown);
+
+        //add a difficulty thing
+        //var songsDifficultyDropDown = new 
 
         super.create();
 

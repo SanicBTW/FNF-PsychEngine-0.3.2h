@@ -66,7 +66,7 @@ class TitleState extends MusicBeatState
 			StorageAccess.checkStorage();
 		}
 		#end
-		#if sys
+		#if windows
 		StorageAccess.checkStorage();
 		#end
 		FlxG.keys.preventDefaultKeys = [TAB];

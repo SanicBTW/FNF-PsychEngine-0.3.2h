@@ -33,13 +33,55 @@ class StorageAccess
 
     public static function getInst(song:String, ext = ".ogg")
     {
-        trace(Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']));
-        return Sound.fromFile(Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']));
+        var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
+        trace(filePath);
+        if(FileSystem.exists(filePath))
+        {
+            trace("Inst exists");
+            return Sound.fromFile(filePath);
+        }
+        else { trace("Couldnt find inst"); }
+        return null;
     }
 
     public static function getVoices(song:String, ext = ".ogg")
     {
-        trace(Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']));
-        return Sound.fromFile(Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']));
+        var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
+        trace(filePath);
+        if(FileSystem.exists(filePath))
+        {
+            trace("Voices exists");
+            return Sound.fromFile(filePath);
+        }
+        else { trace("Couldnt find voices"); }
+        return null;
+    }
+
+    public static function getChart(song:String, diff:String = "")
+    {
+        var chartFile:String = song.toLowerCase() + diff + ".json";
+        var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
+
+        if(FileSystem.exists(mainSongPath))
+        {
+            var possibleCharts = FileSystem.readDirectory(mainSongPath);
+            trace("Possible charts: " + possibleCharts);
+    
+            for(i in 0...possibleCharts.length)
+            {
+                trace(possibleCharts[i]);
+                if(possibleCharts[i] == chartFile)
+                {
+                    trace("Required chart found, returning");
+                    return Path.join([mainSongPath, chartFile]);
+                }
+                else
+                {
+                    trace("Found a chart but not the required one");
+                }
+            }
+        }
+        else { trace("Song doesnt exists on the data folder"); }
+        return null;
     }
 }
