@@ -37,10 +37,6 @@ class MusicTState extends MusicBeatState
 
             inst = StorageAccess.getInst(daDirSongs[Std.parseInt(song)]);
             voices = StorageAccess.getVoices(daDirSongs[Std.parseInt(song)]);
-            var chart = StorageAccess.getChart(daDirSongs[Std.parseInt(song)], "-hard");
-            if(chart != null){
-                trace(chart);
-            }
 
             vocals = new FlxSound().loadEmbedded(voices);
 

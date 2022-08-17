@@ -13,6 +13,8 @@ import haxe.io.Path;
 class StorageAccess
 {
     public static var checkDirs:Map<String, String> = new Map();
+    //filename, filepath, filecontent
+    public static var checkFiles:Map<String, Array<String>> = new Map();
 
     public static function checkStorage()
     {
@@ -23,10 +25,16 @@ class StorageAccess
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
         checkDirs.set("songs", Path.join([checkDirs.get("main"), "songs"]));
 
-        for (dirName => dirPath in checkDirs) 
+        for (varName => dirPath in checkDirs) 
         {
             if(!FileSystem.exists(dirPath)){ FileSystem.createDirectory(dirPath); }
         }
+
+        /*
+        for(varName => args in checkFiles)
+        {
+            if(!FileSystem.exists(args[0])){ File.saveContent(args[0], args[1]); }
+        }*/
 
         openfl.system.System.gc();
     }
@@ -37,7 +45,6 @@ class StorageAccess
         trace(filePath);
         if(FileSystem.exists(filePath))
         {
-            trace("Inst exists");
             return Sound.fromFile(filePath);
         }
         else { trace("Couldnt find inst"); }
@@ -50,36 +57,45 @@ class StorageAccess
         trace(filePath);
         if(FileSystem.exists(filePath))
         {
-            trace("Voices exists");
             return Sound.fromFile(filePath);
         }
         else { trace("Couldnt find voices"); }
         return null;
     }
 
-    public static function getChart(song:String, diff:String = "")
+    public static function getChart(song:String, diff:Int = 1)
     {
-        var chartFile:String = song.toLowerCase() + diff + ".json";
+        var diffString:String = "";
+        switch (diff)
+        {
+            case 0:
+                diffString = "-easy";
+            case 1:
+                diffString = "";
+            case 2:
+                diffString = "-hard";
+        }
+        var chartFile:String = song.toLowerCase() + diffString + ".json";
+        var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
+
+        return Path.join([mainSongPath, chartFile]);
+    }
+
+    //heavily based off musictstate code lol
+    public static function getSongs()
+    {
+        return FileSystem.readDirectory(StorageAccess.checkDirs.get('songs'));
+    }
+
+    public static function getCharts(song:String)
+    {
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
 
         if(FileSystem.exists(mainSongPath))
         {
             var possibleCharts = FileSystem.readDirectory(mainSongPath);
             trace("Possible charts: " + possibleCharts);
-    
-            for(i in 0...possibleCharts.length)
-            {
-                trace(possibleCharts[i]);
-                if(possibleCharts[i] == chartFile)
-                {
-                    trace("Required chart found, returning");
-                    return Path.join([mainSongPath, chartFile]);
-                }
-                else
-                {
-                    trace("Found a chart but not the required one");
-                }
-            }
+            return "exists";
         }
         else { trace("Song doesnt exists on the data folder"); }
         return null;

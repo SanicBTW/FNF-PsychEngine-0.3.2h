@@ -19,6 +19,7 @@ import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
 #if sys
 import openfl.system.System;
+import sys.io.File;
 #end
 
 using StringTools;
@@ -96,6 +97,23 @@ class FreeplayState extends MusicBeatState
 				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
 			}
 		}
+
+		#if sys
+		var internalSongs = StorageAccess.getSongs();
+		for(i in 0...internalSongs.length)
+		{
+			var songName = internalSongs[i];
+
+			//use the get chart method to get the "normal" diff chart from the song, if its found we add it the map and addsong
+			var check = StorageAccess.getCharts(songName);
+			if(check == "exists")
+			{
+				addSong(songName, 0, "bf", FlxColor.fromRGB(146, 113, 253), true);
+			}
+
+			System.gc();
+		}
+		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
@@ -175,9 +193,9 @@ class FreeplayState extends MusicBeatState
 		super.create();
 	}
 
-	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
+	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, intStorage:Bool = false)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, intStorage));
 	}
 
 	var instPlaying:Int = -1;
@@ -286,38 +304,76 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			persistentUpdate = false;
-			
-			var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-			trace(poop);
-
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
-			PlayState.inst = Paths.inst(PlayState.SONG.song);
-			PlayState.voices = Paths.voices(PlayState.SONG.song);
-
-			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-			if(colorTween != null) {
-				colorTween.cancel();
-			}
-			if(FlxG.keys.pressed.SHIFT)
-			{
-				LoadingState.loadAndSwitchState(new ChartingState());
-			}
-			else
-			{
-				LoadingState.loadAndSwitchState(new PlayState());
-			}
-
-			FlxG.sound.music.volume = 0;
-
-			destroyFreeplayVocals();
-
 			#if sys
-			System.gc();
-			#end
+			if(songs[curSelected].intStorage)
+			{
+				persistentUpdate = false;
+			
+				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+	
+				//implement a failsafe in future versions
+				PlayState.SONG = Song.parseJSONshit(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)));
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
+				PlayState.voices = StorageAccess.getVoices(songs[curSelected].songName);
+	
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if(colorTween != null) {
+					colorTween.cancel();
+				}
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+	
+				FlxG.sound.music.volume = 0;
+	
+				destroyFreeplayVocals();
+	
+				#if sys
+				System.gc();
+				#end
+			}
+			else #end if(!songs[curSelected].intStorage)
+			{
+				persistentUpdate = false;
+			
+				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				trace(poop);
+	
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+				PlayState.inst = Paths.inst(PlayState.SONG.song);
+				PlayState.voices = Paths.voices(PlayState.SONG.song);
+	
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if(colorTween != null) {
+					colorTween.cancel();
+				}
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+	
+				FlxG.sound.music.volume = 0;
+	
+				destroyFreeplayVocals();
+	
+				#if sys
+				System.gc();
+				#end
+			}
 		}
 		else if(controls.RESET)
 		{
@@ -428,12 +484,14 @@ class SongMetadata
 	public var week:Int = 0;
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
+	public var intStorage:Bool = false;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int)
+	public function new(song:String, week:Int, songCharacter:String, color:Int, intStorage:Bool = false)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.color = color;
+		this.intStorage = intStorage;
 	}
 }
