@@ -311,10 +311,11 @@ class FreeplayState extends MusicBeatState
 			
 				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
 	
-				//implement a failsafe in future versions
-				PlayState.SONG = Song.parseJSONshit(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)));
+				var the = StorageAccess.getChart(songLowercase, curDifficulty);
+
+				PlayState.SONG = Song.parseJSONshit(File.getContent(the[0]));
 				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = curDifficulty;
+				PlayState.storyDifficulty = the[1];
 				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
 				PlayState.voices = StorageAccess.getVoices(songs[curSelected].songName);
 	

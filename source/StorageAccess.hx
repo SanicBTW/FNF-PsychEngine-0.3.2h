@@ -55,7 +55,8 @@ class StorageAccess
         return null;
     }
 
-    public static function getChart(song:String, diff:Int = 1)
+    //maybe its a bad way to do it, but for now its working
+    public static function getChart(song:String, diff:Int = 1):Array<Dynamic>
     {
         var dadiff:Int = 0;
         var diffString:String = "";
@@ -77,7 +78,7 @@ class StorageAccess
         if(FileSystem.exists(chartPath)) //found the chart
         {
             trace(chartPath);
-            return chartPath;
+            return [chartPath, diff];
         }
         else
         {
@@ -92,7 +93,7 @@ class StorageAccess
                     {
                         trace(chartPath);
                         notfound = false;
-                        return chartPath;
+                        return [chartPath, diff];
                         break;
                     }
                     else
@@ -108,7 +109,7 @@ class StorageAccess
                     {
                         trace(chartPath);
                         notfound = false;
-                        return chartPath;
+                        return [chartPath, diff];
                         break;
                     }
                     else
@@ -124,7 +125,7 @@ class StorageAccess
                     {
                         trace(chartPath);
                         notfound = false;
-                        return chartPath;
+                        return [chartPath, diff];
                         break;
                     }
                     else
