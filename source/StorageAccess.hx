@@ -57,6 +57,7 @@ class StorageAccess
 
     public static function getChart(song:String, diff:Int = 1)
     {
+        var dadiff:Int = 0;
         var diffString:String = "";
         switch (diff)
         {
@@ -80,30 +81,55 @@ class StorageAccess
         }
         else
         {
-            chartFile = song.toLowerCase() + "-easy.json";
-            chartPath = Path.join([mainSongPath, chartFile]);
-
-            if(FileSystem.exists(chartPath)) //didnt find the chart but found the easy chart instead
+            var notfound = true;
+            while(notfound)
             {
-                return chartPath;
-            }
-            else
-            {
-                chartFile = song.toLowerCase() + ".json";
-                chartPath = Path.join([mainSongPath, chartFile]);
-
-                if(FileSystem.exists(chartPath)) //didnt find the easy chart but found the normal chart instead
+                if(diff == 0)
                 {
-                    return chartPath;
+                    chartFile = song.toLowerCase() + "-easy.json";
+                    chartPath = Path.join([mainSongPath, chartFile]);
+                    if(FileSystem.exists(chartPath))
+                    {
+                        trace(chartPath);
+                        notfound = false;
+                        return chartPath;
+                        break;
+                    }
+                    else
+                    {
+                        diff = 1;
+                    }
                 }
-                else
+                if(diff == 1)
+                {
+                    chartFile = song.toLowerCase() + ".json";
+                    chartPath = Path.join([mainSongPath, chartFile]);
+                    if(FileSystem.exists(chartPath))
+                    {
+                        trace(chartPath);
+                        notfound = false;
+                        return chartPath;
+                        break;
+                    }
+                    else
+                    {
+                        diff = 2;
+                    }
+                }
+                if(diff == 2)
                 {
                     chartFile = song.toLowerCase() + "-hard.json";
                     chartPath = Path.join([mainSongPath, chartFile]);
-    
-                    if(FileSystem.exists(chartPath)) //didnt find the normal chart but found the hard chart instead
+                    if(FileSystem.exists(chartPath))
                     {
+                        trace(chartPath);
+                        notfound = false;
                         return chartPath;
+                        break;
+                    }
+                    else
+                    {
+                        diff = 0;
                     }
                 }
             }
