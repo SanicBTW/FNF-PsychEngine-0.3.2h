@@ -18,10 +18,8 @@ class StorageAccess
 
     public static function checkStorage()
     {
-        //hm? dunno if i should do it like this
         checkDirs.set("main", Path.join([System.userDirectory, 'sanicbtw_pe_files']));
 
-        //checkDirs.set("weeks", Path.join([checkDirs.get("main"), 'weeks'])); dont know how i will get this to work tbh
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
         checkDirs.set("songs", Path.join([checkDirs.get("main"), "songs"]));
 
@@ -29,12 +27,6 @@ class StorageAccess
         {
             if(!FileSystem.exists(dirPath)){ FileSystem.createDirectory(dirPath); }
         }
-
-        /*
-        for(varName => args in checkFiles)
-        {
-            if(!FileSystem.exists(args[0])){ File.saveContent(args[0], args[1]); }
-        }*/
 
         openfl.system.System.gc();
     }
@@ -78,10 +70,48 @@ class StorageAccess
         var chartFile:String = song.toLowerCase() + diffString + ".json";
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
 
-        return Path.join([mainSongPath, chartFile]);
+        var chartPath:String = Path.join([mainSongPath, chartFile]);
+
+        //huh? am i this dumb lol
+        if(FileSystem.exists(chartPath)) //found the chart
+        {
+            trace(chartPath);
+            return chartPath;
+        }
+        else
+        {
+            chartFile = song.toLowerCase() + "-easy.json";
+            chartPath = Path.join([mainSongPath, chartFile]);
+
+            if(FileSystem.exists(chartPath)) //didnt find the chart but found the easy chart instead
+            {
+                return chartPath;
+            }
+            else
+            {
+                chartFile = song.toLowerCase() + ".json";
+                chartPath = Path.join([mainSongPath, chartFile]);
+
+                if(FileSystem.exists(chartPath)) //didnt find the easy chart but found the normal chart instead
+                {
+                    return chartPath;
+                }
+                else
+                {
+                    chartFile = song.toLowerCase() + "-hard.json";
+                    chartPath = Path.join([mainSongPath, chartFile]);
+    
+                    if(FileSystem.exists(chartPath)) //didnt find the normal chart but found the hard chart instead
+                    {
+                        return chartPath;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
-    //heavily based off musictstate code lol
     public static function getSongs()
     {
         return FileSystem.readDirectory(StorageAccess.checkDirs.get('songs'));
