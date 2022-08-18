@@ -407,7 +407,7 @@ class PlayState extends MusicBeatState
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
 
-		#if (android || html5)
+		#if android
 		addAndroidControls();
 		androidControls.visible = true;
 		addPadCamera();
@@ -416,18 +416,7 @@ class PlayState extends MusicBeatState
 		startingSong = true;
 		updateTime = true;
 
-		var daSong:String = curSong.toLowerCase();
-		if (isStoryMode && !seenCutscene)
-		{
-			switch (daSong)
-			{
-				default:
-					startCountdown();
-			}
-			seenCutscene = true;
-		} else {
-			startCountdown();
-		}
+		startCountdown();
 		RecalculateRating();
 
 		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
@@ -2258,7 +2247,6 @@ class PlayState extends MusicBeatState
 	var mult = 0.7;
 	function cameraShit(animToPlay, isDad)
 	{
-		//sorry i was too lazy to rename the settings var lol - i will actually rename it here
 		if(isDad)
 		{
 			switch(animToPlay)
@@ -2267,25 +2255,21 @@ class PlayState extends MusicBeatState
 					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX - mult;
-						//snapCamFollowToPos(campointX - camMov, campointY);
 					}
 				case "singDOWN":
 					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY + mult;
-						//snapCamFollowToPos(campointX, campointY + camMov);
 					}
 				case "singUP":
 					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY - mult;
-						//snapCamFollowToPos(campointX, campointY - camMov);
 					}
 				case "singRIGHT":
 					if(!bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX + mult;
-						//snapCamFollowToPos(campointX + camMov, campointY);
 					}
 			}
 		}
@@ -2297,25 +2281,21 @@ class PlayState extends MusicBeatState
 					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX - mult;
-						//snapCamFollowToPos(campointX - camMov, campointY);
 					}
 				case "singDOWN":
 					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY + mult;
-						//snapCamFollowToPos(campointX, campointY + camMov);	
 					}
 				case "singUP":
 					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.y = campointY - mult;
-						//snapCamFollowToPos(campointX, campointY - camMov);
 					}
 				case "singRIGHT":
 					if(bfturn && ClientPrefs.cameraMovOnNoteP)
 					{
 						camFollowPos.x = campointX + mult;
-						//snapCamFollowToPos(campointX + camMov, campointY);
 					}
 			}
 		}

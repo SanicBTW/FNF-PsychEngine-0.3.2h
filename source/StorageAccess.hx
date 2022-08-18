@@ -3,9 +3,11 @@ package;
 import openfl.media.Sound;
 import flixel.FlxG;
 import haxe.Json;
+#if sys
 import sys.io.File;
-import openfl.utils.Assets;
 import sys.FileSystem;
+#end
+import openfl.utils.Assets;
 import lime.system.System;
 import haxe.io.Path;
 
@@ -18,6 +20,7 @@ class StorageAccess
 
     public static function checkStorage()
     {
+        #if sys
         checkDirs.set("main", Path.join([System.userDirectory, 'sanicbtw_pe_files']));
 
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
@@ -29,10 +32,12 @@ class StorageAccess
         }
 
         openfl.system.System.gc();
+        #end
     }
 
     public static function getInst(song:String, ext = ".ogg")
     {
+        #if sys
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
         trace(filePath);
         if(FileSystem.exists(filePath))
@@ -41,10 +46,14 @@ class StorageAccess
         }
         else { trace("Couldnt find inst"); }
         return null;
+        #else
+        return null;
+        #end
     }
 
     public static function getVoices(song:String, ext = ".ogg")
     {
+        #if sys
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
         trace(filePath);
         if(FileSystem.exists(filePath))
@@ -53,10 +62,14 @@ class StorageAccess
         }
         else { trace("Couldnt find voices"); }
         return null;
+        #else
+        return null;
+        #end
     }
 
     public static function getChart(song:String, diff:Int = 1):Array<Dynamic>
     {
+        #if sys
         var dadiff:Int = 0;
         var diffString:String = "";
         switch (diff)
@@ -162,15 +175,23 @@ class StorageAccess
             }
         }
         return null;
+        #else
+        return null;
+        #end
     }
 
     public static function getSongs()
     {
+        #if sys
         return FileSystem.readDirectory(checkDirs.get('songs'));
+        #else
+        return null;
+        #end
     }
 
     public static function getCharts(song:String)
     {
+        #if sys
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
 
         if(FileSystem.exists(mainSongPath))
@@ -180,10 +201,14 @@ class StorageAccess
         }
         else { trace("Song doesnt exists on the data folder"); }
         return null;
+        #else
+        return null;
+        #end
     }
 
     public static function getModifier(song:String):Modifiers
     {
+        #if sys
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
         var modifierPath:String = Path.join([mainSongPath, "modifiers.json"]);
 
@@ -193,6 +218,16 @@ class StorageAccess
             return themMods;
         }
         return null;
+        #else
+        var modifierPath:String = 'assets/data/${song.toLowerCase()}/modifiers.json';
+
+        if(Assets.exists(modifierPath))
+        {
+            var themMods:Modifiers = cast Json.parse(Assets.getText(modifierPath));
+            return themMods;
+        }
+        return null;
+        #end
     }
 }
 

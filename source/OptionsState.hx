@@ -60,7 +60,7 @@ class OptionsState extends MusicBeatState
 		}
 		changeSelection();
 
-		#if (android || html5)
+		#if android
 		addVirtualPad(LEFT_FULL, A_B);
 		#end
 
@@ -91,7 +91,7 @@ class OptionsState extends MusicBeatState
 		}
 
 		if (controls.ACCEPT) {
-			#if (android || html5)
+			#if android
 			removeVirtualPad();
 			#end
 			for (item in grpOptions.members) {
@@ -102,8 +102,10 @@ class OptionsState extends MusicBeatState
 				case 'Notes':
 					openSubState(new NotesSubstate());
 
+				#if android
 				case 'Mobile Controls':
 					openSubState(new android.AndroidControlsSubState());
+				#end
 
 				case 'Controls':
 					openSubState(new ControlsSubstate());
@@ -111,8 +113,10 @@ class OptionsState extends MusicBeatState
 				case 'Preferences':
 					openSubState(new PreferencesSubstate());
 			
+				#if sys
 				case 'Music Test State':
 					MusicBeatState.switchState(new MusicTState());
+				#end
 			}
 		}
 	}
@@ -196,7 +200,7 @@ class NotesSubstate extends MusicBeatSubstate
 		add(hsvText);
 		changeSelection();
 
-		#if (android || html5)
+		#if android
 		addVirtualPad(LEFT_FULL, A_B);
 		#end
 	}
@@ -475,7 +479,7 @@ class ControlsSubstate extends MusicBeatSubstate {
 		}
 		changeSelection();
 
-		#if (android || html5)
+		#if android
 		addVirtualPad(LEFT_FULL, A_B);
 		#end
 	}
@@ -798,7 +802,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		changeSelection();
 		reloadValues();
 
-		#if (android || html5)
+		#if android
 		addVirtualPad(LEFT_FULL, A_B);
 		#end
 	}

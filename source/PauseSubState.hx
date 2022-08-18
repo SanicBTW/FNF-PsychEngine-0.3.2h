@@ -114,7 +114,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
-                #if (android || html5)
+                #if android
 		addVirtualPad(UP_DOWN, A_B);
                 addPadCamera();
 		#end
@@ -194,7 +194,7 @@ class PauseSubState extends MusicBeatSubstate
 	override function destroy()
 	{
 		pauseMusic.destroy();
-		#if (android || html5)
+		#if android
 		removeVirtualPad();
 		#end
 

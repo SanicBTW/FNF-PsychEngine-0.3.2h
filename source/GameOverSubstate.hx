@@ -55,7 +55,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		camFollowPos.setPosition(FlxG.camera.scroll.x + (FlxG.camera.width / 2), FlxG.camera.scroll.y + (FlxG.camera.height / 2));
 		add(camFollowPos);
 
-		#if (android || html5)
+		#if android
 		addVirtualPad(NONE, A_B);
 		addPadCamera();
 		#end
@@ -72,7 +72,7 @@ class GameOverSubstate extends MusicBeatSubstate
 
 		if (controls.ACCEPT)
 		{
-			#if (android || html5)
+			#if android
 			removeVirtualPad();
 			#end
 			endBullshit();
@@ -83,7 +83,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			FlxG.sound.music.stop();
 			PlayState.deathCounter = 0;
 			PlayState.seenCutscene = false;
-			#if (android || html5)
+			#if android
 			removeVirtualPad();
 			#end
 

@@ -12,7 +12,7 @@ import flixel.FlxSprite;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.FlxState;
-#if (android || html5)
+#if android
 import android.AndroidControls;
 import android.flixel.FlxVirtualPad;
 import flixel.input.actions.FlxActionInput;
@@ -31,7 +31,7 @@ class MusicBeatState extends FlxUIState
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	#if (android || html5)
+	#if android
 	var virtualPad:FlxVirtualPad;
 	var androidControls:AndroidControls;
 	var trackedinputsUI:Array<FlxActionInput> = [];
@@ -106,7 +106,7 @@ class MusicBeatState extends FlxUIState
 
 	override function destroy()
 	{
-		#if (android || html5)
+		#if android
 		if (trackedinputsNOTES != [])
 			controls.removeFlxInput(trackedinputsNOTES);
 
@@ -116,7 +116,7 @@ class MusicBeatState extends FlxUIState
 
 		super.destroy();
 
-		#if (android || html5)
+		#if android
 		if (virtualPad != null)
 		{
 			virtualPad = FlxDestroyUtil.destroy(virtualPad);
