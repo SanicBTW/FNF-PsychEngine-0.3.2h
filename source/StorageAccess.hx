@@ -82,6 +82,7 @@ class StorageAccess
         }
         else
         {
+            var priority = ClientPrefs.chartScanPriority;
             var notfound = true;
             while(notfound)
             {
@@ -89,12 +90,22 @@ class StorageAccess
                 {
                     chartFile = song.toLowerCase() + "-easy.json";
                     chartPath = Path.join([mainSongPath, chartFile]);
-                    if(FileSystem.exists(chartPath))
+                    if(FileSystem.exists(chartPath) && priority == "easy" && priority != "normal" && priority != "hard")
                     {
                         trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority != "easy" && priority == "normal" && priority != "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 1;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority != "easy" && priority != "normal" && priority == "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 2;
                     }
                     else
                     {
@@ -105,12 +116,22 @@ class StorageAccess
                 {
                     chartFile = song.toLowerCase() + ".json";
                     chartPath = Path.join([mainSongPath, chartFile]);
-                    if(FileSystem.exists(chartPath))
+                    if(FileSystem.exists(chartPath) && priority != "easy" && priority == "normal" && priority != "hard")
                     {
                         trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority == "easy" && priority != "normal" && priority != "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 0;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority != "easy" && priority != "normal" && priority == "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 2;
                     }
                     else
                     {
@@ -121,12 +142,22 @@ class StorageAccess
                 {
                     chartFile = song.toLowerCase() + "-hard.json";
                     chartPath = Path.join([mainSongPath, chartFile]);
-                    if(FileSystem.exists(chartPath))
+                    if(FileSystem.exists(chartPath) && priority != "easy" && priority != "normal" && priority == "hard")
                     {
                         trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority == "easy" && priority != "normal" && priority != "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 0;
+                    }
+                    else if(FileSystem.exists(chartPath) && priority != "easy" && priority == "normal" && priority != "hard")
+                    {
+                        trace("Found the chart but isnt the priority chart");
+                        diff = 1;
                     }
                     else
                     {
@@ -135,7 +166,6 @@ class StorageAccess
                 }
             }
         }
-
         return null;
     }
 
