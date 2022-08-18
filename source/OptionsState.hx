@@ -685,14 +685,17 @@ class ControlsSubstate extends MusicBeatSubstate {
 class PreferencesSubstate extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
+	private static var index:Int = 0;
 	static var unselectableOptions:Array<String> = [
 		'GRAPHICS',
 		'GAMEPLAY',
-		'OPTIMIZATION'
+		'OPTIMIZATION',
+		'STORAGE ACCESS'
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
-		'Note Delay'
+		'Note Delay',
+		'Chart priority'
 	];
 
 	static var options:Array<String> = [
@@ -715,8 +718,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Camera Zooms',
 		'Snap Camera on Note P',
 		'OPTIMIZATION',
+		//add again the only notes option
 		'Disable score tween',
-		'Hide Health Bar'
+		'Hide Health Bar',
+		'STORAGE ACCESS',
+		'Chart priority'
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -934,6 +940,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.noteOffset += add * mult;
 						if(ClientPrefs.noteOffset < 0) ClientPrefs.noteOffset = 0;
 						else if(ClientPrefs.noteOffset > 500) ClientPrefs.noteOffset = 500;
+					case 'Chart priority':
+						var options = ['easy', 'normal', 'hard'];
+						if(controls.UI_LEFT_P)
+							changeState(-1, options);
+						else if(controls.UI_RIGHT_P)
+							changeState(1, options);
+						ClientPrefs.chartScanPriority = options[index];
 				}
 				reloadValues();
 
@@ -948,6 +961,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 			nextAccept -= 1;
 		}
 		super.update(elapsed);
+	}
+
+	function changeState(change:Int = 0, options:Array<String>)
+	{
+		index += change;
+		if(index < 0)
+			index = options.length - 1;
+		if(index >= options.length)
+			index = 0;
 	}
 	
 	function changeSelection(change:Int = 0)
@@ -1003,6 +1025,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Hides health bar and replaces it with a percentage';
 			case 'Snap Camera on Note P':
 				daText = 'Snaps the camera on the note direction';
+			case 'Chart priority':
+				daText = "placeholder";
 		}
 		descText.text = daText;
 
@@ -1095,6 +1119,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = '' + ClientPrefs.framerate;
 					case 'Note Delay':
 						daText = ClientPrefs.noteOffset + 'ms';
+					case 'Chart priority':
+						daText = ClientPrefs.chartScanPriority;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;
