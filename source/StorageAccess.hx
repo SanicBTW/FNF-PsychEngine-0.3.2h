@@ -231,7 +231,15 @@ class StorageAccess
     }
 }
 
+//make these easier to type on the json or something
 typedef Modifiers = 
 {
     var instaKillOnMiss:Bool;
+    var opponentHealthDrain:Bool;
+    var healthDrainAmount:Float;
+
+    //not working, just added to the typedef
+    var dodging:Bool;
+    var shakyNotes:Bool;
+    var playAsOpponent:Bool;
 }

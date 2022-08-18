@@ -1,3 +1,4 @@
 {
-    "instaKillOnMiss": true
+    "instaKillOnMiss": false,
+    "opponentHealthDrain": true
 }

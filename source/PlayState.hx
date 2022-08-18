@@ -2094,6 +2094,10 @@ class PlayState extends MusicBeatState
 			{
 				if(!note.isSustainNote){
 					cameraShit(animToPlay, true);
+
+					if(modifiers.get("opponentHealthDrain")){
+						health -= modifiers.get("healthDrainAmount");
+					}
 				}
 				char.playAnim(animToPlay + altAnim, true);
 				char.holdTimer = 0;
@@ -2307,6 +2311,12 @@ class PlayState extends MusicBeatState
 		if(songmods != null)
 		{
 			modifiers.set("instaKillOnMiss", songmods.instaKillOnMiss);
+			modifiers.set("opponentHealthDrain", songmods.opponentHealthDrain);
+			if(songmods.healthDrainAmount == null){
+				songmods.healthDrainAmount = 0.01;
+			}
+			modifiers.set("healthDrainAmount", songmods.healthDrainAmount);
+			FlxG.log.add(songmods.healthDrainAmount);
 		}
 	}
 
