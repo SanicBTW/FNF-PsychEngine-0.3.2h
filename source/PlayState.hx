@@ -193,6 +193,7 @@ class PlayState extends MusicBeatState
 	var bfturn:Bool = false;
 
 	public static var startedSong = false;
+	private static var modifiers:Map<String, Dynamic> = new Map();
 
 	override public function create()
 	{
@@ -200,7 +201,6 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 		practiceMode = false;
-		// var gameCam:FlxCamera = FlxG.camera;
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
 		camOther = new FlxCamera();
@@ -210,10 +210,8 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
 		FlxG.cameras.add(camOther);
-		//grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
 		FlxCamera.defaultCameras = [camGame];
-		//FlxG.cameras.setDefaultDrawTarget(camGame, true);
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -441,6 +439,10 @@ class PlayState extends MusicBeatState
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
+
+		//prepare modifiers
+		setupModifiers();
+
 		super.create();
 	}
 	
@@ -1122,12 +1124,8 @@ class PlayState extends MusicBeatState
 
 		if (camZooming)
 		{
-			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
-			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, 0.95);
-
-			/*
 			FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
-			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));*/
+			camHUD.zoom = FlxMath.lerp(1, camHUD.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 		}
 
 		FlxG.watch.addQuick("beatShit", curBeat);
@@ -1139,6 +1137,8 @@ class PlayState extends MusicBeatState
 			health = 0;
 			trace("RESET = True");
 		}
+
+		modifiersCheck();
 
 		doDeathCheck();
 
@@ -1352,8 +1352,6 @@ class PlayState extends MusicBeatState
 			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
-
-			// MusicBeatState.switchState(new GameOverState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 			
 			#if desktop
 			// Game Over doesn't get his own variable because it's only used here
@@ -2319,6 +2317,26 @@ class PlayState extends MusicBeatState
 						camFollowPos.x = campointX + mult;
 						//snapCamFollowToPos(campointX + camMov, campointY);
 					}
+			}
+		}
+	}
+
+	function setupModifiers()
+	{
+		var songmods = StorageAccess.getModifier(SONG.song);
+		if(songmods != null)
+		{
+			modifiers.set("instaKillOnMiss", songmods.instaKillOnMiss);
+		}
+	}
+
+	function modifiersCheck()
+	{
+		if(modifiers.get("instaKillOnMiss"))
+		{
+			if(songMisses > 0)
+			{
+				health = 0;
 			}
 		}
 	}

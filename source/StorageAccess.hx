@@ -9,7 +9,7 @@ import sys.FileSystem;
 import lime.system.System;
 import haxe.io.Path;
 
-//made to access internal storage for platforms that support sys
+//made to access internal storage for target platform sys
 class StorageAccess
 {
     public static var checkDirs:Map<String, String> = new Map();
@@ -55,7 +55,6 @@ class StorageAccess
         return null;
     }
 
-    //maybe its a bad way to do it, but for now its working
     public static function getChart(song:String, diff:Int = 1):Array<Dynamic>
     {
         var dadiff:Int = 0;
@@ -74,10 +73,9 @@ class StorageAccess
 
         var chartPath:String = Path.join([mainSongPath, chartFile]);
 
-        //huh? am i this dumb lol
-        if(FileSystem.exists(chartPath)) //found the chart
+        //kinda buggy, fix it
+        if(FileSystem.exists(chartPath))
         {
-            trace(chartPath);
             return [chartPath, diff];
         }
         else
@@ -92,7 +90,6 @@ class StorageAccess
                     chartPath = Path.join([mainSongPath, chartFile]);
                     if(FileSystem.exists(chartPath) && priority == "easy" && priority != "normal" && priority != "hard")
                     {
-                        trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
@@ -118,7 +115,6 @@ class StorageAccess
                     chartPath = Path.join([mainSongPath, chartFile]);
                     if(FileSystem.exists(chartPath) && priority != "easy" && priority == "normal" && priority != "hard")
                     {
-                        trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
@@ -144,7 +140,6 @@ class StorageAccess
                     chartPath = Path.join([mainSongPath, chartFile]);
                     if(FileSystem.exists(chartPath) && priority != "easy" && priority != "normal" && priority == "hard")
                     {
-                        trace(chartPath);
                         notfound = false;
                         return [chartPath, diff];
                         break;
@@ -171,7 +166,7 @@ class StorageAccess
 
     public static function getSongs()
     {
-        return FileSystem.readDirectory(StorageAccess.checkDirs.get('songs'));
+        return FileSystem.readDirectory(checkDirs.get('songs'));
     }
 
     public static function getCharts(song:String)
@@ -181,10 +176,27 @@ class StorageAccess
         if(FileSystem.exists(mainSongPath))
         {
             var possibleCharts = FileSystem.readDirectory(mainSongPath);
-            trace("Possible charts: " + possibleCharts);
             return "exists";
         }
         else { trace("Song doesnt exists on the data folder"); }
         return null;
     }
+
+    public static function getModifier(song:String):Modifiers
+    {
+        var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
+        var modifierPath:String = Path.join([mainSongPath, "modifiers.json"]);
+
+        if(FileSystem.exists(modifierPath))
+        {
+            var themMods:Modifiers = cast Json.parse(File.getContent(modifierPath));
+            return themMods;
+        }
+        return null;
+    }
+}
+
+typedef Modifiers = 
+{
+    var instaKillOnMiss:Bool;
 }
