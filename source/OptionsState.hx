@@ -720,13 +720,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Hide Song Length',
 		'Flashing Lights',
 		'Camera Zooms',
-		'Snap Camera on Note P',
+		'Camera movement on note press',
 		'OPTIMIZATION',
 		//add again the only notes option
 		'Disable score tween',
 		'Hide Health Bar',
+		#if sys
 		'STORAGE ACCESS',
 		'Chart priority'
+		#end
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -913,7 +915,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.optDisableScoreTween = !ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':
 						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
-					case 'Snap Camera on Note P':
+					case 'Camera movement on note press':
 						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
@@ -1027,10 +1029,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Disables score bop on sick';
 			case 'Hide Health Bar':
 				daText = 'Hides health bar and replaces it with a percentage';
-			case 'Snap Camera on Note P':
-				daText = 'Snaps the camera on the note direction';
+			case 'Camera movement on note press':
+				daText = 'Moves the camera to the note direction';
 			case 'Chart priority':
-				daText = "placeholder";
+				daText = "Change the chart scan priority when\nsearching charts";
 		}
 		descText.text = daText;
 
@@ -1108,7 +1110,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.optDisableScoreTween;
 					case 'Hide Health Bar':
 						daValue = ClientPrefs.optHideHealthBar;
-					case 'Snap Camera on Note P':
+					case 'Camera movement on note press':
 						daValue = ClientPrefs.cameraMovOnNoteP;
 				}
 				checkbox.daValue = daValue;

@@ -205,7 +205,6 @@ class StorageAccess
     }
 }
 
-//make these easier to type on the json or something
 typedef Modifiers = 
 {
     var instaKillOnMiss:Bool;

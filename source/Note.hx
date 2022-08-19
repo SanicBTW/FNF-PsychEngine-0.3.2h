@@ -45,16 +45,6 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String {
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
-				case "Cirno Note":
-					reloadNote('CIRNO');
-					colorSwap.hue = 0;
-					colorSwap.saturation = 0;
-					colorSwap.brightness = 0;
-				case "Hurt Note": //Hurt note
-					reloadNote('HURT');
-					colorSwap.hue = 0;
-					colorSwap.saturation = 0;
-					colorSwap.brightness = 0;
 				case 'No Animation':
 					noAnimation = true;
 				case 'GF Sing':

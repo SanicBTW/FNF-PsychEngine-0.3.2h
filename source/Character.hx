@@ -174,32 +174,11 @@ class Character extends FlxSprite
 		if (isPlayer)
 		{
 			flipX = !flipX;
-
-			// Doesn't flip for BF, since his are already in the right place???
-			/*if (!curCharacter.startsWith('bf'))
-			{
-				// var animArray
-				if(animation.getByName('singLEFT') != null && animation.getByName('singRIGHT') != null)
-				{
-					var oldRight = animation.getByName('singRIGHT').frames;
-					animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-					animation.getByName('singLEFT').frames = oldRight;
-				}
-
-				// IF THEY HAVE MISS ANIMATIONS??
-				if (animation.getByName('singLEFTmiss') != null && animation.getByName('singRIGHTmiss') != null)
-				{
-					var oldMiss = animation.getByName('singRIGHTmiss').frames;
-					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-					animation.getByName('singLEFTmiss').frames = oldMiss;
-				}
-			}*/
 		}
 	}
 
 	override function update(elapsed:Float)
 	{
-		
 		if(!debugMode && animation.curAnim != null)
 		{
 			if(heyTimer > 0)
@@ -297,9 +276,27 @@ class Character extends FlxSprite
 		}
 	}
 
+	public var danceEveryNumBeats:Int = 2;
+	private var settingCharacterUp:Bool = true;
 	public function recalculateDanceIdle() {
+		var lastDanceIdle:Bool = danceIdle;
 		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
-	}
+
+		if(settingCharacterUp)
+		{
+			danceEveryNumBeats = (danceIdle ? 1 : 2);
+		}
+		else if(lastDanceIdle != danceIdle)
+		{
+			var calc:Float = danceEveryNumBeats;
+			if(danceIdle)
+				calc /= 2;
+			else
+				calc *= 2;
+
+			danceEveryNumBeats = Math.round(Math.max(calc, 1));
+		}
+		settingCharacterUp = false;	}
 
 	public function addOffset(name:String, x:Float = 0, y:Float = 0)
 	{
