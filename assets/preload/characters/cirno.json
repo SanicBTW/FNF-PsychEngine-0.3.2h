@@ -1,0 +1,177 @@
+{
+	"animations": [
+		{
+			"loop": false,
+			"offsets": [
+				51,
+				20
+			],
+			"fps": 24,
+			"anim": "singLEFT",
+			"indices": [],
+			"name": "CIRNO_LEFT"
+		},
+		{
+			"loop": false,
+			"offsets": [
+				0,
+				-30
+			],
+			"fps": 24,
+			"anim": "singDOWN",
+			"indices": [],
+			"name": "CIRNO_DOWN"
+		},
+		{
+			"loop": false,
+			"offsets": [
+				24,
+				99
+			],
+			"fps": 24,
+			"anim": "singUP",
+			"indices": [],
+			"name": "CIRNO_UP"
+		},
+		{
+			"loop": false,
+			"offsets": [
+				10,
+				1
+			],
+			"fps": 24,
+			"anim": "singRIGHT",
+			"indices": [],
+			"name": "CIRNO_RIGHT"
+		},
+		{
+			"loop": false,
+			"offsets": [
+				0,
+				0
+			],
+			"fps": 24,
+			"anim": "idle",
+			"indices": [],
+			"name": "CIRNO_IDLE"
+		},
+		{
+			"loop": true,
+			"offsets": [
+				0,
+				0
+			],
+			"anim": "idle-loop",
+			"fps": 24,
+			"name": "CIRNO_IDLE",
+			"indices": []
+		},
+		{
+			"loop": true,
+			"offsets": [
+				51,
+				20
+			],
+			"anim": "singLEFT-loop",
+			"fps": 24,
+			"name": "CIRNO_LEFT",
+			"indices": []
+		},
+		{
+			"loop": true,
+			"offsets": [
+				10,
+				1
+			],
+			"anim": "singRIGHT-loop",
+			"fps": 24,
+			"name": "CIRNO_RIGHT",
+			"indices": []
+		},
+		{
+			"loop": true,
+			"offsets": [
+				24,
+				99
+			],
+			"anim": "singUP-loop",
+			"fps": 24,
+			"name": "CIRNO_UP",
+			"indices": []
+		},
+		{
+			"offsets": [
+				0,
+				-30
+			],
+			"loop": false,
+			"fps": 24,
+			"anim": "singDOWN-loop",
+			"indices": [],
+			"name": "CIRNO_DOWN"
+		},
+		{
+			"offsets": [
+				50,
+				20
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singLEFT-alt",
+			"loop": false,
+			"name": "CIRNO_censorLEFT"
+		},
+		{
+			"offsets": [
+				10,
+				1
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singRIGHT-alt",
+			"loop": false,
+			"name": "CIRNO_censorRIGHT"
+		},
+		{
+			"offsets": [
+				0,
+				-30
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singDOWN-alt",
+			"loop": false,
+			"name": "CIRNO_censorDOWN"
+		},
+		{
+			"offsets": [
+				24,
+				99
+			],
+			"indices": [],
+			"fps": 24,
+			"anim": "singUP-alt",
+			"loop": false,
+			"name": "CIRNO_censorUP"
+		}
+	],
+	"no_antialiasing": false,
+	"image": "characters/cirno",
+	"position": [
+		-120,
+		0
+	],
+	"healthicon": "cirno",
+	"flip_x": false,
+	"healthbar_colors": [
+		0,
+		195,
+		215
+	],
+	"camera_position": [
+		-50,
+		170
+	],
+	"sing_duration": 6.1,
+	"scale": 0.7
+}

@@ -209,26 +209,19 @@ class StorageAccess
         #if sys
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
         var modifierPath:String = Path.join([mainSongPath, "modifiers.json"]);
+        #else
+        var modifierPath:String = 'assets/data/${song.toLowerCase()}/modifiers.json';
+        #end
 
-        if(FileSystem.exists(modifierPath))
+        if(#if sys FileSystem.exists(modifierPath) #else Assets.exists(modifierPath) #end)
         {
-            var themMods:Modifiers = cast Json.parse(File.getContent(modifierPath));
+            var themMods:Modifiers = cast Json.parse(#if sys File.getContent(modifierPath) #else Assets.getText(modifierPath) #end);
             if(themMods.healthDrainAmount == null){
                 themMods.healthDrainAmount = 0.01;
             }
             return themMods;
         }
         return null;
-        #else
-        var modifierPath:String = 'assets/data/${song.toLowerCase()}/modifiers.json';
-
-        if(Assets.exists(modifierPath))
-        {
-            var themMods:Modifiers = cast Json.parse(Assets.getText(modifierPath));
-            return themMods;
-        }
-        return null;
-        #end
     }
 }
 
@@ -237,11 +230,9 @@ typedef Modifiers =
 {
     var instaKillOnMiss:Bool;
     var opponentHealthDrain:Bool;
-    //lmao, this was the easiest way to fix it
-    //but it makes it available to put anything, string, ints or whatever but i doubt someone is that dumb to put that
-    var healthDrainAmount:Dynamic; 
+    var healthDrainAmount:Dynamic;
+    var playAsOpponent:Bool;
 
     //not working, just added to the typedef
     var shakyNotes:Bool;
-    var playAsOpponent:Bool;
 }
