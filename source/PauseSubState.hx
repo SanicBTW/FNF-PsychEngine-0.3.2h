@@ -13,6 +13,8 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
+using StringTools;
+
 class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
@@ -26,6 +28,8 @@ class PauseSubState extends MusicBeatSubstate
 	var practiceText:FlxText;
 	var botplayText:FlxText;
 
+	public static var songName:String = '';
+
 	public function new(x:Float, y:Float)
 	{
 		super();
@@ -37,7 +41,12 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		difficultyChoices.push('BACK');
 
-		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
+		pauseMusic = new FlxSound();
+		if(songName != null) {
+			pauseMusic.loadEmbedded(Paths.music(songName), true, true);
+		} else if (songName != "None") {
+			pauseMusic.loadEmbedded(Paths.music(ClientPrefs.pauseMusic.toLowerCase().replace(" ", "-")), true, true);
+		}
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
 
@@ -114,9 +123,9 @@ class PauseSubState extends MusicBeatSubstate
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
-                #if android
+        #if android
 		addVirtualPad(UP_DOWN, A_B);
-                addPadCamera();
+        addPadCamera();
 		#end
 	}
 

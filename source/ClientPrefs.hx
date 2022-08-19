@@ -32,6 +32,7 @@ class ClientPrefs {
 	public static var cameraMovOnNoteP:Bool = true;
 	public static var chartScanPriority:String = "normal";
 	public static var iconBoping:Bool = true;
+	public static var pauseMusic:String = "Tea Time";
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -94,6 +95,7 @@ class ClientPrefs {
 		FlxG.save.data.cameraMovOnNoteP = cameraMovOnNoteP;
 		FlxG.save.data.chartScanPriority = chartScanPriority;
 		FlxG.save.data.iconBoping = iconBoping;
+		FlxG.save.data.pauseMusic = pauseMusic;
 
 		FlxG.save.flush();
 
@@ -186,6 +188,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.iconBoping != null) {
 			iconBoping = FlxG.save.data.iconBoping;
+		}
+		if(FlxG.save.data.pauseMusic != null) {
+			pauseMusic = FlxG.save.data.pauseMusic;
 		}
 
 		var save:FlxSave = new FlxSave();

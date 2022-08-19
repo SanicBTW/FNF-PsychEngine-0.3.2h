@@ -191,6 +191,8 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+		PauseSubState.songName = null; //Reset to default
+
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
@@ -410,10 +412,15 @@ class PlayState extends MusicBeatState
 		startCountdown();
 		RecalculateRating();
 
-		//PRECACHING MISS SOUNDS BECAUSE I THINK THEY CAN LAG PEOPLE AND FUCK THEM UP IDK HOW HAXE WORKS
 		CoolUtil.precacheSound('missnote1');
 		CoolUtil.precacheSound('missnote2');
 		CoolUtil.precacheSound('missnote3');
+
+		if(PauseSubState.songName != null){
+			CoolUtil.precacheMusic(PauseSubState.songName);
+		} else if(ClientPrefs.pauseMusic != null) {
+			CoolUtil.precacheMusic(ClientPrefs.pauseMusic.toLowerCase().replace(" ", "-"));
+		}
 		
 		#if desktop
 		// Updating Discord Rich Presence.

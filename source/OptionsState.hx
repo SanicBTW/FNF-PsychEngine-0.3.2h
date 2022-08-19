@@ -694,13 +694,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GRAPHICS',
 		'GAMEPLAY',
 		'VISUALS AND UI',
+		'AUDIO',
 		'OPTIMIZATION',
 		'STORAGE ACCESS'
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
 		'Note Delay',
-		'Chart priority'
+		'Chart priority',
+		'Pause music'
 	];
 
 	static var options:Array<String> = [
@@ -724,6 +726,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Flashing Lights',
 		'Camera Zooms',
 		'Icon Boping',
+		'AUDIO',
+		'Pause music',
 		'OPTIMIZATION',
 		//add again the only notes option
 		'Disable score tween',
@@ -958,6 +962,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.chartScanPriority = options[index];
+					case 'Pause music':
+						var options = ['None', 'Breakfast', 'Tea Time'];
+						if(controls.UI_LEFT_P)
+							changeState(-1, options);
+						else if(controls.UI_RIGHT_P)
+							changeState(1, options);
+						ClientPrefs.pauseMusic = options[index];
 				}
 				reloadValues();
 
@@ -1040,6 +1051,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "Change the chart scan priority when\nsearching charts";
 			case 'Icon Boping':
 				daText = "If checked, icons bop";
+			case 'Pause music':
+				daText = "What song do you prefer for the Pause Screen?";
 		}
 		descText.text = daText;
 
@@ -1136,6 +1149,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = ClientPrefs.noteOffset + 'ms';
 					case 'Chart priority':
 						daText = ClientPrefs.chartScanPriority;
+					case 'Pause music':
+						daText = ClientPrefs.pauseMusic;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;
