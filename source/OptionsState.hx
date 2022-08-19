@@ -693,6 +693,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 	static var unselectableOptions:Array<String> = [
 		'GRAPHICS',
 		'GAMEPLAY',
+		'VISUALS AND UI',
 		'OPTIMIZATION',
 		'STORAGE ACCESS'
 	];
@@ -706,8 +707,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GRAPHICS',
 		'Low Quality',
 		'Anti-Aliasing',
-		'FPS Counter',
-		'Memory Counter',
 		#if !html5
 		'Framerate', //Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
@@ -716,11 +715,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Middlescroll',
 		'Ghost Tapping',
 		'Note Delay',
+		'Camera movement on note press',
+		'VISUALS AND UI',
+		'FPS Counter',
+		'Memory Counter',
 		'Hide HUD',
 		'Hide Song Length',
 		'Flashing Lights',
 		'Camera Zooms',
-		'Camera movement on note press',
+		'Icon Boping',
 		'OPTIMIZATION',
 		//add again the only notes option
 		'Disable score tween',
@@ -917,6 +920,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
 						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
+					case 'Icon Boping':
+						ClientPrefs.iconBoping = !ClientPrefs.iconBoping;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1033,6 +1038,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Moves the camera to the note direction';
 			case 'Chart priority':
 				daText = "Change the chart scan priority when\nsearching charts";
+			case 'Icon Boping':
+				daText = "If checked, icons bop";
 		}
 		descText.text = daText;
 
@@ -1112,6 +1119,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
 						daValue = ClientPrefs.cameraMovOnNoteP;
+					case 'Icon Boping':
+						daValue = ClientPrefs.iconBoping;
 				}
 				checkbox.daValue = daValue;
 			}

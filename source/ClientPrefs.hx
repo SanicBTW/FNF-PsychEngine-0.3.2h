@@ -31,6 +31,7 @@ class ClientPrefs {
 	public static var optHideHealthBar:Bool = false;
 	public static var cameraMovOnNoteP:Bool = true;
 	public static var chartScanPriority:String = "normal";
+	public static var iconBoping:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -92,6 +93,7 @@ class ClientPrefs {
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
 		FlxG.save.data.cameraMovOnNoteP = cameraMovOnNoteP;
 		FlxG.save.data.chartScanPriority = chartScanPriority;
+		FlxG.save.data.iconBoping = iconBoping;
 
 		FlxG.save.flush();
 
@@ -181,6 +183,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.chartScanPriority != null) {
 			chartScanPriority = FlxG.save.data.chartScanPriority;
+		}
+		if(FlxG.save.data.iconBoping != null) {
+			iconBoping = FlxG.save.data.iconBoping;
 		}
 
 		var save:FlxSave = new FlxSave();
