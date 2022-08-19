@@ -39,7 +39,6 @@ class StorageAccess
     {
         #if sys
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
-        trace(filePath);
         if(FileSystem.exists(filePath))
         {
             return Sound.fromFile(filePath);
@@ -55,7 +54,6 @@ class StorageAccess
     {
         #if sys
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
-        trace(filePath);
         if(FileSystem.exists(filePath))
         {
             return Sound.fromFile(filePath);
@@ -215,6 +213,9 @@ class StorageAccess
         if(FileSystem.exists(modifierPath))
         {
             var themMods:Modifiers = cast Json.parse(File.getContent(modifierPath));
+            if(themMods.healthDrainAmount == null){
+                themMods.healthDrainAmount = 0.01;
+            }
             return themMods;
         }
         return null;
@@ -236,10 +237,11 @@ typedef Modifiers =
 {
     var instaKillOnMiss:Bool;
     var opponentHealthDrain:Bool;
-    var healthDrainAmount:Float;
+    //lmao, this was the easiest way to fix it
+    //but it makes it available to put anything, string, ints or whatever but i doubt someone is that dumb to put that
+    var healthDrainAmount:Dynamic; 
 
     //not working, just added to the typedef
-    var dodging:Bool;
     var shakyNotes:Bool;
     var playAsOpponent:Bool;
 }
