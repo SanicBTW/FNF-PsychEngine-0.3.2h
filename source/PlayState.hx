@@ -2324,7 +2324,6 @@ class PlayState extends MusicBeatState
 		else if (songMisses >= 10) ratingFC = "Clear";
 	}
 
-	//taken from my vs cirno port remake lol
 	var mult = 0.7;
 	function cameraShit(animToPlay, isDad)
 	{
@@ -2384,6 +2383,7 @@ class PlayState extends MusicBeatState
 
 	function setupModifiers()
 	{
+		/*
 		var songmods = StorageAccess.getModifier(SONG.song);
 		if(songmods != null)
 		{
@@ -2391,7 +2391,7 @@ class PlayState extends MusicBeatState
 			modifiers.set("opponentHealthDrain", songmods.opponentHealthDrain);
 			modifiers.set("healthDrainAmount", songmods.healthDrainAmount);
 			modifiers.set("playAsOpponent", songmods.playAsOpponent);
-		}
+		}*/
 	}
 
 	function modifiersCheck()

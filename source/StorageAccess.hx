@@ -203,26 +203,6 @@ class StorageAccess
         return null;
         #end
     }
-
-    public static function getModifier(song:String):Modifiers
-    {
-        #if sys
-        var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
-        var modifierPath:String = Path.join([mainSongPath, "modifiers.json"]);
-        #else
-        var modifierPath:String = 'assets/data/${song.toLowerCase()}/modifiers.json';
-        #end
-
-        if(#if sys FileSystem.exists(modifierPath) #else Assets.exists(modifierPath) #end)
-        {
-            var themMods:Modifiers = cast Json.parse(#if sys File.getContent(modifierPath) #else Assets.getText(modifierPath) #end);
-            if(themMods.healthDrainAmount == null){
-                themMods.healthDrainAmount = 0.01;
-            }
-            return themMods;
-        }
-        return null;
-    }
 }
 
 //make these easier to type on the json or something
