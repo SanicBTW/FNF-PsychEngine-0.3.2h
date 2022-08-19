@@ -2312,7 +2312,7 @@ class PlayState extends MusicBeatState
 		{
 			modifiers.set("instaKillOnMiss", songmods.instaKillOnMiss);
 			modifiers.set("opponentHealthDrain", songmods.opponentHealthDrain);
-			if(songmods.healthDrainAmount == null){
+			if(songmods.healthDrainAmount < 0){
 				songmods.healthDrainAmount = 0.01;
 			}
 			modifiers.set("healthDrainAmount", songmods.healthDrainAmount);
