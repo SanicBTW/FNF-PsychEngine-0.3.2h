@@ -790,6 +790,7 @@ class PlayState extends MusicBeatState
 			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i);
 
 			var skin:String = "NOTE_assets";
+			if(PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
 
 			babyArrow.frames = Paths.getSparrowAtlas(skin);
 			babyArrow.animation.addByPrefix('green', 'arrowUP');
