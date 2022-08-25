@@ -112,11 +112,6 @@ class OptionsState extends MusicBeatState
 
 				case 'Preferences':
 					openSubState(new PreferencesSubstate());
-			
-				#if sys
-				case 'Music Test State':
-					MusicBeatState.switchState(new MusicTState());
-				#end
 			}
 		}
 	}
@@ -732,7 +727,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		//add again the only notes option
 		'Disable score tween',
 		'Hide Health Bar',
-		#if sys
+		#if FEATURE_STORAGE_ACCESS
 		'STORAGE ACCESS',
 		'Chart priority'
 		#end

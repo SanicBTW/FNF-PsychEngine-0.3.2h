@@ -98,7 +98,7 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		#if sys
+		#if FEATURE_STORAGE_ACCESS
 		var internalSongs = StorageAccess.getSongs();
 		for(i in 0...internalSongs.length)
 		{
@@ -304,7 +304,7 @@ class FreeplayState extends MusicBeatState
 
 		else if (accepted)
 		{
-			#if sys
+			#if FEATURE_STORAGE_ACCESS
 			if(songs[curSelected].intStorage)
 			{
 				persistentUpdate = false;

@@ -3,7 +3,7 @@ package;
 import openfl.media.Sound;
 import flixel.FlxG;
 import haxe.Json;
-#if sys
+#if FEATURE_STORAGE_ACCESS
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -20,7 +20,7 @@ class StorageAccess
 
     public static function checkStorage()
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         checkDirs.set("main", Path.join([System.userDirectory, 'sanicbtw_pe_files']));
 
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
@@ -37,7 +37,7 @@ class StorageAccess
 
     public static function getInst(song:String, ext = ".ogg")
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
         if(FileSystem.exists(filePath))
         {
@@ -45,14 +45,12 @@ class StorageAccess
         }
         else { trace("Couldnt find inst"); }
         return null;
-        #else
-        return null;
         #end
     }
 
     public static function getVoices(song:String, ext = ".ogg")
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
         if(FileSystem.exists(filePath))
         {
@@ -60,14 +58,12 @@ class StorageAccess
         }
         else { trace("Couldnt find voices"); }
         return null;
-        #else
-        return null;
         #end
     }
 
     public static function getChart(song:String, diff:Int = 1):Array<Dynamic>
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         var dadiff:Int = 0;
         var diffString:String = "";
         switch (diff)
@@ -180,16 +176,14 @@ class StorageAccess
 
     public static function getSongs()
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         return FileSystem.readDirectory(checkDirs.get('songs'));
-        #else
-        return null;
         #end
     }
 
     public static function getCharts(song:String)
     {
-        #if sys
+        #if FEATURE_STORAGE_ACCESS
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
 
         if(FileSystem.exists(mainSongPath))
@@ -199,19 +193,6 @@ class StorageAccess
         }
         else { trace("Song doesnt exists on the data folder"); }
         return null;
-        #else
-        return null;
         #end
     }
-}
-
-typedef Modifiers = 
-{
-    var instaKillOnMiss:Bool;
-    var opponentHealthDrain:Bool;
-    var healthDrainAmount:Dynamic;
-    var playAsOpponent:Bool;
-
-    //not working, just added to the typedef
-    var shakyNotes:Bool;
 }

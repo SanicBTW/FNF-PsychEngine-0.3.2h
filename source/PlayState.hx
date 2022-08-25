@@ -269,6 +269,7 @@ class PlayState extends MusicBeatState
 		camPos.x += gf.cameraPosition[0];
 		camPos.y += gf.cameraPosition[1];
 
+		add(gfGroup);
 		add(dadGroup);
 		add(boyfriendGroup);
 
@@ -1468,16 +1469,16 @@ class PlayState extends MusicBeatState
 		if (SONG.notes[id] != null && camFollow.x != dad.getMidpoint().x + 150 && !SONG.notes[id].mustHitSection)
 		{
 			moveCamera(true);
-			campointX = camFollowPos.x;
-			campointY = camFollowPos.y;
+			campointX = camFollow.x;
+			campointY = camFollow.y;
 			bfturn = false;
 		}
 
 		if (SONG.notes[id] != null && SONG.notes[id].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
 		{
 			moveCamera(false);
-			campointX = camFollowPos.x;
-			campointY = camFollowPos.y;
+			campointX = camFollow.x;
+			campointY = camFollow.y;
 			bfturn = true;
 		}
 	}
@@ -2179,7 +2180,7 @@ class PlayState extends MusicBeatState
 		else if (songMisses >= 10) ratingFC = "Clear";
 	}
 
-	var mult = 0.7;
+	var mult = 15;
 	function cameraShit(animToPlay, isDad)
 	{
 		switch(animToPlay)
@@ -2187,22 +2188,22 @@ class PlayState extends MusicBeatState
 			case 'singLEFT':
 				if(((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
 				{
-					camFollowPos.x = campointX - mult;
+					camFollow.x = campointX - mult;
 				}
 			case "singDOWN":
 				if(((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
 				{
-					camFollowPos.y = campointY + mult;
+					camFollow.y = campointY + mult;
 				}
 			case "singUP":
 				if(((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
 				{
-					camFollowPos.y = campointY - mult;
+					camFollow.y = campointY - mult;
 				}
 			case "singRIGHT":
 				if(((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
 				{
-					camFollowPos.x = campointX + mult;
+					camFollow.x = campointX + mult;
 				}
 		}
 	}
