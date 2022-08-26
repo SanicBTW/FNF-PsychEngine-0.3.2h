@@ -1,5 +1,6 @@
 package options;
 
+import flixel.util.FlxTimer;
 import options.SideBar;
 import options.OptionItem;
 import flixel.FlxObject;
@@ -23,6 +24,7 @@ class NewOptionsState extends MusicBeatState
     public static var grpOptions:FlxTypedGroup<OptionItem>;
     public static var contentSideBG:FlxSprite;
     public static var descText:FlxText;
+    public static var optionVal:FlxText;
 
     public static var categories = ["Graphics", "Gameplay", "Visuals and UI", "Audio", "Optimization", "Storage access", "Options personalization"];
     public static var options:Map<String, Array<Dynamic>> = new Map();
@@ -31,7 +33,6 @@ class NewOptionsState extends MusicBeatState
     public static var curItem:Int = 0;
     public static var firstOpening:Bool = true;
     public static var curOption:Int = 0;
-    public static var firstOpen = false;
 
     override function create() 
     {
@@ -39,18 +40,18 @@ class NewOptionsState extends MusicBeatState
         options.set('Graphics', [
             [
                 ["Low quality"], 
-                ["If checked, disables some background details,\ndecreases loading times and improves performance."],
+                ["If checked, disables some background details, decreases loading times and improves performance."],
                 ["lowQuality"]
             ],
             [
                 ["Anti-Aliasing"], 
-                ["If unchecked, disables anti-aliasing, increases performance\nat the cost of the graphics not looking as smooth."],
+                ["If unchecked, disables anti-aliasing, increases performance at the cost of the graphics not looking as smooth."],
                 ["globalAntialiasing"]
             ],
             #if !html5
             [
                 ['Framerate'], 
-                ["Pretty self explanatory, isn't it?\nDefault value is 60."],
+                ["Pretty self explanatory, isn't it? Default value is 60."],
                 ["framerate"]
             ],
             #end
@@ -69,12 +70,12 @@ class NewOptionsState extends MusicBeatState
             ],
             [
                 ["Ghost Tapping"], 
-                ["If checked, you won't get misses from pressing keys\nwhile there are no notes able to be hit."],
+                ["If checked, you won't get misses from pressing keys while there are no notes able to be hit."],
                 ["ghostTapping"]
             ],
             [
                 ["Note Delay"], 
-                ["Changes how late a note is spawned.\nUseful for preventing audio lag from wireless earphones."],
+                ["Changes how late a note is spawned. Useful for preventing audio lag from wireless earphones."],
                 ["noteOffset"]
             ],
             [
@@ -102,7 +103,7 @@ class NewOptionsState extends MusicBeatState
             ],
             [
                 ["Hide Song Length"], 
-                ["If checked, the bar showing how much time is left\nwill be hidden."],
+                ["If checked, the bar showing how much time is left will be hidden."],
                 ["hideTime"]
             ],
             [
@@ -147,7 +148,7 @@ class NewOptionsState extends MusicBeatState
             #if FEATURE_STORAGE_ACCESS
             [
                 ["Chart priority"], 
-                ["Change the chart scan priority when\nsearching charts"],
+                ["Change the chart scan priority when searching charts"],
                 ["chartScanPriority"]
             ]
             #elseif html5
@@ -207,6 +208,11 @@ class NewOptionsState extends MusicBeatState
         grpOptions = new FlxTypedGroup<OptionItem>();
         add(grpOptions);
 
+        optionVal = new FlxText(0, 0, 0, "?", 20);
+        optionVal.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
+        optionVal.visible = false;
+        add(optionVal);
+
         descText = new FlxText(Std.int(bgOverlay.width) - 890, Std.int(bgOverlay.height) - 25, 0, "Select a category", 20);
         descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
         add(descText);
@@ -259,13 +265,11 @@ class NewOptionsState extends MusicBeatState
             if(controls.ACCEPT)
             {
                 selectionState = "In category";
-                firstOpen = true;
                 sideBarItems.forEach(function(sideBarItem:SideBarItem)
                 {
                     if(sideBarItem.ID == curItem)
                     {
                         FlxG.sound.play(Paths.sound('confirmMenu'));
-                        sideBarItem.bg.color = FlxColor.GREEN;
                         changeOption();
                     }
                 });
@@ -278,14 +282,13 @@ class NewOptionsState extends MusicBeatState
             {
                 selectionState = "Choosing category";
                 descText.text = "Select a category";
-                firstOpen = false;
+                optionVal.visible = false;
                 sideBarItems.forEach(function(sideBarItem:SideBarItem)
                 {
                     if(sideBarItem.ID == curItem)
                     {
                         FlxG.sound.play(Paths.sound('cancelMenu'));
                         curOption = 0;
-                        sideBarItem.bg.color = FlxColor.GRAY;
                     }
                 });
 
@@ -306,8 +309,9 @@ class NewOptionsState extends MusicBeatState
                 changeOption(1);
             }
 
-            if(controls.ACCEPT && firstOpen)
+            if(controls.ACCEPT)
             {
+                FlxG.sound.play(Paths.sound('confirmMenu'));
                 grpOptions.forEach(function(optionItem:OptionItem)
                 {
                     if(optionItem.ID == curOption)
@@ -315,7 +319,7 @@ class NewOptionsState extends MusicBeatState
                         if(optionItem.type == "bool")
                         {
                             optionItem.setValue((optionItem.getValue() == true) ? false : true);
-                            optionItem.reload();
+                            changeOption();
                         }
                     }
                 });
@@ -350,6 +354,10 @@ class NewOptionsState extends MusicBeatState
         if(!firstOpening && grpOptions.length > 0)
         {
             grpOptions.clear();
+
+            #if sys
+            openfl.system.System.gc();
+            #end
         }
         var optionshit = options.get(category);
         var curPos = 300;
@@ -370,6 +378,7 @@ class NewOptionsState extends MusicBeatState
             curOption = grpOptions.length - 1;
 
         var descShit = options.get(categories[curItem]);
+        optionVal.visible = true;
 
         grpOptions.forEach(function(optionItem:OptionItem)
         {
@@ -379,6 +388,9 @@ class NewOptionsState extends MusicBeatState
             {
                 optionItem.bg.color = FlxColor.GRAY;
                 descText.text = descShit[curOption][1][0].toString();
+                optionVal.x = optionItem.bg.x + optionItem.bg.width + 10;
+                optionVal.y = optionItem.bg.y + 15;
+                optionVal.text = Std.string(optionItem.getValue());
             }
         });
     }

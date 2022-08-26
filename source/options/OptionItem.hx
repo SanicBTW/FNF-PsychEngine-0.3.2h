@@ -14,7 +14,6 @@ class OptionItem extends FlxSpriteGroup
     public var optionText:FlxText;
     public var variable:String;
     public var type:String;
-    public var bgY:Int = 0;
 
     public function new(text, y, id, variable)
     {
@@ -22,22 +21,13 @@ class OptionItem extends FlxSpriteGroup
 
         this.ID = id;
         this.variable = variable;
-        this.bgY = y;
 
-        var color = FlxColor.WHITE;
+        getValue(); //setup the type shit
 
-        var value = getValue();
-        if(type == "string" || type == "bool" || type == "float"){ color = FlxColor.WHITE; }
-        if(type == "bool")
-        {
-            if(value == true){ color = FlxColor.GREEN; }
-            if(value == false){ color = FlxColor.RED; }
-        }
-
-        bg = new FlxSprite().makeGraphic(400, 50, color);
+        bg = new FlxSprite().makeGraphic(400, 50, FlxColor.WHITE);
         bg.screenCenter();
         bg.x -= 80;
-        bg.y -= bgY;
+        bg.y -= y;
         bg.alpha = 0.8;
 
         optionText = new FlxText(bg.x + 5, bg.y + 15, 0, text, 20);
@@ -66,28 +56,5 @@ class OptionItem extends FlxSpriteGroup
     public function setValue(value:Dynamic)
     {
         Reflect.setProperty(ClientPrefs, variable, value);
-    }
-
-    public function reload()
-    {
-        remove(bg);
-        var color = FlxColor.WHITE;
-
-        var value = getValue();
-        if(type == "string" || type == "bool" || type == "float"){ color = FlxColor.WHITE; }
-        if(type == "bool")
-        {
-            if(value == true){ color = FlxColor.GREEN; }
-            if(value == false){ color = FlxColor.RED; }
-        }
-
-        bg = new FlxSprite().makeGraphic(400, 50, color);
-        bg.screenCenter();
-        bg.x -= 80;
-        bg.y -= bgY;
-        bg.alpha = 0.8;
-        add(bg);
-
-        bg.color = FlxColor.GRAY;
     }
 }
