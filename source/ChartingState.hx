@@ -54,7 +54,6 @@ class ChartingState extends MusicBeatState
 		'Hurt Note',
 		'GF Sing',
 		'No Animation',
-		'Cirno Note'
 	];
 
 	private static var eventStuff:Array<Dynamic> =

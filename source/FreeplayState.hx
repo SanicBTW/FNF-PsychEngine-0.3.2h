@@ -174,10 +174,10 @@ class FreeplayState extends MusicBeatState
 		add(textBG);
 
 		#if PRELOAD_ALL
-		var leText:String = "Press SPACE to listen to the Song / Press RESET to Reset your Score and Accuracy.";
+		var leText:String = "Press SPACE to listen to the Song";
 		var size:Int = 16;
 		#else
-		var leText:String = "Press RESET to Reset your Score and Accuracy.";
+		var leText:String = " ";
 		var size:Int = 18;
 		#end
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
@@ -187,7 +187,7 @@ class FreeplayState extends MusicBeatState
 
 		//bro add functions on other buttons or smth
 		#if android
-		addVirtualPad(LEFT_FULL, A_B_C);
+		addVirtualPad(LEFT_FULL, A_B);
 		#end
 
 		super.create();
@@ -375,11 +375,6 @@ class FreeplayState extends MusicBeatState
 				System.gc();
 				#end
 			}
-		}
-		else if(controls.RESET)
-		{
-			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);

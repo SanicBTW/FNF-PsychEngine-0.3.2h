@@ -12,4 +12,6 @@ Story Menu State (who uses this though)
 
 Achievements (I personally dont like them)
 
+Reset score substate
+
 You can add these again in your fork or repo if you want

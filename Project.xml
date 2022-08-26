@@ -84,5 +84,7 @@
 
 	<!-- If you don't want to use the Storage Access module or feature remove the line below this to completely disable it -->
 	<define name="FEATURE_STORAGE_ACCESS" if="android || desktop" />
+	<!-- If you want vanilla settings menu delete the line below this -->
+	<define name="FEATURE_NEW_SETTINGS"/>
 
 </project>
