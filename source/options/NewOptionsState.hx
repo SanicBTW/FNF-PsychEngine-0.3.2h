@@ -15,9 +15,6 @@ using StringTools;
 //planned stuff, the note stuff will still be the same
 //same with mobile controls and controls,
 //the only thing that will change is the preferences
-//becase its going to be harder to rewrite all of those
-
-//main categories = graphics, gameplay, visuals and ui, audio, optimization, storage access and options personalization
 class NewOptionsState extends MusicBeatState
 {
     public static var menuBG:FlxSprite;
@@ -34,6 +31,7 @@ class NewOptionsState extends MusicBeatState
     public static var curItem:Int = 0;
     public static var firstOpening:Bool = true;
     public static var curOption:Int = 0;
+    public static var firstOpen = false;
 
     override function create() 
     {
@@ -209,7 +207,7 @@ class NewOptionsState extends MusicBeatState
         grpOptions = new FlxTypedGroup<OptionItem>();
         add(grpOptions);
 
-        descText = new FlxText(Std.int(bgOverlay.width) - 345, Std.int(bgOverlay.height) - 16, 0, "placeholder", 20);
+        descText = new FlxText(Std.int(bgOverlay.width) - 890, Std.int(bgOverlay.height) - 25, 0, "Select a category", 20);
         descText.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
         add(descText);
 
@@ -238,6 +236,7 @@ class NewOptionsState extends MusicBeatState
         {
             if(controls.BACK)
             {
+                ClientPrefs.saveSettings();
                 Main.fpsVar.textColor = 0xFFFFFF;
                 Main.memoryVar.textColor = 0xFFFFFF;
                 FlxG.sound.play(Paths.sound('cancelMenu'));
@@ -260,6 +259,7 @@ class NewOptionsState extends MusicBeatState
             if(controls.ACCEPT)
             {
                 selectionState = "In category";
+                firstOpen = true;
                 sideBarItems.forEach(function(sideBarItem:SideBarItem)
                 {
                     if(sideBarItem.ID == curItem)
@@ -277,6 +277,8 @@ class NewOptionsState extends MusicBeatState
             if(controls.BACK)
             {
                 selectionState = "Choosing category";
+                descText.text = "Select a category";
+                firstOpen = false;
                 sideBarItems.forEach(function(sideBarItem:SideBarItem)
                 {
                     if(sideBarItem.ID == curItem)
@@ -302,6 +304,21 @@ class NewOptionsState extends MusicBeatState
             {
                 FlxG.sound.play(Paths.sound('scrollMenu'));
                 changeOption(1);
+            }
+
+            if(controls.ACCEPT && firstOpen)
+            {
+                grpOptions.forEach(function(optionItem:OptionItem)
+                {
+                    if(optionItem.ID == curOption)
+                    {
+                        if(optionItem.type == "bool")
+                        {
+                            optionItem.setValue((optionItem.getValue() == true) ? false : true);
+                            optionItem.reload();
+                        }
+                    }
+                });
             }
         }
 
@@ -338,7 +355,7 @@ class NewOptionsState extends MusicBeatState
         var curPos = 300;
         for(i in 0...optionshit.length)
         {
-            grpOptions.add(new OptionItem(optionshit[i][0].toString(), curPos, i, optionshit[i][2]));
+            grpOptions.add(new OptionItem(optionshit[i][0][0].toString(), curPos, i, optionshit[i][2][0].toString()));
             curPos -= 50;
         }
     }
@@ -352,6 +369,8 @@ class NewOptionsState extends MusicBeatState
         if(curOption < 0)
             curOption = grpOptions.length - 1;
 
+        var descShit = options.get(categories[curItem]);
+
         grpOptions.forEach(function(optionItem:OptionItem)
         {
             optionItem.bg.color = FlxColor.WHITE;
@@ -359,6 +378,7 @@ class NewOptionsState extends MusicBeatState
             if(optionItem.ID == curOption)
             {
                 optionItem.bg.color = FlxColor.GRAY;
+                descText.text = descShit[curOption][1][0].toString();
             }
         });
     }

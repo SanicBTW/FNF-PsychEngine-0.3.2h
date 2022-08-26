@@ -1824,7 +1824,6 @@ class PlayState extends MusicBeatState
 			});
 	}
 
-	//i might have to update to the new handling
 	function noteMiss(direction:Int = 0, daNote:Note):Void
 	{
 		if (!boyfriend.stunned)
