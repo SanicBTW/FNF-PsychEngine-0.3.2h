@@ -27,7 +27,7 @@ class ClientPrefs {
 	public static var hideTime:Bool = false;
 
 	public static var showMemory:Bool = true;
-	public static var optDisableScoreTween:Bool = false;
+	public static var optScoreZoom:Bool = true;
 	public static var optHideHealthBar:Bool = false;
 	public static var cameraMovOnNoteP:Bool = true;
 	public static var chartScanPriority:String = "normal";
@@ -90,7 +90,7 @@ class ClientPrefs {
 		FlxG.save.data.hideTime = hideTime;
 		
 		FlxG.save.data.showMemory = showMemory;
-		FlxG.save.data.optDisableScoreTween = optDisableScoreTween;
+		FlxG.save.data.optScoreZoom = optScoreZoom;
 		FlxG.save.data.optHideHealthBar = optHideHealthBar;
 		FlxG.save.data.cameraMovOnNoteP = cameraMovOnNoteP;
 		FlxG.save.data.chartScanPriority = chartScanPriority;
@@ -174,8 +174,8 @@ class ClientPrefs {
 			showMemory = FlxG.save.data.showMemory;
 		}
 
-		if(FlxG.save.data.optDisableScoreTween != null) {
-			optDisableScoreTween = FlxG.save.data.optDisableScoreTween;
+		if(FlxG.save.data.optScoreZoom != null) {
+			optScoreZoom = FlxG.save.data.optScoreZoom;
 		}
 		if(FlxG.save.data.optHideHealthBar != null) {
 			optHideHealthBar = FlxG.save.data.optHideHealthBar;

@@ -1604,7 +1604,7 @@ class PlayState extends MusicBeatState
 			songScore += Math.round(score);
 			songHits++;
 
-			if (!ClientPrefs.optDisableScoreTween)
+			if (ClientPrefs.optScoreZoom)
 			{
 				if(!cpuControlled)
 				{
@@ -1633,24 +1633,12 @@ class PlayState extends MusicBeatState
 			rating.velocity.y -= FlxG.random.int(140, 175);
 			rating.velocity.x -= FlxG.random.int(0, 10);
 			rating.visible = (!ClientPrefs.hideHud);
-			
-			var comboSpr:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'combo' + pixelShitPart2));
-			comboSpr.cameras = [camHUD];
-			comboSpr.screenCenter();
-			comboSpr.x = coolText.x;
-			comboSpr.acceleration.y = 600;
-			comboSpr.velocity.y -= 150;
-			comboSpr.visible = (!ClientPrefs.hideHud);
-			comboSpr.velocity.x += FlxG.random.int(1, 10);
 
-			if(!cpuControlled) insert(members.indexOf(strumLineNotes), rating);
+			insert(members.indexOf(strumLineNotes), rating);
 
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
 			rating.antialiasing = true;
-			comboSpr.setGraphicSize(Std.int(comboSpr.width * 0.7));
-			comboSpr.antialiasing = true;
 
-			comboSpr.updateHitbox();
 			rating.updateHitbox();
 
 			var seperatedScore:Array<Int> = [];
@@ -1662,7 +1650,6 @@ class PlayState extends MusicBeatState
 			seperatedScore.push(Math.floor(combo / 10) % 10);
 			seperatedScore.push(combo % 10);
 
-			comboSpr.cameras = [camHUD];
 			rating.cameras = [camHUD];
 
 			var daLoop:Int = 0;
@@ -1676,8 +1663,6 @@ class PlayState extends MusicBeatState
 
 				rating.setGraphicSize(Std.int(rating.width * 0.7));
 				rating.antialiasing = ClientPrefs.globalAntialiasing;
-				comboSpr.setGraphicSize(Std.int(comboSpr.width * 0.7));
-				comboSpr.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 
@@ -1688,7 +1673,7 @@ class PlayState extends MusicBeatState
 				numScore.velocity.x = FlxG.random.float(-5, 5);
 				numScore.visible = !ClientPrefs.hideHud;
 				
-				if(!cpuControlled) insert(members.indexOf(strumLineNotes), numScore);
+				insert(members.indexOf(strumLineNotes), numScore);
 
 				FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 					onComplete: function(tween:FlxTween)
@@ -1704,14 +1689,9 @@ class PlayState extends MusicBeatState
 			coolText.text = Std.string(seperatedScore);
 
 			FlxTween.tween(rating, {alpha: 0}, 0.2, {
-				startDelay: Conductor.crochet * 0.001
-			});
-
-			FlxTween.tween(comboSpr, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
 					coolText.destroy();
-					comboSpr.destroy();
 					rating.destroy();
 				},
 				startDelay: Conductor.crochet * 0.001
@@ -1923,9 +1903,7 @@ class PlayState extends MusicBeatState
 
 				if(char != null)
 				{
-					if(!note.isSustainNote){
-						cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], false);
-					}
+					cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], false);
 					char.playAnim(singAnims[Std.int(Math.abs(note.noteData)) % 4] + daAlt, true);
 					char.holdTimer = 0;
 				}
@@ -2010,9 +1988,7 @@ class PlayState extends MusicBeatState
 
 			if(char != null)
 			{
-				if(!note.isSustainNote){
-					cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], true);
-				}
+				cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], true);
 				char.playAnim(singAnims[Std.int(Math.abs(note.noteData)) % 4] + altAnim, true);
 				char.holdTimer = 0;
 			}

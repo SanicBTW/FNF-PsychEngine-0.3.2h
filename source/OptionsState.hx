@@ -725,7 +725,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Pause music',
 		'OPTIMIZATION',
 		//add again the only notes option
-		'Disable score tween',
+		'Score Text Zoom on Hit',
 		'Hide Health Bar',
 		#if FEATURE_STORAGE_ACCESS
 		'STORAGE ACCESS',
@@ -913,8 +913,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						if(Main.memoryVar != null)
 							Main.memoryVar.visible = ClientPrefs.showMemory;
 
-					case 'Disable score tween':
-						ClientPrefs.optDisableScoreTween = !ClientPrefs.optDisableScoreTween;
+					case 'Score Text Zoom on Hit':
+						ClientPrefs.optScoreZoom = !ClientPrefs.optScoreZoom;
 					case 'Hide Health Bar':
 						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
@@ -1036,14 +1036,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 			case "Memory Counter":
 				daText = "Displays a memory counter";
 			
-			case 'Disable score tween':
-				daText = 'Disables score bop on sick';
+			case 'Score Text Zoom on Hit':
+				daText = "If unchecked, disables the Score text zooming\neverytime you hit a note.";
 			case 'Hide Health Bar':
 				daText = 'Hides health bar and replaces it with a percentage';
 			case 'Camera movement on note press':
 				daText = 'Moves the camera to the note direction';
 			case 'Chart priority':
-				daText = "Change the chart scan priority when\nsearching charts";
+				daText = "Change the chart scan priority when searching charts";
 			case 'Icon Boping':
 				daText = "If checked, icons bop";
 			case 'Pause music':
@@ -1121,8 +1121,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.hideTime;
 					case 'Memory Counter':
 						daValue = ClientPrefs.showMemory;
-					case 'Disable score tween':
-						daValue = ClientPrefs.optDisableScoreTween;
+					case 'Score Text Zoom on Hit':
+						daValue = ClientPrefs.optScoreZoom;
 					case 'Hide Health Bar':
 						daValue = ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
