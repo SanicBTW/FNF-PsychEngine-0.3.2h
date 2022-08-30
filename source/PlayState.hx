@@ -413,9 +413,18 @@ class PlayState extends MusicBeatState
 		startCountdown();
 		RecalculateRating();
 
-		CoolUtil.precacheSound('missnote1');
-		CoolUtil.precacheSound('missnote2');
-		CoolUtil.precacheSound('missnote3');
+		//precache if vol higher than 0
+		if(ClientPrefs.missVolume > 0)
+		{
+			CoolUtil.precacheSound('missnote1');
+			CoolUtil.precacheSound('missnote2');
+			CoolUtil.precacheSound('missnote3');
+		}
+
+		if(ClientPrefs.hitsoundVolume > 0)
+		{
+			CoolUtil.precacheSound('hitsound');
+		}
 
 		if(PauseSubState.songName != null){
 			CoolUtil.precacheMusic(PauseSubState.songName);
@@ -1839,7 +1848,10 @@ class PlayState extends MusicBeatState
 						char.playAnim(singAnims[Std.int(Math.abs(daNote.noteData)) % 4] + "miss" + daAlt, true);
 					}
 		
-					FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+					if(ClientPrefs.missVolume > 0)
+					{
+						FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
+					}
 			}
 		}
 	}
@@ -1865,7 +1877,10 @@ class PlayState extends MusicBeatState
 			}
 
 			vocals.volume = 0;
-			FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), FlxG.random.float(0.1, 0.2));
+			if(ClientPrefs.missVolume > 0)
+			{
+				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
+			}
 		}
 	}
 
@@ -1873,6 +1888,11 @@ class PlayState extends MusicBeatState
 	{
 		if (!note.wasGoodHit)
 		{
+			if (ClientPrefs.hitsoundVolume > 0 && !note.isSustainNote)
+			{
+				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
+			}
+
 			switch(note.noteType) {
 			}
 
@@ -1883,15 +1903,7 @@ class PlayState extends MusicBeatState
 				if(combo > 9999) combo = 9999;
 			}
 
-			if (note.noteData >= 0)
-			{
-				health += 0.023;
-			}
-			else
-			{
-				//what is this
-				health += 0.004;
-			}
+			health += 0.023;
 
 			if(!note.noAnimation)
 			{
@@ -2155,7 +2167,7 @@ class PlayState extends MusicBeatState
 		else if (songMisses >= 10) ratingFC = "Clear";
 	}
 
-	var mult = 15;
+	var mult = 10;
 	function cameraShit(animToPlay, isDad)
 	{
 		switch(animToPlay)

@@ -33,6 +33,8 @@ class ClientPrefs {
 	public static var chartScanPriority:String = "normal";
 	public static var iconBoping:Bool = true;
 	public static var pauseMusic:String = "Tea Time";
+	public static var missVolume:Float = 0.5;
+	public static var hitsoundVolume:Float = 0; //soon, custom hitsounds will come back
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -96,6 +98,8 @@ class ClientPrefs {
 		FlxG.save.data.chartScanPriority = chartScanPriority;
 		FlxG.save.data.iconBoping = iconBoping;
 		FlxG.save.data.pauseMusic = pauseMusic;
+		FlxG.save.data.missVolume = missVolume;
+		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 
 		FlxG.save.flush();
 
@@ -191,6 +195,12 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.pauseMusic != null) {
 			pauseMusic = FlxG.save.data.pauseMusic;
+		}
+		if(FlxG.save.data.missVolume != null) {
+			missVolume = FlxG.save.data.missVolume;
+		}
+		if(FlxG.save.data.hitsoundVolume != null) {
+			hitsoundVolume = FlxG.save.data.hitsoundVolume;
 		}
 
 		var save:FlxSave = new FlxSave();

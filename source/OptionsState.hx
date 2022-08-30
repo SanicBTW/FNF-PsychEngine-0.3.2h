@@ -697,7 +697,9 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Framerate',
 		'Note Delay',
 		'Chart priority',
-		'Pause music'
+		'Pause music',
+		'Miss Volume',
+		'Hitsound Volume'
 	];
 
 	static var options:Array<String> = [
@@ -723,6 +725,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Icon Boping',
 		'AUDIO',
 		'Pause music',
+		'Miss Volume',
+		'Hitsound Volume',
 		'OPTIMIZATION',
 		//add again the only notes option
 		'Score Text Zoom on Hit',
@@ -928,6 +932,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		} else {
 			if(controls.UI_LEFT || controls.UI_RIGHT) {
 				var add:Int = controls.UI_LEFT ? -1 : 1;
+				var floatAdd:Float = controls.UI_LEFT ? -0.1 : 0.1;
+
 				if(holdTime > 0.5 || controls.UI_LEFT_P || controls.UI_RIGHT_P)
 				switch(options[curSelected]) {
 					case 'Framerate':
@@ -964,6 +970,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.pauseMusic = options[index];
+					case 'Miss Volume':
+						ClientPrefs.missVolume += floatAdd;
+						if(ClientPrefs.missVolume < 0) ClientPrefs.missVolume = 0;
+						else if(ClientPrefs.missVolume > 0.2) ClientPrefs.missVolume = 0.2; //max cap of vol on playstate
+					case 'Hitsound Volume':
+						ClientPrefs.hitsoundVolume += floatAdd;
+						if(ClientPrefs.hitsoundVolume < 0) ClientPrefs.hitsoundVolume = 0;
+						else if(ClientPrefs.hitsoundVolume > 1) ClientPrefs.hitsoundVolume = 1;
 				}
 				reloadValues();
 
@@ -1048,6 +1062,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "If checked, icons bop";
 			case 'Pause music':
 				daText = "What song do you prefer for the Pause Screen?";
+			case "Miss Volume":
+				daText = "How loud should be the miss sound?";
+			case "Hitsound Volume":
+				daText = "How loud should be the hitsound?";
 		}
 		descText.text = daText;
 
@@ -1146,6 +1164,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = ClientPrefs.chartScanPriority;
 					case 'Pause music':
 						daText = ClientPrefs.pauseMusic;
+					case "Miss Volume":
+						daText = '' + ClientPrefs.missVolume;
+					case "Hitsound Volume":
+						daText = '' + ClientPrefs.hitsoundVolume;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;
