@@ -691,15 +691,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'VISUALS AND UI',
 		'AUDIO',
 		'OPTIMIZATION',
-		'STORAGE ACCESS'
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
 		'Note Delay',
-		'Chart priority',
 		'Pause music',
 		'Miss Volume',
-		'Hitsound Volume'
+		'Hitsound Volume',
+		'Score Text design'
 	];
 
 	static var options:Array<String> = [
@@ -723,6 +722,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Flashing Lights',
 		'Camera Zooms',
 		'Icon Boping',
+		'Score Text design',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
@@ -731,10 +731,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 		//add again the only notes option
 		'Score Text Zoom on Hit',
 		'Hide Health Bar',
-		#if FEATURE_STORAGE_ACCESS
-		'STORAGE ACCESS',
-		'Chart priority'
-		#end
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -956,13 +952,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.noteOffset += add * mult;
 						if(ClientPrefs.noteOffset < 0) ClientPrefs.noteOffset = 0;
 						else if(ClientPrefs.noteOffset > 500) ClientPrefs.noteOffset = 500;
-					case 'Chart priority':
-						var options = ['easy', 'normal', 'hard'];
-						if(controls.UI_LEFT_P)
-							changeState(-1, options);
-						else if(controls.UI_RIGHT_P)
-							changeState(1, options);
-						ClientPrefs.chartScanPriority = options[index];
 					case 'Pause music':
 						var options = ['None', 'Breakfast', 'Tea Time'];
 						if(controls.UI_LEFT_P)
@@ -978,6 +967,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.hitsoundVolume += floatAdd;
 						if(ClientPrefs.hitsoundVolume < 0) ClientPrefs.hitsoundVolume = 0;
 						else if(ClientPrefs.hitsoundVolume > 1) ClientPrefs.hitsoundVolume = 1;
+					case 'Score Text design':
+						var options = ['Engine', 'Psych'];
+						if(controls.UI_LEFT_P)
+							changeState(-1, options);
+						else if(controls.UI_RIGHT_P)
+							changeState(1, options);
+						ClientPrefs.scoreTextDesign = options[index];
 				}
 				reloadValues();
 
@@ -1056,8 +1052,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Hides health bar and replaces it with a percentage';
 			case 'Camera movement on note press':
 				daText = 'Moves the camera to the note direction';
-			case 'Chart priority':
-				daText = "Change the chart scan priority when searching charts";
 			case 'Icon Boping':
 				daText = "If checked, icons bop";
 			case 'Pause music':
@@ -1066,6 +1060,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "How loud should be the miss sound?";
 			case "Hitsound Volume":
 				daText = "How loud should be the hitsound?";
+			case 'Score Text design':
+				daText = "Type of formatting on score text\nEngine: Sc Mi Acc Ra (FCRa)\nPsych: Sc Mi Ra (Acc) - FCRa";
 		}
 		descText.text = daText;
 
@@ -1160,14 +1156,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = '' + ClientPrefs.framerate;
 					case 'Note Delay':
 						daText = ClientPrefs.noteOffset + 'ms';
-					case 'Chart priority':
-						daText = ClientPrefs.chartScanPriority;
 					case 'Pause music':
 						daText = ClientPrefs.pauseMusic;
 					case "Miss Volume":
 						daText = '' + ClientPrefs.missVolume;
 					case "Hitsound Volume":
 						daText = '' + ClientPrefs.hitsoundVolume;
+					case 'Score Text design':
+						daText = ClientPrefs.scoreTextDesign;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;

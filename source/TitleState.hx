@@ -27,9 +27,6 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
-#if android
-import com.player03.android6.Permissions;
-#end
 
 using StringTools;
 
@@ -58,20 +55,6 @@ class TitleState extends MusicBeatState
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
-		#if FEATURE_STORAGE_ACCESS
-			#if android
-			FlxG.android.preventDefaultKeys = [BACK];
-			if(!Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && !Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE)){
-				Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
-				MusicBeatState.resetState();
-			} else {
-				StorageAccess.checkStorage();
-			}
-			#end
-			#if windows
-			StorageAccess.checkStorage();
-			#end
-		#end
 		FlxG.keys.preventDefaultKeys = [TAB];
 
 		PlayerSettings.init();
