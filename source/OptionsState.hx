@@ -31,7 +31,7 @@ using StringTools;
 // TO DO: Redo the menu creation system for not being as dumb
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Notes', #if android 'Mobile Controls' , #end 'Controls', 'Preferences'];
+	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -112,6 +112,9 @@ class OptionsState extends MusicBeatState
 
 				case 'Preferences':
 					openSubState(new PreferencesSubstate());
+
+				case 'Adjust Delay and Combo':
+					LoadingState.loadAndSwitchState(new NoteOffsetState());
 			}
 		}
 	}
@@ -694,7 +697,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
-		'Note Delay',
 		'Pause music',
 		'Miss Volume',
 		'Hitsound Volume',
@@ -712,7 +714,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Downscroll',
 		'Middlescroll',
 		'Ghost Tapping',
-		'Note Delay',
 		'Camera movement on note press',
 		'VISUALS AND UI',
 		'FPS Counter',

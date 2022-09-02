@@ -35,6 +35,7 @@ class ClientPrefs {
 	public static var missVolume:Float = 0.5;
 	public static var hitsoundVolume:Float = 0;
 	public static var scoreTextDesign:String = "Engine";
+	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -100,6 +101,7 @@ class ClientPrefs {
 		FlxG.save.data.missVolume = missVolume;
 		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 		FlxG.save.data.scoreTextDesign = scoreTextDesign;
+		FlxG.save.data.comboOffset = comboOffset;
 
 		FlxG.save.flush();
 
@@ -201,6 +203,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.scoreTextDesign != null) {
 			scoreTextDesign = FlxG.save.data.scoreTextDesign;
+		}
+		if(FlxG.save.data.comboOffset != null) {
+			comboOffset = FlxG.save.data.comboOffset;
 		}
 
 		var save:FlxSave = new FlxSave();

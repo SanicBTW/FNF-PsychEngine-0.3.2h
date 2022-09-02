@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxMath;
 import flixel.FlxG;
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
@@ -75,5 +76,16 @@ class CoolUtil
 		#else
 		FlxG.openURL(site);
 		#end
+	}
+
+	public static function truncateFloat( number : Float, precision : Int): Float {
+		var num = number;
+		num = num * Math.pow(10, precision);
+		num = Math.round( num ) / Math.pow(10, precision);
+		return num;
+	}
+
+	public static function GCD(a, b) {
+		return b == 0 ? FlxMath.absInt(a) : GCD(b, a % b);
 	}
 }

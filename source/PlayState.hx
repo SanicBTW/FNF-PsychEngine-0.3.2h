@@ -208,6 +208,7 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camOther);
 
 		FlxCamera.defaultCameras = [camGame];
+		CustomFadeTransition.nextCamera = camOther;
 
 		persistentUpdate = true;
 		persistentDraw = true;
@@ -438,6 +439,10 @@ class PlayState extends MusicBeatState
 		#end
 
 		super.create();
+
+		openfl.system.System.gc();
+
+		CustomFadeTransition.nextCamera = camOther;
 	}
 	
 	public function reloadHealthBarColors() {
@@ -1532,6 +1537,9 @@ class PlayState extends MusicBeatState
 		}
 
 		trace('WENT BACK TO FREEPLAY??');
+		if(FlxTransitionableState.skipNextTransIn) {
+			CustomFadeTransition.nextCamera = null;
+		}
 		MusicBeatState.switchState(new FreeplayState());
 		FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		usedPractice = false;
@@ -1622,11 +1630,13 @@ class PlayState extends MusicBeatState
 			rating.velocity.y -= FlxG.random.int(140, 175);
 			rating.velocity.x -= FlxG.random.int(0, 10);
 			rating.visible = (!ClientPrefs.hideHud);
+			rating.x += ClientPrefs.comboOffset[0];
+			rating.y -= ClientPrefs.comboOffset[1];
 
 			insert(members.indexOf(strumLineNotes), rating);
 
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
-			rating.antialiasing = true;
+			rating.antialiasing = ClientPrefs.globalAntialiasing;
 
 			rating.updateHitbox();
 
@@ -1649,6 +1659,9 @@ class PlayState extends MusicBeatState
 				numScore.screenCenter();
 				numScore.x = coolText.x + (43 * daLoop) - 90;
 				numScore.y += 80;
+
+				numScore.x += ClientPrefs.comboOffset[2];
+				numScore.y -= ClientPrefs.comboOffset[3];
 
 				rating.setGraphicSize(Std.int(rating.width * 0.7));
 				rating.antialiasing = ClientPrefs.globalAntialiasing;
@@ -1941,7 +1954,7 @@ class PlayState extends MusicBeatState
 					char.holdTimer = 0;
 				}
 
-				if(note.noteType == "Hey") 
+				if(note.noteType == "Hey!") 
 				{
 					if(boyfriend.animOffsets.exists('hey')) {
 						boyfriend.playAnim('hey', true);
