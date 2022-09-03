@@ -84,6 +84,7 @@ class Main extends Sprite
 			memoryVar.visible = ClientPrefs.showMemory;
 		}
 
+		FlxG.mouse.useSystemCursor = true;
 		#if html5
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;

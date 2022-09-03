@@ -51,7 +51,6 @@ class ChartingState extends MusicBeatState
 		'',
 		'Alt Animation',
 		'Hey!',
-		'Hurt Note',
 		'GF Sing',
 		'No Animation',
 	];

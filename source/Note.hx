@@ -44,6 +44,8 @@ class Note extends FlxSprite
 
 	public var noAnimation:Bool = false;
 
+	public var hitsoundDisabled:Bool = false;
+
 	private function set_texture(value:String):String {
 		if(texture != value) {
 			reloadNote('', value);
@@ -120,6 +122,7 @@ class Note extends FlxSprite
 		if (isSustainNote && prevNote != null)
 		{
 			alpha = 0.6;
+			hitsoundDisabled = true;
 			if(ClientPrefs.downScroll) flipY = true;
 
 			x += width / 2;
