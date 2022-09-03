@@ -36,6 +36,7 @@ class ClientPrefs {
 	public static var hitsoundVolume:Float = 0;
 	public static var scoreTextDesign:String = "Engine";
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
+	public static var inputType:String = "Kade";
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -102,6 +103,7 @@ class ClientPrefs {
 		FlxG.save.data.hitsoundVolume = hitsoundVolume;
 		FlxG.save.data.scoreTextDesign = scoreTextDesign;
 		FlxG.save.data.comboOffset = comboOffset;
+		FlxG.save.data.inputType = inputType;
 
 		FlxG.save.flush();
 
@@ -206,6 +208,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.comboOffset != null) {
 			comboOffset = FlxG.save.data.comboOffset;
+		}
+		if(FlxG.save.data.inputType != null) {
+			inputType = FlxG.save.data.inputType;
 		}
 
 		var save:FlxSave = new FlxSave();

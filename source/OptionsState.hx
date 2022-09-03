@@ -700,7 +700,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Pause music',
 		'Miss Volume',
 		'Hitsound Volume',
-		'Score Text design'
+		'Score Text design',
+		'Input'
 	];
 
 	static var options:Array<String> = [
@@ -715,6 +716,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Middlescroll',
 		'Ghost Tapping',
 		'Camera movement on note press',
+		'Input',
 		'VISUALS AND UI',
 		'FPS Counter',
 		'Memory Counter',
@@ -724,6 +726,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Camera Zooms',
 		'Icon Boping',
 		'Score Text design',
+		'Note Splashes',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
@@ -945,14 +948,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 							FlxG.drawFramerate = ClientPrefs.framerate;
 							FlxG.updateFramerate = ClientPrefs.framerate;
 						}
-					case 'Note Delay':
-						var mult:Int = 1;
-						if(holdTime > 1.5) { //Double speed after 1.5 seconds holding
-							mult = 2;
-						}
-						ClientPrefs.noteOffset += add * mult;
-						if(ClientPrefs.noteOffset < 0) ClientPrefs.noteOffset = 0;
-						else if(ClientPrefs.noteOffset > 500) ClientPrefs.noteOffset = 500;
 					case 'Pause music':
 						var options = ['None', 'Breakfast', 'Tea Time'];
 						if(controls.UI_LEFT_P)
@@ -960,6 +955,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.pauseMusic = options[index];
+					//fix floats
 					case 'Miss Volume':
 						ClientPrefs.missVolume += floatAdd;
 						if(ClientPrefs.missVolume < 0) ClientPrefs.missVolume = 0;
@@ -975,6 +971,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.scoreTextDesign = options[index];
+					case 'Input':
+						var options = ['Kade', 'Psych'];
+						if(controls.UI_LEFT_P)
+							changeState(-1, options);
+						else if(controls.UI_RIGHT_P)
+							changeState(1, options);
+						ClientPrefs.inputType = options[index];
 				}
 				reloadValues();
 
@@ -1063,6 +1066,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "How loud should be the hitsound?";
 			case 'Score Text design':
 				daText = "Type of formatting on score text\nEngine: Sc Mi Acc Ra (FCRa)\nPsych: Sc Mi Ra (Acc) - FCRa";
+			case 'Input':
+				daText = "Type of input for keypresses\nI think that there isnt that much of a difference but here you go";
 		}
 		descText.text = daText;
 
@@ -1155,16 +1160,16 @@ class PreferencesSubstate extends MusicBeatSubstate
 				switch(options[textNumber[i]]) {
 					case 'Framerate':
 						daText = '' + ClientPrefs.framerate;
-					case 'Note Delay':
-						daText = ClientPrefs.noteOffset + 'ms';
 					case 'Pause music':
 						daText = ClientPrefs.pauseMusic;
 					case "Miss Volume":
-						daText = '' + ClientPrefs.missVolume;
+						daText = Math.round(ClientPrefs.missVolume * 100) + '%';
 					case "Hitsound Volume":
-						daText = '' + ClientPrefs.hitsoundVolume;
+						daText = Math.round(ClientPrefs.hitsoundVolume * 100) + '%';
 					case 'Score Text design':
 						daText = ClientPrefs.scoreTextDesign;
+					case 'Input':
+						daText = ClientPrefs.inputType;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;

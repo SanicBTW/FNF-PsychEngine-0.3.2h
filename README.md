@@ -14,5 +14,3 @@ You can add these again in your fork or repo if you want
 The branches can be up to date with the base engine or be in an old version
 
 This branch is asset based and doesn't have any file system compatibility
-
-Uses Kade Engine 1.5.3 Input in order to get more accurate key presses

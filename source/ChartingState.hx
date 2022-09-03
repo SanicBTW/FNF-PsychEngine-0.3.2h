@@ -37,10 +37,6 @@ import openfl.media.Sound;
 import openfl.net.FileReference;
 import openfl.utils.ByteArray;
 import openfl.utils.Assets as OpenFlAssets;
-#if MODS_ALLOWED
-import sys.io.File;
-import sys.FileSystem;
-#end
 
 using StringTools;
 
@@ -325,11 +321,7 @@ class ChartingState extends MusicBeatState
 		{
 			var songName:String = _song.song.toLowerCase();
 			var file:String = Paths.json(songName + '/events');
-			#if sys
-			if (sys.FileSystem.exists(file))
-			#else
 			if (OpenFlAssets.exists(file))
-			#end
 			{
 				PlayState.SONG = Song.loadFromJson('events', songName);
 				MusicBeatState.resetState();
@@ -1349,17 +1341,8 @@ class ChartingState extends MusicBeatState
 
 	function loadHealthIconFromCharacter(char:String) {
 		var characterPath:String = 'characters/' + char + '.json';
-		#if MODS_ALLOWED
-		var path:String = Paths.mods(characterPath);
-		if (!FileSystem.exists(path)) {
-			path = Paths.getPreloadPath(characterPath);
-		}
-
-		if (!FileSystem.exists(path))
-		#else
 		var path:String = Paths.getPreloadPath(characterPath);
 		if (!OpenFlAssets.exists(path))
-		#end
 		{
 			path = Paths.getPreloadPath('characters/' + Character.DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 		}
