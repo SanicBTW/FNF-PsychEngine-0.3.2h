@@ -30,7 +30,7 @@ class ClientPrefs {
 	public static var optScoreZoom:Bool = true;
 	public static var optHideHealthBar:Bool = false;
 	public static var cameraMovOnNoteP:Bool = true;
-	public static var iconBoping:Bool = true;
+	public static var iconBoping:Bool = false;
 	public static var pauseMusic:String = "Tea Time";
 	public static var missVolume:Float = 0.5;
 	public static var hitsoundVolume:Float = 0;

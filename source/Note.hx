@@ -55,16 +55,16 @@ class Note extends FlxSprite
 	}
 
 	private function set_noteType(value:String):String {
+		colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
+		colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
+		colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
 				case 'No Animation':
 					noAnimation = true;
 				case 'GF Sing':
 					gfNote = true;
-				default:
-					colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-					colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-					colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
 			}
 			noteType = value;
 		}
