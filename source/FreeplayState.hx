@@ -1,5 +1,6 @@
 package;
 
+import ResetScoreSubstate.ResetScoreSubState;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -18,6 +19,10 @@ import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
 import openfl.system.System;
+#if FEATURE_STORAGE_ACCESS
+import features.StorageAccess;
+import sys.io.File;
+#end
 
 using StringTools;
 
@@ -92,6 +97,26 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
+		#if FEATURE_STORAGE_ACCESS
+		if(FlxG.save.data.allowFileSystemAccess)
+		{
+			var internalSongs = StorageAccess.getSongs();
+			for(i in 0...internalSongs.length)
+			{
+				var songName = internalSongs[i];
+	
+				//gotta improve it like adding the got difficulties to a new array and use that array of diffs instead
+				var check = StorageAccess.getCharts(songName);
+				if(check == "exists")
+				{
+					addSong(songName, 0, "bf", FlxColor.fromRGB(146, 113, 253), true);
+				}
+	
+				System.gc();
+			}
+		}
+		#end
+
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
@@ -162,17 +187,16 @@ class FreeplayState extends MusicBeatState
 		text.scrollFactor.set();
 		add(text);
 
-		//bro add functions on other buttons or smth
 		#if android
-		addVirtualPad(LEFT_FULL, A_B);
+		addVirtualPad(LEFT_FULL, A_B_C);
 		#end
 
 		super.create();
 	}
 
-	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int)
+	public static function addSong(songName:String, weekNum:Int, songCharacter:String, color:Int, intStorage:Bool = false)
 	{
-		songs.push(new SongMetadata(songName, weekNum, songCharacter, color));
+		songs.push(new SongMetadata(songName, weekNum, songCharacter, color, intStorage));
 	}
 
 	var instPlaying:Int = -1;
@@ -256,43 +280,87 @@ class FreeplayState extends MusicBeatState
 
 		if (accepted)
 		{
+			#if FEATURE_STORAGE_ACCESS
+			if(songs[curSelected].intStorage && FlxG.save.data.allowFileSystemAccess)
+			{
+				persistentUpdate = false;
 			
+				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				if(!StorageAccess.exists(StorageAccess.getChart(songLowercase, curDifficulty)))
+				{
+					curDifficulty = 1;
+					trace("Couldnt find file on local storage");
+				}
+
+				PlayState.SONG = Song.parseJSONshit(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)));
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
+				PlayState.voices = StorageAccess.getVoices(songs[curSelected].songName);
+	
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if(colorTween != null) {
+					colorTween.cancel();
+				}
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+	
+				FlxG.sound.music.volume = 0;
+	
+				destroyFreeplayVocals();
+	
+				System.gc();
+			}
+			else #end if(!songs[curSelected].intStorage)
+			{
+				persistentUpdate = false;
+			
+				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) 
+				{
+					poop = songLowercase;
+					curDifficulty = 1;
+					trace('Couldnt find file');
+				}
+	
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+				PlayState.inst = Paths.inst(PlayState.SONG.song);
+				PlayState.voices = Paths.voices(PlayState.SONG.song);
+	
+				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
+				if(colorTween != null) {
+					colorTween.cancel();
+				}
+				if(FlxG.keys.pressed.SHIFT)
+				{
+					LoadingState.loadAndSwitchState(new ChartingState());
+				}
+				else
+				{
+					LoadingState.loadAndSwitchState(new PlayState());
+				}
+	
+				FlxG.sound.music.volume = 0;
+	
+				destroyFreeplayVocals();
+	
+				System.gc();
+			}
+		}
+		else if(controls.RESET)
+		{
 			persistentUpdate = false;
-		
-			var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-			if(!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop))) 
-			{
-				poop = songLowercase;
-				curDifficulty = 1;
-				trace('Couldnt find file');
-			}
-			trace(poop);
-
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
-			PlayState.inst = Paths.inst(PlayState.SONG.song);
-			PlayState.voices = Paths.voices(PlayState.SONG.song);
-
-			trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
-			if(colorTween != null) {
-				colorTween.cancel();
-			}
-			if(FlxG.keys.pressed.SHIFT)
-			{
-				LoadingState.loadAndSwitchState(new ChartingState());
-			}
-			else
-			{
-				LoadingState.loadAndSwitchState(new PlayState());
-			}
-
-			FlxG.sound.music.volume = 0;
-
-			destroyFreeplayVocals();
-
-			System.gc();
+			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -383,13 +451,21 @@ class FreeplayState extends MusicBeatState
 		PlayState.storyWeek = songs[curSelected].week;
 	}
 
-	private function positionHighscore() {
+	private function positionHighscore() 
+	{
 		scoreText.x = FlxG.width - scoreText.width - 6;
 
 		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
 		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
 		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
 		diffText.x -= diffText.width / 2;
+	}
+
+	override function closeSubState() 
+	{
+		changeSelection(0, false);
+		persistentUpdate = true;
+		super.closeSubState();
 	}
 }
 
@@ -399,12 +475,14 @@ class SongMetadata
 	public var week:Int = 0;
 	public var songCharacter:String = "";
 	public var color:Int = -7179779;
+	public var intStorage:Bool = false;
 
-	public function new(song:String, week:Int, songCharacter:String, color:Int)
+	public function new(song:String, week:Int, songCharacter:String, color:Int, intStorage:Bool = false)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
 		this.color = color;
+		this.intStorage = intStorage;
 	}
 }

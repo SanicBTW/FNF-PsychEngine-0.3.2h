@@ -32,7 +32,7 @@ class ClientPrefs {
 	public static var cameraMovOnNoteP:Bool = true;
 	public static var iconBoping:Bool = false;
 	public static var pauseMusic:String = "Tea Time";
-	public static var missVolume:Float = 0.5;
+	public static var missVolume:Float = 0.2;
 	public static var hitsoundVolume:Float = 0;
 	public static var scoreTextDesign:String = "Engine";
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];

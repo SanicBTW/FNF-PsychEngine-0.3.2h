@@ -701,7 +701,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Miss Volume',
 		'Hitsound Volume',
 		'Score Text design',
-		'Input'
+		'Input',
 	];
 
 	static var options:Array<String> = [
@@ -734,7 +734,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'OPTIMIZATION',
 		//add again the only notes option
 		'Score Text Zoom on Hit',
-		'Hide Health Bar',
+		'Hide Health Bar'
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -860,7 +860,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'FPS Counter':
 						ClientPrefs.showFPS = !ClientPrefs.showFPS;
 						if(Main.fpsVar != null)
+						{
 							Main.fpsVar.visible = ClientPrefs.showFPS;
+							if(Main.fpsVar.alpha == 0)
+								Main.tweenFPS();
+						}
 
 					case 'Low Quality':
 						ClientPrefs.lowQuality = !ClientPrefs.lowQuality;
@@ -915,7 +919,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Memory Counter':
 						ClientPrefs.showMemory = !ClientPrefs.showMemory;
 						if(Main.memoryVar != null)
+						{
 							Main.memoryVar.visible = ClientPrefs.showMemory;
+							if(Main.memoryVar.alpha == 0)
+								Main.tweenMemory();
+						}
 
 					case 'Score Text Zoom on Hit':
 						ClientPrefs.optScoreZoom = !ClientPrefs.optScoreZoom;
@@ -930,12 +938,41 @@ class PreferencesSubstate extends MusicBeatSubstate
 				reloadValues();
 			}
 		} else {
-			if(controls.UI_LEFT || controls.UI_RIGHT) {
+			/* cancelled idea because its not working properly for some reason
+			if(controls.ACCEPT)
+			{
+				switch(options[curSelected])
+				{
+					//on android, if you gave perms to the app you need to manually remove them in settings, this only removes the code access to filesystem nothing else
+					case 'Revoke permissions':
+						#if windows
+						DiscordClient.shutdown();
+						#end
+
+						FlxG.mouse.visible = true;
+
+						TitleState.initialized = false;
+						TitleState.closedState = false;
+
+						FlxG.save.data.answeredFSRequest = false;
+						FlxG.save.data.allowFileSystemAccess = false;
+						FlxG.save.flush();
+
+						FlxG.sound.music.fadeOut(0.3);
+						Main.tweenFPS(false, 0.5);
+						Main.tweenMemory(false, 0.5);
+						FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+				}
+			}*/
+
+			if(controls.UI_LEFT || controls.UI_RIGHT) 
+			{
 				var add:Int = controls.UI_LEFT ? -1 : 1;
 				var floatAdd:Float = controls.UI_LEFT ? -0.1 : 0.1;
 
 				if(holdTime > 0.5 || controls.UI_LEFT_P || controls.UI_RIGHT_P)
-				switch(options[curSelected]) {
+				switch(options[curSelected]) 
+				{
 					case 'Framerate':
 						ClientPrefs.framerate += add;
 						if(ClientPrefs.framerate < 30) ClientPrefs.framerate = 30;
@@ -955,7 +992,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.pauseMusic = options[index];
-					//fix floats
 					case 'Miss Volume':
 						ClientPrefs.missVolume += floatAdd;
 						if(ClientPrefs.missVolume < 0) ClientPrefs.missVolume = 0;
@@ -1065,7 +1101,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 			case "Hitsound Volume":
 				daText = "How loud should be the hitsound?";
 			case 'Score Text design':
-				daText = "Type of formatting on score text\nEngine: Sc Mi Acc Ra (FCRa)\nPsych: Sc Mi Ra (Acc) - FCRa";
+				daText = "Type of formatting on score text\nEngine: Score Misses Accuracy Rating (Full Combo Rating)\nPsych: Score Misses Rating (Accuray) - Full Combo Rating";
 			case 'Input':
 				daText = "Type of input for keypresses\nI think that there isnt that much of a difference but here you go";
 		}

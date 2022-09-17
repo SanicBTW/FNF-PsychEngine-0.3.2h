@@ -17,7 +17,9 @@ typedef SwagSong =
 
 	var player1:String;
 	var player2:String;
-	var player3:String;
+	var player3:String; //deprecated, now replaced by gfVersion
+	var gfVersion:String;
+	var stage:String;
 
 	var arrowSkin:String;
 	var splashSkin:String;
@@ -33,10 +35,21 @@ class Song
 	public var arrowSkin:String;
 	public var splashSkin:String;
 	public var speed:Float = 1;
+	public var stage:String;
 
 	public var player1:String = 'bf';
 	public var player2:String = 'dad';
-	public var player3:String = 'gf';
+	public var player3:String = 'gf'; //deprecated
+	public var gfVersion:String = 'gf';
+
+	private static function onLoadJson(songJson:SwagSong) // Convert old charts to newest format
+	{
+		if(songJson.gfVersion == null)
+		{
+			songJson.gfVersion = songJson.player3;
+			songJson.player3 = null;
+		}
+	}
 
 	public function new(song, notes, bpm)
 	{
@@ -47,23 +60,17 @@ class Song
 
 	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson;
-		if(jsonInput == 'events') { //Makes the game not crash while trying to load an events chart, doesn't work on HTML tho
-			#if sys
-			rawJson = sys.io.File.getContent(Paths.json(folder.toLowerCase() + '/events')).trim();
-			#else
-			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/events')).trim();
-			#end
-		} else {
-			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
-		}
+		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
 		while (!rawJson.endsWith("}"))
 		{
 			rawJson = rawJson.substr(0, rawJson.length - 1);
 		}
 
-		return parseJSONshit(rawJson);
+		var songJson:SwagSong = parseJSONshit(rawJson);
+		StageData.loadDirectory(songJson);
+		onLoadJson(songJson);
+		return songJson;
 	}
 
 	public static function parseJSONshit(rawJson:String):SwagSong

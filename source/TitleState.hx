@@ -27,6 +27,12 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+#if android
+import com.player03.android6.Permissions;
+#end
+#if FEATURE_STORAGE_ACCESS
+import features.StorageAccess;
+#end
 
 using StringTools;
 
@@ -44,9 +50,7 @@ class TitleState extends MusicBeatState
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
 	var logoSpr:FlxSprite;
-
 	var curWacky:Array<String> = [];
-
 	var wackyImage:FlxSprite;
 
 	override public function create():Void
@@ -55,13 +59,30 @@ class TitleState extends MusicBeatState
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE) && FlxG.save.data.allowFileSystemAccess)
+		{
+			StorageAccess.checkStorage();
+		}
+		#end
+		#if windows
+		if(FlxG.save.data.allowFileSystemAccess)
+		{
+			StorageAccess.checkStorage();
+		}
+		#end
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		PlayerSettings.init();
+		//PlayerSettings.init(); they are initialized in perms prompt now
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		swagShader = new ColorSwap();
+
+		Main.tweenFPS();
+		Main.tweenMemory();
+
 		super.create();
 
 		FlxG.save.bind('funkin', 'ninjamuffin99');
@@ -70,11 +91,6 @@ class TitleState extends MusicBeatState
 		Highscore.load();
 
 		FlxG.mouse.visible = false;
-		#if FREEPLAY
-		MusicBeatState.switchState(new FreeplayState());
-		#elseif CHARTING
-		MusicBeatState.switchState(new ChartingState());
-		#else
 		#if desktop
 		DiscordClient.initialize();
 		Application.current.onExit.add (function (exitCode) {
@@ -85,7 +101,6 @@ class TitleState extends MusicBeatState
 		{
 			startIntro();
 		});
-		#end
 	}
 
 	var logoBl:FlxSprite;
