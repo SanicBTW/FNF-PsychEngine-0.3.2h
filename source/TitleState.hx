@@ -74,14 +74,13 @@ class TitleState extends MusicBeatState
 		#end
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		//PlayerSettings.init(); they are initialized in perms prompt now
+		#if html5
+		PlayerSettings.init(); //fucking dumb ass
+		#end
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		swagShader = new ColorSwap();
-
-		Main.tweenFPS();
-		Main.tweenMemory();
 
 		super.create();
 
@@ -100,6 +99,8 @@ class TitleState extends MusicBeatState
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
+			Main.tweenFPS();
+			Main.tweenMemory();
 		});
 	}
 

@@ -727,6 +727,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Icon Boping',
 		'Score Text design',
 		'Note Splashes',
+		'Smooth cam zooms',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
@@ -933,38 +934,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
 					case 'Icon Boping':
 						ClientPrefs.iconBoping = !ClientPrefs.iconBoping;
+					case 'Smooth cam zooms':
+						ClientPrefs.smoothCamZoom = !ClientPrefs.smoothCamZoom;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
 			}
 		} else {
-			/* cancelled idea because its not working properly for some reason
-			if(controls.ACCEPT)
-			{
-				switch(options[curSelected])
-				{
-					//on android, if you gave perms to the app you need to manually remove them in settings, this only removes the code access to filesystem nothing else
-					case 'Revoke permissions':
-						#if windows
-						DiscordClient.shutdown();
-						#end
-
-						FlxG.mouse.visible = true;
-
-						TitleState.initialized = false;
-						TitleState.closedState = false;
-
-						FlxG.save.data.answeredFSRequest = false;
-						FlxG.save.data.allowFileSystemAccess = false;
-						FlxG.save.flush();
-
-						FlxG.sound.music.fadeOut(0.3);
-						Main.tweenFPS(false, 0.5);
-						Main.tweenMemory(false, 0.5);
-						FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
-				}
-			}*/
-
 			if(controls.UI_LEFT || controls.UI_RIGHT) 
 			{
 				var add:Int = controls.UI_LEFT ? -1 : 1;
@@ -1104,6 +1080,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "Type of formatting on score text\nEngine: Score Misses Accuracy Rating (Full Combo Rating)\nPsych: Score Misses Rating (Accuray) - Full Combo Rating";
 			case 'Input':
 				daText = "Type of input for keypresses\nI think that there isnt that much of a difference but here you go";
+			case 'Smooth cam zooms':
+				daText = "If you want Psych cam zooms or Kade cam zooms";
 		}
 		descText.text = daText;
 
@@ -1185,6 +1163,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.cameraMovOnNoteP;
 					case 'Icon Boping':
 						daValue = ClientPrefs.iconBoping;
+					case 'Smooth cam zooms':
+						daValue = ClientPrefs.smoothCamZoom;
 				}
 				checkbox.daValue = daValue;
 			}

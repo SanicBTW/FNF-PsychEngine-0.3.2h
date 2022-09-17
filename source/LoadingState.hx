@@ -153,10 +153,10 @@ class LoadingState extends MusicBeatState
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
 		var directory:String = 'shared';
-		/*var weekDir:String = StageData.forceNextDirectory;
-		StageData.forceNextDirectory = null;*/
+		var weekDir:String = StageData.forceNextDirectory;
+		StageData.forceNextDirectory = null;
 
-		//if(weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
+		if(weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
 
 		Paths.setCurrentLevel(directory);
 		trace('Setting asset folder to ' + directory);

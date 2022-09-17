@@ -37,6 +37,7 @@ class ClientPrefs {
 	public static var scoreTextDesign:String = "Engine";
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
 	public static var inputType:String = "Kade";
+	public static var smoothCamZoom:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -104,6 +105,7 @@ class ClientPrefs {
 		FlxG.save.data.scoreTextDesign = scoreTextDesign;
 		FlxG.save.data.comboOffset = comboOffset;
 		FlxG.save.data.inputType = inputType;
+		FlxG.save.data.smoothCamZoom = smoothCamZoom;
 
 		FlxG.save.flush();
 
@@ -211,6 +213,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.inputType != null) {
 			inputType = FlxG.save.data.inputType;
+		}
+		if(FlxG.save.data.smoothCamZoom != null) {
+			smoothCamZoom = FlxG.save.data.smoothCamZoom;
 		}
 
 		var save:FlxSave = new FlxSave();
