@@ -39,6 +39,10 @@ class Note extends FlxSprite
 	public static var GREEN_NOTE:Int = 2;
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
+	public var noteSplashTexture:String = null;
+	public var noteSplashHue:Float = 0;
+	public var noteSplashSat:Float = 0;
+	public var noteSplashBrt:Float = 0;
 
 	public var texture(default, set):String = null;
 
@@ -55,6 +59,7 @@ class Note extends FlxSprite
 	}
 
 	private function set_noteType(value:String):String {
+		noteSplashTexture = PlayState.SONG.splashSkin;
 		colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
 		colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
 		colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
@@ -68,6 +73,9 @@ class Note extends FlxSprite
 			}
 			noteType = value;
 		}
+		noteSplashHue = colorSwap.hue;
+		noteSplashSat = colorSwap.saturation;
+		noteSplashBrt = colorSwap.brightness;
 		return value;
 	}
 

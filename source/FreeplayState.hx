@@ -1,6 +1,5 @@
 package;
 
-import ResetScoreSubstate.ResetScoreSubState;
 #if desktop
 import Discord.DiscordClient;
 #end

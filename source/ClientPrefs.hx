@@ -38,6 +38,7 @@ class ClientPrefs {
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
 	public static var inputType:String = "Kade";
 	public static var smoothCamZoom:Bool = true;
+	public static var opponentNoteSplash:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -106,6 +107,7 @@ class ClientPrefs {
 		FlxG.save.data.comboOffset = comboOffset;
 		FlxG.save.data.inputType = inputType;
 		FlxG.save.data.smoothCamZoom = smoothCamZoom;
+		FlxG.save.data.opponentNoteSplash = opponentNoteSplash;
 
 		FlxG.save.flush();
 
@@ -216,6 +218,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.smoothCamZoom != null) {
 			smoothCamZoom = FlxG.save.data.smoothCamZoom;
+		}
+		if(FlxG.save.data.opponentNoteSplash != null) {
+			opponentNoteSplash = FlxG.save.data.opponentNoteSplash;
 		}
 
 		var save:FlxSave = new FlxSave();

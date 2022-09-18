@@ -77,8 +77,8 @@ class PermissionsPrompt extends MusicBeatState
     override function update(elapsed:Float)
     {
         #if windows
-        if(FlxG.mouse.overlaps(yesText)){ onYes = true;}
-        if(FlxG.mouse.overlaps(noText)){ onYes = false;}
+        if(FlxG.mouse.overlaps(yesText)){ onYes = true; }
+        if(FlxG.mouse.overlaps(noText)){ onYes = false; }
 
         if(FlxG.mouse.overlaps(yesText) && FlxG.mouse.justPressed && !lime.app.Application.current.window.minimized)
         {

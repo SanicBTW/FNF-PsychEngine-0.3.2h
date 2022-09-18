@@ -53,6 +53,7 @@ class TitleState extends MusicBeatState
 	var curWacky:Array<String> = [];
 	var wackyImage:FlxSprite;
 
+	//TODO: RUN FIRST THIS AND GO TO THE PERMS PROMPT
 	override public function create():Void
 	{
 		FlxG.game.focusLostFramerate = 30;
