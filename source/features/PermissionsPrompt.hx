@@ -19,7 +19,7 @@ using StringTools;
 class PermissionsPrompt extends MusicBeatState
 {
     var bg:FlxSprite;
-    var prompts:FlxTypedGroup<Prompt>;
+    var prompts:FlxTypedGroup<CustomPrompt>;
 
     override function create()
     {
@@ -42,27 +42,11 @@ class PermissionsPrompt extends MusicBeatState
             bg.antialiasing = ClientPrefs.globalAntialiasing;
             add(bg);
     
-            prompts = new FlxTypedGroup<Prompt>();
+            prompts = new FlxTypedGroup<CustomPrompt>();
             add(prompts);
     
-            #if FEATURE_ONLINE_SONGS
-            var prompt = new Prompt
-            ({
-                header: 'Online fetching',
-                info: ['Do you want to allow', 'fetching songs from an', 'online server? (Hosted by me)', 'Can be offline sometimes', 'Note: needs a good', 'internet connection :('],
-                hfontSize: 25,
-                ifontSize: 20,
-                settingVar: "allowOnlineFetch"
-            });
-            prompt.screenCenter();
             #if FEATURE_STORAGE_ACCESS
-            prompt.x -= 220;
-            #end
-            prompts.add(prompt);
-            #end
-    
-            #if FEATURE_STORAGE_ACCESS
-            var prompt = new Prompt
+            var prompt = new CustomPrompt
             ({
                 header: 'FileSystem Access',
                 info: ["Do you want to allow", "access to the file system?"],
@@ -71,9 +55,6 @@ class PermissionsPrompt extends MusicBeatState
                 settingVar: 'allowFileSys'
             });
             prompt.screenCenter();
-            #if FEATURE_ONLINE_SONGS
-            prompt.x += 220;
-            #end
             prompts.add(prompt);
             #end
 
@@ -95,7 +76,7 @@ class PermissionsPrompt extends MusicBeatState
 
     override function update(elapsed:Float)
     {
-        prompts.forEach(function(prompt:Prompt)
+        prompts.forEach(function(prompt:CustomPrompt)
         {
             #if (windows || web)
             //clicky clicky
@@ -108,24 +89,9 @@ class PermissionsPrompt extends MusicBeatState
                 {
                     onComplete: function(twn:FlxTween)
                     {
-                        //hardcoded, sorry lol
-                        var moveTo:Float = 0;
-                        if(prompt.x == 675)
-                        {
-                            moveTo = prompt.x - 220;
-                        }
-                        else if(prompt.x == 235)
-                        {
-                            moveTo = prompt.x + 220;
-                        }
                         prompt.kill();
                         prompt.destroy();
                         prompts.remove(prompt, true);
-
-                        if(prompts.members.length == 1)
-                        {
-                            FlxTween.tween(prompts.members[0], {x: moveTo}, 1, { ease: FlxEase.smoothStepInOut });
-                        }
 
                         if(prompts.members.length == 0)
                         {
@@ -150,24 +116,9 @@ class PermissionsPrompt extends MusicBeatState
                     {
                         onComplete: function(twn:FlxTween)
                         {
-                            //hardcoded, sorry lol
-                            var moveTo:Float = 0;
-                            if(prompt.x == 675)
-                            {
-                                moveTo = prompt.x - 220;
-                            }
-                            else if(prompt.x == 235)
-                            {
-                                moveTo = prompt.x + 220;
-                            }
                             prompt.kill();
                             prompt.destroy();
                             prompts.remove(prompt, true);
-
-                            if(prompts.members.length == 1)
-                            {
-                                FlxTween.tween(prompts.members[0], {x: moveTo}, 1, { ease: FlxEase.smoothStepInOut });
-                            }
 
                             if(prompts.members.length == 0)
                             {
@@ -200,15 +151,15 @@ class PermissionsPrompt extends MusicBeatState
     #end
 }
 
-class Prompt extends FlxSpriteGroup
+class CustomPrompt extends FlxSpriteGroup
 {
     var bg:FlxSprite;
     var buttons:FlxSprite;
     public var okButtonReg:FlxSprite;
     public var cancelButtonReg:FlxSprite;
-    public var props:PromptProperties;
+    public var props:CustomPromptProperties;
 
-    public function new(properties:PromptProperties = null)
+    public function new(properties:CustomPromptProperties = null)
     {
         super();
 
@@ -304,7 +255,7 @@ class Prompt extends FlxSpriteGroup
     }
 }
 
-typedef PromptProperties =
+typedef CustomPromptProperties =
 {
     //the header of the prompt
     var header:String;
