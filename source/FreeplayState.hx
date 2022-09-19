@@ -57,10 +57,6 @@ class FreeplayState extends MusicBeatState
 		openfl.Assets.cache.clear("songs");
 		openfl.Assets.cache.clear("images");
 
-		PlayState.inst = null;
-		PlayState.voices = null;
-		PlayState.SONG = null;
-
 		System.gc();
 
 		transIn = FlxTransitionableState.defaultTransIn;
@@ -326,8 +322,6 @@ class FreeplayState extends MusicBeatState
 				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
-				PlayState.inst = Paths.inst(PlayState.SONG.song);
-				PlayState.voices = Paths.voices(PlayState.SONG.song);
 	
 				trace('CURRENT WEEK: ' + WeekData.getWeekFileName());
 				if(colorTween != null) {

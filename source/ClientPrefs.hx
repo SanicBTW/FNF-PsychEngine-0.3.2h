@@ -39,6 +39,11 @@ class ClientPrefs {
 	public static var inputType:String = "Kade";
 	public static var smoothCamZoom:Bool = true;
 	public static var opponentNoteSplash:Bool = true;
+	public static var ratingOffset:Int = 0;
+	public static var sickWindow:Int = 45;
+	public static var goodWindow:Int = 90;
+	public static var badWindow:Int = 135;
+	public static var safeFrames:Float = 10;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -108,6 +113,11 @@ class ClientPrefs {
 		FlxG.save.data.inputType = inputType;
 		FlxG.save.data.smoothCamZoom = smoothCamZoom;
 		FlxG.save.data.opponentNoteSplash = opponentNoteSplash;
+		FlxG.save.data.ratingOffset = ratingOffset;
+		FlxG.save.data.sickWindow = sickWindow;
+		FlxG.save.data.goodWindow = goodWindow;
+		FlxG.save.data.badWindow = badWindow;
+		FlxG.save.data.safeFrames = safeFrames;
 
 		FlxG.save.flush();
 
@@ -221,6 +231,21 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.opponentNoteSplash != null) {
 			opponentNoteSplash = FlxG.save.data.opponentNoteSplash;
+		}
+		if(FlxG.save.data.ratingOffset != null) {
+			ratingOffset = FlxG.save.data.ratingOffset;
+		}
+		if(FlxG.save.data.sickWindow != null) {
+			sickWindow = FlxG.save.data.sickWindow;
+		}
+		if(FlxG.save.data.goodWindow != null) {
+			goodWindow = FlxG.save.data.goodWindow;
+		}
+		if(FlxG.save.data.badWindow != null) {
+			badWindow = FlxG.save.data.badWindow;
+		}
+		if(FlxG.save.data.safeFrames != null) {
+			safeFrames = FlxG.save.data.safeFrames;
 		}
 
 		var save:FlxSave = new FlxSave();

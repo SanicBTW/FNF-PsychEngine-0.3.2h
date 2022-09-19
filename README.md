@@ -7,6 +7,10 @@ Stuff gone:
 
 You can add these again in your fork if you want
 
-Pending stuff:
+Peding stuff:
 
-- Make Accuracy MS based instead of Rating based
+- Fix graphic size on pixel stages
+- Fix story mode state
+- - Difficulty selection
+- - Finish song issue
+- Properly set the back state on pause substate

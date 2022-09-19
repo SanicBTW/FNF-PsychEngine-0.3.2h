@@ -702,6 +702,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Hitsound Volume',
 		'Score Text design',
 		'Input',
+		'Rating Offset',
+		'Sick! Hit Window',
+		'Good Hit Window',
+		'Bad Hit Window',
+		'Safe Frames',
 	];
 
 	static var options:Array<String> = [
@@ -717,6 +722,11 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Ghost Tapping',
 		'Camera movement on note press',
 		'Input',
+		'Rating Offset',
+		'Sick! Hit Window',
+		'Good Hit Window',
+		'Bad Hit Window',
+		'Safe Frames',
 		'VISUALS AND UI',
 		'FPS Counter',
 		'Memory Counter',
@@ -728,6 +738,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Score Text design',
 		'Note Splashes',
 		'Smooth cam zooms',
+		'Opponent Note Splashes',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
@@ -936,6 +947,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.iconBoping = !ClientPrefs.iconBoping;
 					case 'Smooth cam zooms':
 						ClientPrefs.smoothCamZoom = !ClientPrefs.smoothCamZoom;
+					case 'Opponent Note Splashes':
+						ClientPrefs.opponentNoteSplash = !ClientPrefs.opponentNoteSplash;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -990,6 +1003,26 @@ class PreferencesSubstate extends MusicBeatSubstate
 						else if(controls.UI_RIGHT_P)
 							changeState(1, options);
 						ClientPrefs.inputType = options[index];
+					case 'Rating Offset':
+						ClientPrefs.ratingOffset += add;
+						if(ClientPrefs.ratingOffset < -30) ClientPrefs.ratingOffset = -30;
+						else if(ClientPrefs.ratingOffset > 30) ClientPrefs.ratingOffset = 30;
+					case 'Sick! Hit Window':
+						ClientPrefs.sickWindow += add;
+						if(ClientPrefs.sickWindow < 15) ClientPrefs.sickWindow = 15;
+						else if(ClientPrefs.sickWindow > 45) ClientPrefs.sickWindow = 45;
+					case 'Good Hit Window':
+						ClientPrefs.goodWindow += add;
+						if(ClientPrefs.goodWindow < 15) ClientPrefs.goodWindow = 15;
+						else if(ClientPrefs.goodWindow > 90) ClientPrefs.goodWindow = 90;
+					case 'Bad Hit Window':
+						ClientPrefs.badWindow += add;
+						if(ClientPrefs.badWindow < 15) ClientPrefs.badWindow = 15;
+						else if(ClientPrefs.badWindow > 135) ClientPrefs.badWindow = 135;
+					case 'Safe Frames':
+						ClientPrefs.safeFrames += floatAdd;
+						if(ClientPrefs.safeFrames < 2) ClientPrefs.safeFrames = 2;
+						else if(ClientPrefs.safeFrames > 10) ClientPrefs.safeFrames = 10;
 				}
 				reloadValues();
 
@@ -1082,6 +1115,18 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "Type of input for keypresses\nI think that there isnt that much of a difference but here you go";
 			case 'Smooth cam zooms':
 				daText = "If you want Psych cam zooms or Kade cam zooms";
+			case 'Opponent Note Splashes':
+				daText = "If enabled, note splashes will show on opponent note hit";
+			case 'Rating Offset':
+				daText = 'Changes how late/early you have to hit for a "Sick!"\nHigher values mean you have to hit later.';
+			case 'Sick! Hit Window':
+				daText  = 'Changes the amount of time you have\nfor hitting a "Sick!" in milliseconds.';
+			case 'Good Hit Window':
+				daText = 'Changes the amount of time you have\nfor hitting a "Good" in milliseconds.';
+			case 'Bad Hit Window':
+				daText = 'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.';
+			case 'Safe Frames':
+				daText = 'Changes how many frames you have for\nhitting a note earlier or late.';
 		}
 		descText.text = daText;
 
@@ -1165,6 +1210,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.iconBoping;
 					case 'Smooth cam zooms':
 						daValue = ClientPrefs.smoothCamZoom;
+					case 'Opponent Note Splashes':
+						daValue = ClientPrefs.opponentNoteSplash;
 				}
 				checkbox.daValue = daValue;
 			}
@@ -1186,6 +1233,16 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = ClientPrefs.scoreTextDesign;
 					case 'Input':
 						daText = ClientPrefs.inputType;
+					case 'Rating Offset':
+						daText = ClientPrefs.ratingOffset + "ms";
+					case 'Sick! Hit Window':
+						daText = ClientPrefs.sickWindow + "ms";
+					case 'Good Hit Window':
+						daText = ClientPrefs.goodWindow + "ms";
+					case 'Bad Hit Window':
+						daText = ClientPrefs.badWindow + "ms";
+					case 'Safe Frames':
+						daText = '' + FlxMath.roundDecimal(ClientPrefs.safeFrames, 1);
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;
