@@ -31,7 +31,7 @@ using StringTools;
 // TO DO: Redo the menu creation system for not being as dumb
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences'];
+	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences', 'Revoke permissions'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -115,6 +115,26 @@ class OptionsState extends MusicBeatState
 
 				case 'Adjust Delay and Combo':
 					LoadingState.loadAndSwitchState(new NoteOffsetState());
+
+				//on android, if you gave perms to the app you need to manually remove them in settings, this only removes the code access to filesystem nothing else
+				case 'Revoke permissions':
+					#if windows
+					DiscordClient.shutdown();
+					#end
+
+					TitleState.initialized = false;
+					TitleState.closedState = false;
+
+					ClientPrefs.allowFileSys = false;
+					ClientPrefs.answeredReq = false;
+					ClientPrefs.saveSettings();
+
+					FlxG.mouse.visible = true;
+
+					FlxG.sound.music.fadeOut(0.3);
+					Main.tweenFPS(false, 0.5);
+					Main.tweenMemory(false, 0.5);
+					FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
 			}
 		}
 	}

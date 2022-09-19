@@ -45,6 +45,10 @@ class ClientPrefs {
 	public static var badWindow:Int = 135;
 	public static var safeFrames:Float = 10;
 
+	//perms shit - btw make it use a map instead of this shit please - guess i will never do it
+	public static var allowFileSys:Bool = false;
+	public static var answeredReq:Bool = false;
+
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
 		S, DOWN,			//Note Down
@@ -81,7 +85,9 @@ class ClientPrefs {
 	];
 	public static var lastControls:Array<FlxKey> = defaultKeys.copy();
 
-	public static function saveSettings() {
+	//ayo i might change this, im too fucking tired of adding FlxG.save.data for each new option
+	public static function saveSettings() 
+	{
 		FlxG.save.data.downScroll = downScroll;
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.showFPS = showFPS;
@@ -118,6 +124,8 @@ class ClientPrefs {
 		FlxG.save.data.goodWindow = goodWindow;
 		FlxG.save.data.badWindow = badWindow;
 		FlxG.save.data.safeFrames = safeFrames;
+		FlxG.save.data.allowFileSys = allowFileSys;
+		FlxG.save.data.answeredReq = answeredReq;
 
 		FlxG.save.flush();
 
@@ -246,6 +254,12 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.safeFrames != null) {
 			safeFrames = FlxG.save.data.safeFrames;
+		}
+		if(FlxG.save.data.allowFileSys != null) {
+			allowFileSys = FlxG.save.data.allowFileSys;
+		}
+		if(FlxG.save.data.answeredReq != null) {
+			answeredReq = FlxG.save.data.answeredReq;
 		}
 
 		var save:FlxSave = new FlxSave();

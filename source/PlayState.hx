@@ -64,7 +64,6 @@ class PlayState extends MusicBeatState
 		['Sick!', 1], //From 90% to 99%
 		['Perfect!', 1] //The value on this one isn't used actually, since Perfect is always "1"
 	]; 
-
 	//event variables
 	private var isCameraOnForcedPos:Bool = false;
 	#if (haxe >= "4.0.0")
@@ -194,12 +193,19 @@ class PlayState extends MusicBeatState
 	public var opponentCameraOffset:Array<Float> = null;
 	public var girlfriendCameraOffset:Array<Float> = null;
 	public var introSoundsSuffix:String = '';
+	public static var inst:Dynamic = null;
+	public static var voices:Dynamic = null;
 	override public function create()
 	{
 		PauseSubState.songName = null; //Reset to default
 
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
+
+		if(inst == null)
+			inst = Paths.inst(PlayState.SONG.song);
+		if(voices == null)
+			voices = Paths.voices(PlayState.SONG.song);
 
 		practiceMode = false;
 		camGame = new FlxCamera();
@@ -1133,7 +1139,7 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		FlxG.sound.playMusic(Paths.inst(PlayState.SONG.song), 1, false);
+		FlxG.sound.playMusic(inst, 1, false);
 		FlxG.sound.music.onComplete = finishSong;
 		vocals.play();
 
@@ -1167,12 +1173,12 @@ class PlayState extends MusicBeatState
 		curSong = songData.song;
 
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(Paths.voices(PlayState.SONG.song));
+			vocals = new FlxSound().loadEmbedded(voices);
 		else
 			vocals = new FlxSound();
 
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(Paths.inst(PlayState.SONG.song)));
+		FlxG.sound.list.add(new FlxSound().loadEmbedded(inst));
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);

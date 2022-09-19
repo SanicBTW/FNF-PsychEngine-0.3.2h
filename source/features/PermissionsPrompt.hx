@@ -1,5 +1,11 @@
 package features;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.text.FlxText;
+import flixel.group.FlxSpriteGroup;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.FlxG;
@@ -10,55 +16,67 @@ import com.player03.android6.Permissions;
 
 using StringTools;
 
-//totally not based off reset score substate
-
-//DID I JUST SPEND 1 HOUR TRYING TO FIX RANDOM CRASHES ON ANDROID JUST BECAUSE ANDROID CONTROLS WERENT INITIALIZED
 class PermissionsPrompt extends MusicBeatState
 {
     var bg:FlxSprite;
-    var onYes:Bool = false;
-    var yesText:Alphabet;
-    var noText:Alphabet;
+    var prompts:FlxTypedGroup<Prompt>;
 
-    //uses flxg save data cuz clientprefs arent loaded
     override function create()
     {
 		PlayerSettings.init();
 
-        if(!FlxG.save.data.answeredFSRequest) //basically first start
+        FlxG.save.bind('funkin', 'ninjamuffin99');
+		ClientPrefs.loadPrefs();
+
+        #if (!FEATURE_STORAGE_ACCESS) //send to title state if none of the features are enabled
+        FlxTransitionableState.skipNextTransIn = true;
+        FlxTransitionableState.skipNextTransOut = true;
+        MusicBeatState.switchState(new TitleState());
+        #end
+
+        #if (FEATURE_STORAGE_ACCESS) //do the griddy if some feature was found enabled
+        if(!ClientPrefs.answeredReq)
         {
             bg = new FlxSprite().loadGraphic(Paths.image("menuDesat"), false, FlxG.width, FlxG.height);
-            bg.alpha = 0.5;
-            bg.scrollFactor.set();
             bg.screenCenter();
             bg.antialiasing = ClientPrefs.globalAntialiasing;
             add(bg);
     
-            var shit:Alphabet = new Alphabet(0, 180, "Do you want to", true, false, 0.05, 0.9);
-            shit.screenCenter(X);
-            add(shit);
+            prompts = new FlxTypedGroup<Prompt>();
+            add(prompts);
     
-            var shit:Alphabet = new Alphabet(0, shit.y + 90, "allow FileSystem access?", true, false, 0.05, 0.9);
-            shit.screenCenter(X);
-            add(shit);
+            #if FEATURE_ONLINE_SONGS
+            var prompt = new Prompt
+            ({
+                header: 'Online fetching',
+                info: ['Do you want to allow', 'fetching songs from an', 'online server? (Hosted by me)', 'Can be offline sometimes', 'Note: needs a good', 'internet connection :('],
+                hfontSize: 25,
+                ifontSize: 20,
+                settingVar: "allowOnlineFetch"
+            });
+            prompt.screenCenter();
+            #if FEATURE_STORAGE_ACCESS
+            prompt.x -= 220;
+            #end
+            prompts.add(prompt);
+            #end
     
-            var shit:Alphabet = new Alphabet(0, shit.y + 90, "We won't ask again", true, false, 0.05, 0.7);
-            shit.screenCenter(X);
-            add(shit);
-    
-    
-            yesText = new Alphabet(0, shit.y + 150, 'Yes', true);
-            yesText.screenCenter(X);
-            yesText.x -= 200;
-            add(yesText);
-    
-            noText = new Alphabet(0, shit.y + 150, "No", true);
-            noText.screenCenter(X);
-            noText.x += 200;
-            add(noText);
-    
-            updateOptions();
-    
+            #if FEATURE_STORAGE_ACCESS
+            var prompt = new Prompt
+            ({
+                header: 'FileSystem Access',
+                info: ["Do you want to allow", "access to the file system?"],
+                hfontSize: 23,
+                ifontSize: 20,
+                settingVar: 'allowFileSys'
+            });
+            prompt.screenCenter();
+            #if FEATURE_ONLINE_SONGS
+            prompt.x += 220;
+            #end
+            prompts.add(prompt);
+            #end
+
             #if android
             Permissions.onPermissionsGranted.add(_onPermsGrantedEvent);
             Permissions.onPermissionsDenied.add(_onPermsDeniedEvent);
@@ -70,87 +88,231 @@ class PermissionsPrompt extends MusicBeatState
             FlxTransitionableState.skipNextTransOut = true;
             MusicBeatState.switchState(new TitleState());
         }
+        #end
 
         super.create();
     }
 
     override function update(elapsed:Float)
     {
-        #if windows
-        if(FlxG.mouse.overlaps(yesText)){ onYes = true; }
-        if(FlxG.mouse.overlaps(noText)){ onYes = false; }
-
-        if(FlxG.mouse.overlaps(yesText) && FlxG.mouse.justPressed && !lime.app.Application.current.window.minimized)
+        prompts.forEach(function(prompt:Prompt)
         {
-            FlxG.save.data.answeredFSRequest = true;
-            FlxG.save.data.allowFileSystemAccess = true;
-            FlxG.save.flush();
-            FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-            MusicBeatState.switchState(new TitleState());
-        }
-        else if(FlxG.mouse.overlaps(noText) && FlxG.mouse.justPressed && !lime.app.Application.current.window.minimized)
-        {
-            FlxG.save.data.answeredFSRequest = true;
-            FlxG.save.data.allowFileSystemAccess = false;
-            FlxG.save.flush();
-            FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-            MusicBeatState.switchState(new TitleState());
-        }
-        #elseif android
-        for(touch in FlxG.touches.list)
-        {
-            if(touch.overlaps(yesText)){ onYes = true; }
-            if(touch.overlaps(noText)){ onYes = false; }
-
-            if(touch.overlaps(yesText) && touch.justReleased)
+            #if (windows || web)
+            //clicky clicky
+            if(FlxG.mouse.overlaps(prompt) && FlxG.mouse.justPressed && (FlxG.mouse.overlaps(prompt.okButtonReg) || FlxG.mouse.overlaps(prompt.cancelButtonReg)))
             {
-                Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
-            }
-            else if(touch.overlaps(noText) && touch.justReleased)
-            {
-                FlxG.save.data.answeredFSRequest = true;
-                FlxG.save.data.allowFileSystemAccess = false;
-                FlxG.save.flush();
-                FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-                MusicBeatState.switchState(new TitleState());
-            }
-        }
-        #end
+                //DUDE IM SO FUCKING SMART HOLY SHITTTTT
+                Reflect.setProperty(ClientPrefs, prompt.props.settingVar, (FlxG.mouse.overlaps(prompt.okButtonReg) ? true : false));
+                //dawg???
+                FlxTween.tween(prompt, {alpha: 0}, 0.5, 
+                {
+                    onComplete: function(twn:FlxTween)
+                    {
+                        //hardcoded, sorry lol
+                        var moveTo:Float = 0;
+                        if(prompt.x == 675)
+                        {
+                            moveTo = prompt.x - 220;
+                        }
+                        else if(prompt.x == 235)
+                        {
+                            moveTo = prompt.x + 220;
+                        }
+                        prompt.kill();
+                        prompt.destroy();
+                        prompts.remove(prompt, true);
 
-        updateOptions();
+                        if(prompts.members.length == 1)
+                        {
+                            FlxTween.tween(prompts.members[0], {x: moveTo}, 1, { ease: FlxEase.smoothStepInOut });
+                        }
+
+                        if(prompts.members.length == 0)
+                        {
+                            ClientPrefs.answeredReq = true;
+                            ClientPrefs.saveSettings();
+                            MusicBeatState.switchState(new TitleState());
+                        }
+                    }
+                });
+            }
+            #end
+
+            //same shit as above but for android lol
+            #if (android)
+            for(touch in FlxG.touches.list)
+            {
+                if(touch.overlaps(prompt) && touch.justReleased && (touch.overlaps(prompt.okButtonReg) || touch.overlaps(prompt.cancelButtonReg)))
+                {
+                    if(prompt.props.header == 'FileSystem Access'){ Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]); }
+                    Reflect.setProperty(ClientPrefs, prompt.props.settingVar, (touch.overlaps(prompt.okButtonReg) ? true : false));
+                    FlxTween.tween(prompt, {alpha: 0}, 0.5, 
+                    {
+                        onComplete: function(twn:FlxTween)
+                        {
+                            //hardcoded, sorry lol
+                            var moveTo:Float = 0;
+                            if(prompt.x == 675)
+                            {
+                                moveTo = prompt.x - 220;
+                            }
+                            else if(prompt.x == 235)
+                            {
+                                moveTo = prompt.x + 220;
+                            }
+                            prompt.kill();
+                            prompt.destroy();
+                            prompts.remove(prompt, true);
+
+                            if(prompts.members.length == 1)
+                            {
+                                FlxTween.tween(prompts.members[0], {x: moveTo}, 1, { ease: FlxEase.smoothStepInOut });
+                            }
+
+                            if(prompts.members.length == 0)
+                            {
+                                ClientPrefs.answeredReq = true;
+                                ClientPrefs.saveSettings();
+                                MusicBeatState.switchState(new TitleState());
+                            }
+                        }
+                    });
+                }
+            }
+            #end
+        });
 
         super.update(elapsed);
     }
 
-    function updateOptions() 
-    {
-		var scales:Array<Float> = [0.75, 1];
-		var alphas:Array<Float> = [0.6, 1.25];
-		var confirmInt:Int = onYes ? 1 : 0;
-
-		yesText.alpha = alphas[confirmInt];
-		yesText.scale.set(scales[confirmInt], scales[confirmInt]);
-		noText.alpha = alphas[1 - confirmInt];
-		noText.scale.set(scales[1 - confirmInt], scales[1 - confirmInt]);
-	}
-
+    #if android
     static function _onPermsGrantedEvent(args:Array<String>):Void
     {
         trace("perms granted");
-        FlxG.save.data.answeredFSRequest = true;
-        FlxG.save.data.allowFileSystemAccess = true;
-        FlxG.save.flush();
-        FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-        MusicBeatState.switchState(new TitleState());
+        ClientPrefs.allowFileSys = true;
     }
 
     static function _onPermsDeniedEvent(args:Array<String>):Void
     {
         trace("perms denied");
-        FlxG.save.data.answeredFSRequest = true;
-        FlxG.save.data.allowFileSystemAccess = false;
-        FlxG.save.flush();
-        FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-        MusicBeatState.switchState(new TitleState());
+        ClientPrefs.allowFileSys = true;
     }
+    #end
+}
+
+class Prompt extends FlxSpriteGroup
+{
+    var bg:FlxSprite;
+    var buttons:FlxSprite;
+    public var okButtonReg:FlxSprite;
+    public var cancelButtonReg:FlxSprite;
+    public var props:PromptProperties;
+
+    public function new(properties:PromptProperties = null)
+    {
+        super();
+
+        if(properties == null)
+            properties = 
+            {
+                header: "Placeholder",
+                info: ["This is a prompt placeholder", "modify this in the code"],
+                hfontSize: 25,
+                ifontSize: 20,
+                settingVar: null
+            }
+
+        props = properties;
+
+        bg = new FlxSprite().loadGraphic(Paths.image("ui/promptbg"));
+        bg.antialiasing = ClientPrefs.globalAntialiasing;
+        add(bg);
+
+        var text = new FlxText(bg.x + 105, bg.y + 30, 0, properties.header, properties.hfontSize);
+        text.setFormat(Paths.font("vcr.ttf"), properties.hfontSize, FlxColor.BLACK, LEFT);
+        text.antialiasing = ClientPrefs.globalAntialiasing;
+        add(text);
+
+        //shit couldnt afford an \n
+        var prevText:FlxText = null;
+        for(i in 0...properties.info.length)
+        {
+            var text = new FlxText(bg.x + 12, (prevText == null ? text.y + 50 : prevText.y + 20), 0, properties.info[i], properties.ifontSize);
+            text.setFormat(Paths.font("vcr.ttf"), properties.ifontSize, FlxColor.BLACK, LEFT);
+            text.antialiasing = ClientPrefs.globalAntialiasing;
+            add(text);
+            prevText = text;
+        }
+
+        //im so fucking smart
+        buttons = new FlxSprite(bg.x + 15, bg.y + 260);
+        buttons.frames = Paths.getSparrowAtlas('ui/prompt_buttons');
+        buttons.animation.addByIndices('but0', 'buttons', [0], '', 0);
+        buttons.animation.addByIndices('but1', 'buttons', [1], '', 0);
+        buttons.animation.play('but0', true);
+        add(buttons);
+
+        //used for mouse operations
+        okButtonReg = new FlxSprite(buttons.x, buttons.y).makeGraphic(Std.int(buttons.width / 2), Std.int(buttons.height), FlxColor.TRANSPARENT);
+        add(okButtonReg);
+
+        cancelButtonReg = new FlxSprite(buttons.x + (buttons.width / 2), buttons.y).makeGraphic(Std.int(buttons.width / 2), Std.int(buttons.height), FlxColor.TRANSPARENT);
+        add(cancelButtonReg);
+    }
+
+    //handle button sfx, anims and shit
+    override function update(elapsed:Float)
+    {
+        //IM FUCKING BECOMING SMARTER EVERY FUCKING DAYYYYYYY
+        #if (windows || web)
+        if(FlxG.mouse.overlaps(okButtonReg) && buttons.animation.curAnim.name == "but1")
+            changeAnim("but0");
+
+        if(FlxG.mouse.overlaps(cancelButtonReg) && buttons.animation.curAnim.name == "but0")
+            changeAnim("but1");
+
+        if(FlxG.mouse.justPressed && (FlxG.mouse.overlaps(okButtonReg) || FlxG.mouse.overlaps(cancelButtonReg)))
+        {
+            FlxG.sound.play(Paths.sound('cancelMenu'));
+        }
+        #end
+
+        //same logic as above
+        #if (android)
+        for(touch in FlxG.touches.list)
+        {
+            if(touch.overlaps(okButtonReg) && buttons.animation.curAnim.name == "but1")
+                changeAnim("but0");
+
+            if(touch.overlaps(cancelButtonReg) && buttons.animation.curAnim.name == "but0")
+                changeAnim("but1");
+
+            if(touch.justReleased && (touch.overlaps(okButtonReg) || touch.overlaps(cancelButtonReg)))
+            {
+                FlxG.sound.play(Paths.sound('cancelMenu'));
+            }
+        }
+        #end
+
+        super.update(elapsed);
+    }
+
+    function changeAnim(newAnim:String)
+    {
+        buttons.animation.play(newAnim, true);
+        FlxG.sound.play(Paths.sound('scrollMenu'));
+    }
+}
+
+typedef PromptProperties =
+{
+    //the header of the prompt
+    var header:String;
+    //the info shit of the prompt
+    var info:Array<String>;
+    //the header font size
+    var hfontSize:Int;
+    //the info font size
+    var ifontSize:Int;
+    var settingVar:String;
 }

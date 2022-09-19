@@ -53,7 +53,6 @@ class TitleState extends MusicBeatState
 	var curWacky:Array<String> = [];
 	var wackyImage:FlxSprite;
 
-	//TODO: RUN FIRST THIS AND GO TO THE PERMS PROMPT
 	override public function create():Void
 	{
 		FlxG.game.focusLostFramerate = 30;
@@ -62,31 +61,24 @@ class TitleState extends MusicBeatState
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];
-		if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE) && FlxG.save.data.allowFileSystemAccess)
+		if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE) && ClientPrefs.allowFileSys)
 		{
 			StorageAccess.checkStorage();
 		}
 		#end
 		#if windows
-		if(FlxG.save.data.allowFileSystemAccess)
+		if(ClientPrefs.allowFileSys)
 		{
 			StorageAccess.checkStorage();
 		}
 		#end
 		FlxG.keys.preventDefaultKeys = [TAB];
 
-		#if html5
-		PlayerSettings.init(); //fucking dumb ass
-		#end
-
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
 		swagShader = new ColorSwap();
 
 		super.create();
-
-		FlxG.save.bind('funkin', 'ninjamuffin99');
-		ClientPrefs.loadPrefs();
 
 		Highscore.load();
 

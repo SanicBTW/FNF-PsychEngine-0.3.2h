@@ -14,8 +14,7 @@ class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	// We gonna ask if the player wants to give permissions if not we pass and we dont ask again, if player allows then cool
-	var initialState:Class<FlxState> = #if FEATURE_STORAGE_ACCESS features.PermissionsPrompt #else TitleState #end; 
+	var initialState:Class<FlxState> = features.PermissionsPrompt; 
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
@@ -70,14 +69,14 @@ class Main extends Sprite
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
-		fpsVar = new FPS(10, 8, 0xFFFFFF);
+		fpsVar = new FPS(13, 8, 0xFFFFFF);
 		addChild(fpsVar);
 		if(fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 			fpsVar.alpha = 0;
 		}
 
-		memoryVar = new MemoryCounter(10, 20);
+		memoryVar = new MemoryCounter(13, 20);
 		addChild(memoryVar);
 		if(memoryVar != null){
 			memoryVar.visible = ClientPrefs.showMemory;
@@ -85,11 +84,7 @@ class Main extends Sprite
 		}
 
 		FlxG.mouse.useSystemCursor = true;
-		#if windows
 		FlxG.mouse.visible = true;
-		#else
-		FlxG.mouse.visible = false;
-		#end
 		FlxG.autoPause = false;
 	}
 
