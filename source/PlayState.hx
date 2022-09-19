@@ -2611,15 +2611,12 @@ class PlayState extends MusicBeatState
 
 			if (!isPixelStage)
 			{
-				rating.setGraphicSize(Std.int(rating.width * 0.7));
-				rating.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 			}
 			else
 			{
 				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
-				rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.85));
 			}
 
 			numScore.updateHitbox();

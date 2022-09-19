@@ -9,7 +9,6 @@ You can add these again in your fork if you want
 
 Peding stuff:
 
-- Fix graphic size on pixel stages
 - Fix story mode state
 - - Difficulty selection
 - - Finish song issue
