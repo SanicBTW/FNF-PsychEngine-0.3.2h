@@ -1,0 +1,18 @@
+{
+	"songs": [
+		["amaze-meisakura", "bf", [0, 0, 0]],
+		["cirnos-perfect-math-class", "bf", [0, 0, 0]],
+		["crossing-delta", "bf", [0, 0, 0]],
+		["equilibrium", "bf", [0, 0, 0]],
+		["four-veiled-stars", "bf", [0, 0, 0]],
+		["rumias-theme", "bf", [0, 0, 0]]
+	],
+
+	"storyName": "",
+	"weekBefore": "tutorial",
+	"weekName": "Mod Ports",
+	"startUnlocked": true,
+
+	"hideStoryMode": false,
+	"hideFreeplay": false
+}
