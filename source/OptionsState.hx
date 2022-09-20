@@ -746,6 +746,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Good Hit Window',
 		'Bad Hit Window',
 		'Safe Frames',
+		'Freestyle BF',
 		'VISUALS AND UI',
 		'FPS Counter',
 		'Memory Counter',
@@ -969,6 +970,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.ratingEffects = !ClientPrefs.ratingEffects;
 					case 'Num score effects':
 						ClientPrefs.numScoreEffects = !ClientPrefs.numScoreEffects;
+					case 'Freestyle BF':
+						ClientPrefs.ghostTappingBFSing = !ClientPrefs.ghostTappingBFSing;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1149,6 +1152,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'If disabled, there will not be any tween\non the rating';
 			case 'Num score effects':
 				daText = 'If disabled, there will not be any tween\non the num score';
+			case 'Freestyle BF':
+				daText = 'If enabled, BF will sing in the strum direction\nonly works with Ghost Tapping';
 		}
 		descText.text = daText;
 
@@ -1236,6 +1241,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.ratingEffects;
 					case 'Num score effects':
 						daValue = ClientPrefs.numScoreEffects;
+					case 'Freestyle BF':
+						daValue = ClientPrefs.ghostTappingBFSing;
 				}
 				checkbox.daValue = daValue;
 			}

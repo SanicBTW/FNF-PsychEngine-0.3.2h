@@ -2838,7 +2838,7 @@ class PlayState extends MusicBeatState
 			});
 
 			//dawg tf
-			if(ClientPrefs.ghostTapping && !cpuControlled)
+			if(ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
 			{
 				var index = pressArray.indexOf(pressArray.contains(true));
 				if(pressArray[index])
@@ -2952,7 +2952,7 @@ class PlayState extends MusicBeatState
 			});
 
 			//dawg tf
-			if(ClientPrefs.ghostTapping && !cpuControlled)
+			if(ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
 			{
 				var index = controlArray.indexOf(controlArray.contains(true));
 				if(controlArray[index])

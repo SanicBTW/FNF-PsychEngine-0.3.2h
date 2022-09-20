@@ -47,6 +47,7 @@ class ClientPrefs {
 	public static var answeredReq:Bool = false;
 	public static var ratingEffects:Bool = true;
 	public static var numScoreEffects:Bool = true;
+	public static var ghostTappingBFSing:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -126,6 +127,7 @@ class ClientPrefs {
 		FlxG.save.data.answeredReq = answeredReq;
 		FlxG.save.data.ratingEffects = ratingEffects;
 		FlxG.save.data.numScoreEffects = numScoreEffects;
+		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
 
 		FlxG.save.flush();
 
@@ -263,6 +265,9 @@ class ClientPrefs {
 		}
 		if(FlxG.save.data.numScoreEffects != null) {
 			numScoreEffects = FlxG.save.data.numScoreEffects;
+		}
+		if(FlxG.save.data.ghostTappingBFSing != null) {
+			ghostTappingBFSing = FlxG.save.data.ghostTappingBFSing;
 		}
 
 		var save:FlxSave = new FlxSave();
