@@ -85,7 +85,9 @@ class Main extends Sprite
 
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = true;
+		#if !android
 		FlxG.autoPause = false;
+		#end
 	}
 
 	//deez comin from fof repo, i liked it
