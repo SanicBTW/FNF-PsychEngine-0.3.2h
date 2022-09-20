@@ -69,14 +69,14 @@ class Main extends Sprite
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
-		fpsVar = new FPS(13, 8, 0xFFFFFF);
+		fpsVar = new FPS(10, 8, 0xFFFFFF);
 		addChild(fpsVar);
 		if(fpsVar != null) {
 			fpsVar.visible = ClientPrefs.showFPS;
 			fpsVar.alpha = 0;
 		}
 
-		memoryVar = new MemoryCounter(13, 20);
+		memoryVar = new MemoryCounter(10, 20);
 		addChild(memoryVar);
 		if(memoryVar != null){
 			memoryVar.visible = ClientPrefs.showMemory;

@@ -12,4 +12,3 @@ Peding stuff:
 - Fix story mode state
 - - Difficulty selection
 - - Finish song issue
-- Properly set the back state on pause substate

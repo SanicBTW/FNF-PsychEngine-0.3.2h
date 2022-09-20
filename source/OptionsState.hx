@@ -31,7 +31,7 @@ using StringTools;
 // TO DO: Redo the menu creation system for not being as dumb
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences', 'Revoke permissions'];
+	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences', #if (FEATURE_STORAGE_ACCESS) 'Revoke permissions' #end];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -713,7 +713,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GAMEPLAY',
 		'VISUALS AND UI',
 		'AUDIO',
-		'OPTIMIZATION',
 	];
 	static var noCheckbox:Array<String> = [
 		'Framerate',
@@ -757,16 +756,15 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Icon Boping',
 		'Score Text design',
 		'Note Splashes',
-		'Smooth cam zooms',
 		'Opponent Note Splashes',
+		'Smooth cam zooms',
+		'Score Text Zoom on Hit',
+		'Rating effects',
+		'Num score effects',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
 		'Hitsound Volume',
-		'OPTIMIZATION',
-		//add again the only notes option
-		'Score Text Zoom on Hit',
-		'Hide Health Bar'
 	];
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
@@ -959,8 +957,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 					case 'Score Text Zoom on Hit':
 						ClientPrefs.optScoreZoom = !ClientPrefs.optScoreZoom;
-					case 'Hide Health Bar':
-						ClientPrefs.optHideHealthBar = !ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
 						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
 					case 'Icon Boping':
@@ -969,6 +965,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.smoothCamZoom = !ClientPrefs.smoothCamZoom;
 					case 'Opponent Note Splashes':
 						ClientPrefs.opponentNoteSplash = !ClientPrefs.opponentNoteSplash;
+					case 'Rating effects':
+						ClientPrefs.ratingEffects = !ClientPrefs.ratingEffects;
+					case 'Num score effects':
+						ClientPrefs.numScoreEffects = !ClientPrefs.numScoreEffects;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1117,8 +1117,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 			
 			case 'Score Text Zoom on Hit':
 				daText = "If unchecked, disables the Score text zooming\neverytime you hit a note.";
-			case 'Hide Health Bar':
-				daText = 'Hides health bar and replaces it with a percentage';
 			case 'Camera movement on note press':
 				daText = 'Moves the camera to the note direction';
 			case 'Icon Boping':
@@ -1147,6 +1145,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.';
 			case 'Safe Frames':
 				daText = 'Changes how many frames you have for\nhitting a note earlier or late.';
+			case 'Rating effects':
+				daText = 'If disabled, there will not be any tween\non the rating';
+			case 'Num score effects':
+				daText = 'If disabled, there will not be any tween\non the num score';
 		}
 		descText.text = daText;
 
@@ -1222,8 +1224,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.showMemory;
 					case 'Score Text Zoom on Hit':
 						daValue = ClientPrefs.optScoreZoom;
-					case 'Hide Health Bar':
-						daValue = ClientPrefs.optHideHealthBar;
 					case 'Camera movement on note press':
 						daValue = ClientPrefs.cameraMovOnNoteP;
 					case 'Icon Boping':
@@ -1232,6 +1232,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.smoothCamZoom;
 					case 'Opponent Note Splashes':
 						daValue = ClientPrefs.opponentNoteSplash;
+					case 'Rating effects':
+						daValue = ClientPrefs.ratingEffects;
+					case 'Num score effects':
+						daValue = ClientPrefs.numScoreEffects;
 				}
 				checkbox.daValue = daValue;
 			}

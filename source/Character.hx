@@ -98,12 +98,21 @@ class Character extends FlxSprite
 				}
 
 				var rawJson = Assets.getText(path);
+				var spriteType = "sparrow";
 
 				var json:CharacterFile = cast Json.parse(rawJson);
-				if(Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT))) {
-					frames = Paths.getPackerAtlas(json.image);
-				} else {
-					frames = Paths.getSparrowAtlas(json.image);
+				if(Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT)))
+					spriteType = "packer";
+				
+				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
+					spriteType = "texture";
+
+				switch(spriteType)
+				{
+					case "packer":
+						frames = Paths.getPackerAtlas(json.image);
+					case "sparrow":
+						frames = Paths.getSparrowAtlas(json.image);
 				}
 				imageFile = json.image;
 
