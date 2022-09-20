@@ -57,11 +57,6 @@ class PermissionsPrompt extends MusicBeatState
             prompt.screenCenter();
             prompts.add(prompt);
             #end
-
-            #if android
-            Permissions.onPermissionsGranted.add(_onPermsGrantedEvent);
-            Permissions.onPermissionsDenied.add(_onPermsDeniedEvent);
-            #end
         }
         else
         {
@@ -110,24 +105,76 @@ class PermissionsPrompt extends MusicBeatState
             {
                 if(touch.overlaps(prompt) && touch.justReleased && (touch.overlaps(prompt.okButtonReg) || touch.overlaps(prompt.cancelButtonReg)))
                 {
-                    if(prompt.props.header == 'FileSystem Access'){ Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]); }
-                    Reflect.setProperty(ClientPrefs, prompt.props.settingVar, (touch.overlaps(prompt.okButtonReg) ? true : false));
-                    FlxTween.tween(prompt, {alpha: 0}, 0.5, 
+                    if(touch.overlaps(prompt.okButtonReg) && touch.justReleased)
                     {
-                        onComplete: function(twn:FlxTween)
+                        persistentUpdate = false;
+                        Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
+                        Permissions.onPermissionsGranted.add(function(args)
                         {
-                            prompt.kill();
-                            prompt.destroy();
-                            prompts.remove(prompt, true);
-
-                            if(prompts.members.length == 0)
+                            persistentUpdate = true;
+                            trace("perms granted");
+                            ClientPrefs.allowFileSys = true;
+                            FlxTween.tween(prompt, {alpha: 0}, 0.5, 
                             {
-                                ClientPrefs.answeredReq = true;
-                                ClientPrefs.saveSettings();
-                                MusicBeatState.switchState(new TitleState());
+                                onComplete: function(twn:FlxTween)
+                                {
+                                    prompt.kill();
+                                    prompt.destroy();
+                                    prompts.remove(prompt, true);
+        
+                                    if(prompts.members.length == 0)
+                                    {
+                                        ClientPrefs.answeredReq = true;
+                                        ClientPrefs.saveSettings();
+                                        MusicBeatState.switchState(new TitleState());
+                                    }
+                                }
+                            });
+                        });
+
+                        Permissions.onPermissionsDenied.add(function(args)
+                        {
+                            persistentUpdate = true;
+                            trace("perms diend");
+                            ClientPrefs.allowFileSys = false;
+                            FlxTween.tween(prompt, {alpha: 0}, 0.5, 
+                            {
+                                onComplete: function(twn:FlxTween)
+                                {
+                                    prompt.kill();
+                                    prompt.destroy();
+                                    prompts.remove(prompt, true);
+        
+                                    if(prompts.members.length == 0)
+                                    {
+                                        ClientPrefs.answeredReq = true;
+                                        ClientPrefs.saveSettings();
+                                        MusicBeatState.switchState(new TitleState());
+                                    }
+                                }
+                            });
+                        });
+                    }
+                    else
+                    {
+                        Reflect.setProperty(ClientPrefs, prompt.props.settingVar, (touch.overlaps(prompt.okButtonReg) ? true : false));
+                        FlxTween.tween(prompt, {alpha: 0}, 0.5, 
+                        {
+                            onComplete: function(twn:FlxTween)
+                            {
+                                prompt.kill();
+                                prompt.destroy();
+                                prompts.remove(prompt, true);
+    
+                                if(prompts.members.length == 0)
+                                {
+                                    ClientPrefs.answeredReq = true;
+                                    ClientPrefs.saveSettings();
+                                    MusicBeatState.switchState(new TitleState());
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
             #end
@@ -135,20 +182,6 @@ class PermissionsPrompt extends MusicBeatState
 
         super.update(elapsed);
     }
-
-    #if android
-    static function _onPermsGrantedEvent(args:Array<String>):Void
-    {
-        trace("perms granted");
-        ClientPrefs.allowFileSys = true;
-    }
-
-    static function _onPermsDeniedEvent(args:Array<String>):Void
-    {
-        trace("perms denied");
-        ClientPrefs.allowFileSys = true;
-    }
-    #end
 }
 
 class CustomPrompt extends FlxSpriteGroup
