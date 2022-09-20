@@ -7,7 +7,13 @@ Stuff gone:
 
 You can add these again in your fork if you want
 
-Peding stuff:
+Pending stuff:
 
 - Fix story mode state
 - - Finish song issue
+
+Special thanks:
+
+HTML5 Players - For testing latest changes
+
+Dulce - For beta testing the Android version (<3)
