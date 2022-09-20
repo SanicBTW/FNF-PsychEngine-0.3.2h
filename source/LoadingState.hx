@@ -8,14 +8,14 @@ import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.util.FlxTimer;
 import flixel.math.FlxMath;
-
 import openfl.utils.Assets;
 import lime.utils.Assets as LimeAssets;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
-
 import haxe.io.Path;
+import flixel.ui.FlxBar;
 
+//update to the loading state, originally from scarlet melopeia port
 class LoadingState extends MusicBeatState
 {
 	inline static var MIN_TIME = 1.0;
@@ -40,22 +40,28 @@ class LoadingState extends MusicBeatState
 		this.directory = directory;
 	}
 
-	var funkay:FlxSprite;
-	var loadBar:FlxSprite;
+	var loadBar:FlxBar;
+	var gfDance:FlxSprite;
+	var danceLeft:Bool = false;
 	override function create()
 	{
-		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
-		add(bg);
-		funkay = new FlxSprite(0, 0).loadGraphic(Paths.getPath('images/funkay.png', IMAGE));
-		funkay.setGraphicSize(0, FlxG.height);
-		funkay.updateHitbox();
-		funkay.antialiasing = ClientPrefs.globalAntialiasing;
-		add(funkay);
-		funkay.scrollFactor.set();
-		funkay.screenCenter();
+		Conductor.changeBPM(102);
 
-		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
+		add(bg);
+
+		gfDance = new FlxSprite(552, 0);
+		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
+		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
+		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
+		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
+		add(gfDance);
+
+		loadBar = new FlxBar();
+		loadBar.screenCenter();
+		loadBar.y = FlxG.height * 0.97;
 		loadBar.screenCenter(X);
+		loadBar.scale.set(10, 1);
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		add(loadBar);
 		
@@ -113,17 +119,27 @@ class LoadingState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
-		funkay.updateHitbox();
-		if(controls.ACCEPT)
-		{
-			funkay.setGraphicSize(Std.int(funkay.width + 60));
-			funkay.updateHitbox();
-		}
+
+		Conductor.songPosition = FlxG.sound.music.time;
 
 		if(callbacks != null) {
 			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
-			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
+			loadBar.percent = 100 * targetShit;
+		}
+	}
+
+	override function beatHit()
+	{
+		super.beatHit();
+
+		if(gfDance != null) 
+		{
+			danceLeft = !danceLeft;
+
+			if (danceLeft)
+				gfDance.animation.play('danceRight');
+			else
+				gfDance.animation.play('danceLeft');
 		}
 	}
 	
