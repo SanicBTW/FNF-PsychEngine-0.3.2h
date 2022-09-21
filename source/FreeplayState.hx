@@ -57,7 +57,6 @@ class FreeplayState extends MusicBeatState
 		openfl.Assets.cache.clear("songs");
 		openfl.Assets.cache.clear("images");
 
-		PlayState.SONG = null;
 		PlayState.inst = null;
 		PlayState.voices = null;
 

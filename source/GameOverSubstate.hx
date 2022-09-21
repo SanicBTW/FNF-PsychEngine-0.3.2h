@@ -25,8 +25,9 @@ class GameOverSubstate extends MusicBeatSubstate
 	public static var loopSoundName:String = 'gameOver';
 	public static var endSoundName:String = 'gameOverEnd';
 
-	public static function resetVariables() {
-		characterName = 'bf';
+	public static function resetVariables() 
+	{
+		characterName = 'bf-dead';
 		deathSoundName = 'fnf_loss_sfx';
 		loopSoundName = 'gameOver';
 		endSoundName = 'gameOverEnd';
@@ -86,7 +87,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			removeVirtualPad();
 			#end
 
-			MusicBeatState.switchState(new FreeplayState());
+			MusicBeatState.switchState(PlayState.isStoryMode ? new StoryMenuState() : new FreeplayState());
 
 			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}

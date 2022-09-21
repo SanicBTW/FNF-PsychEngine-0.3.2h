@@ -2377,7 +2377,7 @@ class PlayState extends MusicBeatState
 		seenCutscene = false;
 		KillNotes();
 
-		if (SONG.validScore && !cpuControlled)
+		if (SONG.validScore && !cpuControlled && !changedDifficulty && !usedPractice)
 		{
 			#if !switch
 			var percent:Float = ratingPercent;
@@ -2420,12 +2420,15 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
+				//btw DID I JUST FUCKING FIX THE FINISH SONG ISSUE, BRO I CANT BELIVE IT WAS THIS EASY FUCK
+				//i swear to god, i need to learn how to name variables :skull:
 				var difficulty:String = '' + CoolUtil.difficultyStuff[storyDifficulty][1];
+				var nextSong = PlayState.storyPlaylist[0].toLowerCase().replace(" ", "-");
 
 				trace('LOADING NEXT SONG');
-				trace(PlayState.storyPlaylist[0].toLowerCase() + difficulty);
+				trace(nextSong + difficulty);
 
-				var winterHorrorlandNext = (SONG.song.toLowerCase() == "eggnog");
+				var winterHorrorlandNext = (SONG.song.toLowerCase().replace(" ", "-") == "eggnog");
 				if (winterHorrorlandNext)
 				{
 					var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
@@ -2440,7 +2443,11 @@ class PlayState extends MusicBeatState
 				prevCamFollow = camFollow;
 				prevCamFollowPos = camFollowPos;
 
-				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + difficulty, PlayState.storyPlaylist[0]);
+				PlayState.SONG = Song.loadFromJson(nextSong + difficulty, nextSong);
+				//make these null to avoid any errors in the future
+				PlayState.inst = null;
+				PlayState.voices = null;
+				System.gc();
 				FlxG.sound.music.stop();
 
 				if(winterHorrorlandNext) {

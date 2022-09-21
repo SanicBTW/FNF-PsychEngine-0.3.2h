@@ -1,20 +1,15 @@
-# Psych 0.3.2h with Android features for mod ports
+# Psych Engine 0.3.2h
 
-Stuff gone:
+# What is this?
 
-- Lua stuff (0.3.2h lua, not really important I guess)
-- Achievements (I personally dont like them)
+This is another fork of Psych Engine 0.3.2h that I made to add Android compatibility and more features (because I like 0.3.2h a lot and shit is easier to port to HTML5)
 
-You can add these again in your fork if you want
+# Features
 
-Pending stuff:
+- too lazy to write them rn sorry lol
 
-- Finish song issue:
-- - When finishing song it will take some time to change the song (a lot of time)
-- - Plays the last song instead of the next one (tested week 3, played pico then blammed)
-
-Special thanks:
+# Special thanks
 
 HTML5 Players - For testing latest changes
 
-Dulce - For beta testing the Android version (<3)
+Dulce - For beta testing the Android version <3

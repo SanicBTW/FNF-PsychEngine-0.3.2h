@@ -1,5 +1,6 @@
 package;
 
+import openfl.system.System;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -51,6 +52,9 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
+		PlayState.inst = null;
+		PlayState.voices = null;
+		System.gc();
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
 		if(curWeek >= WeekData.weeksList.length) curWeek = 0;
@@ -300,12 +304,14 @@ class StoryMenuState extends MusicBeatState
 			PlayState.isStoryMode = true;
 			selectedWeek = true;
 
+			//fucking dumbass
 			var diffic = CoolUtil.difficultyStuff[curDifficulty][1];
+			var firstSong = PlayState.storyPlaylist[0].toLowerCase().replace(" ", "-");
 			if(diffic == null) diffic = '';
 
 			PlayState.storyDifficulty = curDifficulty;
 
-			PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase() + diffic, PlayState.storyPlaylist[0].toLowerCase());
+			PlayState.SONG = Song.loadFromJson(firstSong + diffic, firstSong);
 			PlayState.storyWeek = curWeek;
 			PlayState.campaignScore = 0;
 			PlayState.campaignMisses = 0;
