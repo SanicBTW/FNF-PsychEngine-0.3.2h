@@ -93,6 +93,6 @@
 
 	<!-- _____________________________ Engine Features ____________________________ -->
 
-	<define name="FEATURE_STORAGE_ACCESS" if="android || windows" />
+	<define name="STORAGE_ACCESS" if="android || windows" />
 
 </project>

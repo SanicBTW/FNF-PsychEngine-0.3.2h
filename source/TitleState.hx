@@ -30,7 +30,7 @@ import openfl.Assets;
 #if android
 import com.player03.android6.Permissions;
 #end
-#if FEATURE_STORAGE_ACCESS
+#if STORAGE_ACCESS
 import features.StorageAccess;
 #end
 

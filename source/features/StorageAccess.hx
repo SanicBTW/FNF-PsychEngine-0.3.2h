@@ -3,7 +3,7 @@ package features;
 import openfl.media.Sound;
 import flixel.FlxG;
 import haxe.Json;
-#if FEATURE_STORAGE_ACCESS
+#if STORAGE_ACCESS
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -20,7 +20,7 @@ class StorageAccess
 
     public static function checkStorage()
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         checkDirs.set("main", Path.join([System.userDirectory, 'sanicbtw_pe_files']));
 
         checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
@@ -39,7 +39,7 @@ class StorageAccess
 
     public static function getInst(song:String, ext = ".ogg")
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
         if(exists(filePath))
         {
@@ -51,7 +51,7 @@ class StorageAccess
 
     public static function getVoices(song:String, ext = ".ogg")
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
         if(exists(filePath))
         {
@@ -63,7 +63,7 @@ class StorageAccess
 
     public static function getChart(song:String, diff:Int = 1):String
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         var diffString:String = "";
         switch (diff)
         {
@@ -91,14 +91,14 @@ class StorageAccess
 
     public static function getSongs()
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         return FileSystem.readDirectory(checkDirs.get('songs'));
         #end
     }
 
     public static function getCharts(song:String)
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
 
         if(exists(mainSongPath))
@@ -113,7 +113,7 @@ class StorageAccess
     //dawg?????? tf
     public static function exists(file:String)
     {
-        #if FEATURE_STORAGE_ACCESS
+        #if STORAGE_ACCESS
         if(FileSystem.exists(file))
         {
             return true;

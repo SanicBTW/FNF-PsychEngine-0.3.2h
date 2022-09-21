@@ -9,8 +9,9 @@ You can add these again in your fork if you want
 
 Pending stuff:
 
-- Fix story mode state
-- - Finish song issue
+- Finish song issue:
+- - When finishing song it will take some time to change the song (a lot of time)
+- - Plays the last song instead of the next one (tested week 3, played pico then blammed)
 
 Special thanks:
 

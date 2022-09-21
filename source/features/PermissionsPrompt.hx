@@ -34,7 +34,7 @@ class PermissionsPrompt extends MusicBeatState
         MusicBeatState.switchState(new TitleState());
         #end
 
-        #if (FEATURE_STORAGE_ACCESS) //do the griddy if some feature was found enabled
+        #if (STORAGE_ACCESS) //do the griddy if some feature was found enabled
         if(!ClientPrefs.answeredReq)
         {
             bg = new FlxSprite().loadGraphic(Paths.image("menuDesat"), false, FlxG.width, FlxG.height);
@@ -45,7 +45,7 @@ class PermissionsPrompt extends MusicBeatState
             prompts = new FlxTypedGroup<CustomPrompt>();
             add(prompts);
     
-            #if FEATURE_STORAGE_ACCESS
+            #if STORAGE_ACCESS
             var prompt = new CustomPrompt
             ({
                 header: 'FileSystem Access',

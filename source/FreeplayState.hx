@@ -19,7 +19,7 @@ import flixel.system.FlxSound;
 import openfl.utils.Assets as OpenFlAssets;
 import WeekData;
 import openfl.system.System;
-#if FEATURE_STORAGE_ACCESS
+#if STORAGE_ACCESS
 import features.StorageAccess;
 import sys.io.File;
 #end
@@ -98,7 +98,7 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 
-		#if FEATURE_STORAGE_ACCESS
+		#if STORAGE_ACCESS
 		if(ClientPrefs.allowFileSys)
 		{
 			var internalSongs = StorageAccess.getSongs();
@@ -281,7 +281,7 @@ class FreeplayState extends MusicBeatState
 
 		if (accepted)
 		{
-			#if FEATURE_STORAGE_ACCESS
+			#if STORAGE_ACCESS
 			if(songs[curSelected].intStorage && ClientPrefs.allowFileSys)
 			{
 				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
