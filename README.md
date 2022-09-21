@@ -17,6 +17,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - A bunch of options to customize the engine (Might add more)
 - Some sick features from PE 0.5.2h
 - A really cool screen to ask for permissions (Storage Access to add songs and shit, hitsounds folder not working yet lol)
+- A new loading screen (For HTML5 users)
 
 # Pending
 
