@@ -706,8 +706,6 @@ class ControlsSubstate extends MusicBeatSubstate {
 	}
 }
 
-
-
 class PreferencesSubstate extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
@@ -764,8 +762,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Opponent Note Splashes',
 		'Smooth cam zooms',
 		'Score Text Zoom on Hit',
-		'Rating effects',
-		'Num score effects',
+		'Combo Stacking',
 		'AUDIO',
 		'Pause music',
 		'Miss Volume',
@@ -963,12 +960,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.smoothCamZoom = !ClientPrefs.smoothCamZoom;
 					case 'Opponent Note Splashes':
 						ClientPrefs.opponentNoteSplash = !ClientPrefs.opponentNoteSplash;
-					case 'Rating effects':
-						ClientPrefs.ratingEffects = !ClientPrefs.ratingEffects;
-					case 'Num score effects':
-						ClientPrefs.numScoreEffects = !ClientPrefs.numScoreEffects;
 					case 'Freestyle BF':
 						ClientPrefs.ghostTappingBFSing = !ClientPrefs.ghostTappingBFSing;
+					case 'Combo Stacking':
+						ClientPrefs.comboStacking = !ClientPrefs.comboStacking;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -1145,12 +1140,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'Changes the amount of time you have\nfor hitting a "Bad" in milliseconds.';
 			case 'Safe Frames':
 				daText = 'Changes how many frames you have for\nhitting a note earlier or late.';
-			case 'Rating effects':
-				daText = 'If disabled, there will not be any tween\non the rating';
-			case 'Num score effects':
-				daText = 'If disabled, there will not be any tween\non the num score';
 			case 'Freestyle BF':
 				daText = 'If enabled, BF will sing in the strum direction\nonly works with Ghost Tapping';
+			case 'Combo Stacking':
+				daText = "If unchecked, Ratings and Combo won't stack\nsaving on System Memory and making them easier to read";
 		}
 		descText.text = daText;
 
@@ -1234,12 +1227,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.smoothCamZoom;
 					case 'Opponent Note Splashes':
 						daValue = ClientPrefs.opponentNoteSplash;
-					case 'Rating effects':
-						daValue = ClientPrefs.ratingEffects;
-					case 'Num score effects':
-						daValue = ClientPrefs.numScoreEffects;
 					case 'Freestyle BF':
 						daValue = ClientPrefs.ghostTappingBFSing;
+					case 'Combo Stacking':
+						daValue = ClientPrefs.comboStacking;
 				}
 				checkbox.daValue = daValue;
 			}

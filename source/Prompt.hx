@@ -1,117 +1,166 @@
 package;
 
-import flixel.util.FlxColor;
-import flixel.text.FlxText;
-import flixel.group.FlxSpriteGroup;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 
-//I will add more comments regarding the functionality and shit
 class Prompt extends FlxSpriteGroup
 {
-    //UI Shit
-    private var titleTxt:FlxText;
-    private var buttons:FlxSprite;
+	public var titleTxt:FlxText;
+	public var infoTxt:FlxText;
 
-    //Button functions, it didn't have custom frames and that stuff so I made these
-    private var okButtonReg:FlxSprite;
-    private var cancelButtonReg:FlxSprite;
+	// For ok cancel stuff
+	private var okcBtns:FlxSprite;
+	private var okButtonReg:FlxSprite;
+	private var cancelButtonReg:FlxSprite;
 
-    //Button callbacks - ex when pressing
-    public var okCallback:Void->Void = function(){ FlxG.log.add("Pressed ok"); };
-    public var cancelCallback:Void->Void = function(){ FlxG.log.add("Pressed cancel"); };
-    //I made this to set the proper callback when pressing or hovering
-    private var executeCb:Void->Void = null;
+	private var upBtn:FlxSprite;
+	private var downBtn:FlxSprite;
 
-    public function new(title:String = "Placeholder", info:Array<String>, showButtons:Bool = true)
-    {
-        super();
+	// I changed these to avoid having to make more callbacks
+	// button 1 is the ok button or the up button
+	public var b1Callback:Void->Void = function()
+	{
+		trace("Pressed ok button or up button");
+	}
 
-        var bg = new FlxSprite().loadGraphic(Paths.image("ui/promptbg"));
-        bg.antialiasing = ClientPrefs.globalAntialiasing;
-        add(bg);
+	// button 2 is the cancel button or the down button
+	public var b2Callback:Void->Void = function()
+	{
+		trace("Pressed cancel button or down button");
+	}
 
-        titleTxt = new FlxText(bg.x + 105, bg.y + 30, 0, title, 25);
-        titleTxt.setFormat(Paths.font("vcr.ttf"), 25, FlxColor.BLACK, LEFT);
-        titleTxt.antialiasing = ClientPrefs.globalAntialiasing;
-        add(titleTxt);
+	private var executeCb:Void->Void = null;
 
-        var prevText:FlxText = null;
-        for(i in 0...info.length)
-        {
-            var text = new FlxText(bg.x + 12, (prevText == null ? titleTxt.y + 50 : prevText.y + 20), 0, info[i], 20);
-            text.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
-            text.antialiasing = ClientPrefs.globalAntialiasing;
-            add(text);
-            prevText = text;
-        }
+	public function new(title:String = "Placeholder", info:String = "Placeholder", buttonType:ButtonType = OK_CANCEL)
+	{
+		super();
 
-        if(showButtons)
-        {
-            buttons = new FlxSprite(bg.x + 15, bg.y + 260);
-            buttons.frames = Paths.getSparrowAtlas('ui/prompt_buttons');
-            buttons.animation.addByIndices('but0', 'buttons', [0], '', 0);
-            buttons.animation.addByIndices('but1', 'buttons', [1], '', 0);
-            buttons.animation.play('but0', true);
-            add(buttons);
-    
-            okButtonReg = new FlxSprite(buttons.x, buttons.y).makeGraphic(Std.int(buttons.width / 2), Std.int(buttons.height), FlxColor.TRANSPARENT);
-            add(okButtonReg);
-    
-            cancelButtonReg = new FlxSprite(buttons.x + (buttons.width / 2), buttons.y).makeGraphic(Std.int(buttons.width / 2), Std.int(buttons.height), FlxColor.TRANSPARENT);
-            add(cancelButtonReg);
-        }
-    }
+		var bg = new FlxSprite().loadGraphic(Paths.image("ui/promptbg"));
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		add(bg);
 
-    //I believe I can make this simpler
-    override function update(elapsed:Float)
-    {
-        if(okButtonReg != null && cancelButtonReg != null && buttons != null)
-        {
-            #if !android
-            if(FlxG.mouse.overlaps(okButtonReg) && buttons.animation.curAnim.name == "but1")
-                changeAnim("but0");
+		// i didnt understand this one, why is it above 100 and the info text is below 50 :skull:
+		titleTxt = new FlxText(bg.x + 105, bg.y + 30, bg.width - 132, title, 25);
+		titleTxt.setFormat(Paths.font("vcr.ttf"), 25, FlxColor.BLACK, LEFT);
+		titleTxt.antialiasing = ClientPrefs.globalAntialiasing;
+		add(titleTxt);
 
-            if(FlxG.mouse.overlaps(cancelButtonReg) && buttons.animation.curAnim.name == "but0")
-                changeAnim("but1");
+		infoTxt = new FlxText(bg.x + 12, titleTxt.y + 50, bg.width - 32, info, 20);
+		infoTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
+		infoTxt.antialiasing = ClientPrefs.globalAntialiasing;
+		add(infoTxt);
 
-            if(FlxG.mouse.justPressed && (FlxG.mouse.overlaps(okButtonReg) || FlxG.mouse.overlaps(cancelButtonReg)))
-            {
-                executeCb();
-                FlxG.sound.play(Paths.sound('cancelMenu'));
-            }
-            #else
-            for(touch in FlxG.touches.list)
-            {
-                if(touch.overlaps(okButtonReg) && buttons.animation.curAnim.name == "but1")
-                    changeAnim("but0");
+		switch (buttonType)
+		{
+			case OK_CANCEL:
+				okcBtns = new FlxSprite(bg.x + 15, bg.y + 260);
+				okcBtns.frames = Paths.getSparrowAtlas('ui/prompt_buttons');
+				okcBtns.animation.addByIndices('but0', 'buttons', [0], '', 0);
+				okcBtns.animation.addByIndices('but1', 'buttons', [1], '', 0);
+				okcBtns.animation.play('but0', true);
+				okcBtns.antialiasing = ClientPrefs.globalAntialiasing;
+				add(okcBtns);
 
-                if(touch.overlaps(cancelButtonReg) && buttons.animation.curAnim.name == "but0")
-                    changeAnim("but1");
+				okButtonReg = new FlxSprite(okcBtns.x, okcBtns.y).makeGraphic(Std.int(okcBtns.width / 2), Std.int(okcBtns.height), FlxColor.TRANSPARENT);
+				add(okButtonReg);
 
-                if(touch.justReleased && (touch.overlaps(okButtonReg) || touch.overlaps(cancelButtonReg)))
-                {
-                    executeCb();
-                    FlxG.sound.play(Paths.sound('cancelMenu'));
-                }
-            }
-            #end
-        }
+				cancelButtonReg = new FlxSprite(okcBtns.x + (okcBtns.width / 2),
+					okcBtns.y).makeGraphic(Std.int(okcBtns.width / 2), Std.int(okcBtns.height), FlxColor.TRANSPARENT);
+				add(cancelButtonReg);
+			case UP_DOWN:
+				downBtn = new FlxSprite(bg.x + 15, bg.y + 275).loadGraphic(Paths.image("ui/butt_graph0001"));
+				downBtn.antialiasing = ClientPrefs.globalAntialiasing;
+				add(downBtn);
 
-        super.update(elapsed);
-    }
+				upBtn = new FlxSprite(downBtn.x + 285, downBtn.y).loadGraphic(Paths.image("ui/butt_graph0002"));
+				upBtn.antialiasing = ClientPrefs.globalAntialiasing;
+				add(upBtn);
+			case NONE:
+				// do nothing
+		}
+	}
 
-    function changeAnim(newAnim:String)
-    {
-        buttons.animation.play(newAnim, true);
-        if(newAnim == "but0"){ executeCb = okCallback; }
-        if(newAnim == "but1"){ executeCb = cancelCallback; }
-        FlxG.sound.play(Paths.sound('scrollMenu'));
-    }
+	override function update(elapsed:Float)
+	{
+		if (okcBtns != null && okButtonReg != null && cancelButtonReg != null)
+		{
+			if (FlxG.mouse.overlaps(okButtonReg) || FlxG.mouse.overlaps(cancelButtonReg))
+			{
+				var prevAnim = okcBtns.animation.curAnim.name;
+				okcBtns.animation.play(FlxG.mouse.overlaps(okButtonReg) ? "but0" : "but1", true);
+				if (okcBtns.animation.curAnim.name == "but0" && prevAnim == "but1")
+				{
+					executeCb = b1Callback;
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
 
-    public function changeTitle(newTitle:String)
-    {
-        titleTxt.text = newTitle;
-        FlxG.log.add("Changed");
-    }
+				if (okcBtns.animation.curAnim.name == "but1" && prevAnim == "but0")
+				{
+					executeCb = b2Callback;
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
+
+				if (FlxG.mouse.justPressed)
+				{
+					executeCb();
+					FlxG.sound.play(Paths.sound('cancelMenu'));
+				}
+			}
+		}
+
+		if (upBtn != null && downBtn != null)
+		{
+			if (FlxG.mouse.overlaps(upBtn))
+			{
+				upBtn.alpha = 1;
+				// bruh wtf - its to avoid setting the execute callback to the same thing all the time lol
+				if (executeCb != b1Callback)
+				{
+					executeCb = b1Callback;
+				}
+
+				if (FlxG.mouse.justPressed)
+				{
+					executeCb();
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
+			}
+			else
+			{
+				upBtn.alpha = 0.6;
+			}
+
+			if (FlxG.mouse.overlaps(downBtn))
+			{
+				downBtn.alpha = 1;
+				if (executeCb != b2Callback)
+				{
+					executeCb = b2Callback;
+				}
+
+				if (FlxG.mouse.justPressed)
+				{
+					executeCb();
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
+			}
+			else
+			{
+				downBtn.alpha = 0.6;
+			}
+		}
+
+		super.update(elapsed);
+	}
+}
+
+@:enum abstract ButtonType(String) to String
+{
+	var OK_CANCEL;
+	var UP_DOWN;
+	var NONE;
 }

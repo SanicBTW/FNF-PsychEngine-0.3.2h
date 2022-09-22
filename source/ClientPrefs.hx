@@ -45,9 +45,8 @@ class ClientPrefs {
 	public static var safeFrames:Float = 10;
 	public static var allowFileSys:Bool = false;
 	public static var answeredReq:Bool = false;
-	public static var ratingEffects:Bool = true;
-	public static var numScoreEffects:Bool = true;
 	public static var ghostTappingBFSing:Bool = true;
+	public static var comboStacking:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
@@ -125,9 +124,8 @@ class ClientPrefs {
 		FlxG.save.data.safeFrames = safeFrames;
 		FlxG.save.data.allowFileSys = allowFileSys;
 		FlxG.save.data.answeredReq = answeredReq;
-		FlxG.save.data.ratingEffects = ratingEffects;
-		FlxG.save.data.numScoreEffects = numScoreEffects;
 		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
+		FlxG.save.data.comboStacking = comboStacking;
 
 		FlxG.save.flush();
 
@@ -260,14 +258,11 @@ class ClientPrefs {
 		if(FlxG.save.data.answeredReq != null) {
 			answeredReq = FlxG.save.data.answeredReq;
 		}
-		if(FlxG.save.data.ratingEffects != null) {
-			ratingEffects = FlxG.save.data.ratingEffects;
-		}
-		if(FlxG.save.data.numScoreEffects != null) {
-			numScoreEffects = FlxG.save.data.numScoreEffects;
-		}
 		if(FlxG.save.data.ghostTappingBFSing != null) {
 			ghostTappingBFSing = FlxG.save.data.ghostTappingBFSing;
+		}
+		if(FlxG.save.data.comboStacking != null) {
+			comboStacking = FlxG.save.data.comboStacking;
 		}
 
 		var save:FlxSave = new FlxSave();

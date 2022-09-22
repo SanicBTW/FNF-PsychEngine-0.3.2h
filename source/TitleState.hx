@@ -7,15 +7,14 @@ import sys.thread.Thread;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.input.keyboard.FlxKey;
 import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
-//import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup;
 import flixel.input.gamepad.FlxGamepad;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.system.FlxSound;
@@ -27,14 +26,16 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+
+using StringTools;
+
+// import flixel.graphics.FlxGraphic;
 #if android
 import com.player03.android6.Permissions;
 #end
 #if STORAGE_ACCESS
 import features.StorageAccess;
 #end
-
-using StringTools;
 
 class TitleState extends MusicBeatState
 {
@@ -59,19 +60,24 @@ class TitleState extends MusicBeatState
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		#if STORAGE_ACCESS
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];
-		if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE) && ClientPrefs.allowFileSys)
+		if (Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE)
+			&& Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE)
+			&& ClientPrefs.allowFileSys)
 		{
 			StorageAccess.checkStorage();
 		}
 		#end
 		#if windows
-		if(ClientPrefs.allowFileSys)
+		if (ClientPrefs.allowFileSys)
 		{
 			StorageAccess.checkStorage();
 		}
 		#end
+		#end
+
 		FlxG.keys.preventDefaultKeys = [TAB];
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
@@ -85,7 +91,8 @@ class TitleState extends MusicBeatState
 		FlxG.mouse.visible = false;
 		#if desktop
 		DiscordClient.initialize();
-		Application.current.onExit.add (function (exitCode) {
+		Application.current.onExit.add(function(exitCode)
+		{
 			DiscordClient.shutdown();
 		});
 		#end
@@ -107,7 +114,8 @@ class TitleState extends MusicBeatState
 	{
 		if (!initialized)
 		{
-			if(FlxG.sound.music == null) {
+			if (FlxG.sound.music == null)
+			{
 				FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 
 				FlxG.sound.music.fadeIn(4, 0, 0.7);
@@ -228,7 +236,8 @@ class TitleState extends MusicBeatState
 
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
-			if(titleText != null) titleText.animation.play('press');
+			if (titleText != null)
+				titleText.animation.play('press');
 
 			FlxG.camera.flash(FlxColor.WHITE, 1);
 			FlxG.sound.play(Paths.sound('confirmMenu'), 0.7);
@@ -240,7 +249,6 @@ class TitleState extends MusicBeatState
 				MusicBeatState.switchState(new MainMenuState());
 				closedState = true;
 			});
-
 		}
 
 		if (initialized && pressedEnter && !skippedIntro)
@@ -248,10 +256,12 @@ class TitleState extends MusicBeatState
 			skipIntro();
 		}
 
-		if(swagShader != null)
+		if (swagShader != null)
 		{
-			if(controls.UI_LEFT) swagShader.hue -= elapsed * 0.1;
-			if(controls.UI_RIGHT) swagShader.hue += elapsed * 0.1;
+			if (controls.UI_LEFT)
+				swagShader.hue -= elapsed * 0.1;
+			if (controls.UI_RIGHT)
+				swagShader.hue += elapsed * 0.1;
 		}
 
 		super.update(elapsed);
@@ -271,7 +281,8 @@ class TitleState extends MusicBeatState
 
 	function addMoreText(text:String, ?offset:Float = 0)
 	{
-		if(textGroup != null) {
+		if (textGroup != null)
+		{
 			var coolText:Alphabet = new Alphabet(0, 0, text, true, false);
 			coolText.screenCenter(X);
 			coolText.y += (textGroup.length * 60) + 200 + offset;
@@ -293,10 +304,11 @@ class TitleState extends MusicBeatState
 	{
 		super.beatHit();
 
-		if(logoBl != null) 
+		if (logoBl != null)
 			logoBl.animation.play('bump');
 
-		if(gfDance != null) {
+		if (gfDance != null)
+		{
 			danceLeft = !danceLeft;
 
 			if (danceLeft)
@@ -305,7 +317,8 @@ class TitleState extends MusicBeatState
 				gfDance.animation.play('danceLeft');
 		}
 
-		if(!closedState) {
+		if (!closedState)
+		{
 			switch (curBeat)
 			{
 				case 1:

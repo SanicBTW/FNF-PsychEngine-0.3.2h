@@ -195,6 +195,12 @@ class PlayState extends MusicBeatState
 	public var introSoundsSuffix:String = '';
 	public static var inst:Dynamic = null;
 	public static var voices:Dynamic = null;
+	// stores the last judgement object
+	public static var lastRating:FlxSprite;
+	// stores the last combo sprite object
+	public static var lastCombo:FlxSprite;
+	// stores the last combo score objects in an array
+	public static var lastScore:Array<FlxSprite> = [];
 	override public function create()
 	{
 		PauseSubState.songName = null; //Reset to default
@@ -2580,19 +2586,20 @@ class PlayState extends MusicBeatState
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
 		rating.y -= 60;
-
-		if(ClientPrefs.ratingEffects)
-		{
-			rating.acceleration.y = 550;
-			rating.velocity.y -= FlxG.random.int(140, 175);
-			rating.velocity.x -= FlxG.random.int(0, 10);
-		}
+		rating.acceleration.y = 550;
+		rating.velocity.y -= FlxG.random.int(140, 175);
+		rating.velocity.x -= FlxG.random.int(0, 10);
 
 		rating.visible = (!ClientPrefs.hideHud);
 		rating.x += ClientPrefs.comboOffset[0];
 		rating.y -= ClientPrefs.comboOffset[1];
 
 		insert(members.indexOf(strumLineNotes), rating);
+		if(!ClientPrefs.comboStacking)
+		{
+			if (lastRating != null) lastRating.kill();
+			lastRating = rating;
+		}
 
 		if (!isPixelStage)
 		{
@@ -2618,6 +2625,14 @@ class PlayState extends MusicBeatState
 		rating.cameras = [camHUD];
 
 		var daLoop:Int = 0;
+		if (lastScore != null)
+		{
+			while (lastScore.length > 0)
+			{
+				lastScore[0].kill();
+				lastScore.remove(lastScore[0]);
+			}
+		}
 		for (i in seperatedScore)
 		{
 			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
@@ -2628,6 +2643,9 @@ class PlayState extends MusicBeatState
 
 			numScore.x += ClientPrefs.comboOffset[2];
 			numScore.y -= ClientPrefs.comboOffset[3];
+
+			if (!ClientPrefs.comboStacking)
+				lastScore.push(numScore);
 
 			if (!isPixelStage)
 			{
@@ -2641,57 +2659,33 @@ class PlayState extends MusicBeatState
 
 			numScore.updateHitbox();
 
-			if(ClientPrefs.numScoreEffects)
-			{
-				numScore.acceleration.y = FlxG.random.int(200, 300);
-				numScore.velocity.y -= FlxG.random.int(140, 160);
-				numScore.velocity.x = FlxG.random.float(-5, 5);
-			}
+			numScore.acceleration.y = FlxG.random.int(200, 300);
+			numScore.velocity.y -= FlxG.random.int(140, 160);
+			numScore.velocity.x = FlxG.random.float(-5, 5);
 
 			numScore.visible = !ClientPrefs.hideHud;
 			
 			insert(members.indexOf(strumLineNotes), numScore);
 
-			if(ClientPrefs.numScoreEffects)
-			{
-				FlxTween.tween(numScore, {alpha: 0}, 0.2, {
-					onComplete: function(tween:FlxTween)
-					{
-						numScore.destroy();
-					},
-					startDelay: Conductor.crochet * 0.001
-				});
-			}
-			else
-			{
-				new FlxTimer().start(Conductor.crochet * 0.001, function(tmr:FlxTimer)
+			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
+				onComplete: function(tween:FlxTween)
 				{
 					numScore.destroy();
-				});
-			}
+				},
+				startDelay: Conductor.crochet * 0.001
+			});
 
 			daLoop++;
 		}
 
-		if(ClientPrefs.ratingEffects)
-		{
-			FlxTween.tween(rating, {alpha: 0}, 0.2, {
-				onComplete: function(tween:FlxTween)
-				{
-					coolText.destroy();
-					rating.destroy();
-				},
-				startDelay: Conductor.crochet * 0.001
-			});
-		}
-		else
-		{
-			new FlxTimer().start(Conductor.crochet * 0.001, function(tmr:FlxTimer)
+		FlxTween.tween(rating, {alpha: 0}, 0.2, {
+			onComplete: function(tween:FlxTween)
 			{
 				coolText.destroy();
 				rating.destroy();
-			});
-		}
+			},
+			startDelay: Conductor.crochet * 0.001
+		});
 	}
 
 	//bruh
