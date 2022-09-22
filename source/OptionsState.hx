@@ -31,7 +31,7 @@ using StringTools;
 // TO DO: Redo the menu creation system for not being as dumb
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences', #if (STORAGE_ACCESS) 'Revoke permissions' #end];
+	var options:Array<String> = ['Notes', 'Adjust Delay and Combo', #if android 'Mobile Controls' , #end 'Controls', 'Preferences', #if (STORAGE_ACCESS) 'Revoke permissions', #end 'Prompt testing'];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -56,8 +56,6 @@ class OptionsState extends MusicBeatState
 			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
 			optionText.isMenuItem = true;
 			optionText.targetY = i;
-			//optionText.screenCenter();
-			//optionText.y += (100 * (i - (options.length / 2))) + 50;
 			grpOptions.add(optionText);
 		}
 		changeSelection();
@@ -137,6 +135,9 @@ class OptionsState extends MusicBeatState
 					Main.tweenFPS(false, 0.5);
 					Main.tweenMemory(false, 0.5);
 					FlxG.camera.fade(FlxColor.BLACK, 0.5, false, FlxG.resetGame, false);
+				
+				case 'Prompt testing':
+					MusicBeatState.switchState(new PromptTesting());
 			}
 		}
 	}
