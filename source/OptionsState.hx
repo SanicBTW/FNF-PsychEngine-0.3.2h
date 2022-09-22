@@ -53,9 +53,11 @@ class OptionsState extends MusicBeatState
 
 		for (i in 0...options.length)
 		{
-			var optionText:Alphabet = new Alphabet(0, 0, options[i], true, false);
-			optionText.screenCenter();
-			optionText.y += (100 * (i - (options.length / 2))) + 50;
+			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, options[i], true, false);
+			optionText.isMenuItem = true;
+			optionText.targetY = i;
+			//optionText.screenCenter();
+			//optionText.y += (100 * (i - (options.length / 2))) + 50;
 			grpOptions.add(optionText);
 		}
 		changeSelection();
@@ -139,7 +141,8 @@ class OptionsState extends MusicBeatState
 		}
 	}
 	
-	function changeSelection(change:Int = 0) {
+	function changeSelection(change:Int = 0) 
+	{
 		curSelected += change;
 		if (curSelected < 0)
 			curSelected = options.length - 1;
@@ -791,14 +794,6 @@ class PreferencesSubstate extends MusicBeatSubstate
 			var isCentered:Bool = unselectableCheck(i);
 			var optionText:Alphabet = new Alphabet(0, 70 * i, options[i], false, false);
 			optionText.isMenuItem = true;
-			if(isCentered) {
-				optionText.screenCenter(X);
-				optionText.forceX = optionText.x;
-			} else {
-				optionText.x += 300;
-				optionText.forceX = 300;
-			}
-			optionText.yMult = 90;
 			optionText.targetY = i;
 			grpOptions.add(optionText);
 
@@ -812,13 +807,14 @@ class PreferencesSubstate extends MusicBeatSubstate
 				}
 
 				if(useCheckbox) {
-					var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, false);
+					var checkbox:CheckboxThingie = new CheckboxThingie(0, optionText.y, false);
 					checkbox.sprTracker = optionText;
+					checkbox.offsetX = optionText.width + 150;
 					checkboxArray.push(checkbox);
 					checkboxNumber.push(i);
 					add(checkbox);
 				} else {
-					var valueText:AttachedText = new AttachedText('0', optionText.width + 80);
+					var valueText:AttachedText = new AttachedText('0', optionText.width + 70);
 					valueText.sprTracker = optionText;
 					grpTexts.add(valueText);
 					textNumber.push(i);
