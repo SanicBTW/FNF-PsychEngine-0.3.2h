@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 import openfl.filters.BlurFilter;
 
@@ -17,5 +18,15 @@ class PromptTesting extends MusicBeatState
         add(funkyPrompt);
 
         super.create();
+    }
+
+    override function update(elapsed:Float)
+    {
+        if(FlxG.keys.justPressed.T)
+        {
+            funkyPrompt.changeTitle("hola");
+        }
+
+        super.update(elapsed);
     }
 }

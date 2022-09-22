@@ -10,21 +10,18 @@ import flixel.FlxSprite;
 class Prompt extends FlxSpriteGroup
 {
     //UI Shit
-    var buttons:FlxSprite;
+    private var titleTxt:FlxText;
+    private var buttons:FlxSprite;
 
     //Button functions, it didn't have custom frames and that stuff so I made these
-    public var okButtonReg:FlxSprite;
-    public var cancelButtonReg:FlxSprite;
+    private var okButtonReg:FlxSprite;
+    private var cancelButtonReg:FlxSprite;
 
     //Button callbacks - ex when pressing
     public var okCallback:Void->Void = function(){ FlxG.log.add("Pressed ok"); };
     public var cancelCallback:Void->Void = function(){ FlxG.log.add("Pressed cancel"); };
     //I made this to set the proper callback when pressing or hovering
-    var executeCb:Void->Void = null;
-
-    //Properties
-    public var titleSize:Int = 25;
-    public var infoSize:Int = 20;
+    private var executeCb:Void->Void = null;
 
     public function new(title:String = "Placeholder", info:Array<String>, showButtons:Bool = true)
     {
@@ -34,16 +31,16 @@ class Prompt extends FlxSpriteGroup
         bg.antialiasing = ClientPrefs.globalAntialiasing;
         add(bg);
 
-        var title = new FlxText(bg.x + 105, bg.y + 30, 0, title, this.titleSize);
-        title.setFormat(Paths.font("vcr.ttf"), this.titleSize, FlxColor.BLACK, LEFT);
-        title.antialiasing = ClientPrefs.globalAntialiasing;
-        add(title);
+        titleTxt = new FlxText(bg.x + 105, bg.y + 30, 0, title, 25);
+        titleTxt.setFormat(Paths.font("vcr.ttf"), 25, FlxColor.BLACK, LEFT);
+        titleTxt.antialiasing = ClientPrefs.globalAntialiasing;
+        add(titleTxt);
 
         var prevText:FlxText = null;
         for(i in 0...info.length)
         {
-            var text = new FlxText(bg.x + 12, (prevText == null ? title.y + 50 : prevText.y + 20), 0, info[i], this.infoSize);
-            text.setFormat(Paths.font("vcr.ttf"), this.infoSize, FlxColor.BLACK, LEFT);
+            var text = new FlxText(bg.x + 12, (prevText == null ? titleTxt.y + 50 : prevText.y + 20), 0, info[i], 20);
+            text.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
             text.antialiasing = ClientPrefs.globalAntialiasing;
             add(text);
             prevText = text;
@@ -110,5 +107,11 @@ class Prompt extends FlxSpriteGroup
         if(newAnim == "but0"){ executeCb = okCallback; }
         if(newAnim == "but1"){ executeCb = cancelCallback; }
         FlxG.sound.play(Paths.sound('scrollMenu'));
+    }
+
+    public function changeTitle(newTitle:String)
+    {
+        titleTxt.text = newTitle;
+        FlxG.log.add("Changed");
     }
 }
