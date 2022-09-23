@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import lime.app.Application;
 
 class OutdatedState extends MusicBeatState
 {
@@ -20,7 +21,11 @@ class OutdatedState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		add(bg);
 
-		updatePrompt = new Prompt('Engine Outdated!', "Your current version is outdated. Press OK to go to the Github page otherwise press CANCEL to ignore");
+		updatePrompt = new Prompt('Engine Outdated!',
+			"Your current version is outdated. Press OK to go to the Github page otherwise press CANCEL to ignore\n\nNewest ver "
+			+ TitleState.updateVer
+			+ "\nCurrent ver "
+			+ Application.current.meta.get('version'));
 		updatePrompt.infoTxt.size = 16;
 		updatePrompt.titleTxt.y -= 10;
 		updatePrompt.screenCenter();
