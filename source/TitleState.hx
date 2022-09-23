@@ -59,9 +59,6 @@ class TitleState extends MusicBeatState
 
 	public static var updateVer:String = "";
 
-	var updatePrompt:Prompt;
-	var updatePromptBG:FlxSprite;
-
 	override public function create():Void
 	{
 		#if CHECK_UPDATES
@@ -231,46 +228,6 @@ class TitleState extends MusicBeatState
 
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
-		updatePromptBG = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		updatePromptBG.alpha = 0;
-		add(updatePromptBG);
-
-		updatePrompt = new Prompt('Engine Outdated!', "Your current version is outdated. Press OK to go to the Github page otherwise press CANCEL to ignore");
-		updatePrompt.infoTxt.size = 16;
-		updatePrompt.titleTxt.y -= 10;
-		updatePrompt.alpha = 0;
-		updatePrompt.screenCenter();
-		add(updatePrompt);
-
-		updatePrompt.b1Callback = function()
-		{
-			trace("Redirecting");
-			CoolUtil.browserLoad('https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h');
-			FlxTween.tween(updatePrompt, {alpha: 0}, 1, {
-				onComplete: function(twn:FlxTween)
-				{
-					MusicBeatState.switchState(new MainMenuState());
-					closedState = true;
-					remove(updatePrompt);
-					remove(updatePromptBG);
-				}
-			});
-		}
-
-		updatePrompt.b2Callback = function()
-		{
-			trace("Alright!");
-			FlxTween.tween(updatePrompt, {alpha: 0}, 1, {
-				onComplete: function(twn:FlxTween)
-				{
-					MusicBeatState.switchState(new MainMenuState());
-					closedState = true;
-					remove(updatePrompt);
-					remove(updatePromptBG);
-				}
-			});
-		}
-
 		if (initialized)
 			skipIntro();
 		else
@@ -343,8 +300,7 @@ class TitleState extends MusicBeatState
 			{
 				if (mustUpdate)
 				{
-					FlxTween.tween(updatePromptBG, {alpha: 1}, 1);
-					FlxTween.tween(updatePrompt, {alpha: 1}, 1);
+					MusicBeatState.switchState(new OutdatedState());
 				}
 				else
 				{

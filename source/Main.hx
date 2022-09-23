@@ -1,9 +1,9 @@
 package;
 
-import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.tweens.FlxTween;
 import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
@@ -14,11 +14,12 @@ class Main extends Sprite
 {
 	var gameWidth:Int = 1280; // Width of the game in pixels (might be less / more in actual pixels depending on your zoom).
 	var gameHeight:Int = 720; // Height of the game in pixels (might be less / more in actual pixels depending on your zoom).
-	var initialState:Class<FlxState> = features.PermissionsPrompt; 
+	var initialState:Class<FlxState> = features.PermissionsPrompt;
 	var zoom:Float = -1; // If -1, zoom is automatically calculated to fit the window dimensions.
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
+
 	public static var fpsVar:FPS;
 	public static var memoryVar:MemoryCounter;
 
@@ -71,31 +72,33 @@ class Main extends Sprite
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);
 		addChild(fpsVar);
-		if(fpsVar != null) {
+		if (fpsVar != null)
+		{
 			fpsVar.visible = ClientPrefs.showFPS;
 			fpsVar.alpha = 0;
 		}
 
 		memoryVar = new MemoryCounter(10, 20);
 		addChild(memoryVar);
-		if(memoryVar != null){
+		if (memoryVar != null)
+		{
 			memoryVar.visible = ClientPrefs.showMemory;
 			memoryVar.alpha = 0;
 		}
 
 		FlxG.mouse.useSystemCursor = true;
-		FlxG.mouse.visible = true;
+		FlxG.mouse.visible = false;
 		#if !android
 		FlxG.autoPause = false;
 		#end
 	}
 
-	//deez comin from fof repo, i liked it
+	// deez comin from fof repo, i liked it
 	public static function tweenFPS(show:Bool = true, duration:Float = 1)
 	{
-		if(ClientPrefs.showFPS && fpsVar != null)
+		if (ClientPrefs.showFPS && fpsVar != null)
 		{
-			if(show)
+			if (show)
 			{
 				FlxTween.tween(fpsVar, {alpha: 1}, duration);
 			}
@@ -108,9 +111,9 @@ class Main extends Sprite
 
 	public static function tweenMemory(show:Bool = true, duration:Float = 1)
 	{
-		if(ClientPrefs.showMemory && memoryVar != null)
+		if (ClientPrefs.showMemory && memoryVar != null)
 		{
-			if(show)
+			if (show)
 			{
 				FlxTween.tween(memoryVar, {alpha: 1}, duration);
 			}
