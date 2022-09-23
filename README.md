@@ -1,4 +1,4 @@
-# Psych 0.3.2h with Android features for mod ports
+# Psych Engine 0.3.2h - more details on master branch
 
 Page repo
 
