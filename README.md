@@ -1,4 +1,4 @@
-# Psych Engine 0.3.2h
+# Psych Engine 0.3.2h (or Sanco Engine Remastered, if you have a name suggestion don't mind telling me)
 
 # What is this?
 
