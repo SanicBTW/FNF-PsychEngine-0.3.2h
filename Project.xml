@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Psych Engine" file="PsychEngine" packageName="com.sanicbtw.psychengine" package="com.sanicbtw.psychengine" main="Main" version="0.9.8" company="SanicBTW" />
+	<app title="Psych Engine" file="PsychEngine" packageName="com.sanicbtw.psychengine" package="com.sanicbtw.psychengine" main="Main" version="0.9.9" company="SanicBTW" />
 
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 
