@@ -132,6 +132,7 @@ class TitleState extends MusicBeatState
 		#end
 
 		FlxG.keys.preventDefaultKeys = [TAB];
+		FlxG.mouse.visible = false;
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
