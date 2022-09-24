@@ -317,6 +317,7 @@ class DialogueBoxPsych extends FlxSpriteGroup
 			if (bgFade.alpha > 0.5)
 				bgFade.alpha = 0.5;
 
+			#if !android
 			if (PlayerSettings.player1.controls.ACCEPT)
 			{
 				if (!daText.finishedText)
@@ -453,6 +454,147 @@ class DialogueBoxPsych extends FlxSpriteGroup
 					}
 				}
 			}
+			#else
+			for (touch in FlxG.touches.list)
+			{
+				if (touch.justPressed)
+				{
+					if (!daText.finishedText)
+					{
+						if (daText != null)
+						{
+							daText.killTheTimer();
+							daText.kill();
+							remove(daText);
+							daText.destroy();
+						}
+						daText = new Alphabet(DEFAULT_TEXT_X, DEFAULT_TEXT_Y, textToType, false, true, 0.0, 0.7);
+						add(daText);
+
+						if (skipDialogueThing != null)
+						{
+							skipDialogueThing();
+						}
+					}
+					else if (currentText >= dialogueList.dialogue.length)
+					{
+						dialogueEnded = true;
+						for (i in 0...textBoxTypes.length)
+						{
+							var checkArray:Array<String> = ['', 'center-'];
+							var animName:String = box.animation.curAnim.name;
+							for (j in 0...checkArray.length)
+							{
+								if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open')
+								{
+									box.animation.play(checkArray[j] + textBoxTypes[i] + 'Open', true);
+								}
+							}
+						}
+
+						box.animation.curAnim.curFrame = box.animation.curAnim.frames.length - 1;
+						box.animation.curAnim.reverse();
+						daText.kill();
+						remove(daText);
+						daText.destroy();
+						daText = null;
+						updateBoxOffsets(box);
+						FlxG.sound.music.fadeOut(1, 0);
+					}
+					else
+					{
+						startNextDialog();
+					}
+					FlxG.sound.play(Paths.sound('dialogueClose'));
+				}
+				else if (daText.finishedText)
+				{
+					var char:DialogueCharacter = arrayCharacters[lastCharacter];
+					if (char != null && char.animation.curAnim != null && char.animationIsLoop() && char.animation.finished)
+					{
+						char.playAnim(char.animation.curAnim.name, true);
+					}
+				}
+				else
+				{
+					var char:DialogueCharacter = arrayCharacters[lastCharacter];
+					if (char != null && char.animation.curAnim != null && char.animation.finished)
+					{
+						char.animation.curAnim.restart();
+					}
+				}
+
+				if (box.animation.curAnim.finished)
+				{
+					for (i in 0...textBoxTypes.length)
+					{
+						var checkArray:Array<String> = ['', 'center-'];
+						var animName:String = box.animation.curAnim.name;
+						for (j in 0...checkArray.length)
+						{
+							if (animName == checkArray[j] + textBoxTypes[i] || animName == checkArray[j] + textBoxTypes[i] + 'Open')
+							{
+								box.animation.play(checkArray[j] + textBoxTypes[i], true);
+							}
+						}
+					}
+					updateBoxOffsets(box);
+				}
+
+				if (lastCharacter != -1 && arrayCharacters.length > 0)
+				{
+					for (i in 0...arrayCharacters.length)
+					{
+						var char = arrayCharacters[i];
+						if (char != null)
+						{
+							if (i != lastCharacter)
+							{
+								switch (char.jsonFile.dialogue_pos)
+								{
+									case 'left':
+										char.x -= scrollSpeed * elapsed;
+										if (char.x < char.startingPos + offsetPos)
+											char.x = char.startingPos + offsetPos;
+									case 'center':
+										char.y += scrollSpeed * elapsed;
+										if (char.y > char.startingPos + FlxG.height)
+											char.y = char.startingPos + FlxG.height;
+									case 'right':
+										char.x += scrollSpeed * elapsed;
+										if (char.x > char.startingPos - offsetPos)
+											char.x = char.startingPos - offsetPos;
+								}
+								char.alpha -= 3 * elapsed;
+								if (char.alpha < 0.00001)
+									char.alpha = 0.00001;
+							}
+							else
+							{
+								switch (char.jsonFile.dialogue_pos)
+								{
+									case 'left':
+										char.x += scrollSpeed * elapsed;
+										if (char.x > char.startingPos)
+											char.x = char.startingPos;
+									case 'center':
+										char.y -= scrollSpeed * elapsed;
+										if (char.y < char.startingPos)
+											char.y = char.startingPos;
+									case 'right':
+										char.x -= scrollSpeed * elapsed;
+										if (char.x < char.startingPos)
+											char.x = char.startingPos;
+								}
+								char.alpha += 3 * elapsed;
+								if (char.alpha > 1)
+									char.alpha = 1;
+							}
+						}
+					}
+				}
+			}
+			#end
 		}
 		else
 		{ // Dialogue ending

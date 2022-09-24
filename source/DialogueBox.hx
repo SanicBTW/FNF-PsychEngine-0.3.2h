@@ -182,6 +182,7 @@ class DialogueBox extends FlxSpriteGroup
 			dialogueStarted = true;
 		}
 
+		#if !android
 		if (PlayerSettings.player1.controls.ACCEPT)
 		{
 			if (dialogueEnded)
@@ -233,6 +234,62 @@ class DialogueBox extends FlxSpriteGroup
 				}
 			}
 		}
+		#else
+		for (touch in FlxG.touches.list)
+		{
+			if (touch.justPressed)
+			{
+				if (dialogueEnded)
+				{
+					remove(dialogue);
+					if (dialogueList[1] == null && dialogueList[0] != null)
+					{
+						if (!isEnding)
+						{
+							isEnding = true;
+							FlxG.sound.play(Paths.sound('clickText'), 0.8);
+
+							if (PlayState.SONG.song.toLowerCase() == 'senpai' || PlayState.SONG.song.toLowerCase() == 'thorns')
+								FlxG.sound.music.fadeOut(1.5, 0);
+
+							new FlxTimer().start(0.2, function(tmr:FlxTimer)
+							{
+								box.alpha -= 1 / 5;
+								bgFade.alpha -= 1 / 5 * 0.7;
+								portraitLeft.visible = false;
+								portraitRight.visible = false;
+								swagDialogue.alpha -= 1 / 5;
+								handSelect.alpha -= 1 / 5;
+								dropText.alpha = swagDialogue.alpha;
+							}, 5);
+
+							new FlxTimer().start(1.5, function(tmr:FlxTimer)
+							{
+								finishThing();
+								kill();
+							});
+						}
+					}
+					else
+					{
+						dialogueList.remove(dialogueList[0]);
+						startDialogue();
+						FlxG.sound.play(Paths.sound('clickText'), 0.8);
+					}
+				}
+				else if (dialogueStarted)
+				{
+					FlxG.sound.play(Paths.sound('clickText'), 0.8);
+					swagDialogue.skip();
+
+					if (skipDialogueThing != null)
+					{
+						skipDialogueThing();
+					}
+				}
+			}
+		}
+		#end
 
 		super.update(elapsed);
 	}
