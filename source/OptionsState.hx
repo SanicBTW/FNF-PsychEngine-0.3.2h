@@ -1009,7 +1009,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 							changeState(1, options);
 						ClientPrefs.scoreTextDesign = options[index];
 					case 'Input':
-						var options = ['Kade', 'Psych'];
+						var options = ['Kade 1.5.3', 'Psych 0.4.2'];
 						if(controls.UI_LEFT_P)
 							changeState(-1, options);
 						else if(controls.UI_RIGHT_P)

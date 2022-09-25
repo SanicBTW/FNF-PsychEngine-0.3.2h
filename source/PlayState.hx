@@ -3143,7 +3143,7 @@ class PlayState extends MusicBeatState
 	// bruh
 	private function keyShit():Void
 	{
-		if (ClientPrefs.inputType == "Kade")
+		if (ClientPrefs.inputType == "Kade 1.5.3")
 		{
 			// control arrays, order L D R U
 			var holdArray:Array<Bool> = [controls.NOTE_LEFT, controls.NOTE_DOWN, controls.NOTE_UP, controls.NOTE_RIGHT];
@@ -3168,7 +3168,7 @@ class PlayState extends MusicBeatState
 				releaseArray = [false, false, false, false];
 			}
 			// HOLDS, check for sustain notes
-			if (holdArray.contains(true) && /*!boyfriend.stunned && */ generatedMusic)
+			if (holdArray.contains(true) && !boyfriend.stunned && generatedMusic)
 			{
 				notes.forEachAlive(function(daNote:Note)
 				{
@@ -3178,7 +3178,7 @@ class PlayState extends MusicBeatState
 			}
 
 			// PRESSES, check for note hits
-			if (pressArray.contains(true) && /*!boyfriend.stunned && */ generatedMusic)
+			if (pressArray.contains(true) && !boyfriend.stunned && generatedMusic)
 			{
 				boyfriend.holdTimer = 0;
 
@@ -3215,6 +3215,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 				});
+
 				for (note in dumbNotes)
 				{
 					FlxG.log.add("killing dumb ass note at " + note.strumTime);
@@ -3300,7 +3301,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 		}
-		else
+		else if (ClientPrefs.inputType == "Psych 0.4.2")
 		{
 			// HOLDING
 			var up = controls.NOTE_UP;
