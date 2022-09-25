@@ -88,21 +88,13 @@ class Prompt extends FlxSpriteGroup
 	{
 		if (okcBtns != null && okButtonReg != null && cancelButtonReg != null)
 		{
+			#if !android
 			if (FlxG.mouse.overlaps(okButtonReg) || FlxG.mouse.overlaps(cancelButtonReg))
 			{
-				var prevAnim = okcBtns.animation.curAnim.name;
-				okcBtns.animation.play(FlxG.mouse.overlaps(okButtonReg) ? "but0" : "but1", true);
-				if (okcBtns.animation.curAnim.name == "but0" && prevAnim == "but1")
-				{
-					executeCb = b1Callback;
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-				}
-
-				if (okcBtns.animation.curAnim.name == "but1" && prevAnim == "but0")
-				{
-					executeCb = b2Callback;
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-				}
+				if (FlxG.mouse.overlaps(okButtonReg) && okcBtns.animation.curAnim.name == "but1")
+					changeAnim("but0");
+				if (FlxG.mouse.overlaps(cancelButtonReg) && okcBtns.animation.curAnim.name == "but0")
+					changeAnim("but1");
 
 				if (FlxG.mouse.justPressed)
 				{
@@ -110,18 +102,36 @@ class Prompt extends FlxSpriteGroup
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 				}
 			}
+			#else
+			for (touch in FlxG.touches.list)
+			{
+				if (touch.overlaps(okButtonReg) || touch.overlaps(cancelButtonReg))
+				{
+					if (touch.overlaps(okButtonReg) && okcBtns.animation.curAnim.name == "but1")
+						changeAnim("but0");
+					if (touch.overlaps(cancelButtonReg) && okcBtns.animation.curAnim.name == "but0")
+						changeAnim("but1");
+
+					// to avoid pressing accidentaly on hovering lol
+					if (touch.justReleased)
+					{
+						executeCb();
+						FlxG.sound.play(Paths.sound('cancelMenu'));
+					}
+				}
+			}
+			#end
 		}
 
 		if (upBtn != null && downBtn != null)
 		{
+			#if !android
 			if (FlxG.mouse.overlaps(upBtn))
 			{
 				upBtn.alpha = 1;
 				// bruh wtf - its to avoid setting the execute callback to the same thing all the time lol
 				if (executeCb != b1Callback)
-				{
 					executeCb = b1Callback;
-				}
 
 				if (FlxG.mouse.justPressed)
 				{
@@ -138,9 +148,7 @@ class Prompt extends FlxSpriteGroup
 			{
 				downBtn.alpha = 1;
 				if (executeCb != b2Callback)
-				{
 					executeCb = b2Callback;
-				}
 
 				if (FlxG.mouse.justPressed)
 				{
@@ -152,9 +160,61 @@ class Prompt extends FlxSpriteGroup
 			{
 				downBtn.alpha = 0.6;
 			}
+			#else
+			for (touch in FlxG.touches.list)
+			{
+				if (touch.overlaps(upBtn))
+				{
+					upBtn.alpha = 1;
+
+					// i doubt its actually working
+					if (executeCb != b1Callback)
+						executeCb = b1Callback;
+
+					if (touch.justReleased)
+					{
+						executeCb();
+						FlxG.sound.play(Paths.sound('scrollMenu'));
+					}
+				}
+				else
+				{
+					upBtn.alpha = 0.6;
+				}
+
+				if (touch.overlaps(downBtn))
+				{
+					downBtn.alpha = 1;
+
+					if (executeCb != b2Callback)
+						executeCb = b2Callback;
+
+					if (touch.justReleased)
+					{
+						executeCb();
+						FlxG.sound.play(Paths.sound('scrollMenu'));
+					}
+				}
+				else
+				{
+					downBtn.alpha = 0.6;
+				}
+			}
+			#end
 		}
 
 		super.update(elapsed);
+	}
+
+	// move to the old system cuz it works better
+	function changeAnim(anim:String)
+	{
+		okcBtns.animation.play(anim, true);
+		if (anim == "but0")
+			executeCb = b1Callback;
+		if (anim == "but1")
+			executeCb = b2Callback;
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 }
 
