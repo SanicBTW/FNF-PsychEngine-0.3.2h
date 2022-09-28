@@ -91,6 +91,8 @@ class Prompt extends FlxSpriteGroup
 			#if !android
 			if (FlxG.mouse.overlaps(okButtonReg) || FlxG.mouse.overlaps(cancelButtonReg))
 			{
+				executeCb = (FlxG.mouse.overlaps(okButtonReg) ? b1Callback : b2Callback);
+
 				if (FlxG.mouse.overlaps(okButtonReg) && okcBtns.animation.curAnim.name == "but1")
 					changeAnim("but0");
 				if (FlxG.mouse.overlaps(cancelButtonReg) && okcBtns.animation.curAnim.name == "but0")
@@ -107,6 +109,8 @@ class Prompt extends FlxSpriteGroup
 			{
 				if (touch.overlaps(okButtonReg) || touch.overlaps(cancelButtonReg))
 				{
+					executeCb = (touch.overlaps(okButtonReg) ? b1Callback : b2Callback);
+
 					if (touch.overlaps(okButtonReg) && okcBtns.animation.curAnim.name == "but1")
 						changeAnim("but0");
 					if (touch.overlaps(cancelButtonReg) && okcBtns.animation.curAnim.name == "but0")
@@ -210,10 +214,6 @@ class Prompt extends FlxSpriteGroup
 	function changeAnim(anim:String)
 	{
 		okcBtns.animation.play(anim, true);
-		if (anim == "but0")
-			executeCb = b1Callback;
-		if (anim == "but1")
-			executeCb = b2Callback;
 		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 }

@@ -54,61 +54,8 @@ class TitleState extends MusicBeatState
 	var curWacky:Array<String> = [];
 	var wackyImage:FlxSprite;
 
-	var gitURL:String = "https://raw.githubusercontent.com/SanicBTW/FNF-PsychEngine-0.3.2h/master/engineVersion.txt";
-	var mustUpdate:Bool = false;
-
-	public static var updateVer:String = "";
-
 	override public function create():Void
 	{
-		#if CHECK_UPDATES
-		if (!closedState)
-		{
-			#if !html5
-			var http = new haxe.Http(gitURL);
-
-			http.onData = function(data:String)
-			{
-				updateVer = data.split('\n')[0].trim();
-				var curVer = Application.current.meta.get('version');
-				trace("repo version: " + updateVer + " cur version" + curVer);
-				if (updateVer != curVer)
-				{
-					trace('not matching');
-					mustUpdate = true;
-				}
-			}
-
-			http.onError = function(error)
-			{
-				trace(error);
-			}
-
-			http.request();
-			#else
-			var req = js.Browser.createXMLHttpRequest();
-			req.addEventListener('load', function()
-			{
-				updateVer = req.responseText.split('\n')[0].trim();
-				var curVer = Application.current.meta.get('version');
-				trace("repo version: " + updateVer + " cur version: " + curVer);
-				if (updateVer != curVer)
-				{
-					trace("not macthing");
-					mustUpdate = true;
-				}
-			});
-
-			req.addEventListener('error', function()
-			{
-				trace(req.statusText);
-			});
-			req.open("GET", gitURL);
-			req.send();
-			#end
-		}
-		#end
-
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
@@ -299,15 +246,8 @@ class TitleState extends MusicBeatState
 
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
-				if (mustUpdate)
-				{
-					MusicBeatState.switchState(new OutdatedState());
-				}
-				else
-				{
-					MusicBeatState.switchState(new MainMenuState());
-					closedState = true;
-				}
+				MusicBeatState.switchState(new MainMenuState());
+				closedState = true;
 			});
 		}
 

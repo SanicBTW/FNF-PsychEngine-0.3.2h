@@ -28,4 +28,4 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 
 HTML5 Players - For testing latest changes
 
-Dulce - For beta testing the Android version <3
+Dulce - For beta testing the Android version

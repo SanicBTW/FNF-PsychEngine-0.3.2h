@@ -74,7 +74,7 @@ class PermissionsPrompt extends MusicBeatState
 		strgePrmptTwn(function()
 		{
 			remove(storagePrompt);
-			ClientPrefs.allowFileSys = false;
+			ClientPrefs.allowFileSys = true;
 			ClientPrefs.answeredReq = true;
 			ClientPrefs.saveSettings();
 			MusicBeatState.switchState(new TitleState());

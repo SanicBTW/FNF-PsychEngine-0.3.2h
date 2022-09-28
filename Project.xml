@@ -94,6 +94,5 @@
 	<!-- _____________________________ Engine Features ____________________________ -->
 
 	<define name="STORAGE_ACCESS" if="android || windows" />
-	<define name="CHECK_UPDATES"/>
 
 </project>
