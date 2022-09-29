@@ -8,6 +8,7 @@ import openfl.Assets;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
+import openfl.display.StageScaleMode;
 import openfl.events.Event;
 
 class Main extends Sprite
@@ -85,6 +86,10 @@ class Main extends Sprite
 			memoryVar.visible = ClientPrefs.showMemory;
 			memoryVar.alpha = 0;
 		}
+
+		// what
+		Lib.current.stage.align = "tl";
+		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = true;
