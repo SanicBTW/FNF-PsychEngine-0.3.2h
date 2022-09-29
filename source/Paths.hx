@@ -1,11 +1,11 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
+import lime.utils.Assets;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-import lime.utils.Assets;
-import flixel.FlxSprite;
 
 using StringTools;
 
@@ -29,7 +29,8 @@ class Paths
 		if (currentLevel != null)
 		{
 			var levelPath:String = '';
-			if(currentLevel != 'shared') {
+			if (currentLevel != 'shared')
+			{
 				levelPath = getLibraryPathForce(file, currentLevel);
 				if (OpenFlAssets.exists(levelPath, type))
 					return levelPath;
@@ -112,7 +113,7 @@ class Paths
 	{
 		return getPath('images/$key.png', IMAGE, library);
 	}
-	
+
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
 		return Assets.getText(getPath(key, TEXT));
@@ -125,7 +126,8 @@ class Paths
 
 	inline static public function fileExists(key:String, type:AssetType, ?ignoreMods:Bool = false, ?library:String)
 	{
-		if(OpenFlAssets.exists(Paths.getPath(key, type))) {
+		if (OpenFlAssets.exists(Paths.getPath(key, type)))
+		{
 			return true;
 		}
 		return false;
@@ -139,10 +141,5 @@ class Paths
 	inline static public function getPackerAtlas(key:String, ?library:String)
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
-	}
-
-	inline static public function video(key:String)
-	{
-		return 'assets/videos/$key.$VIDEO_EXT';
 	}
 }
