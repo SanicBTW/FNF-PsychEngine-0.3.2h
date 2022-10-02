@@ -20,10 +20,6 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - A new loading screen (For HTML5 users)
 - New note splash texture
 
-# Pending
-
-- Fix the reset score substate not destroying past control or resetting state as options state does
-
 # Special thanks
 
 HTML5 Players - For testing latest changes
