@@ -246,7 +246,7 @@ class PlayState extends MusicBeatState
 
 		if (inst == null)
 			inst = Paths.inst(PlayState.SONG.song);
-		if (voices == null)
+		if (!FreeplayState.songs[FreeplayState.curSelected].intStorage && voices == null)
 			voices = Paths.voices(PlayState.SONG.song);
 
 		practiceMode = false;
