@@ -27,13 +27,6 @@ class StorageAccess
 		checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
 		checkDirs.set("songs", Path.join([checkDirs.get("main"), "songs"]));
 
-		// never finished sorry, i will work on it one day
-		checkDirs.set("hitsounds", Path.join([checkDirs.get("main"), "hitsounds"]));
-
-		// finally implemented images???? no way
-		checkDirs.set("images", Path.join([checkDirs.get("main"), "images"]));
-		checkDirs.set("icons", Path.join([checkDirs.get("images"), "icons"]));
-
 		for (varName => dirPath in checkDirs)
 		{
 			trace("Checking: " + varName + " - " + dirPath);
