@@ -29,7 +29,7 @@ class ClientPrefs
 
 	public static var showMemory:Bool = true;
 	public static var optScoreZoom:Bool = true;
-	public static var cameraMovOnNoteP:Bool = true;
+	public static var cameraMovement:Bool = true;
 	public static var iconBoping:Bool = false;
 	public static var pauseMusic:String = "Tea Time";
 	public static var missVolume:Float = 0.2;
@@ -48,6 +48,7 @@ class ClientPrefs
 	public static var answeredReq:Bool = false;
 	public static var ghostTappingBFSing:Bool = true;
 	public static var comboStacking:Bool = true;
+	public static var cameraMovementDisplacement:Float = 15;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -116,7 +117,7 @@ class ClientPrefs
 
 		FlxG.save.data.showMemory = showMemory;
 		FlxG.save.data.optScoreZoom = optScoreZoom;
-		FlxG.save.data.cameraMovOnNoteP = cameraMovOnNoteP;
+		FlxG.save.data.cameraMovement = cameraMovement;
 		FlxG.save.data.iconBoping = iconBoping;
 		FlxG.save.data.pauseMusic = pauseMusic;
 		FlxG.save.data.missVolume = missVolume;
@@ -135,6 +136,7 @@ class ClientPrefs
 		FlxG.save.data.answeredReq = answeredReq;
 		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
 		FlxG.save.data.comboStacking = comboStacking;
+		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
 
 		FlxG.save.flush();
 
@@ -238,9 +240,9 @@ class ClientPrefs
 		{
 			optScoreZoom = FlxG.save.data.optScoreZoom;
 		}
-		if (FlxG.save.data.cameraMovOnNoteP != null)
+		if (FlxG.save.data.cameraMovement != null)
 		{
-			cameraMovOnNoteP = FlxG.save.data.cameraMovOnNoteP;
+			cameraMovement = FlxG.save.data.cameraMovement;
 		}
 		if (FlxG.save.data.iconBoping != null)
 		{
@@ -313,6 +315,10 @@ class ClientPrefs
 		if (FlxG.save.data.comboStacking != null)
 		{
 			comboStacking = FlxG.save.data.comboStacking;
+		}
+		if (FlxG.save.data.cameraMovementDisplacement != null)
+		{
+			cameraMovementDisplacement = FlxG.save.data.cameraMovementDisplacement;
 		}
 
 		var save:FlxSave = new FlxSave();

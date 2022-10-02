@@ -15,7 +15,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'VISUALS AND UI', 'AUDIO',];
 	static var noCheckbox:Array<String> = [
 		'Framerate', 'Pause Music', 'Miss Volume', 'Hitsound Volume', 'Score Text design', 'Input', 'Rating Offset', 'Sick! Hit Window', 'Good Hit Window',
-		'Bad Hit Window', 'Safe Frames',
+		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement'
 	];
 
 	static var options:Array<String> = [
@@ -29,7 +29,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Downscroll',
 		'Middlescroll',
 		'Ghost Tapping',
-		'Camera movement on note press',
+		'Camera Movement',
+		'Camera Mov Displacement',
 		'Input',
 		'Rating Offset',
 		'Sick! Hit Window',
@@ -261,8 +262,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 					case 'Score Text Zoom on Hit':
 						ClientPrefs.optScoreZoom = !ClientPrefs.optScoreZoom;
-					case 'Camera movement on note press':
-						ClientPrefs.cameraMovOnNoteP = !ClientPrefs.cameraMovOnNoteP;
+					case 'Camera Movement':
+						ClientPrefs.cameraMovement = !ClientPrefs.cameraMovement;
 					case 'Icon Boping':
 						ClientPrefs.iconBoping = !ClientPrefs.iconBoping;
 					case 'Smooth cam zooms':
@@ -368,6 +369,12 @@ class PreferencesSubstate extends MusicBeatSubstate
 								ClientPrefs.safeFrames = 2;
 							else if (ClientPrefs.safeFrames > 10)
 								ClientPrefs.safeFrames = 10;
+						case 'Camera Mov Displacement':
+							ClientPrefs.cameraMovementDisplacement += floatAdd;
+							if (ClientPrefs.cameraMovementDisplacement < 5)
+								ClientPrefs.cameraMovementDisplacement = 5;
+							else if (ClientPrefs.cameraMovementDisplacement > 50)
+								ClientPrefs.cameraMovementDisplacement = 50;
 					}
 				reloadValues();
 
@@ -449,8 +456,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 
 			case 'Score Text Zoom on Hit':
 				daText = "If unchecked, disables the Score text zooming\neverytime you hit a note.";
-			case 'Camera movement on note press':
-				daText = 'Moves the camera to the note direction';
+			case 'Camera Movement':
+				daText = 'Moves the camera to the strum direction';
 			case 'Icon Boping':
 				daText = "If checked, icons bop";
 			case 'Pause Music':
@@ -481,6 +488,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = 'If enabled, BF will sing in the strum direction\nonly works with Ghost Tapping';
 			case 'Combo Stacking':
 				daText = "If unchecked, Ratings and Combo won't stack\nsaving on System Memory and making them easier to read";
+			case 'Camera Mov Displacement':
+				daText = "Changes the camera displace value\nOnly works if camera movement is enabled";
 		}
 		descText.text = daText;
 
@@ -568,8 +577,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.showMemory;
 					case 'Score Text Zoom on Hit':
 						daValue = ClientPrefs.optScoreZoom;
-					case 'Camera movement on note press':
-						daValue = ClientPrefs.cameraMovOnNoteP;
+					case 'Camera Movement':
+						daValue = ClientPrefs.cameraMovement;
 					case 'Icon Boping':
 						daValue = ClientPrefs.iconBoping;
 					case 'Smooth cam zooms':
@@ -614,6 +623,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = ClientPrefs.badWindow + "ms";
 					case 'Safe Frames':
 						daText = '' + FlxMath.roundDecimal(ClientPrefs.safeFrames, 1);
+					case 'Camera Mov Displacement':
+						daText = '' + FlxMath.roundDecimal(ClientPrefs.cameraMovementDisplacement, 1);
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;

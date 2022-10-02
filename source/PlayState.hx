@@ -107,6 +107,7 @@ class PlayState extends MusicBeatState
 
 	private var strumLine:FlxSprite;
 	private var curSection:Int = 0;
+	private var lastSection:Int = 0;
 	private var camFollow:FlxPoint;
 	private var camFollowPos:FlxObject;
 
@@ -236,6 +237,9 @@ class PlayState extends MusicBeatState
 	public static var lastScore:Array<FlxSprite> = [];
 
 	var curFont = null; // to properly set the font on format
+
+	var camDisplaceX:Float = 0;
+	var camDisplaceY:Float = 0;
 
 	override public function create()
 	{
@@ -1028,9 +1032,6 @@ class PlayState extends MusicBeatState
 		openfl.system.System.gc();
 
 		CustomFadeTransition.nextCamera = camOther;
-
-		camZooming = false; // to avoid an annoying cam zoom
-		beatHit(); // fix startup camera pos - stupid shit
 	}
 
 	public function reloadHealthBarColors()
@@ -2111,6 +2112,24 @@ class PlayState extends MusicBeatState
 			}
 		}
 
+		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null)
+		{
+			var curSection = Std.int(curStep / 16);
+			if (curSection != lastSection)
+			{
+				// section reset stuff
+				var lastMustHit:Bool = PlayState.SONG.notes[lastSection].mustHitSection;
+				if (SONG.notes[curSection].mustHitSection != lastMustHit)
+				{
+					camDisplaceX = 0;
+					camDisplaceY = 0;
+				}
+				lastSection = Std.int(curStep / 16);
+			}
+
+			updateCamFollow(elapsed);
+		}
+
 		if (camZooming)
 		{
 			if (ClientPrefs.smoothCamZoom)
@@ -2307,6 +2326,8 @@ class PlayState extends MusicBeatState
 			{
 				boyfriend.dance();
 			}
+			cameraDisplacement(boyfriend, true);
+			cameraDisplacement(dad, false);
 		}
 
 		#if debug
@@ -2708,69 +2729,6 @@ class PlayState extends MusicBeatState
 							gf.visible = isGfVisible;
 						}
 				}
-		}
-	}
-
-	function moveCameraSection(?id:Int = 0):Void
-	{
-		if (SONG.notes[id] != null && camFollow.x != dad.getMidpoint().x + 150 && !SONG.notes[id].mustHitSection)
-		{
-			moveCamera(true);
-			campointX = camFollow.x;
-			campointY = camFollow.y;
-			bfturn = false;
-		}
-
-		if (SONG.notes[id] != null && SONG.notes[id].mustHitSection && camFollow.x != boyfriend.getMidpoint().x - 100)
-		{
-			moveCamera(false);
-			campointX = camFollow.x;
-			campointY = camFollow.y;
-			bfturn = true;
-		}
-	}
-
-	var cameraTwn:FlxTween;
-
-	public function moveCamera(isDad:Bool)
-	{
-		if (isDad)
-		{
-			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
-			camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
-			camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
-			tweenCamIn();
-		}
-		else
-		{
-			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
-			camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
-			camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
-
-			if (SONG.song.toLowerCase().replace(" ", "-") == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1)
-			{
-				cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1}, (Conductor.stepCrochet * 4 / 1000), {
-					ease: FlxEase.elasticInOut,
-					onComplete: function(twn:FlxTween)
-					{
-						cameraTwn = null;
-					}
-				});
-			}
-		}
-	}
-
-	function tweenCamIn()
-	{
-		if (SONG.song.toLowerCase().replace(" ", "-") == 'tutorial' && cameraTwn == null && FlxG.camera.zoom != 1.3)
-		{
-			cameraTwn = FlxTween.tween(FlxG.camera, {zoom: 1.3}, (Conductor.stepCrochet * 4 / 1000), {
-				ease: FlxEase.elasticInOut,
-				onComplete: function(twn:FlxTween)
-				{
-					cameraTwn = null;
-				}
-			});
 		}
 	}
 
@@ -3546,7 +3504,6 @@ class PlayState extends MusicBeatState
 
 				if (char != null)
 				{
-					cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], false);
 					char.playAnim(singAnims[Std.int(Math.abs(note.noteData)) % 4] + daAlt, true);
 					char.holdTimer = 0;
 				}
@@ -3650,7 +3607,6 @@ class PlayState extends MusicBeatState
 
 			if (char != null)
 			{
-				cameraShit(singAnims[Std.int(Math.abs(note.noteData)) % 4], true);
 				char.playAnim(singAnims[Std.int(Math.abs(note.noteData)) % 4] + altAnim, true);
 				char.holdTimer = 0;
 			}
@@ -3917,11 +3873,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		if (generatedMusic && PlayState.SONG.notes[Std.int(curStep / 16)] != null && !endingSong && !isCameraOnForcedPos)
-		{
-			moveCameraSection(Std.int(curStep / 16));
-		}
-
 		if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % 4 == 0)
 		{
 			FlxG.camera.zoom += 0.015;
@@ -4113,39 +4064,6 @@ class PlayState extends MusicBeatState
 			ratingFC = "Clear";
 	}
 
-	var mult = 5;
-
-	function cameraShit(animToPlay, isDad)
-	{
-		switch (animToPlay)
-		{
-			case 'singLEFT':
-				if (((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
-				{
-					camFollow.x = campointX - mult;
-					camFollow.y = campointY;
-				}
-			case "singDOWN":
-				if (((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
-				{
-					camFollow.x = campointX;
-					camFollow.y = campointY + mult;
-				}
-			case "singUP":
-				if (((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
-				{
-					camFollow.x = campointX;
-					camFollow.y = campointY - mult;
-				}
-			case "singRIGHT":
-				if (((!bfturn && isDad) || (bfturn && !isDad)) && ClientPrefs.cameraMovOnNoteP)
-				{
-					camFollow.x = campointX + mult;
-					camFollow.y = campointY;
-				}
-		}
-	}
-
 	function getScoreTextFormat():String
 	{
 		switch (ClientPrefs.scoreTextDesign)
@@ -4172,6 +4090,62 @@ class PlayState extends MusicBeatState
 				}
 		}
 		return "";
+	}
+
+	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
+	function cameraDisplacement(character:Character, mustHit:Bool)
+	{
+		if (ClientPrefs.cameraMovement)
+		{
+			if (SONG.notes[Std.int(curStep / 16)] != null)
+			{
+				if (SONG.notes[Std.int(curStep / 16)].mustHitSection
+					&& mustHit
+					|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && !mustHit))
+				{
+					if (character.animation.curAnim != null)
+					{
+						camDisplaceX = 0;
+						camDisplaceY = 0;
+						switch (character.animation.curAnim.name)
+						{
+							case 'singUP':
+								camDisplaceY -= ClientPrefs.cameraMovementDisplacement;
+							case 'singDOWN':
+								camDisplaceY += ClientPrefs.cameraMovementDisplacement;
+							case 'singLEFT':
+								camDisplaceX -= ClientPrefs.cameraMovementDisplacement;
+							case 'singRIGHT':
+								camDisplaceX += ClientPrefs.cameraMovementDisplacement;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	function updateCamFollow(?elapsed:Float)
+	{
+		if (elapsed == null)
+			elapsed = FlxG.elapsed;
+		if (!PlayState.SONG.notes[Std.int(curStep / 16)].mustHitSection)
+		{
+			var char = dad;
+
+			var getCenterX = char.getMidpoint().x + 150;
+			var getCenterY = char.getMidpoint().y - 100;
+
+			camFollow.set(getCenterX + camDisplaceX + char.cameraPosition[0], getCenterY + camDisplaceY + char.cameraPosition[1]);
+		}
+		else
+		{
+			var char = boyfriend;
+
+			var getCenterX = char.getMidpoint().x - 100;
+			var getCenterY = char.getMidpoint().y - 100;
+
+			camFollow.set(getCenterX + camDisplaceX - char.cameraPosition[0], getCenterY + camDisplaceY + char.cameraPosition[1]);
+		}
 	}
 
 	var curLight:Int = 0;
