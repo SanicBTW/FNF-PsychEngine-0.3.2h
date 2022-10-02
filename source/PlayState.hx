@@ -231,8 +231,6 @@ class PlayState extends MusicBeatState
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
 	// stores the last combo sprite object
-	public static var lastCombo:FlxSprite;
-	// stores the last combo score objects in an array
 	public static var lastScore:Array<FlxSprite> = [];
 
 	var curFont = null; // to properly set the font on format
@@ -246,7 +244,7 @@ class PlayState extends MusicBeatState
 
 		if (inst == null)
 			inst = Paths.inst(PlayState.SONG.song);
-		if (voices == null)
+		if (!FreeplayState.songs[FreeplayState.curSelected].intStorage && voices == null)
 			voices = Paths.voices(PlayState.SONG.song);
 
 		practiceMode = false;
@@ -3900,7 +3898,6 @@ class PlayState extends MusicBeatState
 		if (lastBeatHit >= curBeat)
 		{
 			trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
-			openfl.system.System.gc();
 			return;
 		}
 

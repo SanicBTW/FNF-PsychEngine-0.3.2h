@@ -14,9 +14,13 @@ import sys.io.File;
 // made to access internal storage for target platform sys
 class StorageAccess
 {
-	public static var checkDirs:Map<String, String> = new Map();
+	private static var checkDirs:Map<String, String> = new Map();
+	// set flags to a dir for ex if its gonna be used or not, if it should be created or not, etc
+	private static var dirFlags:Map<String, Array<StorageFlags>> = new Map();
 	// filename, filepath, filecontent
-	public static var checkFiles:Map<String, Array<String>> = new Map();
+	private static var checkFiles:Map<String, Array<String>> = new Map();
+
+	private static var shouldCreate:Bool = true;
 
 	public static function checkStorage()
 	{
@@ -29,6 +33,7 @@ class StorageAccess
 
 		// never finished sorry, i will work on it one day
 		checkDirs.set("hitsounds", Path.join([checkDirs.get("main"), "hitsounds"]));
+		dirFlags.set("hitsounds", [DONT_CREATE, DONT_USE]);
 
 		// finally implemented images???? no way
 		checkDirs.set("images", Path.join([checkDirs.get("main"), "images"]));
@@ -37,10 +42,31 @@ class StorageAccess
 		for (varName => dirPath in checkDirs)
 		{
 			trace("Checking: " + varName + " - " + dirPath);
-			if (!exists(dirPath))
+			for (dirFlag in dirFlags)
 			{
-				FileSystem.createDirectory(dirPath);
+				trace("Checking flags for: " + varName);
+				if (dirFlags.get(varName) == null)
+				{
+					trace("Couldn't find flags for: " + varName);
+					return;
+				}
+
+				trace("Found flags for: " + varName);
+				for (flag in dirFlag)
+				{
+					switch (flag)
+					{
+						case DONT_CREATE:
+							shouldCreate = false;
+						case DONT_USE:
+					}
+				}
 			}
+			/*
+				if (!exists(dirPath))
+				{
+					FileSystem.createDirectory(dirPath);
+			}*/
 		}
 
 		openfl.system.System.gc();
@@ -134,4 +160,10 @@ class StorageAccess
 		}
 		#end
 	}
+}
+
+@:enum abstract StorageFlags(String) to String
+{
+	var DONT_CREATE;
+	var DONT_USE;
 }
