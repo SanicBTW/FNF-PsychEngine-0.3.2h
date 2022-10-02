@@ -248,7 +248,7 @@ class PlayState extends MusicBeatState
 
 		if (inst == null)
 			inst = Paths.inst(PlayState.SONG.song);
-		if (!FreeplayState.songs[FreeplayState.curSelected].intStorage && voices == null)
+		if (PlayState.SONG.needsVoices && voices == null)
 			voices = Paths.voices(PlayState.SONG.song);
 
 		practiceMode = false;
@@ -1826,7 +1826,7 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		if (!paused)
+		if (!paused && startedCountdown && canPause && !inCutscene)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
@@ -2017,7 +2017,9 @@ class PlayState extends MusicBeatState
 		}
 		botplayTxt.visible = cpuControlled;
 
-		if (FlxG.keys.justPressed.ENTER #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
+		if (FlxG.keys.justPressed.ENTER #if android || FlxG.android.justReleased.BACK #end && startedCountdown
+			&& canPause
+			&& !inCutscene)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;

@@ -25,3 +25,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 HTML5 Players - For testing latest changes
 
 Dulce - For beta testing the Android version
+
+# Bugs
+
+- Lime 8.0.0 seems to have issues with rendering sometimes (Some stuff like FlxText's might seem a little bit more pixelated )
