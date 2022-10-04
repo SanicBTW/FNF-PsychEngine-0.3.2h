@@ -3241,6 +3241,10 @@ class PlayState extends MusicBeatState
 				{
 					spr.playAnim('pressed');
 					spr.resetAnim = 0;
+					if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
+					{
+						boyfriend.playAnim(singAnims[spr.ID]);
+					}
 				}
 				if (releaseArray[spr.ID])
 				{
@@ -3248,16 +3252,6 @@ class PlayState extends MusicBeatState
 					spr.resetAnim = 0;
 				}
 			});
-
-			// dawg tf
-			if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
-			{
-				var index = pressArray.indexOf(pressArray.contains(true));
-				if (pressArray[index])
-				{
-					boyfriend.playAnim(singAnims[index]);
-				}
-			}
 		}
 		else if (ClientPrefs.inputType == "Psych 0.4.2")
 		{
@@ -3366,6 +3360,10 @@ class PlayState extends MusicBeatState
 				{
 					spr.playAnim('pressed');
 					spr.resetAnim = 0;
+					if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
+					{
+						boyfriend.playAnim(singAnims[spr.ID]);
+					}
 				}
 				if (controlReleaseArray[spr.ID])
 				{
@@ -3373,16 +3371,6 @@ class PlayState extends MusicBeatState
 					spr.resetAnim = 0;
 				}
 			});
-
-			// dawg tf
-			if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
-			{
-				var index = controlArray.indexOf(controlArray.contains(true));
-				if (controlArray[index])
-				{
-					boyfriend.playAnim(singAnims[index]);
-				}
-			}
 		}
 	}
 
