@@ -4123,7 +4123,10 @@ class PlayState extends MusicBeatState
 			var getCenterX = char.getMidpoint().x + 150;
 			var getCenterY = char.getMidpoint().y - 100;
 
-			camFollow.set(getCenterX + camDisplaceX + char.cameraPosition[0], getCenterY + camDisplaceY + char.cameraPosition[1]);
+			camFollow.set(getCenterX, getCenterY);
+
+			camFollow.x += camDisplaceX + char.cameraPosition[0] + opponentCameraOffset[0];
+			camFollow.y += camDisplaceY + char.cameraPosition[1] + opponentCameraOffset[1];
 		}
 		else
 		{
@@ -4132,7 +4135,10 @@ class PlayState extends MusicBeatState
 			var getCenterX = char.getMidpoint().x - 100;
 			var getCenterY = char.getMidpoint().y - 100;
 
-			camFollow.set(getCenterX + camDisplaceX - char.cameraPosition[0], getCenterY + camDisplaceY + char.cameraPosition[1]);
+			camFollow.set(getCenterX, getCenterY);
+
+			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
+			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
 		}
 	}
 
