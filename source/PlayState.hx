@@ -218,10 +218,6 @@ class PlayState extends MusicBeatState
 	public var bads:Int = 0;
 	public var shits:Int = 0;
 
-	var campointX:Float = 0;
-	var campointY:Float = 0;
-	var bfturn:Bool = false;
-
 	public var boyfriendCameraOffset:Array<Float> = null;
 	public var opponentCameraOffset:Array<Float> = null;
 	public var girlfriendCameraOffset:Array<Float> = null;
