@@ -1822,7 +1822,7 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		if (!paused && startedCountdown && canPause && !inCutscene)
+		if (!paused && startedCountdown && canPause && !inCutscene && ClientPrefs.pauseOnFocusLost)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
@@ -2013,9 +2013,7 @@ class PlayState extends MusicBeatState
 		}
 		botplayTxt.visible = cpuControlled;
 
-		if (FlxG.keys.justPressed.ENTER #if android || FlxG.android.justReleased.BACK #end && startedCountdown
-			&& canPause
-			&& !inCutscene)
+		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause && !inCutscene)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;

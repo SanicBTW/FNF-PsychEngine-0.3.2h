@@ -12,7 +12,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
 	private static var index:Int = 0;
-	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'VISUALS AND UI', 'AUDIO',];
+	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'CAMERA', 'VISUALS AND UI', 'AUDIO',];
 	static var noCheckbox:Array<String> = [
 		'Framerate', 'Pause Music', 'Miss Volume', 'Hitsound Volume', 'Score Text design', 'Input', 'Rating Offset', 'Sick! Hit Window', 'Good Hit Window',
 		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement'
@@ -22,15 +22,12 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'GRAPHICS',
 		'Low Quality',
 		'Anti-Aliasing',
-		#if !html5
-		'Framerate', // Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
+		#if !html5 'Framerate', // Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
 		'GAMEPLAY',
 		'Downscroll',
 		'Middlescroll',
 		'Ghost Tapping',
-		'Camera Movement',
-		'Camera Mov Displacement',
 		'Input',
 		'Rating Offset',
 		'Sick! Hit Window',
@@ -38,18 +35,22 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Bad Hit Window',
 		'Safe Frames',
 		'Freestyle BF',
+		'Pause game when focus is lost',
+		'CAMERA',
+		'Camera Zooms',
+		'Smooth cam zooms',
+		'Camera Movement',
+		'Camera Mov Displacement',
 		'VISUALS AND UI',
 		'FPS Counter',
 		'Memory Counter',
 		'Hide HUD',
 		'Hide Song Length',
 		'Flashing Lights',
-		'Camera Zooms',
 		'Icon Boping',
 		'Score Text design',
 		'Note Splashes',
 		'Opponent Note Splashes',
-		'Smooth cam zooms',
 		'Score Text Zoom on Hit',
 		'Combo Stacking',
 		'AUDIO',
@@ -274,6 +275,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.ghostTappingBFSing = !ClientPrefs.ghostTappingBFSing;
 					case 'Combo Stacking':
 						ClientPrefs.comboStacking = !ClientPrefs.comboStacking;
+					case 'Pause game when focus is lost':
+						ClientPrefs.pauseOnFocusLost = !ClientPrefs.pauseOnFocusLost;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -490,6 +493,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "If unchecked, Ratings and Combo won't stack\nsaving on System Memory and making them easier to read";
 			case 'Camera Mov Displacement':
 				daText = "Changes the camera displace value\nOnly works if camera movement is enabled";
+			case 'Pause game when focus is lost':
+				daText = "I don't know if I should put something here";
 		}
 		descText.text = daText;
 
@@ -589,6 +594,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.ghostTappingBFSing;
 					case 'Combo Stacking':
 						daValue = ClientPrefs.comboStacking;
+					case 'Pause game when focus is lost':
+						daValue = ClientPrefs.pauseOnFocusLost;
 				}
 				checkbox.daValue = daValue;
 			}

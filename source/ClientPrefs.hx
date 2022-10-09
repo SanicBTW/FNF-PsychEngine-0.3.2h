@@ -48,7 +48,8 @@ class ClientPrefs
 	public static var answeredReq:Bool = false;
 	public static var ghostTappingBFSing:Bool = true;
 	public static var comboStacking:Bool = true;
-	public static var cameraMovementDisplacement:Float = 15;
+	public static var cameraMovementDisplacement:Float = 15; // about to be deprecated
+	public static var pauseOnFocusLost:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -137,6 +138,7 @@ class ClientPrefs
 		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
+		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
 
 		FlxG.save.flush();
 
@@ -234,6 +236,10 @@ class ClientPrefs
 		if (FlxG.save.data.showMemory != null)
 		{
 			showMemory = FlxG.save.data.showMemory;
+			if (Main.memoryVar != null)
+			{
+				Main.memoryVar.visible = showMemory;
+			}
 		}
 
 		if (FlxG.save.data.optScoreZoom != null)
@@ -319,6 +325,10 @@ class ClientPrefs
 		if (FlxG.save.data.cameraMovementDisplacement != null)
 		{
 			cameraMovementDisplacement = FlxG.save.data.cameraMovementDisplacement;
+		}
+		if (FlxG.save.data.pauseOnFocusLost != null)
+		{
+			pauseOnFocusLost = FlxG.save.data.pauseOnFocusLost;
 		}
 
 		var save:FlxSave = new FlxSave();
