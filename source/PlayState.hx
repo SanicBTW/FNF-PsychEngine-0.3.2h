@@ -3462,7 +3462,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 			}
 
-			if (!note.isSustainNote)
+			if (!note.isSustainNote || note.animation.curAnim.name.endsWith('end'))
 			{
 				combo += 1;
 				popUpScore(note);
