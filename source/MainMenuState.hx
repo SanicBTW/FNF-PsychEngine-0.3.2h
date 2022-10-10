@@ -46,7 +46,7 @@ class MainMenuState extends MusicBeatState
 		camGame = new FlxCamera();
 
 		FlxG.cameras.reset(camGame);
-		FlxG.cameras.setDefaultDrawTarget(camGame, true);
+		FlxCamera.defaultCameras = [camGame];
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
