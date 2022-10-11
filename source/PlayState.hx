@@ -3322,7 +3322,6 @@ class PlayState extends MusicBeatState
 						{
 							// heavily based on my own code LOL if it aint broke dont fix it
 							var pressNotes:Array<Note> = [];
-							var notesDatas:Array<Int> = [];
 							var notesStopped:Bool = false;
 
 							var sortedNotesList:Array<Note> = [];
@@ -3331,7 +3330,6 @@ class PlayState extends MusicBeatState
 								if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && daNote.noteData == i)
 								{
 									sortedNotesList.push(daNote);
-									notesDatas.push(daNote.noteData);
 									canMiss = true;
 								}
 							});

@@ -43,7 +43,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		boyfriend = new Boyfriend(x, y, characterName);
 		add(boyfriend);
 
-		camFollow = new FlxPoint(camX, camY);
+		camFollow = new FlxPoint(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
 
 		FlxG.sound.play(Paths.sound(deathSoundName));
 		Conductor.changeBPM(100);
@@ -91,7 +91,6 @@ class GameOverSubstate extends MusicBeatSubstate
 		{
 			endBullshit(function()
 			{
-				FlxG.sound.music.stop();
 				PlayState.deathCounter = 0;
 				PlayState.seenCutscene = false;
 				#if android
@@ -101,7 +100,7 @@ class GameOverSubstate extends MusicBeatSubstate
 				MusicBeatState.switchState(PlayState.isStoryMode ? new StoryMenuState() : new FreeplayState());
 	
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			});
+			}, false);
 		}
 
 		if (boyfriend.animation.curAnim.name == 'firstDeath')
@@ -138,14 +137,17 @@ class GameOverSubstate extends MusicBeatSubstate
 		FlxG.sound.playMusic(Paths.music(loopSoundName), volume);
 	}
 
-	function endBullshit(cb:Void->Void):Void
+	function endBullshit(cb:Void->Void, playAnimSound:Bool = true):Void
 	{
 		if (!isEnding)
 		{
 			isEnding = true;
-			boyfriend.playAnim('deathConfirm', true);
 			FlxG.sound.music.stop();
-			FlxG.sound.play(Paths.music(endSoundName));
+			if(playAnimSound)
+			{
+				boyfriend.playAnim('deathConfirm', true);
+				FlxG.sound.play(Paths.music(endSoundName));
+			}
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, cb);
