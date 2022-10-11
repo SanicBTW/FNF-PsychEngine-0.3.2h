@@ -22,7 +22,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 
 # Update changelog (1.0.1)
 
-### i wrote it here because i forgor after some time :skull:
+### i wrote it here because i will forger after some time :skull:
 
 - Updated the game over screen
 - - Snaps camera to bf (can be disabled)
@@ -32,6 +32,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Hopefully fix the camera bug (fixes [issue 9](https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h/issues/9) but gives back deprecation errors)
 - Add mashing violations (from kade engine, this wasnt added before because i was dumb, now its back) - ONLY FOR KADE INPUT
 - (code shit) Moved character groups to FlxSpriteGroup from FlxTypedGroup (coming from 0.5.2h)
+- (PENDING) maybe a rewrite on storage access and add a screen to download songs maybe?
 
 # Special thanks
 
