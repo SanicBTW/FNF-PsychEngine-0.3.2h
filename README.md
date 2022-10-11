@@ -27,7 +27,6 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Updated the game over screen
 - - Snaps camera to bf (can be disabled)
 - - Now shows the stage (can be disabled too)
-- - Plays the retry anim when going back
 - Fixed note splash offset (again)
 - Hopefully fix the camera bug (fixes [issue 9](https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h/issues/9) but gives back deprecation errors)
 - Add mashing violations (from kade engine, this wasnt added before because i was dumb, now its back) - ONLY FOR KADE INPUT
