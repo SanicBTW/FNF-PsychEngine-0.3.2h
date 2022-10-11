@@ -235,6 +235,8 @@ class PlayState extends MusicBeatState
 	var camDisplaceX:Float = 0;
 	var camDisplaceY:Float = 0;
 
+	var mashViolations:Int = 0;
+
 	override public function create()
 	{
 		PauseSubState.songName = null; // Reset to default
@@ -3194,8 +3196,11 @@ class PlayState extends MusicBeatState
 					}
 					for (coolNote in possibleNotes)
 					{
-						if (pressArray[coolNote.noteData])
+						if (pressArray[coolNote.noteData] && coolNote.canBeHit && !coolNote.tooLate)
 						{
+							if (mashViolations != 0)
+								mashViolations--;
+							scoreTxt.color = FlxColor.WHITE;
 							goodNoteHit(coolNote);
 						}
 					}
@@ -3207,6 +3212,18 @@ class PlayState extends MusicBeatState
 						if (pressArray[shit] && !directionList.contains(shit))
 							noteMissPress(shit);
 					}
+				}
+
+				if(dontCheck && possibleNotes.length > 0)
+				{
+					if(mashViolations > 4)
+					{
+						FlxG.log.add("mash violations " + mashViolations);
+						scoreTxt.color = FlxColor.RED;
+						noteMissPress(pressArray.indexOf(pressArray.contains(true)));
+					}
+					else
+						mashViolations++;
 				}
 			}
 
@@ -3462,7 +3479,7 @@ class PlayState extends MusicBeatState
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 			}
 
-			if (!note.isSustainNote || note.animation.curAnim.name.endsWith('end'))
+			if (!note.isSustainNote)
 			{
 				combo += 1;
 				popUpScore(note);
