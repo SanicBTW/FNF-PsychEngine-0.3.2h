@@ -50,6 +50,8 @@ class ClientPrefs
 	public static var comboStacking:Bool = true;
 	public static var cameraMovementDisplacement:Float = 15; // about to be deprecated
 	public static var pauseOnFocusLost:Bool = true;
+	public static var snapCameraOnGameover:Bool = true;
+	public static var showStageWhenDead:Bool = true;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -139,6 +141,8 @@ class ClientPrefs
 		FlxG.save.data.comboStacking = comboStacking;
 		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
 		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
+		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
+		FlxG.save.data.showStageWhenDead = showStageWhenDead;
 
 		FlxG.save.flush();
 
@@ -329,6 +333,14 @@ class ClientPrefs
 		if (FlxG.save.data.pauseOnFocusLost != null)
 		{
 			pauseOnFocusLost = FlxG.save.data.pauseOnFocusLost;
+		}
+		if (FlxG.save.data.snapCameraOnGameover != null)
+		{
+			snapCameraOnGameover = FlxG.save.data.snapCameraOnGameover;
+		}
+		if (FlxG.save.data.showStageWhenDead != null)
+		{
+			showStageWhenDead = FlxG.save.data.showStageWhenDead;
 		}
 
 		var save:FlxSave = new FlxSave();

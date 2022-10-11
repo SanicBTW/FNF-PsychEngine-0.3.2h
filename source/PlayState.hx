@@ -43,6 +43,8 @@ import openfl.filters.ShaderFilter;
 import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.group.FlxSpriteGroup;
 
 using StringTools;
 
@@ -79,15 +81,17 @@ class PlayState extends MusicBeatState
 	public var dadMap:Map<String, Character> = new Map<String, Character>();
 	public var gfMap:Map<String, Character> = new Map<String, Character>();
 	#end
+
 	public var BF_X:Float = 770;
 	public var BF_Y:Float = 100;
 	public var DAD_X:Float = 100;
 	public var DAD_Y:Float = 100;
 	public var GF_X:Float = 400;
 	public var GF_Y:Float = 130;
-	public var boyfriendGroup:FlxTypedGroup<Boyfriend>;
-	public var dadGroup:FlxTypedGroup<Character>;
-	public var gfGroup:FlxTypedGroup<Character>;
+
+	public var boyfriendGroup:FlxSpriteGroup;
+	public var dadGroup:FlxSpriteGroup;
+	public var gfGroup:FlxSpriteGroup;
 
 	public static var curStage:String = '';
 	public static var isPixelStage:Bool = false;
@@ -362,9 +366,9 @@ class PlayState extends MusicBeatState
 		if (girlfriendCameraOffset == null)
 			girlfriendCameraOffset = [0, 0];
 
-		boyfriendGroup = new FlxTypedGroup<Boyfriend>();
-		dadGroup = new FlxTypedGroup<Character>();
-		gfGroup = new FlxTypedGroup<Character>();
+		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
+		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
+		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
 		if (curFont == null)
 			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
@@ -736,17 +740,17 @@ class PlayState extends MusicBeatState
 
 		if (!stageData.hide_girlfriend)
 		{
-			gf = new Character(GF_X, GF_Y, gfVersion);
+			gf = new Character(0, 0, gfVersion);
 			startCharacterPos(gf);
 			gf.scrollFactor.set(0.95, 0.95);
 			gfGroup.add(gf);
 		}
 
-		dad = new Character(DAD_X, DAD_Y, SONG.player2);
+		dad = new Character(0, 0, SONG.player2);
 		startCharacterPos(dad, true);
 		dadGroup.add(dad);
 
-		boyfriend = new Boyfriend(BF_X, BF_Y, SONG.player1);
+		boyfriend = new Boyfriend(0, 0, SONG.player1);
 		startCharacterPos(boyfriend);
 		boyfriendGroup.add(boyfriend);
 
@@ -1044,32 +1048,35 @@ class PlayState extends MusicBeatState
 			case 0:
 				if (!boyfriendMap.exists(newCharacter))
 				{
-					var newBoyfriend:Boyfriend = new Boyfriend(BF_X, BF_Y, newCharacter);
+					var newBoyfriend:Boyfriend = new Boyfriend(0, 0, newCharacter);
 					boyfriendMap.set(newCharacter, newBoyfriend);
 					boyfriendGroup.add(newBoyfriend);
 					startCharacterPos(newBoyfriend);
-					newBoyfriend.visible = false;
+					newBoyfriend.alpha = 0.00001;
+					newBoyfriend.alreadyLoaded = false;
 				}
 
 			case 1:
 				if (!dadMap.exists(newCharacter))
 				{
-					var newDad:Character = new Character(DAD_X, DAD_Y, newCharacter);
+					var newDad:Character = new Character(0, 0, newCharacter);
 					dadMap.set(newCharacter, newDad);
 					dadGroup.add(newDad);
-					startCharacterPos(newDad);
-					newDad.visible = false;
+					startCharacterPos(newDad, true);
+					newDad.alpha = 0.00001;
+					newDad.alreadyLoaded = false;
 				}
 
 			case 2:
 				if (!gfMap.exists(newCharacter))
 				{
-					var newGf:Character = new Character(GF_X, GF_Y, newCharacter);
+					var newGf:Character = new Character(0, 0, newCharacter);
 					newGf.scrollFactor.set(0.95, 0.95);
 					gfMap.set(newCharacter, newGf);
 					gfGroup.add(newGf);
 					startCharacterPos(newGf);
-					newGf.visible = false;
+					newGf.alpha = 0.00001;
+					newGf.alreadyLoaded = false;
 				}
 		}
 	}
@@ -2384,13 +2391,20 @@ class PlayState extends MusicBeatState
 			deathCounter++;
 
 			persistentUpdate = false;
-			persistentDraw = false;
+			if(ClientPrefs.showStageWhenDead)
+				persistentDraw = true;
+			else
+				persistentDraw = false;
 			paused = true;
+
+			camHUD.alpha = 0;
+			camOther.alpha = 0;
+			boyfriendGroup.alpha = 0;
 
 			vocals.stop();
 			FlxG.sound.music.stop();
 
-			openSubState(new GameOverSubstate(dad.getScreenPosition().x, dad.getScreenPosition().y, camFollowPos.x, camFollowPos.y));
+			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y, camFollow.x, camFollow.y));
 
 			#if desktop
 			// Game Over doesn't get his own variable because it's only used here

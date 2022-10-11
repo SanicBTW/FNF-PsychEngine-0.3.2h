@@ -24,6 +24,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Anti-Aliasing',
 		#if !html5 'Framerate', // Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
+		'Show stage when game over',
 		'GAMEPLAY',
 		'Downscroll',
 		'Middlescroll',
@@ -41,6 +42,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Smooth cam zooms',
 		'Camera Movement',
 		'Camera Mov Displacement',
+		'Snap camera on bf when gameover',
 		'VISUALS AND UI',
 		'FPS Counter',
 		'Memory Counter',
@@ -277,6 +279,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.comboStacking = !ClientPrefs.comboStacking;
 					case 'Pause game when focus is lost':
 						ClientPrefs.pauseOnFocusLost = !ClientPrefs.pauseOnFocusLost;
+					case 'Snap camera on bf when gameover':
+						ClientPrefs.snapCameraOnGameover = !ClientPrefs.snapCameraOnGameover;
+					case 'Show stage when game over':
+						ClientPrefs.showStageWhenDead = !ClientPrefs.showStageWhenDead;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -495,6 +501,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "Changes the camera displace value\nOnly works if camera movement is enabled";
 			case 'Pause game when focus is lost':
 				daText = "I don't know if I should put something here";
+			case 'Snap camera on bf when gameover':
+				daText = "Snaps the camera on bf when he is dead";
+			case 'Show stage when game over':
+				daText = "Shows the song stage when bf is dead\nIf disabled it will show a black bg";
 		}
 		descText.text = daText;
 
@@ -596,6 +606,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.comboStacking;
 					case 'Pause game when focus is lost':
 						daValue = ClientPrefs.pauseOnFocusLost;
+					case 'Snap camera on bf when gameover':
+						daValue = ClientPrefs.snapCameraOnGameover;
+					case 'Show stage when game over':
+						daValue = ClientPrefs.showStageWhenDead;
 				}
 				checkbox.daValue = daValue;
 			}
