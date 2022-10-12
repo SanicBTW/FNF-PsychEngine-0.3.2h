@@ -9,6 +9,14 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
+typedef EventNote = 
+{
+	strumTime:Float,
+	event:String,
+	value1:String,
+	value2:String
+}
+
 class Note extends FlxSprite
 {
 	public var strumTime:Float = 0;
@@ -62,6 +70,8 @@ class Note extends FlxSprite
 	public var noAnimation:Bool = false;
 
 	public var hitsoundDisabled:Bool = false;
+
+	public var isLiftNote:Bool = false;
 
 	private function set_texture(value:String):String
 	{

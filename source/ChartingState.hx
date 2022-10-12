@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxSort;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -197,10 +198,11 @@ class ChartingState extends MusicBeatState
 			_song = {
 				song: 'Test',
 				notes: [],
+				events: [],
 				bpm: 150.0,
 				needsVoices: true,
 				arrowSkin: '',
-				splashSkin: 'noteSplashes',
+				splashSkin: 'noteSplashes',//idk it would crash if i didn't
 				player1: 'bf',
 				player2: 'dad',
 				player3: null,
@@ -209,6 +211,8 @@ class ChartingState extends MusicBeatState
 				stage: 'stage',
 				validScore: false
 			};
+			addSection();
+			PlayState.SONG = _song;
 		}
 
 		if (curSection >= _song.notes.length)
@@ -488,6 +492,7 @@ class ChartingState extends MusicBeatState
 
 	var stepperLength:FlxUINumericStepper;
 	var check_mustHitSection:FlxUICheckBox;
+	var check_gfSection:FlxUICheckBox;
 	var check_changeBPM:FlxUICheckBox;
 	var stepperSectionBPM:FlxUINumericStepper;
 	var check_altAnim:FlxUICheckBox;
@@ -507,6 +512,10 @@ class ChartingState extends MusicBeatState
 		check_mustHitSection.name = 'check_mustHit';
 		check_mustHitSection.checked = _song.notes[curSection].mustHitSection;
 		// _song.needsVoices = check_mustHit.checked;
+
+		check_gfSection = new FlxUICheckBox(130, 30, null, null, "GF section", 100);
+		check_gfSection.name = 'check_gf';
+		check_gfSection.checked = _song.notes[curSection].gfSection;
 
 		check_altAnim = new FlxUICheckBox(10, 60, null, null, "Alt Animation", 100);
 		check_altAnim.checked = _song.notes[curSection].altAnim;
@@ -603,6 +612,7 @@ class ChartingState extends MusicBeatState
 		tab_group_section.add(stepperLength);
 		tab_group_section.add(stepperSectionBPM);
 		tab_group_section.add(check_mustHitSection);
+		tab_group_section.add(check_gfSection);
 		tab_group_section.add(check_altAnim);
 		tab_group_section.add(check_changeBPM);
 		tab_group_section.add(copyButton);
@@ -848,6 +858,12 @@ class ChartingState extends MusicBeatState
 			{
 				case 'Must hit section':
 					_song.notes[curSection].mustHitSection = check.checked;
+
+					updateGrid();
+					updateHeads();
+
+				case 'GF section':
+					_song.notes[curSection].gfSection = check.checked;
 
 					updateGrid();
 					updateHeads();
@@ -1443,6 +1459,7 @@ class ChartingState extends MusicBeatState
 
 		stepperLength.value = sec.lengthInSteps;
 		check_mustHitSection.checked = sec.mustHitSection;
+		check_gfSection.checked = sec.gfSection;
 		check_altAnim.checked = sec.altAnim;
 		check_changeBPM.checked = sec.changeBPM;
 		stepperSectionBPM.value = sec.bpm;
@@ -1459,11 +1476,13 @@ class ChartingState extends MusicBeatState
 		{
 			leftIcon.changeIcon(healthIconP1);
 			rightIcon.changeIcon(healthIconP2);
+			if (_song.notes[curSection].gfSection) leftIcon.changeIcon('gf');
 		}
 		else
 		{
 			leftIcon.changeIcon(healthIconP2);
 			rightIcon.changeIcon(healthIconP1);
+			if (_song.notes[curSection].gfSection) leftIcon.changeIcon('gf');
 		}
 	}
 
@@ -1670,6 +1689,7 @@ class ChartingState extends MusicBeatState
 			bpm: _song.bpm,
 			changeBPM: false,
 			mustHitSection: true,
+			gfSection: false,
 			sectionNotes: [],
 			typeOfSection: 0,
 			altAnim: false
@@ -1853,39 +1873,18 @@ class ChartingState extends MusicBeatState
 		}
 	}
 
+	function sortByTime(Obj1:Array<Dynamic>, Obj2:Array<Dynamic>):Int
+	{
+		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
+	}
+
 	private function saveEvents()
 	{
-		var events:Array<SwagSection> = [];
-		for (sec in 0..._song.notes.length)
-		{
-			if (_song.notes[sec] == null)
-				continue;
-
-			var arrayNotes:Array<Dynamic> = [];
-			for (i in 0..._song.notes[sec].sectionNotes.length)
-			{
-				var note:Array<Dynamic> = _song.notes[sec].sectionNotes[i];
-				if (note != null && note[1] < 0)
-				{
-					arrayNotes.push(note);
-				}
-			}
-
-			var sex:SwagSection = {
-				sectionNotes: arrayNotes,
-				lengthInSteps: 16,
-				typeOfSection: 0,
-				mustHitSection: false,
-				bpm: 0,
-				changeBPM: false,
-				altAnim: false
-			};
-			events.push(sex);
-		}
-
+		_song.events.sort(sortByTime);
 		var eventsSong:SwagSong = {
 			song: _song.song,
-			notes: events,
+			notes: [],
+			events: _song.events,
 			bpm: _song.bpm,
 			needsVoices: _song.needsVoices,
 			speed: _song.speed,
