@@ -382,8 +382,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 							ClientPrefs.cameraMovementDisplacement += floatAdd;
 							if (ClientPrefs.cameraMovementDisplacement < 5)
 								ClientPrefs.cameraMovementDisplacement = 5;
-							else if (ClientPrefs.cameraMovementDisplacement > 50)
-								ClientPrefs.cameraMovementDisplacement = 50;
+							else if (ClientPrefs.cameraMovementDisplacement > 20)
+								ClientPrefs.cameraMovementDisplacement = 20;
 					}
 				reloadValues();
 

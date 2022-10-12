@@ -2404,7 +2404,7 @@ class PlayState extends MusicBeatState
 			vocals.stop();
 			FlxG.sound.music.stop();
 
-			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y, camFollow.x, camFollow.y));
+			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y, [boyfriend.cameraPosition[0], boyfriend.cameraPosition[1], boyfriendCameraOffset[0], boyfriendCameraOffset[1]]));
 
 			#if desktop
 			// Game Over doesn't get his own variable because it's only used here

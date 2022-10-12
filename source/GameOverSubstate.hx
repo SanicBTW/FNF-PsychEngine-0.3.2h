@@ -34,7 +34,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		endSoundName = 'gameOverEnd';
 	}
 
-	public function new(x:Float, y:Float, camX:Float, camY:Float)
+	public function new(x:Float, y:Float, camShit:Array<Float>)
 	{
 		super();
 
@@ -43,14 +43,19 @@ class GameOverSubstate extends MusicBeatSubstate
 		boyfriend = new Boyfriend(x, y, characterName);
 		add(boyfriend);
 
-		camFollow = new FlxPoint(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y);
+		var getCenterX = boyfriend.getMidpoint().x - 100;
+		var getCenterY = boyfriend.getMidpoint().y - 100;
+
+		camFollow = new FlxPoint(getCenterX, getCenterY);
+		camFollow.x -= camShit[0] - camShit[2];
+		camFollow.y += camShit[1] + camShit[3];
 
 		FlxG.sound.play(Paths.sound(deathSoundName));
 		Conductor.changeBPM(100);
 		FlxG.camera.scroll.set();
 		FlxG.camera.target = null;
 		if (ClientPrefs.snapCameraOnGameover)
-			FlxG.camera.focusOn(new FlxPoint(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y));
+			FlxG.camera.focusOn(new FlxPoint(getCenterX + camShit[0] + camShit[2], getCenterY + camShit[1] + camShit[3]));
 
 		boyfriend.playAnim('firstDeath');
 
