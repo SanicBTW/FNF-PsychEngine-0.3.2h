@@ -234,11 +234,6 @@ class TitleState extends MusicBeatState
 			#end
 		}
 
-		if (FlxG.keys.justPressed.T)
-		{
-			MusicBeatState.switchState(new virtualFS.VirtualFSState());
-		}
-
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
 			if (titleText != null)

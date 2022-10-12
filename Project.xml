@@ -94,6 +94,5 @@
 	<!-- _____________________________ Engine Features ____________________________ -->
 
 	<define name="STORAGE_ACCESS" if="android || windows" />
-	<define name="VIRTUAL_FS" if="html5"/>
 
 </project>
