@@ -1510,42 +1510,32 @@ class PlayState extends MusicBeatState
 				susLength = susLength / Conductor.stepCrochet;
 				unspawnNotes.push(swagNote);
 
-				if (susLength != 0)
+				var floorSus:Int = Math.floor(susLength);
+
+				if (floorSus > 0)
 				{
-					for (susNote in 0...(Math.floor(susLength) + 2))
+					for (susNote in 0...floorSus + 2)
 					{
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-						// this is from modding plus
-						if (susLength < susNote && gottaHitNote)
-						{
-							var liftNote:Note = new Note(daStrumTime
-								+ (Conductor.stepCrochet * susNote)
-								+ (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData,
-								oldNote, true);
-							liftNote.mustPress = gottaHitNote;
-							liftNote.gfNote = (section.gfSection && (songNotes[1] < 4));
-							liftNote.noteType = swagNote.noteType;
-							liftNote.isLiftNote = true;
-							liftNote.scrollFactor.set();
-							unspawnNotes.push(liftNote);
 
-							if(liftNote.mustPress)
-								liftNote.x += FlxG.width / 2;
-						}
-						else if (susLength > susNote)
-						{
-							var sustainNote:Note = new Note(daStrumTime
-								+ (Conductor.stepCrochet * susNote)
-								+ (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData,
-								oldNote, true);
-							sustainNote.mustPress = gottaHitNote;
-							sustainNote.gfNote = (section.gfSection && (songNotes[1] < 4));
-							sustainNote.noteType = swagNote.noteType;
-							sustainNote.scrollFactor.set();
-							unspawnNotes.push(sustainNote);
+						var sustainNote:Note = new Note(daStrumTime
+							+ (Conductor.stepCrochet * susNote)
+							+ (Conductor.stepCrochet / FlxMath.roundDecimal(SONG.speed, 2)), daNoteData,
+							oldNote, true);
+						sustainNote.mustPress = gottaHitNote;
+						sustainNote.gfNote = (section.gfSection && (songNotes[1] < 4));
+						sustainNote.noteType = swagNote.noteType;
+						sustainNote.scrollFactor.set();
+						
+						unspawnNotes.push(sustainNote);
 
-							if (sustainNote.mustPress)
-								sustainNote.x += FlxG.width / 2; // general offset
+						if (sustainNote.mustPress)
+							sustainNote.x += FlxG.width / 2;
+
+						if (susLength < susNote)
+						{
+							sustainNote.isLiftNote = true;
+							sustainNote.alpha = 0.7;
 						}
 					}
 				}
@@ -3140,7 +3130,6 @@ class PlayState extends MusicBeatState
 		});
 	}
 
-	// bruh
 	private function keyShit():Void
 	{
 		if (ClientPrefs.inputType == "Kade 1.5.3")
