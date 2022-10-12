@@ -2391,10 +2391,7 @@ class PlayState extends MusicBeatState
 			deathCounter++;
 
 			persistentUpdate = false;
-			if (ClientPrefs.showStageWhenDead)
-				persistentDraw = true;
-			else
-				persistentDraw = false;
+			persistentDraw = false;
 			paused = true;
 
 			camHUD.alpha = 0;
@@ -2404,7 +2401,7 @@ class PlayState extends MusicBeatState
 			vocals.stop();
 			FlxG.sound.music.stop();
 
-			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y, [boyfriend.cameraPosition[0], boyfriend.cameraPosition[1], boyfriendCameraOffset[0], boyfriendCameraOffset[1]]));
+			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y));
 
 			#if desktop
 			// Game Over doesn't get his own variable because it's only used here
