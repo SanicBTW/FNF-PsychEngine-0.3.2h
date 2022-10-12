@@ -1,19 +1,19 @@
 package android.flixel;
 
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxCamera;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.graphics.atlas.FlxNode;
 import flixel.graphics.frames.FlxTileFrames;
 import flixel.input.FlxInput;
 import flixel.input.FlxPointer;
 import flixel.input.IFlxInput;
+import flixel.input.touch.FlxTouch;
 import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxDestroyUtil;
-import flixel.input.touch.FlxTouch;
 import openfl.utils.Assets;
 
 class FlxButton extends FlxTypedButton<FlxText>

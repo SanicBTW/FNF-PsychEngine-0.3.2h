@@ -3,6 +3,7 @@ package android.flixel;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.touch.FlxTouch;
 import flixel.math.FlxAngle;
@@ -10,7 +11,6 @@ import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
 import flixel.util.FlxDestroyUtil;
-import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.Assets;
 
 /**
@@ -67,8 +67,8 @@ class FlxJoyStick extends FlxSpriteGroup
 	{
 		base = new FlxSprite(0,
 			0).loadGraphic(FlxGraphic.fromFrame(FlxAtlasFrames.fromSparrow(Assets.getBitmapData('assets/android/joystick.png'),
-				Assets.getText('assets/android/joystick.xml'))
-				.getByName('base')));
+			Assets.getText('assets/android/joystick.xml'))
+			.getByName('base')));
 		base.resetSizeFromFrame();
 		base.x += -base.width * 0.5;
 		base.y += -base.height * 0.5;
@@ -84,8 +84,8 @@ class FlxJoyStick extends FlxSpriteGroup
 	{
 		thumb = new FlxSprite(0,
 			0).loadGraphic(FlxGraphic.fromFrame(FlxAtlasFrames.fromSparrow(Assets.getBitmapData('assets/android/joystick.png'),
-				Assets.getText('assets/android/joystick.xml'))
-				.getByName('thumb')));
+			Assets.getText('assets/android/joystick.xml'))
+			.getByName('thumb')));
 		thumb.resetSizeFromFrame();
 		thumb.x += -thumb.width * 0.5;
 		thumb.y += -thumb.height * 0.5;

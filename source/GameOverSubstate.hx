@@ -49,7 +49,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		Conductor.changeBPM(100);
 		FlxG.camera.scroll.set();
 		FlxG.camera.target = null;
-		if(ClientPrefs.snapCameraOnGameover)
+		if (ClientPrefs.snapCameraOnGameover)
 			FlxG.camera.focusOn(new FlxPoint(boyfriend.getGraphicMidpoint().x, boyfriend.getGraphicMidpoint().y));
 
 		boyfriend.playAnim('firstDeath');
@@ -96,9 +96,9 @@ class GameOverSubstate extends MusicBeatSubstate
 				#if android
 				removeVirtualPad();
 				#end
-	
+
 				MusicBeatState.switchState(PlayState.isStoryMode ? new StoryMenuState() : new FreeplayState());
-	
+
 				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}, false);
 		}
@@ -143,7 +143,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		{
 			isEnding = true;
 			FlxG.sound.music.stop();
-			if(playAnimSound)
+			if (playAnimSound)
 			{
 				boyfriend.playAnim('deathConfirm', true);
 				FlxG.sound.play(Paths.music(endSoundName));

@@ -1,13 +1,14 @@
 package;
 
-import openfl.utils.Assets;
+import Song;
 import haxe.Json;
 import haxe.format.JsonParser;
-import Song;
+import openfl.utils.Assets;
 
 using StringTools;
 
-typedef StageFile = {
+typedef StageFile =
+{
 	var directory:String;
 	var defaultZoom:Float;
 	var isPixelStage:Bool;
@@ -16,20 +17,25 @@ typedef StageFile = {
 	var girlfriend:Array<Dynamic>;
 	var opponent:Array<Dynamic>;
 	var hide_girlfriend:Bool;
-
 	var camera_boyfriend:Array<Float>;
 	var camera_opponent:Array<Float>;
 	var camera_girlfriend:Array<Float>;
 	var camera_speed:Null<Float>;
 }
 
-class StageData {
+class StageData
+{
 	public static var forceNextDirectory:String = null;
-	public static function loadDirectory(SONG:SwagSong) {
+
+	public static function loadDirectory(SONG:SwagSong)
+	{
 		var stage:String = '';
-		if(SONG.stage != null) {
+		if (SONG.stage != null)
+		{
 			stage = SONG.stage;
-		} else if(SONG.song != null) {
+		}
+		else if (SONG.song != null)
+		{
 			switch (SONG.song.toLowerCase().replace(' ', '-'))
 			{
 				case 'spookeez' | 'south' | 'monster':
@@ -49,23 +55,30 @@ class StageData {
 				default:
 					stage = 'stage';
 			}
-		} else {
+		}
+		else
+		{
 			stage = 'stage';
 		}
 
 		var stageFile:StageFile = getStageFile(stage);
-		if(stageFile == null) { //preventing crashes
+		if (stageFile == null)
+		{ // preventing crashes
 			forceNextDirectory = '';
-		} else {
+		}
+		else
+		{
 			forceNextDirectory = stageFile.directory;
 		}
 	}
 
-	public static function getStageFile(stage:String):StageFile {
+	public static function getStageFile(stage:String):StageFile
+	{
 		var rawJson:String = null;
 		var path:String = Paths.getPreloadPath('stages/' + stage + '.json');
 
-		if(Assets.exists(path)) {
+		if (Assets.exists(path))
+		{
 			rawJson = Assets.getText(path);
 		}
 		else

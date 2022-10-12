@@ -377,7 +377,7 @@ class Controls extends FlxActionSet
 
 		for (action in digitalActions)
 			byName[action.name] = action;
-			
+
 		if (scheme == null)
 			scheme = None;
 		setKeyboardScheme(scheme, false);
@@ -402,7 +402,7 @@ class Controls extends FlxActionSet
 		action.add(input);
 	}
 
-	public function setHitBox(Hitbox:FlxHitbox) 
+	public function setHitBox(Hitbox:FlxHitbox)
 	{
 		inline forEachBound(Control.NOTE_UP, (action, state) -> addbuttonNOTES(action, Hitbox.buttonUp, state));
 		inline forEachBound(Control.NOTE_DOWN, (action, state) -> addbuttonNOTES(action, Hitbox.buttonDown, state));
@@ -450,12 +450,12 @@ class Controls extends FlxActionSet
 			case A_B | A_B_C | A_B_E | A_B_X_Y | A_B_C_X_Y | A_B_C_X_Y_Z | A_B_C_D_V_X_Y_Z:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonUI(action, VirtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonUI(action, VirtualPad.buttonB, state));
-				inline forEachBound(Control.RESET, (action, state) -> addbuttonUI(action, VirtualPad.buttonC, state));			
+				inline forEachBound(Control.RESET, (action, state) -> addbuttonUI(action, VirtualPad.buttonC, state));
 			case NONE: // do nothing
 		}
 	}
 
-	public function setVirtualPadNOTES(VirtualPad:FlxVirtualPad, DPad:FlxDPadMode, Action:FlxActionMode) 
+	public function setVirtualPadNOTES(VirtualPad:FlxVirtualPad, DPad:FlxDPadMode, Action:FlxActionMode)
 	{
 		switch (DPad)
 		{
@@ -665,7 +665,7 @@ class Controls extends FlxActionSet
 			for (input in action.inputs)
 			{
 				if (device == null || isDevice(input, device))
-				byName[name].add(cast input);
+					byName[name].add(cast input);
 			}
 		}
 		#end
@@ -716,8 +716,10 @@ class Controls extends FlxActionSet
 	public function bindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
-		for (i in 0...copyKeys.length) {
-			if(i == NONE) copyKeys.remove(i);
+		for (i in 0...copyKeys.length)
+		{
+			if (i == NONE)
+				copyKeys.remove(i);
 		}
 
 		#if (haxe >= "4.0.0")
@@ -730,8 +732,10 @@ class Controls extends FlxActionSet
 	public function unbindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		var copyKeys:Array<FlxKey> = keys.copy();
-		for (i in 0...copyKeys.length) {
-			if(i == NONE) copyKeys.remove(i);
+		for (i in 0...copyKeys.length)
+		{
+			if (i == NONE)
+				copyKeys.remove(i);
 		}
 
 		#if (haxe >= "4.0.0")
@@ -741,7 +745,6 @@ class Controls extends FlxActionSet
 		#end
 	}
 	#elseif (android || html5)
-
 	public function bindKeys(control:Control, keys:Array<FlxKey>)
 	{
 		#if (haxe >= "4.0.0")
@@ -758,13 +761,13 @@ class Controls extends FlxActionSet
 		#else
 		forEachBound(control, function(action, _) removeKeys(action, keys));
 		#end
-	}	
+	}
 	#end
 
 	inline static function addKeys(action:FlxActionDigital, keys:Array<FlxKey>, state:FlxInputState)
 	{
 		for (key in keys)
-			if(key != NONE)
+			if (key != NONE)
 				action.addKey(key, state);
 	}
 
@@ -785,7 +788,7 @@ class Controls extends FlxActionSet
 			removeKeyboard();
 
 		keyboardScheme = scheme;
-		
+
 		#if (haxe >= "4.0.0")
 		switch (scheme)
 		{
@@ -896,7 +899,7 @@ class Controls extends FlxActionSet
 	public function addGamepad(id:Int, ?buttonMap:Map<Control, Array<FlxGamepadInputID>>):Void
 	{
 		gamepadsAdded.push(id);
-		
+
 		#if (haxe >= "4.0.0")
 		for (control => buttons in buttonMap)
 			inline bindButtons(control, id, buttons);
@@ -939,22 +942,14 @@ class Controls extends FlxActionSet
 	{
 		#if !switch
 		addGamepadLiteral(id, [
-			Control.ACCEPT => [A],
-			Control.BACK => [B],
-			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
-			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
-			Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
-			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
-			Control.NOTE_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
-			Control.NOTE_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
-			Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
-			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
-			Control.PAUSE => [START],
-			Control.RESET => [Y]
-		]);
+			Control.ACCEPT => [A], Control.BACK => [B], Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
+			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN], Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
+			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT], Control.NOTE_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
+			Control.NOTE_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN], Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
+			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT], Control.PAUSE => [START], Control.RESET => [Y]]);
 		#else
 		addGamepadLiteral(id, [
-			//Swap A and B for switch
+			// Swap A and B for switch
 			Control.ACCEPT => [B],
 			Control.BACK => [A],
 			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP, RIGHT_STICK_DIGITAL_UP],
@@ -966,7 +961,7 @@ class Controls extends FlxActionSet
 			Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT, RIGHT_STICK_DIGITAL_LEFT],
 			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT, RIGHT_STICK_DIGITAL_RIGHT],
 			Control.PAUSE => [START],
-			//Swap Y and X for switch
+			// Swap Y and X for switch
 			Control.RESET => [Y],
 		]);
 		#end

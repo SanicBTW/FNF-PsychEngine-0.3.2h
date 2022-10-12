@@ -35,16 +35,20 @@ class PauseSubState extends MusicBeatSubstate
 		super();
 		menuItems = menuItemsOG;
 
-		for (i in 0...CoolUtil.difficultyStuff.length) {
+		for (i in 0...CoolUtil.difficultyStuff.length)
+		{
 			var diff:String = '' + CoolUtil.difficultyStuff[i][0];
 			difficultyChoices.push(diff);
 		}
 		difficultyChoices.push('BACK');
 
 		pauseMusic = new FlxSound();
-		if(songName != null) {
+		if (songName != null)
+		{
 			pauseMusic.loadEmbedded(Paths.music(songName), true, true);
-		} else if (songName != "None") {
+		}
+		else if (songName != "None")
+		{
 			pauseMusic.loadEmbedded(Paths.music(ClientPrefs.pauseMusic.toLowerCase().replace(" ", "-")), true, true);
 		}
 		pauseMusic.volume = 0;
@@ -122,9 +126,9 @@ class PauseSubState extends MusicBeatSubstate
 
 		cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
 
-        #if android
+		#if android
 		addVirtualPad(UP_DOWN, A_B);
-        addPadCamera();
+		addPadCamera();
 		#end
 	}
 
@@ -151,8 +155,10 @@ class PauseSubState extends MusicBeatSubstate
 		if (accepted)
 		{
 			var daSelected:String = menuItems[curSelected];
-			for (i in 0...difficultyChoices.length-1) {
-				if(difficultyChoices[i] == daSelected) {
+			for (i in 0...difficultyChoices.length - 1)
+			{
+				if (difficultyChoices[i] == daSelected)
+				{
 					var name:String = PlayState.SONG.song.toLowerCase();
 					var poop = Highscore.formatSong(name, curSelected);
 					PlayState.SONG = Song.loadFromJson(poop, name);
@@ -163,7 +169,7 @@ class PauseSubState extends MusicBeatSubstate
 					PlayState.cpuControlled = false;
 					return;
 				}
-			} 
+			}
 
 			switch (daSelected)
 			{
@@ -236,11 +242,14 @@ class PauseSubState extends MusicBeatSubstate
 		}
 	}
 
-	function regenMenu():Void {
-		for (i in 0...grpMenuShit.members.length) {
+	function regenMenu():Void
+	{
+		for (i in 0...grpMenuShit.members.length)
+		{
 			this.grpMenuShit.remove(this.grpMenuShit.members[0], true);
 		}
-		for (i in 0...menuItems.length) {
+		for (i in 0...menuItems.length)
+		{
 			var item = new Alphabet(0, 70 * i + 30, menuItems[i], true, false);
 			item.isMenuItem = true;
 			item.targetY = i;

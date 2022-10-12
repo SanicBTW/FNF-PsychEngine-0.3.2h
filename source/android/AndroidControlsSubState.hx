@@ -9,12 +9,12 @@ import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
-import flixel.util.FlxSave;
-import flixel.util.FlxColor;
 import flixel.input.touch.FlxTouch;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 import openfl.utils.Assets;
 
 class AndroidControlsSubState extends FlxSubState
@@ -65,7 +65,8 @@ class AndroidControlsSubState extends FlxSubState
 		resetButton.visible = false;
 		add(resetButton);
 
-		applyButton = new FlxButton(FlxG.width - 200, 110, "Apply", function(){
+		applyButton = new FlxButton(FlxG.width - 200, 110, "Apply", function()
+		{
 			AndroidControls.setMode(curSelected);
 
 			if (controlsItems[Math.floor(curSelected)] == 'Pad-Custom')

@@ -37,7 +37,8 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 
 - maybe a rewrite on storage access 
 - a screen to download songs maybe?
-- Clean up the fucking preferences state
+- Clean up the fucking preferences state (never)
+- Virtual Filesystem??
 
 # Special thanks
 

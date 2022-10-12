@@ -8,34 +8,34 @@ import openfl.text.TextFormat;
 
 class MemoryCounter extends TextField
 {
-    var memPeak:Float = 0;
+	var memPeak:Float = 0;
 
-    public function new(xPos:Float, yPos:Float)
-    {
-        super();
+	public function new(xPos:Float, yPos:Float)
+	{
+		super();
 
-        x = xPos;
-        y = yPos;
-        width = 200;
-        height = 70;
+		x = xPos;
+		y = yPos;
+		width = 200;
+		height = 70;
 
-        selectable = false;
+		selectable = false;
 
-        defaultTextFormat = new TextFormat("_sans", 12, 0xFFFFFF);
-        text = "";
+		defaultTextFormat = new TextFormat("_sans", 12, 0xFFFFFF);
+		text = "";
 
-        addEventListener(Event.ENTER_FRAME, onEnterFrame);
-    }
+		addEventListener(Event.ENTER_FRAME, onEnterFrame);
+	}
 
-    function onEnterFrame(_) 
-    {
-        var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-        if(mem > memPeak)
-            memPeak = mem;
+	function onEnterFrame(_)
+	{
+		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
+		if (mem > memPeak)
+			memPeak = mem;
 
-        if(visible)
-        {
-            text = "Memory: " + mem + " MB\nPeak Memory: " + memPeak + " MB";
-        }
-    }
+		if (visible)
+		{
+			text = "Memory: " + mem + " MB\nPeak Memory: " + memPeak + " MB";
+		}
+	}
 }

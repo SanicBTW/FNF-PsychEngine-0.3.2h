@@ -3,12 +3,12 @@ package android.flixel;
 import android.flixel.FlxButton;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxDestroyUtil;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.graphics.FlxGraphic;
-import flixel.tweens.FlxTween;
-import flixel.tweens.FlxEase;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxDestroyUtil;
 import openfl.utils.Assets;
 
 /**

@@ -156,37 +156,23 @@ class ClientPrefs
 	public static function loadPrefs()
 	{
 		if (FlxG.save.data.downScroll != null)
-		{
 			downScroll = FlxG.save.data.downScroll;
-		}
 		if (FlxG.save.data.middleScroll != null)
-		{
 			middleScroll = FlxG.save.data.middleScroll;
-		}
 		if (FlxG.save.data.showFPS != null)
 		{
 			showFPS = FlxG.save.data.showFPS;
 			if (Main.fpsVar != null)
-			{
 				Main.fpsVar.visible = showFPS;
-			}
 		}
 		if (FlxG.save.data.flashing != null)
-		{
 			flashing = FlxG.save.data.flashing;
-		}
 		if (FlxG.save.data.globalAntialiasing != null)
-		{
 			globalAntialiasing = FlxG.save.data.globalAntialiasing;
-		}
 		if (FlxG.save.data.noteSplashes != null)
-		{
 			noteSplashes = FlxG.save.data.noteSplashes;
-		}
 		if (FlxG.save.data.lowQuality != null)
-		{
 			lowQuality = FlxG.save.data.lowQuality;
-		}
 		if (FlxG.save.data.framerate != null)
 		{
 			framerate = FlxG.save.data.framerate;
@@ -201,154 +187,79 @@ class ClientPrefs
 				FlxG.updateFramerate = framerate;
 			}
 		}
-		/*if(FlxG.save.data.cursing != null) {
-				cursing = FlxG.save.data.cursing;
-			}
-			if(FlxG.save.data.violence != null) {
-				violence = FlxG.save.data.violence;
-		}*/
 		if (FlxG.save.data.camZooms != null)
-		{
 			camZooms = FlxG.save.data.camZooms;
-		}
 		if (FlxG.save.data.hideHud != null)
-		{
 			hideHud = FlxG.save.data.hideHud;
-		}
 		if (FlxG.save.data.noteOffset != null)
-		{
 			noteOffset = FlxG.save.data.noteOffset;
-		}
 		if (FlxG.save.data.arrowHSV != null)
-		{
 			arrowHSV = FlxG.save.data.arrowHSV;
-		}
-		if (FlxG.save.data.imagesPersist != null)
-		{
-			imagesPersist = FlxG.save.data.imagesPersist;
-			FlxGraphic.defaultPersist = ClientPrefs.imagesPersist;
-		}
 		if (FlxG.save.data.ghostTapping != null)
-		{
 			ghostTapping = FlxG.save.data.ghostTapping;
-		}
 		if (FlxG.save.data.hideTime != null)
-		{
 			hideTime = FlxG.save.data.hideTime;
-		}
 
 		if (FlxG.save.data.showMemory != null)
 		{
 			showMemory = FlxG.save.data.showMemory;
 			if (Main.memoryVar != null)
-			{
 				Main.memoryVar.visible = showMemory;
-			}
 		}
 
 		if (FlxG.save.data.optScoreZoom != null)
-		{
 			optScoreZoom = FlxG.save.data.optScoreZoom;
-		}
 		if (FlxG.save.data.cameraMovement != null)
-		{
 			cameraMovement = FlxG.save.data.cameraMovement;
-		}
 		if (FlxG.save.data.iconBoping != null)
-		{
 			iconBoping = FlxG.save.data.iconBoping;
-		}
 		if (FlxG.save.data.pauseMusic != null)
-		{
 			pauseMusic = FlxG.save.data.pauseMusic;
-		}
 		if (FlxG.save.data.missVolume != null)
-		{
 			missVolume = FlxG.save.data.missVolume;
-		}
 		if (FlxG.save.data.hitsoundVolume != null)
-		{
 			hitsoundVolume = FlxG.save.data.hitsoundVolume;
-		}
 		if (FlxG.save.data.scoreTextDesign != null)
-		{
 			scoreTextDesign = FlxG.save.data.scoreTextDesign;
-		}
 		if (FlxG.save.data.comboOffset != null)
-		{
 			comboOffset = FlxG.save.data.comboOffset;
-		}
 		if (FlxG.save.data.inputType != null)
-		{
 			inputType = FlxG.save.data.inputType;
-		}
 		if (FlxG.save.data.smoothCamZoom != null)
-		{
 			smoothCamZoom = FlxG.save.data.smoothCamZoom;
-		}
 		if (FlxG.save.data.opponentNoteSplash != null)
-		{
 			opponentNoteSplash = FlxG.save.data.opponentNoteSplash;
-		}
 		if (FlxG.save.data.ratingOffset != null)
-		{
 			ratingOffset = FlxG.save.data.ratingOffset;
-		}
 		if (FlxG.save.data.sickWindow != null)
-		{
 			sickWindow = FlxG.save.data.sickWindow;
-		}
 		if (FlxG.save.data.goodWindow != null)
-		{
 			goodWindow = FlxG.save.data.goodWindow;
-		}
 		if (FlxG.save.data.badWindow != null)
-		{
 			badWindow = FlxG.save.data.badWindow;
-		}
 		if (FlxG.save.data.safeFrames != null)
-		{
 			safeFrames = FlxG.save.data.safeFrames;
-		}
 		if (FlxG.save.data.allowFileSys != null)
-		{
 			allowFileSys = FlxG.save.data.allowFileSys;
-		}
 		if (FlxG.save.data.answeredReq != null)
-		{
 			answeredReq = FlxG.save.data.answeredReq;
-		}
 		if (FlxG.save.data.ghostTappingBFSing != null)
-		{
 			ghostTappingBFSing = FlxG.save.data.ghostTappingBFSing;
-		}
 		if (FlxG.save.data.comboStacking != null)
-		{
 			comboStacking = FlxG.save.data.comboStacking;
-		}
 		if (FlxG.save.data.cameraMovementDisplacement != null)
-		{
 			cameraMovementDisplacement = FlxG.save.data.cameraMovementDisplacement;
-		}
 		if (FlxG.save.data.pauseOnFocusLost != null)
-		{
 			pauseOnFocusLost = FlxG.save.data.pauseOnFocusLost;
-		}
 		if (FlxG.save.data.snapCameraOnGameover != null)
-		{
 			snapCameraOnGameover = FlxG.save.data.snapCameraOnGameover;
-		}
 		if (FlxG.save.data.showStageWhenDead != null)
-		{
 			showStageWhenDead = FlxG.save.data.showStageWhenDead;
-		}
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls', 'ninjamuffin99');
 		if (save != null && save.data.customControls != null)
-		{
 			reloadControls(save.data.customControls);
-		}
 	}
 
 	public static function reloadControls(newKeys:Array<FlxKey>)
@@ -367,14 +278,10 @@ class ClientPrefs
 			for (j in 0...2)
 			{
 				if (controlArray[controlValue + j] != NONE)
-				{
 					controlsToRemove.push(controlArray[controlValue + j]);
-				}
 			}
 			if (controlsToRemove.length > 0)
-			{
 				PlayerSettings.player1.controls.unbindKeys(keyBinds[i][0], controlsToRemove);
-			}
 		}
 	}
 
@@ -387,14 +294,10 @@ class ClientPrefs
 			for (j in 0...2)
 			{
 				if (controlArray[controlValue + j] != NONE)
-				{
 					controlsToAdd.push(controlArray[controlValue + j]);
-				}
 			}
 			if (controlsToAdd.length > 0)
-			{
 				PlayerSettings.player1.controls.bindKeys(keyBinds[i][0], controlsToAdd);
-			}
 		}
 	}
 }

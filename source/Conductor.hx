@@ -35,11 +35,11 @@ class Conductor
 
 	public static function judgeNote(note:Note, diff:Float = 0)
 	{
-		//tryna do MS based judgment due to popular demand
+		// tryna do MS based judgment due to popular demand
 		var timingWindows:Array<Int> = [ClientPrefs.sickWindow, ClientPrefs.goodWindow, ClientPrefs.badWindow];
 		var windowNames:Array<String> = ['sick', 'good', 'bad'];
 
-		for(i in 0...timingWindows.length)
+		for (i in 0...timingWindows.length)
 		{
 			if (diff <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))])
 			{
@@ -58,7 +58,7 @@ class Conductor
 		var totalPos:Float = 0;
 		for (i in 0...song.notes.length)
 		{
-			if(song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
+			if (song.notes[i].changeBPM && song.notes[i].bpm != curBPM)
 			{
 				curBPM = song.notes[i].bpm;
 				var event:BPMChangeEvent = {

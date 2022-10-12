@@ -21,6 +21,8 @@ import flixel.addons.transition.FlxTransitionableState;
 import flixel.graphics.atlas.FlxAtlas;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
@@ -43,8 +45,6 @@ import openfl.filters.ShaderFilter;
 import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.group.FlxSpriteGroup;
 
 using StringTools;
 
@@ -2391,7 +2391,7 @@ class PlayState extends MusicBeatState
 			deathCounter++;
 
 			persistentUpdate = false;
-			if(ClientPrefs.showStageWhenDead)
+			if (ClientPrefs.showStageWhenDead)
 				persistentDraw = true;
 			else
 				persistentDraw = false;
@@ -3228,9 +3228,9 @@ class PlayState extends MusicBeatState
 					}
 				}
 
-				if(dontCheck && possibleNotes.length > 0)
+				if (dontCheck && possibleNotes.length > 0)
 				{
-					if(mashViolations > 4)
+					if (mashViolations > 4)
 					{
 						FlxG.log.add("mash violations " + mashViolations);
 						scoreTxt.color = FlxColor.RED;

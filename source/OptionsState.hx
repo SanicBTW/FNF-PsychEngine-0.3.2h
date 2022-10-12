@@ -35,10 +35,12 @@ class OptionsState extends MusicBeatState
 	var options:Array<String> = [
 		'Notes',
 		'Adjust Delay and Combo',
-		#if android 'Mobile Controls', #end
+		#if android 'Mobile Controls',
+		#end
 		'Controls',
 		'Preferences',
-		#if (STORAGE_ACCESS) 'Revoke permissions', #end
+		#if (STORAGE_ACCESS) 'Revoke permissions',
+		#end
 	];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 
