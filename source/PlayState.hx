@@ -1516,7 +1516,7 @@ class PlayState extends MusicBeatState
 					{
 						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
 						// this is from modding plus
-						if (susLength < susNote)
+						if (susLength < susNote && gottaHitNote)
 						{
 							var liftNote:Note = new Note(daStrumTime
 								+ (Conductor.stepCrochet * susNote)
@@ -1528,9 +1528,9 @@ class PlayState extends MusicBeatState
 							liftNote.isLiftNote = true;
 							liftNote.scrollFactor.set();
 							unspawnNotes.push(liftNote);
+
 							if(liftNote.mustPress)
 								liftNote.x += FlxG.width / 2;
-							liftNote.colorSwap.brightness = 10; //placeholder for testing shit
 						}
 						else if (susLength > susNote)
 						{
@@ -1543,8 +1543,6 @@ class PlayState extends MusicBeatState
 							sustainNote.noteType = swagNote.noteType;
 							sustainNote.scrollFactor.set();
 							unspawnNotes.push(sustainNote);
-
-							sustainNote.mustPress = gottaHitNote;
 
 							if (sustainNote.mustPress)
 								sustainNote.x += FlxG.width / 2; // general offset
@@ -1578,9 +1576,6 @@ class PlayState extends MusicBeatState
 				eventPushed(subEvent);
 			}
 		}
-
-		// trace(unspawnNotes.length);
-		// playerCounter += 1;
 
 		unspawnNotes.sort(sortByShit);
 		if (eventNotes.length > 1)
@@ -3150,9 +3145,8 @@ class PlayState extends MusicBeatState
 	{
 		if (ClientPrefs.inputType == "Kade 1.5.3")
 		{
-			// control arrays, order L D R U
 			var holdArray:Array<Bool> = [controls.NOTE_LEFT, controls.NOTE_DOWN, controls.NOTE_UP, controls.NOTE_RIGHT];
-			var pressArray:Array<Bool> = [
+			var controlArray:Array<Bool> = [
 				controls.NOTE_LEFT_P,
 				controls.NOTE_DOWN_P,
 				controls.NOTE_UP_P,
@@ -3165,189 +3159,202 @@ class PlayState extends MusicBeatState
 				controls.NOTE_RIGHT_R
 			];
 
-			// Prevent player input if botplay is on
-			if (cpuControlled)
+			if (!boyfriend.stunned && generatedMusic)
 			{
-				holdArray = [false, false, false, false];
-				pressArray = [false, false, false, false];
-				releaseArray = [false, false, false, false];
-			}
-			// HOLDS, check for sustain notes
-			if (holdArray.contains(true) && !boyfriend.stunned && generatedMusic)
-			{
-				notes.forEachAlive(function(daNote:Note)
+				if (controlArray.contains(true))
 				{
-					if (daNote.isSustainNote && daNote.canBeHit && daNote.mustPress && holdArray[daNote.noteData])
-						goodNoteHit(daNote);
-				});
-			}
+					boyfriend.holdTimer = 0;
 
-			// PRESSES, check for note hits
-			if (pressArray.contains(true) && !boyfriend.stunned && generatedMusic)
-			{
-				boyfriend.holdTimer = 0;
-
-				var possibleNotes:Array<Note> = []; // notes that can be hit
-				var directionList:Array<Int> = []; // directions that can be hit
-				var dumbNotes:Array<Note> = []; // notes to kill later
-
-				notes.forEachAlive(function(daNote:Note)
-				{
-					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isLiftNote)
+					var possibleNotes:Array<Note> = [];
+					var directionList:Array<Int> = [];
+					var dumbNotes:Array<Note> = [];
+	
+					notes.forEachAlive(function(daNote:Note)
 					{
-						if (directionList.contains(daNote.noteData))
+						if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && !daNote.isLiftNote)
 						{
-							for (coolNote in possibleNotes)
+							if (directionList.contains(daNote.noteData))
 							{
-								if (coolNote.noteData == daNote.noteData && Math.abs(daNote.strumTime - coolNote.strumTime) < 10)
-								{ // if it's the same note twice at < 10ms distance, just delete it
-									// EXCEPT u cant delete it in this loop cuz it fucks with the collection lol
-									dumbNotes.push(daNote);
-									break;
+								for (coolNote in possibleNotes)
+								{
+									if (coolNote.noteData == daNote.noteData && Math.abs(daNote.strumTime - coolNote.strumTime) < 10)
+									{
+										dumbNotes.push(daNote);
+										break;
+									}
+									else if (coolNote.noteData == daNote.noteData && daNote.strumTime < coolNote.strumTime)
+									{
+										possibleNotes.remove(coolNote);
+										possibleNotes.push(daNote);
+										break;
+									}
 								}
-								else if (coolNote.noteData == daNote.noteData && daNote.strumTime < coolNote.strumTime)
-								{ // if daNote is earlier than existing note (coolNote), replace
-									possibleNotes.remove(coolNote);
-									possibleNotes.push(daNote);
-									break;
-								}
+							}
+							else
+							{
+								possibleNotes.push(daNote);
+								directionList.push(daNote.noteData);
+							}
+						}
+					});
+	
+					for (note in dumbNotes)
+					{
+						FlxG.log.add("killing dumb ass note at " + note.strumTime);
+						note.kill();
+						notes.remove(note, true);
+						note.destroy();
+					}
+	
+					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+	
+					var dontCheck = false;
+	
+					for (i in 0...controlArray.length)
+					{
+						if (controlArray[i] && !directionList.contains(i))
+							dontCheck = true;
+					}
+	
+					if (possibleNotes.length > 0 && !dontCheck)
+					{
+						if (!ClientPrefs.ghostTapping)
+						{
+							for (shit in 0...controlArray.length)
+							{
+								if (controlArray[shit] && !directionList.contains(shit))
+									noteMissPress(shit);
+							}
+						}
+
+						for (coolNote in possibleNotes)
+						{
+							if (controlArray[coolNote.noteData] && coolNote.canBeHit && !coolNote.tooLate)
+							{
+								if (mashViolations != 0)
+									mashViolations--;
+								scoreTxt.color = FlxColor.WHITE;
+								goodNoteHit(coolNote);
+							}
+						}
+					}
+					else if (!ClientPrefs.ghostTapping)
+					{
+						for (shit in 0...controlArray.length)
+						{
+							if (controlArray[shit] && !directionList.contains(shit))
+								noteMissPress(shit);
+						}
+					}
+	
+					if (dontCheck && possibleNotes.length > 0)
+					{
+						if (mashViolations > 4)
+						{
+							FlxG.log.add("mash violations " + mashViolations);
+							scoreTxt.color = FlxColor.RED;
+							for (shit in 0...controlArray.length)
+							{
+								noteMissPress(shit);
 							}
 						}
 						else
+							mashViolations++;
+					}
+				}
+
+				if (releaseArray.contains(true))
+				{
+					boyfriend.holdTimer = 0;
+
+					var possibleNotes:Array<Note> = [];
+					var directionList:Array<Int> = [];
+					var dumbNotes:Array<Note> = [];
+
+					notes.forEachAlive(function(daNote:Note)
+					{
+						if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && daNote.isLiftNote)
 						{
-							possibleNotes.push(daNote);
-							directionList.push(daNote.noteData);
-						}
-					}
-				});
-
-				for (note in dumbNotes)
-				{
-					FlxG.log.add("killing dumb ass note at " + note.strumTime);
-					note.kill();
-					notes.remove(note, true);
-					note.destroy();
-				}
-
-				var dontCheck = false;
-				for (i in 0...pressArray.length)
-				{
-					if (pressArray[i] && !directionList.contains(i))
-						dontCheck = true;
-				}
-				if (possibleNotes.length > 0 && !dontCheck)
-				{
-					if (!ClientPrefs.ghostTapping)
-					{
-						for (shit in 0...pressArray.length)
-						{ // if a direction is hit that shouldn't be
-							if (pressArray[shit] && !directionList.contains(shit))
-								noteMiss(shit, null);
-						}
-					}
-					for (coolNote in possibleNotes)
-					{
-						if (pressArray[coolNote.noteData] && coolNote.canBeHit && !coolNote.tooLate)
-						{
-							if (mashViolations != 0)
-								mashViolations--;
-							scoreTxt.color = FlxColor.WHITE;
-							goodNoteHit(coolNote);
-						}
-					}
-				}
-				else if (!ClientPrefs.ghostTapping)
-				{
-					for (shit in 0...pressArray.length)
-					{ // if a direction is hit that shouldn't be
-						if (pressArray[shit] && !directionList.contains(shit))
-							noteMissPress(shit);
-					}
-				}
-
-				if (dontCheck && possibleNotes.length > 0)
-				{
-					if (mashViolations > 4)
-					{
-						FlxG.log.add("mash violations " + mashViolations);
-						scoreTxt.color = FlxColor.RED;
-						noteMissPress(pressArray.indexOf(pressArray.contains(true)));
-					}
-					else
-						mashViolations++;
-				}
-			}
-
-			//add this to psych input
-			if (releaseArray.contains(true) && !boyfriend.stunned && generatedMusic)
-			{
-				boyfriend.holdTimer = 0;
-
-				var possibleNotes:Array<Note> = []; // notes that can be hit
-				var directionList:Array<Int> = []; // directions that can be hit
-				var dumbNotes:Array<Note> = []; // notes to kill later
-
-				notes.forEachAlive(function(daNote:Note)
-				{
-					if (daNote.canBeHit && daNote.mustPress && !daNote.tooLate && !daNote.wasGoodHit && daNote.isLiftNote)
-					{
-						if (directionList.contains(daNote.noteData))
-						{
-							for (coolNote in possibleNotes)
+							if (directionList.contains(daNote.noteData))
 							{
-								if (coolNote.noteData == daNote.noteData && Math.abs(daNote.strumTime - coolNote.strumTime) < 10)
-								{ // if it's the same note twice at < 10ms distance, just delete it
-									// EXCEPT u cant delete it in this loop cuz it fucks with the collection lol
-									dumbNotes.push(daNote);
-									break;
+								for (coolNote in possibleNotes)
+								{
+									if (coolNote.noteData == daNote.noteData && Math.abs(daNote.strumTime - coolNote.strumTime) < 10)
+									{
+										dumbNotes.push(daNote);
+										break;
+									}
+									else if (coolNote.noteData == daNote.noteData && daNote.strumTime < coolNote.strumTime)
+									{
+										possibleNotes.remove(coolNote);
+										possibleNotes.push(daNote);
+										break;
+									}
 								}
-								else if (coolNote.noteData == daNote.noteData && daNote.strumTime < coolNote.strumTime)
-								{ // if daNote is earlier than existing note (coolNote), replace
-									possibleNotes.remove(coolNote);
-									possibleNotes.push(daNote);
-									break;
-								}
+							}
+							else
+							{
+								possibleNotes.push(daNote);
+								directionList.push(daNote.noteData);
+							}
+						}
+					});
+	
+					for (note in dumbNotes)
+					{
+						FlxG.log.add("killing dumb ass note at " + note.strumTime);
+						note.kill();
+						notes.remove(note, true);
+						note.destroy();
+					}
+
+					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+
+					var dontCheck = false;
+
+					for (i in 0...releaseArray.length)
+					{
+						if (releaseArray[i] && !directionList.contains(i))
+							dontCheck = true;
+					}
+
+					if (possibleNotes.length > 0 && !dontCheck)
+					{
+						for (coolNote in possibleNotes)
+						{
+							if (releaseArray[coolNote.noteData])
+							{
+								if (mashViolations != 0)
+									mashViolations--;
+								scoreTxt.color = FlxColor.WHITE;
+								goodNoteHit(coolNote, true);
+							}
+						}
+					}
+
+					if (dontCheck && possibleNotes.length > 0)
+					{
+						if (mashViolations > 4)
+						{
+							FlxG.log.add("mash violations " + mashViolations);
+							scoreTxt.color = FlxColor.RED;
+							for (shit in 0...releaseArray.length)
+							{
+								noteMissPress(shit);
 							}
 						}
 						else
-						{
-							possibleNotes.push(daNote);
-							directionList.push(daNote.noteData);
-						}
+							mashViolations++;
 					}
-				});
-
-				for (note in dumbNotes)
-				{
-					FlxG.log.add("killing dumb ass note at " + note.strumTime);
-					note.kill();
-					notes.remove(note, true);
-					note.destroy();
 				}
 
-				var dontCheck = false;
-				for (i in 0...releaseArray.length)
+				if (holdArray.contains(true))
 				{
-					if (releaseArray[i] && !directionList.contains(i))
-						dontCheck = true;
-				}
-				if (possibleNotes.length > 0 && !dontCheck)
-				{
-					if (!ClientPrefs.ghostTapping)
+					notes.forEachAlive(function(daNote:Note)
 					{
-						for (shit in 0...releaseArray.length)
-						{ // if a direction is hit that shouldn't be
-							if (releaseArray[shit] && !directionList.contains(shit))
-								noteMiss(shit, null);
-						}
-					}
-					for (coolNote in possibleNotes)
-					{
-						if (releaseArray[coolNote.noteData])
-						{
-							goodNoteHit(coolNote);
-						}
-					}
+						if (daNote.canBeHit && daNote.mustPress && daNote.isSustainNote && holdArray[daNote.noteData] && !daNote.isLiftNote)
+							goodNoteHit(daNote);
+					});
 				}
 			}
 
@@ -3366,13 +3373,13 @@ class PlayState extends MusicBeatState
 
 			if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && (!holdArray.contains(true) || cpuControlled))
 			{
-				if (boyfriend.animation.curAnim.name.startsWith('sing') && !boyfriend.animation.curAnim.name.endsWith('miss'))
+				if (boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.animation.curAnim.name.endsWith("miss"))
 					boyfriend.playAnim('idle');
 			}
 
 			playerStrums.forEach(function(spr:StrumNote)
 			{
-				if (pressArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
+				if (controlArray[spr.ID] && spr.animation.curAnim.name != 'confirm')
 				{
 					spr.playAnim('pressed');
 					spr.resetAnim = 0;
@@ -3507,7 +3514,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function noteMiss(direction:Int = 0, daNote:Note):Void
+	function noteMiss(daNote:Note):Void
 	{
 		if (!boyfriend.stunned)
 		{
@@ -3582,14 +3589,14 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function goodNoteHit(note:Note):Void
+	function goodNoteHit(note:Note, released:Bool = false):Void // i hate myself
 	{
 		if (!note.wasGoodHit)
 		{
 			if (ClientPrefs.hitsoundVolume > 0 && !note.hitsoundDisabled)
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 
-			if (!note.isSustainNote)
+			if (!note.isSustainNote || released && note.isLiftNote)
 			{
 				combo += 1;
 				popUpScore(note);
@@ -3666,7 +3673,6 @@ class PlayState extends MusicBeatState
 				if (boyfriend.holdTimer + 0.2 > targetHold)
 					boyfriend.holdTimer = targetHold - 0.2;
 			}
-			RecalculateRating();
 		}
 	}
 

@@ -32,7 +32,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Add mashing violations (from kade engine, this wasnt added before because i was dumb, now its back) - ONLY FOR KADE INPUT
 - (code shit) Moved character groups to FlxSpriteGroup from FlxTypedGroup (coming from 0.5.2h)
 - Slightly moved the Y coordinate from the FPS counter
-- Added lift note to simulate osu! mania input shit - i think its okay (Y coord needs to be fixed on pixel skin) - needs to be fixed, not releasing doesnt do anything
+- Added lift note to simulate osu! mania input shit - needs more testing (but i think it currently works fine) - ONLY FOR KADE INPUT
 - Moved to 0.5.2h event handling
 
 # Ideas (1.0.1)
