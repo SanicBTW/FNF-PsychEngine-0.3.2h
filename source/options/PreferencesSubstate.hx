@@ -15,7 +15,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'CAMERA', 'VISUALS AND UI', 'AUDIO',];
 	static var noCheckbox:Array<String> = [
 		'Framerate', 'Pause Music', 'Miss Volume', 'Hitsound Volume', 'Score Text design', 'Input', 'Rating Offset', 'Sick! Hit Window', 'Good Hit Window',
-		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement'
+		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement', 'Counters Font'
 	];
 
 	static var options:Array<String> = [
@@ -54,6 +54,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Opponent Note Splashes',
 		'Score Text Zoom on Hit',
 		'Combo Stacking',
+		'Counters Font',
 		'AUDIO',
 		'Pause Music',
 		'Miss Volume',
@@ -381,6 +382,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 								ClientPrefs.cameraMovementDisplacement = 5;
 							else if (ClientPrefs.cameraMovementDisplacement > 20)
 								ClientPrefs.cameraMovementDisplacement = 20;
+						case 'Counters Font':
+							var options = ["Funkin", "VCR OSD Mono", "Sans", "Pixel"];
+							if (controls.UI_LEFT_P)
+								changeState(-1, options);
+							if (controls.UI_RIGHT_P)
+								changeState(1, options);
+							ClientPrefs.counterFont = options[index];
 					}
 				reloadValues();
 
@@ -500,6 +508,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "I don't know if I should put something here";
 			case 'Snap camera on bf when gameover':
 				daText = "Snaps the camera on bf when he is dead";
+			case 'Counters Font':
+				daText = "Change the FPS Counter and Memory Counter fonts";
 		}
 		descText.text = daText;
 
@@ -639,6 +649,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = '' + FlxMath.roundDecimal(ClientPrefs.safeFrames, 1);
 					case 'Camera Mov Displacement':
 						daText = '' + FlxMath.roundDecimal(ClientPrefs.cameraMovementDisplacement, 1);
+					case 'Counters Font':
+						daText = ClientPrefs.counterFont;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;

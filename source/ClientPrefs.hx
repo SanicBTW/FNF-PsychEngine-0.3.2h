@@ -51,6 +51,7 @@ class ClientPrefs
 	public static var cameraMovementDisplacement:Float = 15; // about to be deprecated
 	public static var pauseOnFocusLost:Bool = true;
 	public static var snapCameraOnGameover:Bool = true;
+	public static var counterFont:String = "Funkin";
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -141,6 +142,7 @@ class ClientPrefs
 		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
 		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
 		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
+		FlxG.save.data.counterFont = counterFont;
 
 		FlxG.save.flush();
 
@@ -251,6 +253,8 @@ class ClientPrefs
 			pauseOnFocusLost = FlxG.save.data.pauseOnFocusLost;
 		if (FlxG.save.data.snapCameraOnGameover != null)
 			snapCameraOnGameover = FlxG.save.data.snapCameraOnGameover;
+		if (FlxG.save.data.counterFont != null)
+			counterFont = FlxG.save.data.counterFont;
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls', 'ninjamuffin99');

@@ -34,6 +34,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Slightly moved the Y coordinate from the FPS counter
 - Added lift note to simulate osu! mania input shit - (i think it currently works fine) - ONLY FOR KADE INPUT
 - Moved to 0.5.2h event handling
+- Can now change the FPS Counter and Memory Counter font
 
 # Ideas (1.0.1)
 
