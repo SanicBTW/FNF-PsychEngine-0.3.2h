@@ -182,7 +182,7 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy";
+		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy" #if html5 + " | Press TAB to open the online song selection" #end;
 		var size:Int = 18;
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
@@ -284,6 +284,13 @@ class FreeplayState extends MusicBeatState
 			changeDiff(1);
 		else if (upP || downP)
 			changeDiff();
+
+		#if html5
+		if (FlxG.keys.justPressed.TAB)
+		{
+			MusicBeatState.switchState(new online.SongsListState());
+		}
+		#end
 
 		if (controls.BACK)
 		{

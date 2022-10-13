@@ -58,9 +58,18 @@ class Song
 		this.bpm = bpm;
 	}
 
-	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
+	public static function loadFromJson(jsonInput:String, notFolder:Bool = false, ?folder:String):SwagSong
 	{
-		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson = "";
+
+		if(notFolder == false)
+		{
+			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		}
+		else
+		{
+			rawJson = jsonInput;
+		}
 
 		while (!rawJson.endsWith("}"))
 		{
