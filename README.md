@@ -35,11 +35,11 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Added lift note to simulate osu! mania input shit - (i think it currently works fine) - ONLY FOR KADE INPUT
 - Moved to 0.5.2h event handling
 - Can now change the FPS Counter and Memory Counter font
+- Rewrote the Kade input (slightly rewritten)
 
 # Ideas (1.0.1)
 
 - maybe a rewrite on storage access 
-- a screen to download songs maybe?
 - Clean up the fucking preferences state (never)
 
 # Special thanks
