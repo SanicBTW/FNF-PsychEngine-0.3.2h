@@ -142,4 +142,9 @@ class Paths
 	{
 		return FlxAtlasFrames.fromSpriteSheetPacker(image(key, library), file('images/$key.txt', library));
 	}
+
+	inline static public function formatToSongPath(path:String)
+	{
+		return path.toLowerCase().replace(' ', '-');
+	}
 }

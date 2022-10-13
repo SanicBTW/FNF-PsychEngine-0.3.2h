@@ -296,7 +296,7 @@ class PlayState extends MusicBeatState
 		#end
 
 		GameOverSubstate.resetVariables();
-		var songName:String = SONG.song.toLowerCase().replace(" ", "-");
+		var songName:String = Paths.formatToSongPath(SONG.song);
 
 		curStage = PlayState.SONG.stage;
 		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
@@ -1020,7 +1020,7 @@ class PlayState extends MusicBeatState
 		}
 		else if (ClientPrefs.pauseMusic != null)
 		{
-			CoolUtil.precacheMusic(ClientPrefs.pauseMusic.toLowerCase().replace(" ", "-"));
+			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 		}
 
 		#if desktop
@@ -1165,11 +1165,12 @@ class PlayState extends MusicBeatState
 		senpaiEvil.screenCenter();
 		senpaiEvil.x += 300;
 
-		if (SONG.song.toLowerCase() == 'roses' || SONG.song.toLowerCase() == 'thorns')
+		var songName:String = Paths.formatToSongPath(SONG.song);
+		if (songName == 'roses' || songName == 'thorns')
 		{
 			remove(black);
 
-			if (SONG.song.toLowerCase() == 'thorns')
+			if (songName == 'thorns')
 			{
 				add(red);
 				camHUD.visible = false;
@@ -1188,7 +1189,7 @@ class PlayState extends MusicBeatState
 			{
 				if (dialogueBox != null)
 				{
-					if (SONG.song.toLowerCase() == 'thorns')
+					if (Paths.formatToSongPath(SONG.song) == 'thorns')
 					{
 						add(senpaiEvil);
 						senpaiEvil.alpha = 0;
@@ -1452,7 +1453,7 @@ class PlayState extends MusicBeatState
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
-		var songName:String = SONG.song.toLowerCase();
+		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + '/events');
 		if (OpenFlAssets.exists(file))
 		{
@@ -3291,7 +3292,7 @@ class PlayState extends MusicBeatState
 	
 					for (note in dumbNotes)
 					{
-						FlxG.log.add("killing dumb ass note at " + note.strumTime);
+						FlxG.log.add("killing dumb ass note at (release arr) " + note.strumTime);
 						note.kill();
 						notes.remove(note, true);
 						note.destroy();
@@ -3605,7 +3606,7 @@ class PlayState extends MusicBeatState
 				if (note.gfNote)
 					char = gf;
 
-				if (char != null)
+				if (char != null && !(released && note.isLiftNote))
 				{
 					char.playAnim(singAnims[Std.int(Math.abs(note.noteData)) % 4] + daAlt, true);
 					char.holdTimer = 0;

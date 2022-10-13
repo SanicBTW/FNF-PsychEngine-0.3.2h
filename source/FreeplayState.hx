@@ -300,14 +300,14 @@ class FreeplayState extends MusicBeatState
 			#if STORAGE_ACCESS
 			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
 			{
-				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				if (!StorageAccess.exists(StorageAccess.getChart(songLowercase, curDifficulty)))
 				{
 					curDifficulty = 1;
 					trace("Couldnt find file on local storage");
 				}
 
-				PlayState.SONG = Song.parseJSONshit(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)));
+				PlayState.SONG = Song.loadFromJson(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)), "", true);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
@@ -319,7 +319,7 @@ class FreeplayState extends MusicBeatState
 			else
 			#end if (!songs[curSelected].intStorage)
 		{
-				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
+				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
 				{

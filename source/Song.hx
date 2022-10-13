@@ -21,6 +21,7 @@ typedef SwagSong =
 	var player3:String; // deprecated, now replaced by gfVersion
 	var gfVersion:String;
 	var stage:String;
+
 	var arrowSkin:String;
 	var splashSkin:String;
 	var validScore:Bool;
@@ -83,9 +84,14 @@ class Song
 		this.bpm = bpm;
 	}
 
-	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
+	// i hate myself sometimes
+	public static function loadFromJson(jsonInput:String, ?folder:String, isRaw:Bool = false):SwagSong
 	{
-		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson:String = "";
+		if(isRaw)
+			rawJson = jsonInput;
+		else
+			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
 		while (!rawJson.endsWith("}"))
 		{

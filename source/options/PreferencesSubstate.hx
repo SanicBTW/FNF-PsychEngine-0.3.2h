@@ -1,5 +1,6 @@
 package options;
 
+import openfl.text.TextFormat;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -651,6 +652,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = '' + FlxMath.roundDecimal(ClientPrefs.cameraMovementDisplacement, 1);
 					case 'Counters Font':
 						daText = ClientPrefs.counterFont;
+						updateFonts();
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;
@@ -670,5 +672,29 @@ class PreferencesSubstate extends MusicBeatSubstate
 			}
 		}
 		return options[num] == '';
+	}
+
+	private function updateFonts()
+	{
+		var formatSize:Int = 12;
+		var propername:String = ClientPrefs.counterFont;
+		switch(ClientPrefs.counterFont)
+		{
+			case "Funkin":
+				formatSize = 18;
+			case "VCR OSD Mono":
+				formatSize = 16;
+			case "Pixel":
+				formatSize = 10;
+				propername = "Pixel Arial 11 Bold";
+			case "Sans":
+				propername = "_sans";
+		}
+
+		Main.fpsVar.defaultTextFormat = new TextFormat(propername, formatSize, 0xFFFFFF);
+		Main.fpsVar.embedFonts = true;
+
+		Main.memoryVar.defaultTextFormat = new TextFormat(propername, formatSize, 0xFFFFFF);
+		Main.memoryVar.embedFonts = true;
 	}
 }

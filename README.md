@@ -20,7 +20,7 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - A new loading screen (For HTML5 users)
 - New note splash texture
 
-# Update changelog (1.0.1)
+# Update changelog (1.1.0)
 
 - Updated the game over screen
 - - Snaps camera to bf (can be disabled)
