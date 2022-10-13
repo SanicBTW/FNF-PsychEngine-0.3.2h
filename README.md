@@ -22,8 +22,6 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 
 # Update changelog (1.0.1)
 
-### i wrote it here because i will forger after some time :skull:
-
 - Updated the game over screen
 - - Snaps camera to bf (can be disabled)
 - - Now shows the stage (can be disabled too) - discarded because i had to fix the camera for a bunch of stages and i didnt want to spend time on it
@@ -36,11 +34,6 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 - Moved to 0.5.2h event handling
 - Can now change the FPS Counter and Memory Counter font
 - Rewrote the Kade input (slightly rewritten)
-
-# Ideas (1.0.1)
-
-- maybe a rewrite on storage access 
-- Clean up the fucking preferences state (never)
 
 # Special thanks
 
