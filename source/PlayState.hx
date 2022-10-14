@@ -918,7 +918,7 @@ class PlayState extends MusicBeatState
 
 		#if android
 		addAndroidControls();
-		androidControls.visible = true;
+		androidControls.visible = false;
 		addPadCamera();
 		#end
 
@@ -1243,6 +1243,10 @@ class PlayState extends MusicBeatState
 		{
 			return;
 		}
+		
+		#if android
+		androidControls.visible = true;
+		#end
 
 		inCutscene = false;
 		generateStaticArrows(0);
@@ -2969,15 +2973,11 @@ class PlayState extends MusicBeatState
 				score = 200;
 				if (!note.ratingDisabled)
 					goods++;
-				if (health < 2)
-					health += 0.04;
 			case 'sick':
 				totalNotesHit += 1;
 				note.ratingMod = 1;
 				if (!note.ratingDisabled)
 					sicks++;
-				if (health < 2)
-					health += 0.1;
 		}
 		note.rating = daRating;
 
