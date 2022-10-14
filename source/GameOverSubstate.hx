@@ -18,6 +18,7 @@ class GameOverSubstate extends MusicBeatSubstate
 	var camFollow:FlxPoint;
 	var camFollowPos:FlxObject;
 	var updateCamera:Bool = false;
+	var playingDeathSound:Bool = false;
 
 	var stageSuffix:String = "";
 
@@ -112,9 +113,25 @@ class GameOverSubstate extends MusicBeatSubstate
 				isFollowingAlready = true;
 			}
 
-			if (boyfriend.animation.curAnim.finished)
+			if (boyfriend.animation.curAnim.finished && !playingDeathSound)
 			{
-				coolStartDeath();
+				if (PlayState.SONG.stage == "tank")
+				{
+					playingDeathSound = true;
+					coolStartDeath(0.2);
+
+					FlxG.sound.play(Paths.sound("jeffGameover/jeffGameover-" + FlxG.random.int(1, 25)), 1, false, null, true, function()
+					{
+						if (!isEnding)
+						{
+							FlxG.sound.music.fadeIn(1, 0.2, 1);
+						}
+					});
+				}
+				else
+				{
+					coolStartDeath();
+				}
 				boyfriend.startedDeath = true;
 			}
 		}
