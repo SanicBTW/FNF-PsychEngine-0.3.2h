@@ -1538,10 +1538,7 @@ class PlayState extends MusicBeatState
 							sustainNote.x += FlxG.width / 2;
 
 						if (susLength < susNote)
-						{
 							sustainNote.isLiftNote = true;
-							sustainNote.alpha = 0.7;
-						}
 					}
 				}
 
