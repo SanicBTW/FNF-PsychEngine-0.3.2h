@@ -2719,6 +2719,11 @@ class PlayState extends MusicBeatState
 
 							boyfriend.visible = false;
 							boyfriend = boyfriendMap.get(value2);
+							if (!boyfriend.alreadyLoaded)
+							{
+								boyfriend.alpha = 1;
+								boyfriend.alreadyLoaded = true;
+							}
 							boyfriend.visible = true;
 							iconP1.changeIcon(boyfriend.healthIcon);
 						}
@@ -2745,6 +2750,11 @@ class PlayState extends MusicBeatState
 							{
 								gf.visible = false;
 							}
+							if (!dad.alreadyLoaded)
+							{
+								dad.alpha = 1;
+								dad.alreadyLoaded = true;
+							}
 							dad.visible = true;
 							iconP2.changeIcon(dad.healthIcon);
 						}
@@ -2760,6 +2770,11 @@ class PlayState extends MusicBeatState
 							var isGfVisible:Bool = gf.visible;
 							gf.visible = false;
 							gf = gfMap.get(value2);
+							if (!gf.alreadyLoaded)
+							{
+								gf.alpha = 1;
+								gf.alreadyLoaded = true;
+							}
 							gf.visible = isGfVisible;
 						}
 				}
