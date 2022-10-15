@@ -72,25 +72,17 @@ class LoadingState extends MusicBeatState
 			var introComplete = callbacks.add("introComplete");
 			if (PlayState.SONG != null)
 			{
-				MemoryManagement.pushLibrary(getSongPath());
-				//checkLoadSong(getSongPath());
+				checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices)
-					//checkLoadSong(getVocalPath());
-					MemoryManagement.pushLibrary(getVocalPath());
+					checkLoadSong(getVocalPath());
 			}
-			//checkLibrary("shared");
-			//checkLibrary("UILib");
+			for(i in 0...Main.loadLibs.length)
+				checkLibrary(Main.loadLibs[i]);
 			if (directory != null && directory.length > 0 && directory != 'shared')
-				//checkLibrary(directory);
-				MemoryManagement.pushLibrary(directory);
-
-			MemoryManagement.getLibraries(function(lib)
 			{
-				if(lib.startsWith("songs:"))
-					checkLoadSong(lib);
-				else
-					checkLibrary(lib);
-			});
+				checkLibrary(directory);
+				Main.clearLibs.push(directory);
+			}
 
 			var fadeTime = 0.5;
 			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
@@ -191,23 +183,15 @@ class LoadingState extends MusicBeatState
 
 		#if NO_PRELOAD_ALL
 		var loaded:Bool = false;
-		MemoryManagement.getLibraries(function(lib)
-		{
-			var instLoaded:Bool = false;
-			var voicesLoaded:Bool = false;
-			var assetsLoaded:Bool = false;
-			if (PlayState.SONG != null)
-			{
-				if(lib.contains("Inst"))
-					instLoaded = isSoundLoaded(getSongPath());
-				else if(lib.contains("Voices"))
-					voicesLoaded = (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()));
-				else
-					assetsLoaded = isLibraryLoaded(lib);
 
-				loaded = instLoaded && voicesLoaded && assetsLoaded;
-			}
-		});
+		if (PlayState.SONG != null)
+		{
+			loaded = isSoundLoaded(getSongPath())
+				&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
+				&& isLibraryLoaded(directory)
+				&& areLibrariesLoaded();
+		}
+
 		if (!loaded)
 			return new LoadingState(target, stopMusic, directory);
 		#end
@@ -226,6 +210,17 @@ class LoadingState extends MusicBeatState
 	static function isLibraryLoaded(library:String):Bool
 	{
 		return Assets.getLibrary(library) != null;
+	}
+
+	static function areLibrariesLoaded():Bool
+	{
+		for(i in 0...Main.loadLibs.length)
+		{
+			trace(Main.loadLibs[i]);
+			trace(Assets.getLibrary(Main.loadLibs[i]) != null);
+			return Assets.getLibrary(Main.loadLibs[i]) != null;
+		}
+		return false;
 	}
 	#end
 

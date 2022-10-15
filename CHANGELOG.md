@@ -4,6 +4,12 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-7] - 15-10-2022
+### Removed
+- The Memory Management
+### Changed
+- Some code for library cleaning and loading screen
+
 ## [1.2_UNRELEASED-6] - 15-10-2022
 ### Changed
 - Improved the Memory Management code

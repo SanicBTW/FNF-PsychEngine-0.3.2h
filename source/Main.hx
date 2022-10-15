@@ -1,5 +1,6 @@
 package;
 
+import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -128,5 +129,21 @@ class Main extends Sprite
 				FlxTween.tween(memoryVar, {alpha: 0}, duration);
 			}
 		}
+	}
+
+	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
+	public static var loadLibs:Array<String> = ["shared", "UILib"];
+
+	public static function clearCache()
+	{
+		for(i in 0...clearLibs.length)
+		{
+			Assets.cache.clear(clearLibs[i]);
+		}
+
+		PlayState.inst = null;
+		PlayState.voices = null;
+
+		System.gc();
 	}
 }
