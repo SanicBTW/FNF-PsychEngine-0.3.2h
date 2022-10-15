@@ -80,8 +80,6 @@ class OptionsState extends MusicBeatState
 		}
 	}
 
-	var selectorLeft:Alphabet;
-
 	override function create() {
 		#if desktop
 		DiscordClient.changePresence("Options Menu", null);
@@ -107,11 +105,6 @@ class OptionsState extends MusicBeatState
 			//optionText.y += (100 * (i - (options.length / 2))) + 50;
 			grpOptions.add(optionText);
 		}
-
-		selectorLeft = new Alphabet(20, 0, '>', true, false);
-		selectorLeft.screenCenter(Y);
-		selectorLeft.y += 20;
-		add(selectorLeft);
 
 		changeSelection();
 		ClientPrefs.saveSettings();
@@ -169,9 +162,6 @@ class OptionsState extends MusicBeatState
 			item.alpha = 0.6;
 			if (item.targetY == 0) {
 				item.alpha = 1;
-				/*
-				selectorLeft.x = item.x - 63;
-				selectorLeft.y = item.y;*/
 			}
 		}
 		FlxG.sound.play(Paths.sound('scrollMenu'));

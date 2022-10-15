@@ -53,13 +53,14 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
-		PlayState.inst = null;
-		PlayState.voices = null;
-		System.gc();
+		MemoryManagement.clearLibraryCache();
+		
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
+
 		if (curWeek >= WeekData.weeksList.length)
 			curWeek = 0;
+
 		persistentUpdate = persistentDraw = true;
 
 		scoreText = new FlxText(10, 10, 0, "SCORE: 49324858", 36);

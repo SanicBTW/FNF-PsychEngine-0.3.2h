@@ -57,14 +57,8 @@ class FreeplayState extends MusicBeatState
 	override function create()
 	{
 		songs = [];
-		openfl.Assets.cache.clear("assets");
-		openfl.Assets.cache.clear("songs");
-		openfl.Assets.cache.clear("images");
 
-		PlayState.inst = null;
-		PlayState.voices = null;
-
-		System.gc();
+		MemoryManagement.clearLibraryCache();
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;

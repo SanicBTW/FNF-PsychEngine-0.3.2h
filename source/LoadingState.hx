@@ -60,7 +60,7 @@ class LoadingState extends MusicBeatState
 		loadBar.screenCenter();
 		loadBar.y = FlxG.height * 0.97;
 		loadBar.screenCenter(X);
-		loadBar.scale.set(10, 1);
+		loadBar.scale.set(12, 1);
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		add(loadBar);
 
@@ -70,16 +70,27 @@ class LoadingState extends MusicBeatState
 			var introComplete = callbacks.add("introComplete");
 			if (PlayState.SONG != null)
 			{
-				checkLoadSong(getSongPath());
+				MemoryManagement.addToLoadQueue(getSongPath(), SONG);
 				if (PlayState.SONG.needsVoices)
-					checkLoadSong(getVocalPath());
+					MemoryManagement.addToLoadQueue(getVocalPath(), SONG);
 			}
-			checkLibrary("shared");
-			checkLibrary("UILib");
+			MemoryManagement.addToLoadQueue("shared", LIBRARY);
+			MemoryManagement.addToLoadQueue("UILib", LIBRARY);
 			if (directory != null && directory.length > 0 && directory != 'shared')
+				MemoryManagement.addToLoadQueue(directory, LIBRARY);
+
+			MemoryManagement.getLoadQueue(function(shit)
 			{
-				checkLibrary(directory);
-			}
+				var libName:String = shit[0];
+				var libType:MemoryManagement.LibraryType = shit[1];
+				switch(libType)
+				{
+					case LIBRARY:
+						checkLibrary(libName);
+					case SONG:
+						checkLoadSong(libName);
+				}
+			});
 
 			var fadeTime = 0.5;
 			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
@@ -91,23 +102,18 @@ class LoadingState extends MusicBeatState
 	{
 		if (!Assets.cache.hasSound(path))
 		{
-			var library = Assets.getLibrary("songs");
-			final symbolPath = path.split(":").pop();
-			// @:privateAccess
-			// library.types.set(symbolPath, SOUND);
-			// @:privateAccess
-			// library.pathGroups.set(symbolPath, [library.__cacheBreak(symbolPath)]);
 			var callback = callbacks.add("song:" + path);
 			Assets.loadSound(path).onComplete(function(_)
 			{
 				callback();
+				MemoryManagement.removeFromLoadQueue(path, false);
+				MemoryManagement.pushToLoaded("songs");
 			});
 		}
 	}
 
 	function checkLibrary(library:String)
 	{
-		trace(Assets.hasLibrary(library));
 		if (Assets.getLibrary(library) == null)
 		{
 			@:privateAccess
@@ -118,6 +124,7 @@ class LoadingState extends MusicBeatState
 			Assets.loadLibrary(library).onComplete(function(_)
 			{
 				callback();
+				MemoryManagement.removeFromLoadQueue(library);
 			});
 		}
 	}
@@ -186,6 +193,7 @@ class LoadingState extends MusicBeatState
 		trace('Setting asset folder to ' + directory);
 
 		#if NO_PRELOAD_ALL
+		//gotta keep it like this
 		var loaded:Bool = false;
 		if (PlayState.SONG != null)
 		{
