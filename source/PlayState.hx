@@ -249,22 +249,6 @@ class PlayState extends MusicBeatState
 
 	public static var instance:PlayState; // for the dumb week 7 shit
 
-	//unoptimized much??
-	var sicksCounter:FlxText;
-	var sickTwn:FlxTween;
-
-	var goodsCounter:FlxText;
-	var goodTwn:FlxTween;
-
-	var badsCounter:FlxText;
-	var badTwn:FlxTween;
-
-	//funny
-	var shitsCounter:FlxText;
-	var shitTwn:FlxTween;
-
-	var counters:Array<FlxText>;
-
 	override public function create()
 	{
 		instance = this;
@@ -1024,41 +1008,6 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
-		// bruh
-		if (ClientPrefs.judgementCounter)
-		{
-			sicksCounter = new FlxText(20, 0, 0, "Sicks: ?", 32);
-			sicksCounter.setFormat(curFont, 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			sicksCounter.borderSize = 2;
-			sicksCounter.borderQuality = 2;
-			sicksCounter.scrollFactor.set();
-			sicksCounter.screenCenter(Y);
-			add(sicksCounter);
-
-			goodsCounter = new FlxText(20, sicksCounter.y + 32, 0, "Goods: ?", 32);
-			goodsCounter.setFormat(curFont, 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			goodsCounter.borderSize = 2;
-			goodsCounter.borderQuality = 2;
-			goodsCounter.scrollFactor.set();
-			add(goodsCounter);
-
-			badsCounter = new FlxText(20, goodsCounter.y + 32, 0, "Bads: ?", 32);
-			badsCounter.setFormat(curFont, 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			badsCounter.borderSize = 2;
-			badsCounter.borderQuality = 2;
-			badsCounter.scrollFactor.set();
-			add(badsCounter);
-
-			shitsCounter = new FlxText(20, badsCounter.y + 32, 0, "Shits: ?", 32);
-			shitsCounter.setFormat(curFont, 20, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-			shitsCounter.borderSize = 2;
-			shitsCounter.borderQuality = 2;
-			shitsCounter.scrollFactor.set();
-			add(shitsCounter);
-
-			counters = [sicksCounter, goodsCounter, badsCounter, shitsCounter];
-		}
-
 		strumLineNotes.cameras = [camHUD];
 		grpNoteSplashes.cameras = [camHUD];
 		notes.cameras = [camHUD];
@@ -1072,14 +1021,6 @@ class PlayState extends MusicBeatState
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
-
-		if (ClientPrefs.judgementCounter)
-		{
-			sicksCounter.cameras = [camHUD];
-			goodsCounter.cameras = [camHUD];
-			badsCounter.cameras = [camHUD];
-			shitsCounter.cameras = [camHUD];
-		}
 
 		#if android
 		addAndroidControls();
@@ -2503,14 +2444,6 @@ class PlayState extends MusicBeatState
 
 		scoreTxt.text = getScoreTextFormat();
 
-		if (ClientPrefs.judgementCounter)
-		{
-			sicksCounter.text = "Sicks: " + sicks;
-			goodsCounter.text = "Goods: " + goods;
-			badsCounter.text = "Bads: " + bads;
-			shitsCounter.text = "Shits: " + shits;
-		}
-
 		if (cpuControlled)
 		{
 			botplaySine += 180 * elapsed;
@@ -3447,7 +3380,6 @@ class PlayState extends MusicBeatState
 				if (!note.ratingDisabled)
 				{
 					shits++;
-					doTextZoom(shitsCounter, shitTwn);
 				}
 			case 'bad':
 				totalNotesHit += 0.5;
@@ -3457,7 +3389,6 @@ class PlayState extends MusicBeatState
 				if (!note.ratingDisabled)
 				{
 					bads++;
-					doTextZoom(badsCounter, badTwn);
 				}
 			case 'good':
 				totalNotesHit += 0.75;
@@ -3466,7 +3397,6 @@ class PlayState extends MusicBeatState
 				if (!note.ratingDisabled)
 				{
 					goods++;
-					doTextZoom(goodsCounter, goodTwn);
 				}
 			case 'sick':
 				totalNotesHit += 1;
@@ -3474,7 +3404,6 @@ class PlayState extends MusicBeatState
 				if (!note.ratingDisabled)
 				{
 					sicks++;
-					doTextZoom(sicksCounter, sickTwn);
 				}
 		}
 		note.rating = daRating;
@@ -4744,11 +4673,6 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX + char.cameraPosition[0] + opponentCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + opponentCameraOffset[1];
-
-			for (i in 0...counters.length)
-			{
-				FlxTween.tween(counters[i], {alpha: 0.5}, 0.1);
-			}
 		}
 		else
 		{
@@ -4761,11 +4685,6 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
-
-			for (i in 0...counters.length)
-			{
-				FlxTween.tween(counters[i], {alpha: 1}, 0.1);
-			}
 		}
 	}
 
@@ -4783,25 +4702,6 @@ class PlayState extends MusicBeatState
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 			camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
 			camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
-		}
-	}
-
-	// uh
-	function doTextZoom(text:FlxText, tween:FlxTween)
-	{
-		if (!cpuControlled)
-		{
-			if (tween != null)
-				tween.cancel();
-			text.scale.x = 1.075;
-			text.scale.y = 1.075;
-			tween = FlxTween.tween(text.scale, {x: 1, y: 1}, 0.2, 
-			{
-				onComplete: function(twn:FlxTween)
-				{
-					tween = null;
-				}
-			});
 		}
 	}
 

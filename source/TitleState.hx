@@ -92,6 +92,11 @@ class TitleState extends MusicBeatState
 
 		setupFonts();
 
+		if (FlxG.save.data.weekCompleted != null)
+		{
+			StoryMenuState.weekCompleted = FlxG.save.data.weekCompleted;
+		}
+
 		#if desktop
 		DiscordClient.initialize();
 		Application.current.onExit.add(function(exitCode)
