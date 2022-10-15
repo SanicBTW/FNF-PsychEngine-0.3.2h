@@ -180,9 +180,4 @@ class WeekData
 	{
 		return weeksLoaded.get(weeksList[PlayState.storyWeek]);
 	}
-
-	// this is used for the mod shit, not gonna do anything with it
-	public static function setDirectoryFromWeek(?data:WeekData = null)
-	{
-	}
 }

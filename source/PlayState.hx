@@ -1349,7 +1349,6 @@ class PlayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		dadGroup.alpha = 0.00001;
 		camHUD.visible = false;
-		//inCutscene = true; //this would stop the camera movement, oops
 
 		var tankman:FlxSprite = new FlxSprite(-20, 320);
 		tankman.frames = Paths.getSparrowAtlas('cutscenes/' + songName);
@@ -1379,7 +1378,6 @@ class PlayState extends MusicBeatState
 			var timeForStuff:Float = Conductor.crochet / 1000 * 4.5;
 			FlxG.sound.music.fadeOut(timeForStuff);
 			FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, timeForStuff, {ease: FlxEase.quadInOut});
-			//moveCamera(true); what how do i use this with the new camera shit
 			startCountdown();
 
 			dadGroup.alpha = 1;
@@ -1389,7 +1387,7 @@ class PlayState extends MusicBeatState
 			gf.dance();
 		};
 
-		camFollow.set(dad.x + 280, dad.y + 170);
+		focusCamera(true);
 		switch(songName)
 		{
 			case 'ugh':
@@ -1417,8 +1415,7 @@ class PlayState extends MusicBeatState
 				// Move camera to BF
 				cutsceneHandler.timer(3, function()
 				{
-					camFollow.x += 750;
-					camFollow.y += 100;
+					focusCamera(false);
 				});
 
 				// Beep!
@@ -1432,8 +1429,7 @@ class PlayState extends MusicBeatState
 				// Move camera to Tankman
 				cutsceneHandler.timer(6, function()
 				{
-					camFollow.x -= 750;
-					camFollow.y -= 100;
+					focusCamera(true);
 
 					// We should just kill you but... what the hell, it's been a boring day... let's see what you've got!
 					tankman.animation.play('killYou', true);
@@ -1472,6 +1468,7 @@ class PlayState extends MusicBeatState
 					};
 				});
 
+			/*
 			case 'stress':
 				cutsceneHandler.endTime = 35.5;
 				tankman.x -= 54;
@@ -1610,7 +1607,8 @@ class PlayState extends MusicBeatState
 
 				cutsceneHandler.timer(20, function()
 				{
-					camFollow.set(dad.x + 500, dad.y + 170);
+					focusCamera(true);
+					//camFollow.set(dad.x + 500, dad.y + 170);
 				});
 
 				cutsceneHandler.timer(31.2, function()
@@ -1633,7 +1631,7 @@ class PlayState extends MusicBeatState
 				cutsceneHandler.timer(32.2, function()
 				{
 					zoomBack();
-				});
+				});*/
 		}
 	}
 
@@ -2551,14 +2549,16 @@ class PlayState extends MusicBeatState
 			var curSection = Std.int(curStep / 16);
 			if (curSection != lastSection)
 			{
-				// section reset stuff
-				var lastMustHit:Bool = PlayState.SONG.notes[lastSection].mustHitSection;
-				if (SONG.notes[curSection].mustHitSection != lastMustHit)
+				if (PlayState.SONG.notes[lastSection] != null)
 				{
-					camDisplaceX = 0;
-					camDisplaceY = 0;
+					var lastMustHit:Bool = PlayState.SONG.notes[lastSection].mustHitSection;
+					if (SONG.notes[curSection].mustHitSection != lastMustHit)
+					{
+						camDisplaceX = 0;
+						camDisplaceY = 0;
+					}
+					lastSection = Std.int(curStep / 16);
 				}
-				lastSection = Std.int(curStep / 16);
 			}
 
 			updateCamFollow(elapsed);
@@ -4677,6 +4677,23 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
+		}
+	}
+
+	// goofy fix for the cutscene camera
+	function focusCamera(isDad:Bool = false)
+	{
+		if(isDad)
+		{
+			camFollow.set(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
+			camFollow.x += dad.cameraPosition[0] + opponentCameraOffset[0];
+			camFollow.y += dad.cameraPosition[1] + opponentCameraOffset[1];
+		}
+		else
+		{
+			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
+			camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
+			camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
 		}
 	}
 
