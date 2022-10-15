@@ -4,12 +4,17 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-6] - 15-10-2022
+### Changed
+- Improved the Memory Management code
+
 ## [1.2_UNRELEASED-5] - 15-10-2022
 ### Added
 - A class to manage memory (Just to manage cache, not anything too special)
 ### Changed
 - The audio increase decimals
 - How assets / libraries are loaded
+- Progress bar scale on Loading State
 ### Removed
 - The options left selector because it looks bad
 

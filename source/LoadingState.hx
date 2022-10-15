@@ -15,6 +15,8 @@ import lime.utils.AssetManifest;
 import lime.utils.Assets as LimeAssets;
 import openfl.utils.Assets;
 
+using StringTools;
+
 // update to the loading state, originally from scarlet melopeia port
 class LoadingState extends MusicBeatState
 {
@@ -70,26 +72,24 @@ class LoadingState extends MusicBeatState
 			var introComplete = callbacks.add("introComplete");
 			if (PlayState.SONG != null)
 			{
-				MemoryManagement.addToLoadQueue(getSongPath(), SONG);
+				MemoryManagement.pushLibrary(getSongPath());
+				//checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices)
-					MemoryManagement.addToLoadQueue(getVocalPath(), SONG);
+					//checkLoadSong(getVocalPath());
+					MemoryManagement.pushLibrary(getVocalPath());
 			}
-			MemoryManagement.addToLoadQueue("shared", LIBRARY);
-			MemoryManagement.addToLoadQueue("UILib", LIBRARY);
+			//checkLibrary("shared");
+			//checkLibrary("UILib");
 			if (directory != null && directory.length > 0 && directory != 'shared')
-				MemoryManagement.addToLoadQueue(directory, LIBRARY);
+				//checkLibrary(directory);
+				MemoryManagement.pushLibrary(directory);
 
-			MemoryManagement.getLoadQueue(function(shit)
+			MemoryManagement.getLibraries(function(lib)
 			{
-				var libName:String = shit[0];
-				var libType:MemoryManagement.LibraryType = shit[1];
-				switch(libType)
-				{
-					case LIBRARY:
-						checkLibrary(libName);
-					case SONG:
-						checkLoadSong(libName);
-				}
+				if(lib.startsWith("songs:"))
+					checkLoadSong(lib);
+				else
+					checkLibrary(lib);
 			});
 
 			var fadeTime = 0.5;
@@ -106,8 +106,6 @@ class LoadingState extends MusicBeatState
 			Assets.loadSound(path).onComplete(function(_)
 			{
 				callback();
-				MemoryManagement.removeFromLoadQueue(path, false);
-				MemoryManagement.pushToLoaded("songs");
 			});
 		}
 	}
@@ -124,7 +122,6 @@ class LoadingState extends MusicBeatState
 			Assets.loadLibrary(library).onComplete(function(_)
 			{
 				callback();
-				MemoryManagement.removeFromLoadQueue(library);
 			});
 		}
 	}
@@ -193,17 +190,24 @@ class LoadingState extends MusicBeatState
 		trace('Setting asset folder to ' + directory);
 
 		#if NO_PRELOAD_ALL
-		//gotta keep it like this
 		var loaded:Bool = false;
-		if (PlayState.SONG != null)
+		MemoryManagement.getLibraries(function(lib)
 		{
-			loaded = isSoundLoaded(getSongPath())
-				&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
-				&& isLibraryLoaded("shared")
-				&& isLibraryLoaded("UILib")
-				&& isLibraryLoaded(directory);
-		}
+			var instLoaded:Bool = false;
+			var voicesLoaded:Bool = false;
+			var assetsLoaded:Bool = false;
+			if (PlayState.SONG != null)
+			{
+				if(lib.contains("Inst"))
+					instLoaded = isSoundLoaded(getSongPath());
+				else if(lib.contains("Voices"))
+					voicesLoaded = (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()));
+				else
+					assetsLoaded = isLibraryLoaded(lib);
 
+				loaded = instLoaded && voicesLoaded && assetsLoaded;
+			}
+		});
 		if (!loaded)
 			return new LoadingState(target, stopMusic, directory);
 		#end

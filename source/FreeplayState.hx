@@ -58,7 +58,7 @@ class FreeplayState extends MusicBeatState
 	{
 		songs = [];
 
-		MemoryManagement.clearLibraryCache();
+		MemoryManagement.clearLibrariesCache();
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
