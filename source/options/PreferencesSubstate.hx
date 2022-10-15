@@ -13,10 +13,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 {
 	private static var curSelected:Int = 0;
 	private static var index:Int = 0;
-	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'CAMERA', 'VISUALS AND UI', 'AUDIO',];
+	static var unselectableOptions:Array<String> = ['GRAPHICS', 'GAMEPLAY', 'CAMERA', 'VISUALS AND UI', 'AUDIO', "INPUT"];
 	static var noCheckbox:Array<String> = [
-		'Framerate', 'Pause Music', 'Miss Volume', 'Hitsound Volume', 'Score Text design', 'Input', 'Rating Offset', 'Sick! Hit Window', 'Good Hit Window',
-		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement', 'Counters Font'
+		'Framerate', 'Pause Music', 'Miss Volume', 'Hitsound Volume', 'Score Text design', 'Style', 'Rating Offset', 'Sick! Hit Window', 'Good Hit Window',
+		'Bad Hit Window', 'Safe Frames', 'Camera Mov Displacement', 'Counters Font', 'Ratings Style'
 	];
 
 	static var options:Array<String> = [
@@ -25,18 +25,21 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Anti-Aliasing',
 		#if !html5 'Framerate', // Apparently 120FPS isn't correctly supported on Browser? Probably it has some V-Sync shit enabled by default, idk
 		#end
+		"Ratings Style",
 		'GAMEPLAY',
 		'Downscroll',
 		'Middlescroll',
 		'Ghost Tapping',
-		'Input',
+		'Freestyle BF',
+		'Pause game when focus is lost',
+		'INPUT',
+		"Style",
+		"OSU! Mania Lifts",
 		'Rating Offset',
 		'Sick! Hit Window',
 		'Good Hit Window',
 		'Bad Hit Window',
 		'Safe Frames',
-		'Freestyle BF',
-		'Pause game when focus is lost',
 		'CAMERA',
 		'Camera Zooms',
 		'Smooth cam zooms',
@@ -56,6 +59,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 		'Score Text Zoom on Hit',
 		'Combo Stacking',
 		'Counters Font',
+		'Judgements counter',
 		'AUDIO',
 		'Pause Music',
 		'Miss Volume',
@@ -282,6 +286,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						ClientPrefs.pauseOnFocusLost = !ClientPrefs.pauseOnFocusLost;
 					case 'Snap camera on bf when gameover':
 						ClientPrefs.snapCameraOnGameover = !ClientPrefs.snapCameraOnGameover;
+					case 'OSU! Mania Lifts':
+						ClientPrefs.osuManiaSimulation = !ClientPrefs.osuManiaSimulation;
+					case 'Judgements counter':
+						ClientPrefs.judgementCounter = !ClientPrefs.judgementCounter;
 				}
 				FlxG.sound.play(Paths.sound('scrollMenu'));
 				reloadValues();
@@ -340,7 +348,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 							else if (controls.UI_RIGHT_P)
 								changeState(1, options);
 							ClientPrefs.scoreTextDesign = options[index];
-						case 'Input':
+						case 'Style':
 							var options = ['Kade 1.5.3', 'Psych 0.4.2'];
 							if (controls.UI_LEFT_P)
 								changeState(-1, options);
@@ -390,6 +398,13 @@ class PreferencesSubstate extends MusicBeatSubstate
 							if (controls.UI_RIGHT_P)
 								changeState(1, options);
 							ClientPrefs.counterFont = options[index];
+						case 'Ratings Style':
+							var options = ["Classic", "Kade New", "Kade Old"];
+							if (controls.UI_LEFT_P)
+								changeState(-1, options);
+							if (controls.UI_RIGHT_P)
+								changeState(1, options);
+							ClientPrefs.ratingsStyle = options[index];
 					}
 				reloadValues();
 
@@ -483,7 +498,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "How loud should be the hitsound?";
 			case 'Score Text design':
 				daText = "Type of formatting on score text\nEngine: Score Misses Accuracy Rating (Full Combo Rating)\nPsych: Score Misses Rating (Accuracy) - Full Combo Rating";
-			case 'Input':
+			case 'Style':
 				daText = "Type of input for keypresses\nI think that there isnt that much of a difference but here you go";
 			case 'Smooth cam zooms':
 				daText = "If you want Psych cam zooms or Kade cam zooms";
@@ -511,6 +526,12 @@ class PreferencesSubstate extends MusicBeatSubstate
 				daText = "Snaps the camera on bf when he is dead";
 			case 'Counters Font':
 				daText = "Change the FPS Counter and Memory Counter fonts";
+			case 'OSU! Mania Lifts':
+				daText = "If enabled, you must stop holding on a sustain note\nat the correct moment.\nThis simulates OSU! Mania input kind of";
+			case 'Ratings Style':
+				daText = "The style of the ratings (Sick!, Good, Bad, Shit)";
+			case 'Judgements counter':
+				daText = "If enabled a counter for ratings aka judgements\nwill be shown on the left side of the screen";
 		}
 		descText.text = daText;
 
@@ -614,6 +635,10 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daValue = ClientPrefs.pauseOnFocusLost;
 					case 'Snap camera on bf when gameover':
 						daValue = ClientPrefs.snapCameraOnGameover;
+					case 'OSU! Mania Lifts':
+						daValue = ClientPrefs.osuManiaSimulation;
+					case 'Judgements counter':
+						daValue = ClientPrefs.judgementCounter;
 				}
 				checkbox.daValue = daValue;
 			}
@@ -636,7 +661,7 @@ class PreferencesSubstate extends MusicBeatSubstate
 						daText = Math.round(ClientPrefs.hitsoundVolume * 100) + '%';
 					case 'Score Text design':
 						daText = ClientPrefs.scoreTextDesign;
-					case 'Input':
+					case 'Style':
 						daText = ClientPrefs.inputType;
 					case 'Rating Offset':
 						daText = ClientPrefs.ratingOffset + "ms";
@@ -653,6 +678,8 @@ class PreferencesSubstate extends MusicBeatSubstate
 					case 'Counters Font':
 						daText = ClientPrefs.counterFont;
 						updateFonts();
+					case 'Ratings Style':
+						daText = ClientPrefs.ratingsStyle;
 				}
 				var lastTracker:FlxSprite = text.sprTracker;
 				text.sprTracker = null;

@@ -43,7 +43,7 @@
 		<library name="week4"         preload="true" />
 		<library name="week5"         preload="true" />
 		<library name="week6"         preload="true" />
-		<library name="week7"		  preload="true"/>
+		<library name="week7"		  preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
@@ -54,7 +54,7 @@
 		<library name="week4"         preload="false" />
 		<library name="week5"         preload="false" />
 		<library name="week6"         preload="false" />
-		<library name="week7"		  preload="false"/>
+		<library name="week7"		  preload="false" />
 	</section>
 	
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3"/>
@@ -65,6 +65,7 @@
 	<assets path="assets/week5"         library="week5"         exclude="*.mp3"/>
 	<assets path="assets/week6"         library="week6"         exclude="*.mp3"/>
 	<assets path="assets/week7"         library="week7"         exclude="*.mp3"/>
+	<assets path="assets/UILib"			library="UILib"			exclude="*.mp3"/> <!-- why would i wanto to exclude mp3 files if there are none :skull: -->
 	<assets path="assets/android" if="android"/>
 
 	<assets path="assets/fonts" embed='true'/>

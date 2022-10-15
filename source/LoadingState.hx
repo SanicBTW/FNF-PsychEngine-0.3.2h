@@ -75,6 +75,7 @@ class LoadingState extends MusicBeatState
 					checkLoadSong(getVocalPath());
 			}
 			checkLibrary("shared");
+			checkLibrary("UILib");
 			if (directory != null && directory.length > 0 && directory != 'shared')
 			{
 				checkLibrary(directory);
@@ -191,6 +192,7 @@ class LoadingState extends MusicBeatState
 			loaded = isSoundLoaded(getSongPath())
 				&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
 				&& isLibraryLoaded("shared")
+				&& isLibraryLoaded("UILib")
 				&& isLibraryLoaded(directory);
 		}
 

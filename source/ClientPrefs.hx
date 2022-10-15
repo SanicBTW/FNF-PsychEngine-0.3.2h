@@ -52,6 +52,9 @@ class ClientPrefs
 	public static var pauseOnFocusLost:Bool = true;
 	public static var snapCameraOnGameover:Bool = true;
 	public static var counterFont:String = "Funkin";
+	public static var judgementCounter:Bool = true;
+	public static var osuManiaSimulation:Bool = true; //not exactly a simulation but yeah
+	public static var ratingsStyle:String = "Classic";
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A,
@@ -143,6 +146,9 @@ class ClientPrefs
 		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
 		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
 		FlxG.save.data.counterFont = counterFont;
+		FlxG.save.data.judgementCounter = judgementCounter;
+		FlxG.save.data.osuManiaSimulation = osuManiaSimulation;
+		FlxG.save.data.ratingsStyle = ratingsStyle;
 
 		FlxG.save.flush();
 
@@ -255,6 +261,12 @@ class ClientPrefs
 			snapCameraOnGameover = FlxG.save.data.snapCameraOnGameover;
 		if (FlxG.save.data.counterFont != null)
 			counterFont = FlxG.save.data.counterFont;
+		if (FlxG.save.data.judgementCounter  != null)
+			judgementCounter = FlxG.save.data.judgementCounter;
+		if (FlxG.save.data.osuManiaSimulation != null)
+			osuManiaSimulation = FlxG.save.data.osuManiaSimulation;
+		if (FlxG.save.data.ratingsStyle != null)
+			ratingsStyle = FlxG.save.data.ratingsStyle;
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls', 'ninjamuffin99');
