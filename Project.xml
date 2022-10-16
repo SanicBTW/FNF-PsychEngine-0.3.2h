@@ -82,6 +82,8 @@
 
 	<haxelib name="android6permissions" if="android"/>
 
+	<haxelib name="flxanimate"/>
+
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />

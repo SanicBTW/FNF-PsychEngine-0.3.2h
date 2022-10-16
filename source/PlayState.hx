@@ -1,6 +1,5 @@
 package;
 
-import animateatlas.AtlasFrameMaker;
 import DialogueBoxPsych;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -47,6 +46,7 @@ import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import Note.EventNote;
+import flxanimate.frames.FlxAnimateFrames;
 
 using StringTools;
 
@@ -1468,7 +1468,6 @@ class PlayState extends MusicBeatState
 					};
 				});
 
-			/*
 			case 'stress':
 				cutsceneHandler.endTime = 35.5;
 				tankman.x -= 54;
@@ -1506,7 +1505,7 @@ class PlayState extends MusicBeatState
 					gfCutscene.alpha = 0.00001;
 				}
 
-				picoCutscene.frames = AtlasFrameMaker.construct('cutscenes/stressPico');
+				picoCutscene.frames = FlxAnimateFrames.fromTextureAtlas(Paths.getLibraryPath('images/cutscenes/stressPico', "week7"));
 				picoCutscene.animation.addByPrefix('anim', 'Pico Badass', 24, false);
 				insert(members.indexOf(gfGroup), picoCutscene);
 				picoCutscene.alpha = 0.00001;
@@ -1631,7 +1630,7 @@ class PlayState extends MusicBeatState
 				cutsceneHandler.timer(32.2, function()
 				{
 					zoomBack();
-				});*/
+				});
 		}
 	}
 

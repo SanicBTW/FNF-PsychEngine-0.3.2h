@@ -212,6 +212,7 @@ class LoadingState extends MusicBeatState
 		return Assets.getLibrary(library) != null;
 	}
 
+	//i dont belive this is working butttt alright
 	static function areLibrariesLoaded():Bool
 	{
 		for(i in 0...Main.loadLibs.length)

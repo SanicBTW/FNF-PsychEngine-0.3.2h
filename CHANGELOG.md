@@ -4,6 +4,12 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-8] - 16-10-2022
+### Added
+- FlxAnimate (modified some of its code because it wasn't compiling) if you want it [here it is](https://hastebin.com/ubofamivam.php)
+### Fixed
+- Slightly fixed Stress Cutscene
+
 ## [1.2_UNRELEASED-7] - 15-10-2022
 ### Removed
 - The Memory Management
