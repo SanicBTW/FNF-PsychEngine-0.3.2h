@@ -4,6 +4,16 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-10] - 18-10-2022
+### Added
+- Some funky alpha fade in and out on cutscenes
+- Miss camera displacements
+- A hint on Freeplay text to show the key to open the online song selection screen
+- Old event pushing system (Because I'm getting a bunch of errors for not checking > -1 on song generation bruh)
+- A check to avoid breaking the accept event on the online song screen
+### Changed
+- Set Persistent Update to false when selecting a song on online (WHY IS IT NOT WORKING AAAAAA)
+
 ## [1.2_UNRELEASED-9] - 18-10-2022
 ### Added
 - Online song selection screen (A lot of progress for HTML5, needs to be improved)

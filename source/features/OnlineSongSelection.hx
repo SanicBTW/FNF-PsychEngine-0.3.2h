@@ -12,6 +12,7 @@ class OnlineSongSelection extends MusicBeatState
     var songs:Array<String> = [];
     var grpSongs:FlxTypedGroup<Alphabet>;
     var curSelected:Int = 0;
+    var canAccept:Bool = true;
 
     //will add scores for the next commit/update
     //maybe i will add a difficulty display too?
@@ -120,9 +121,11 @@ class OnlineSongSelection extends MusicBeatState
             }
         }
 
-        if(controls.ACCEPT)
+        if(controls.ACCEPT && canAccept)
         {
             var songShit = songsMap.get(songs[curSelected]);
+            canAccept = false;
+            persistentUpdate = false;
 
             var request = js.Browser.createXMLHttpRequest();
 
@@ -182,7 +185,7 @@ class OnlineSongSelection extends MusicBeatState
 
     function goToPlayState()
     {
-        persistentUpdate = true;
+        persistentUpdate = false;
 
         PlayState.storyDifficulty = 2;
         PlayState.storyWeek = 0;

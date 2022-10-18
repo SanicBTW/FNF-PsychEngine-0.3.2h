@@ -173,7 +173,13 @@ class FreeplayState extends MusicBeatState
 		add(textBG);
 
 		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy";
-		var size:Int = 18;
+		var size:Int = 16;
+		#if ONLINE_SONGS
+		if(ClientPrefs.allowOnlineFetching)
+		{
+			leText += " / Press " + #if android "S" #else "TAB" #end + " to open the Online song list";
+		}
+		#end
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
 		text.scrollFactor.set();
@@ -288,11 +294,12 @@ class FreeplayState extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
+		#if ONLINE_SONGS
 		if (ClientPrefs.allowOnlineFetching && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonS.justPressed #end))
 		{
 			MusicBeatState.switchState(new features.OnlineSongSelection());
 		}
-		else if (accepted)
+		else #end if (accepted)
 		{
 			#if STORAGE_ACCESS
 			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
