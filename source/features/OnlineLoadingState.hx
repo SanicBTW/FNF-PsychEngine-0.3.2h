@@ -1,4 +1,6 @@
-package;
+package features;
+
+//just a copy of LoadingState but modified to fit my desires, maybe its bad to do it but meh
 
 import flixel.util.FlxColor;
 import flixel.tweens.FlxTween;
@@ -20,7 +22,7 @@ import openfl.utils.Assets;
 using StringTools;
 
 // update to the loading state, originally from scarlet melopeia port
-class LoadingState extends MusicBeatState
+class OnlineLoadingState extends MusicBeatState
 {
 	inline static var MIN_TIME = 1.0;
 
@@ -76,36 +78,13 @@ class LoadingState extends MusicBeatState
 		{
 			callbacks = new MultiCallback(onLoad);
 			var introComplete = callbacks.add("introComplete");
-			if (PlayState.SONG != null)
-			{
-				checkLoadSong(getSongPath());
-				if (PlayState.SONG.needsVoices)
-					checkLoadSong(getVocalPath());
-			}
 			for(i in 0...Main.loadLibs.length)
 				checkLibrary(Main.loadLibs[i]);
-			if (directory != null && directory.length > 0 && directory != 'shared')
-			{
-				checkLibrary(directory);
-				Main.clearLibs.push(directory);
-			}
 
 			var fadeTime = 0.5;
 			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
 			new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
 		});
-	}
-
-	function checkLoadSong(path:String)
-	{
-		if (!Assets.cache.hasSound(path))
-		{
-			var callback = callbacks.add("song:" + path);
-			Assets.loadSound(path).onComplete(function(_)
-			{
-				callback();
-			});
-		}
 	}
 
 	function checkLibrary(library:String)
@@ -172,16 +151,6 @@ class LoadingState extends MusicBeatState
 		MusicBeatState.switchState(target);
 	}
 
-	static function getSongPath()
-	{
-		return Paths.inst(PlayState.SONG.song);
-	}
-
-	static function getVocalPath()
-	{
-		return Paths.voices(PlayState.SONG.song);
-	}
-
 	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
 	{
 		MusicBeatState.switchState(getNextState(target, stopMusic));
@@ -204,14 +173,11 @@ class LoadingState extends MusicBeatState
 
 		if (PlayState.SONG != null)
 		{
-			loaded = isSoundLoaded(getSongPath())
-				&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
-				&& isLibraryLoaded(directory)
-				&& areLibrariesLoaded();
+			loaded = areLibrariesLoaded();
 		}
 
 		if (!loaded)
-			return new LoadingState(target, stopMusic, directory);
+			return new OnlineLoadingState(target, stopMusic, directory);
 		#end
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
@@ -220,17 +186,6 @@ class LoadingState extends MusicBeatState
 	}
 
 	#if NO_PRELOAD_ALL
-	static function isSoundLoaded(path:String):Bool
-	{
-		return Assets.cache.hasSound(path);
-	}
-
-	static function isLibraryLoaded(library:String):Bool
-	{
-		return Assets.getLibrary(library) != null;
-	}
-
-	//i dont belive this is working butttt alright
 	static function areLibrariesLoaded():Bool
 	{
 		for(i in 0...Main.loadLibs.length)

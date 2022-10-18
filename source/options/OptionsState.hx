@@ -30,7 +30,7 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Gameplay', 'Input', 'Camera', 'Visuals and UI', 'Audio', #if android 'Mobile Controls', #end #if (STORAGE_ACCESS) 'Revoke permissions' #end];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Gameplay', 'Input', 'Camera', 'Visuals and UI', 'Audio', #if android 'Mobile Controls', #end #if (STORAGE_ACCESS || ONLINE_SONGS) 'Revoke permissions' #end];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -68,6 +68,7 @@ class OptionsState extends MusicBeatState
 				TitleState.closedState = false;
 
 				ClientPrefs.allowFileSys = false;
+				ClientPrefs.allowOnlineFetching = false;
 				ClientPrefs.answeredReq = false;
 				ClientPrefs.saveSettings();
 
@@ -125,6 +126,11 @@ class OptionsState extends MusicBeatState
 
 	override function update(elapsed:Float) {
 		super.update(elapsed);
+
+		if(FlxG.keys.justPressed.TAB) //gonna leave it here just for fun
+		{
+			openSubState(new HPrompt("Hola", 0, function(){ FlxG.log.add("sex"); }, function(){ FlxG.log.add("no sex"); }, false, "Sex", "No sex"));
+		}
 
 		if (controls.UI_UP_P) {
 			changeSelection(-1);

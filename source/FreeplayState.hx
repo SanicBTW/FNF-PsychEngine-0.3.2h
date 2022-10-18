@@ -31,8 +31,6 @@ class FreeplayState extends MusicBeatState
 {
 	public static var songs:Array<SongMetadata> = [];
 
-	var selector:FlxText;
-
 	public static var curSelected:Int = 0;
 
 	var curDifficulty:Int = 1;
@@ -182,7 +180,10 @@ class FreeplayState extends MusicBeatState
 		add(text);
 
 		#if android
-		addVirtualPad(LEFT_FULL, A_B_C);
+		if(ClientPrefs.allowOnlineFetching)
+			addVirtualPad(LEFT_FULL, A_B_C_S);
+		else
+			addVirtualPad(LEFT_FULL, A_B_C);
 		#end
 
 		super.create();
@@ -287,7 +288,11 @@ class FreeplayState extends MusicBeatState
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		if (accepted)
+		if (ClientPrefs.allowOnlineFetching && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonS.justPressed #end))
+		{
+			MusicBeatState.switchState(new features.OnlineSongSelection());
+		}
+		else if (accepted)
 		{
 			#if STORAGE_ACCESS
 			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
@@ -308,9 +313,8 @@ class FreeplayState extends MusicBeatState
 
 				goToPlayState();
 			}
-			else
-			#end if (!songs[curSelected].intStorage)
-		{
+			else #end if (!songs[curSelected].intStorage)
+			{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
@@ -319,13 +323,12 @@ class FreeplayState extends MusicBeatState
 					curDifficulty = 1;
 					trace('Couldnt find file');
 				}
-
 				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.storyWeek = songs[curSelected].week;
 				goToPlayState();
-		}
+			}
 		}
 		else if (controls.RESET)
 		{

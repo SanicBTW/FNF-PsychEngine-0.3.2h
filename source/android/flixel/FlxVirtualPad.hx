@@ -36,6 +36,7 @@ class FlxVirtualPad extends FlxSpriteGroup
 	public var buttonX:FlxButton = new FlxButton(0, 0);
 	public var buttonY:FlxButton = new FlxButton(0, 0);
 	public var buttonZ:FlxButton = new FlxButton(0, 0);
+	public var buttonS:FlxButton = new FlxButton(0, 0);
 
 	/**
 	 * Create a gamepad.
@@ -93,6 +94,12 @@ class FlxVirtualPad extends FlxSpriteGroup
 				add(buttonA = createButton(FlxG.width - 132, FlxG.height - 135, 132, 127, 'a'));
 				add(buttonB = createButton(FlxG.width - 258, FlxG.height - 135, 132, 127, 'b'));
 			case A_B_C:
+				add(buttonC = createButton(FlxG.width - 384, FlxG.height - 135, 132, 127, 'c'));
+				add(buttonB = createButton(FlxG.width - 258, FlxG.height - 135, 132, 127, 'b'));
+				add(buttonA = createButton(FlxG.width - 132, FlxG.height - 135, 132, 127, 'a'));
+			//uhhh i belive this isnt going to work but whatever
+			case A_B_C_S:
+				add(buttonS = createButton(FlxG.width - 510, FlxG.height - 135, 132, 127, "s"));
 				add(buttonC = createButton(FlxG.width - 384, FlxG.height - 135, 132, 127, 'c'));
 				add(buttonB = createButton(FlxG.width - 258, FlxG.height - 135, 132, 127, 'b'));
 				add(buttonA = createButton(FlxG.width - 132, FlxG.height - 135, 132, 127, 'a'));
@@ -192,6 +199,7 @@ enum FlxActionMode
 	A_B;
 	A_B_C;
 	A_B_E;
+	A_B_C_S;
 	A_B_X_Y;
 	A_B_C_X_Y;
 	A_B_C_X_Y_Z;

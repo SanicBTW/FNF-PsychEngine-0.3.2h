@@ -1,5 +1,7 @@
 package;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -9,10 +11,9 @@ import flixel.util.FlxColor;
 
 class Prompt extends FlxSpriteGroup
 {
+	// UI
 	public var titleTxt:FlxText;
 	public var infoTxt:FlxText;
-
-	// For ok cancel stuff
 	private var okcBtns:FlxSprite;
 	private var okButtonReg:FlxSprite;
 	private var cancelButtonReg:FlxSprite;
@@ -20,20 +21,24 @@ class Prompt extends FlxSpriteGroup
 	private var upBtn:FlxSprite;
 	private var downBtn:FlxSprite;
 
-	// I changed these to avoid having to make more callbacks
+	private var selector:FlxSprite;
+	private var selectorSine:Float = 0; //totally not from botplaysine
+
+	// Functions on pressing buttons
 	// button 1 is the ok button or the up button
-	public var b1Callback:Void->Void = function()
+	public var b1Callback:String->Void = function(promptName:String)
 	{
-		trace("Pressed ok button or up button");
+		trace("Pressed ok button or up button, prompt name: " + promptName);
 	}
 
 	// button 2 is the cancel button or the down button
-	public var b2Callback:Void->Void = function()
+	public var b2Callback:String->Void = function(promptName:String)
 	{
-		trace("Pressed cancel button or down button");
+		trace("Pressed cancel button or down button, prompt name: " + promptName);
 	}
 
-	private var executeCb:Void->Void = null;
+	// the callback to execute
+	private var executeCb:String->Void = null;
 
 	public function new(title:String = "Placeholder", info:String = "Placeholder", buttonType:ButtonType = OK_CANCEL)
 	{
@@ -71,6 +76,13 @@ class Prompt extends FlxSpriteGroup
 				cancelButtonReg = new FlxSprite(okcBtns.x + (okcBtns.width / 2),
 					okcBtns.y).makeGraphic(Std.int(okcBtns.width / 2), Std.int(okcBtns.height), FlxColor.TRANSPARENT);
 				add(cancelButtonReg);
+
+				// base the x and y pos of the selector on the ok button as its the main button? uh
+				selector = new FlxSprite(okButtonReg.x, okButtonReg.y).makeGraphic(Std.int(okButtonReg.width), Std.int(okButtonReg.height), FlxColor.GRAY);
+				selector.alpha = 0.5;
+				add(selector);
+
+			/* rewrite
 			case UP_DOWN:
 				downBtn = new FlxSprite(bg.x + 15, bg.y + 275).loadGraphic(Paths.image("ui/butt_graph0001"));
 				downBtn.antialiasing = ClientPrefs.globalAntialiasing;
@@ -78,7 +90,7 @@ class Prompt extends FlxSpriteGroup
 
 				upBtn = new FlxSprite(downBtn.x + 285, downBtn.y).loadGraphic(Paths.image("ui/butt_graph0002"));
 				upBtn.antialiasing = ClientPrefs.globalAntialiasing;
-				add(upBtn);
+				add(upBtn);*/
 			case NONE:
 				// do nothing
 		}
@@ -86,6 +98,12 @@ class Prompt extends FlxSpriteGroup
 
 	override function update(elapsed:Float)
 	{
+		if (selector != null)
+		{
+			selectorSine += 200 * elapsed;
+			selector.alpha = 0.5 * Math.sin((Math.PI * selectorSine) / 200);
+		}
+
 		if (okcBtns != null && okButtonReg != null && cancelButtonReg != null)
 		{
 			#if !android
@@ -94,13 +112,19 @@ class Prompt extends FlxSpriteGroup
 				executeCb = (FlxG.mouse.overlaps(okButtonReg) ? b1Callback : b2Callback);
 
 				if (FlxG.mouse.overlaps(okButtonReg) && okcBtns.animation.curAnim.name == "but1")
+				{
 					changeAnim("but0");
+					selector.x = okButtonReg.x;
+				}
 				if (FlxG.mouse.overlaps(cancelButtonReg) && okcBtns.animation.curAnim.name == "but0")
+				{
 					changeAnim("but1");
+					selector.x = cancelButtonReg.x;
+				}
 
 				if (FlxG.mouse.justPressed)
 				{
-					executeCb();
+					executeCb(this.titleTxt.text);
 					FlxG.sound.play(Paths.sound('cancelMenu'));
 				}
 			}
@@ -119,7 +143,7 @@ class Prompt extends FlxSpriteGroup
 					// to avoid pressing accidentaly on hovering lol
 					if (touch.justReleased)
 					{
-						executeCb();
+						executeCb(this.titleTxt.text);
 						FlxG.sound.play(Paths.sound('cancelMenu'));
 					}
 				}
@@ -127,6 +151,7 @@ class Prompt extends FlxSpriteGroup
 			#end
 		}
 
+		/* shit code needs to be rewritten
 		if (upBtn != null && downBtn != null)
 		{
 			#if !android
@@ -139,7 +164,7 @@ class Prompt extends FlxSpriteGroup
 
 				if (FlxG.mouse.justPressed)
 				{
-					executeCb();
+					executeCb(this.titleTxt.text);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 				}
 			}
@@ -156,7 +181,7 @@ class Prompt extends FlxSpriteGroup
 
 				if (FlxG.mouse.justPressed)
 				{
-					executeCb();
+					executeCb(this.titleTxt.text);
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 				}
 			}
@@ -177,7 +202,7 @@ class Prompt extends FlxSpriteGroup
 
 					if (touch.justReleased)
 					{
-						executeCb();
+						executeCb(this.titleTxt.text);
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 					}
 				}
@@ -195,7 +220,7 @@ class Prompt extends FlxSpriteGroup
 
 					if (touch.justReleased)
 					{
-						executeCb();
+						executeCb(this.titleTxt.text);
 						FlxG.sound.play(Paths.sound('scrollMenu'));
 					}
 				}
@@ -205,7 +230,7 @@ class Prompt extends FlxSpriteGroup
 				}
 			}
 			#end
-		}
+		}*/
 
 		super.update(elapsed);
 	}
@@ -221,6 +246,5 @@ class Prompt extends FlxSpriteGroup
 @:enum abstract ButtonType(String) to String
 {
 	var OK_CANCEL;
-	var UP_DOWN;
 	var NONE;
 }

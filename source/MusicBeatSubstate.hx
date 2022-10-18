@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.ui.FlxUISubState;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;
@@ -9,7 +10,7 @@ import flixel.input.actions.FlxActionInput;
 import flixel.util.FlxDestroyUtil;
 #end
 
-class MusicBeatSubstate extends FlxSubState
+class MusicBeatSubstate extends FlxUISubState //why tf is musicbeatstate extending flxuistate and this isnt extending flxuisubstate
 {
 	public function new()
 	{

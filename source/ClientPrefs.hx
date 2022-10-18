@@ -54,6 +54,7 @@ class ClientPrefs
 	public static var counterFont:String = "Funkin";
 	public static var osuManiaSimulation:Bool = true; //not exactly a simulation but yeah
 	public static var ratingsStyle:String = "Classic";
+	public static var allowOnlineFetching:Bool = false;
 
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
 		//Key Bind, Name for ControlsSubState
@@ -134,6 +135,7 @@ class ClientPrefs
 		FlxG.save.data.counterFont = counterFont;
 		FlxG.save.data.osuManiaSimulation = osuManiaSimulation;
 		FlxG.save.data.ratingsStyle = ratingsStyle;
+		FlxG.save.data.allowOnlineFetching = allowOnlineFetching;
 
 		FlxG.save.flush();
 
@@ -250,6 +252,8 @@ class ClientPrefs
 			osuManiaSimulation = FlxG.save.data.osuManiaSimulation;
 		if (FlxG.save.data.ratingsStyle != null)
 			ratingsStyle = FlxG.save.data.ratingsStyle;
+		if (FlxG.save.data.allowOnlineFetching != null)
+			allowOnlineFetching = FlxG.save.data.allowOnlineFetching;
 
 		// flixel automatically saves your volume!
 		if(FlxG.save.data.volume != null)

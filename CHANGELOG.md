@@ -4,9 +4,28 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-9] - 18-10-2022
+### Added
+- Online song selection screen (A lot of progress for HTML5, needs to be improved)
+- A new prompt for permissions for fetching songs
+- 0.5.2h Prompt (I don't know why, also it was kind of rewritten and better formatted)
+- An "S" button for the Android pad (not tested)
+- Background color changing on beat on Loading State (kinda buggy and laggy)
+- A selector (indicator) on buttons in the Prompt
+- Custom Loading State for the online song selection (to avoid having to modify some base code and breaking it I will just copy it and modify it)
+### Changed
+- Some prompt code (Void->Void to String->Void to return the prompt name)
+- MusicBeatSubstate extends FlxSubState to FlxUISubState
+- Set Fixed Timestep to false by default
+### Fixed
+- Not setting back the clear libraries array to default values to avoid cleaning up an already cleaned up library
+- Not setting SONG to null when cleaning cache
+### Removed
+- Up and down button type on the Prompt
+
 ## [1.2_UNRELEASED-8] - 16-10-2022
 ### Added
-- FlxAnimate (modified some of its code because it wasn't compiling) if you want it [here it is](https://hastebin.com/ubofamivam.php)
+- FlxAnimate (modified some of its code because it wasn't compiling) if you want it [here it is](https://hastebin.com/ubofamivam.php) - apparently it was because of the Haxe version, sorry :P
 ### Fixed
 - Slightly fixed Stress Cutscene
 

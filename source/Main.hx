@@ -93,6 +93,7 @@ class Main extends Sprite
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
+		FlxG.fixedTimestep = false; //when going leaving playstate there is not set timestep back to true so lets just set it to false globally
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = true;
 		#if !android
@@ -134,15 +135,21 @@ class Main extends Sprite
 	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
 	public static var loadLibs:Array<String> = ["shared", "UILib"];
 
-	public static function clearCache()
+	public static function clearCache(setNulls:Bool = true)
 	{
 		for(i in 0...clearLibs.length)
 		{
 			Assets.cache.clear(clearLibs[i]);
 		}
 
-		PlayState.inst = null;
-		PlayState.voices = null;
+		clearLibs = ["shared", "UILib", "songs", "images"];
+
+		if(setNulls)
+		{
+			PlayState.inst = null;
+			PlayState.voices = null;
+			PlayState.SONG = null;
+		}
 
 		System.gc();
 	}

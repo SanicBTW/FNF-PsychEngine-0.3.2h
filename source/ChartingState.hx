@@ -1099,6 +1099,7 @@ class ChartingState extends MusicBeatState
 		{
 			if (FlxG.keys.justPressed.ENTER)
 			{
+				Main.clearCache(false);
 				autosaveSong();
 				FlxG.mouse.visible = false;
 				PlayState.SONG = _song;
