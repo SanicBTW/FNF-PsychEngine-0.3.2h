@@ -1,5 +1,6 @@
 package features;
 
+import openfl.net.URLRequest;
 import openfl.system.System;
 import openfl.media.Sound;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -32,6 +33,7 @@ class OnlineSongSelection extends MusicBeatState
         grpSongs = new FlxTypedGroup<Alphabet>();
         add(grpSongs);
 
+        #if html5
         var request = js.Browser.createXMLHttpRequest();
         //when getting data i guess
         request.addEventListener('load', function()
@@ -53,29 +55,30 @@ class OnlineSongSelection extends MusicBeatState
         request.addEventListener('loadend', function()
         {
             //to avoid having errors, we generate the shit when it finishes loading
-            for(i in 0...songs.length)
-            {
-                var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i], true, false);
-                songText.isMenuItem = true;
-                songText.targetY = i;
-                grpSongs.add(songText);
-
-                if(songText.width > 980)
-                {
-                    var textScale:Float = 980 / songText.width;
-                    songText.scale.x = textScale;
-                    for(letter in songText.lettersArray)
-                    {
-                        letter.x *= textScale;
-                        letter.offset.x *= textScale;
-                    }
-                }
-            }
-
-            changeSelection(0, false);
+            regenMenu();
         });
         request.open("GET", 'http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records');
         request.send();
+        #else
+        var http = new haxe.Http("http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records");
+        http.onData = function(data:String)
+        {
+            var onlineSongItems:Dynamic = cast haxe.Json.parse(data).items;
+			for(i in 0...onlineSongItems.length)
+			{
+				var onlineSongItemName = onlineSongItems[i].song_name;
+
+				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
+				var instPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
+				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+
+				songsMap.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
+                songs.push(onlineSongItemName);
+            }
+            regenMenu();
+        }
+        http.request();
+        #end
     }
 
     var holdTime:Float = 0; //funky keep pressin shit
@@ -127,6 +130,7 @@ class OnlineSongSelection extends MusicBeatState
             {
                 var songShit = songsMap.get(songs[curSelected]);
     
+                #if html5
                 var request = js.Browser.createXMLHttpRequest();
     
                 //gonna make it download the sounds automatically
@@ -156,6 +160,25 @@ class OnlineSongSelection extends MusicBeatState
     
                 request.open("GET", songShit[0]);
                 request.send();
+                #else
+                var http = new haxe.Http(songShit[0]);
+                http.onData = function(data:String)
+                {
+                    blockInputs = true; //WHY IT ISNT WORKINGGGGGGG
+
+                    PlayState.SONG = Song.loadFromJson(data, "", true);
+
+                    PlayState.inst = new Sound(new URLRequest(songShit[1]));
+                    if(PlayState.SONG.needsVoices)
+                    {
+                        PlayState.voices = new Sound(new URLRequest(songShit[2]));
+                        goToPlayState();
+                    }
+                    else
+                        goToPlayState();
+                }
+                http.request();
+                #end
                 blockInputs = true; //AAAAAAAAAAA
             }
         }
@@ -197,5 +220,27 @@ class OnlineSongSelection extends MusicBeatState
         OnlineLoadingState.loadAndSwitchState(new PlayState());
 
         System.gc();
+    }
+
+    function regenMenu()
+    {
+        for(i in 0...songs.length)
+        {
+            var songText:Alphabet = new Alphabet(0, (70 * i) + 30, songs[i], true, false);
+            songText.isMenuItem = true;
+            songText.targetY = i;
+            grpSongs.add(songText);
+            if(songText.width > 980)
+            {
+                var textScale:Float = 980 / songText.width;
+                songText.scale.x = textScale;
+                for(letter in songText.lettersArray)
+                {
+                    letter.x *= textScale;
+                    letter.offset.x *= textScale;
+                }
+            }
+        }
+        changeSelection(0, false);
     }
 }

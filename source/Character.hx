@@ -1,6 +1,6 @@
 package;
 
-import flxanimate.frames.FlxAnimateFrames;
+import animateatlas.AtlasFrameMaker;
 import Section.SwagSection;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -120,9 +120,8 @@ class Character extends FlxSprite
 						frames = Paths.getPackerAtlas(json.image);
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(json.image);
-					//ill have to take a look into textures
 					case "texture":
-						frames = FlxAnimateFrames.fromJson(json.image);
+						frames = AtlasFrameMaker.construct(json.image);
 				}
 				imageFile = json.image;
 

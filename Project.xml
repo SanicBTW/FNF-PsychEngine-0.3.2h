@@ -82,7 +82,7 @@
 
 	<haxelib name="android6permissions" if="android"/>
 
-	<haxelib name="flxanimate"/>
+	<haxelib name="Flixel-TextureAtlas"/> <!-- haxelib git Flixel-TextureAtlas https://github.com/Smokey555/Flixel-TextureAtlas -->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

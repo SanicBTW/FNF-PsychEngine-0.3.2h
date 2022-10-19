@@ -243,6 +243,9 @@ class Note extends FlxSprite
 			}
 		}
 
+		if(Paths.getSparrowAtlas(skin) == null)
+			skin = "NOTE_assets";
+
 		var animName:String = null;
 		if (animation.curAnim != null)
 		{

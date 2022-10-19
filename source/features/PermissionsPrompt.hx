@@ -22,6 +22,7 @@ class PermissionsPrompt extends MusicBeatState
 {
 	var storagePrompt:Prompt;
 	var onlineSongsPrompt:Prompt;
+	var mapPrompts:Map<String, Prompt> = new Map();
 
 	override function create()
 	{
@@ -52,6 +53,7 @@ class PermissionsPrompt extends MusicBeatState
 			onlineSongsPrompt.x -= 220;
 			#end
 			add(onlineSongsPrompt);
+			mapPrompts.set("Online Fetching", onlineSongsPrompt);
 			#end
 
 			#if STORAGE_ACCESS
@@ -65,6 +67,7 @@ class PermissionsPrompt extends MusicBeatState
 			storagePrompt.x += 220;
 			#end
 			add(storagePrompt);
+			mapPrompts.set("FileSystem Access", storagePrompt);
 			#end
 		}
 		else
@@ -78,9 +81,17 @@ class PermissionsPrompt extends MusicBeatState
 		super.create();
 	}
 
+	var transitioning:Bool = false;
+
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		//because i want to kms so badly
+		if(!mapPrompts.exists("Online Fetching") && !mapPrompts.exists("FileSystem Access") && !transitioning)
+		{
+			everythingDone();
+		}
 	}
 
 	function accepted(promptName:String)
@@ -143,6 +154,7 @@ class PermissionsPrompt extends MusicBeatState
 
 	function everythingDone()
 	{
+		transitioning = true;
 		ClientPrefs.answeredReq = true;
 		ClientPrefs.saveSettings();
 		MusicBeatState.switchState(new TitleState());
@@ -156,12 +168,11 @@ class PermissionsPrompt extends MusicBeatState
 		{
 			Reflect.setProperty(ClientPrefs, field, state);
 
+			mapPrompts.remove(curPrompt.titleTxt.text);
 			remove(curPrompt);
 
 			if(nextPrompt != null)
 				promptMoveTween(nextPrompt);
-			else
-				everythingDone();
 		});
 	}
 }

@@ -46,7 +46,7 @@ import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import Note.EventNote;
-import flxanimate.frames.FlxAnimateFrames;
+import animateatlas.AtlasFrameMaker;
 
 using StringTools;
 
@@ -1513,7 +1513,7 @@ class PlayState extends MusicBeatState
 					gfCutscene.alpha = 0.00001;
 				}
 
-				picoCutscene.frames = FlxAnimateFrames.fromTextureAtlas(Paths.getLibraryPath('images/cutscenes/stressPico', "week7"));
+				picoCutscene.frames = AtlasFrameMaker.construct(Paths.getLibraryPath('images/cutscenes/stressPico', "week7")); //FlxAnimateFrames.fromTextureAtlas();
 				picoCutscene.animation.addByPrefix('anim', 'Pico Badass', 24, false);
 				insert(members.indexOf(gfGroup), picoCutscene);
 				picoCutscene.alpha = 0.00001;
@@ -1632,9 +1632,10 @@ class PlayState extends MusicBeatState
 					};
 
 					//gonna suck a big cock
-					camFollow.set(boyfriend.x + 280, boyfriend.y + 200);
+					//camFollow.set(boyfriend.x + 280, boyfriend.y + 200);
 					cameraSpeed = 12;
-					FlxTween.tween(FlxG.camera, {zoom: 0.9 * 1.2 * 1.2}, 0.25, {ease: FlxEase.elasticOut});
+					focusCamera(false);
+					//FlxTween.tween(FlxG.camera, {zoom: 0.9 * 1.2 * 1.2}, 0.25, {ease: FlxEase.elasticOut});
 				});
 
 				cutsceneHandler.timer(32.2, function()
@@ -2107,6 +2108,8 @@ class PlayState extends MusicBeatState
 					if (SONG.arrowSkin != null && SONG.arrowSkin.length > 1)
 						skin = SONG.arrowSkin;
 
+					if(Paths.getSparrowAtlas(skin) == null)
+						skin = "NOTE_assets";
 					babyArrow.frames = Paths.getSparrowAtlas(skin);
 					babyArrow.animation.addByPrefix('green', 'arrowUP');
 					babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
