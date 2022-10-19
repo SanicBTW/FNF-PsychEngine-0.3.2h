@@ -12,7 +12,7 @@ class OnlineSongSelection extends MusicBeatState
     var songs:Array<String> = [];
     var grpSongs:FlxTypedGroup<Alphabet>;
     var curSelected:Int = 0;
-    var canAccept:Bool = true;
+    var blockInputs:Bool = false;
 
     //will add scores for the next commit/update
     //maybe i will add a difficulty display too?
@@ -84,76 +84,80 @@ class OnlineSongSelection extends MusicBeatState
     {
         super.update(elapsed);
 
-        if(controls.BACK)
+        if(blockInputs == false)
         {
-            FlxG.sound.play(Paths.sound('cancelMenu'));
-            MusicBeatState.switchState(new FreeplayState());
-        }
-
-        var shiftMult:Int = 1;
-        if(FlxG.keys.pressed.SHIFT)
-            shiftMult = 3;
-
-        //just in case
-        if(songs.length > 1)
-        {
-            if(controls.UI_UP_P)
+            if(controls.BACK)
             {
-                changeSelection(-shiftMult);
-                holdTime = 0;
+                FlxG.sound.play(Paths.sound('cancelMenu'));
+                MusicBeatState.switchState(new FreeplayState());
             }
-            if(controls.UI_DOWN_P)
+        
+            var shiftMult:Int = 1;
+            if(FlxG.keys.pressed.SHIFT)
+                shiftMult = 3;
+        
+            //just in case
+            if(songs.length > 1)
             {
-                changeSelection(shiftMult);
-                holdTime = 0;
-            }
-
-            if(controls.UI_DOWN || controls.UI_UP)
-            {
-                var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
-				holdTime += elapsed;
-				var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
-
-				if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
-				{
-					changeSelection((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
-				}
-            }
-        }
-
-        if(controls.ACCEPT && canAccept)
-        {
-            var songShit = songsMap.get(songs[curSelected]);
-            canAccept = false;
-            persistentUpdate = false;
-
-            var request = js.Browser.createXMLHttpRequest();
-
-            //gonna make it download the sounds automatically
-            request.addEventListener("load", function()
-            {
-                //to check if it needs voices
-                PlayState.SONG = Song.loadFromJson(request.responseText, "", true);
-
-                Sound.loadFromFile(songShit[1]).onComplete(function(sound)
+                if(controls.UI_UP_P)
                 {
-                    PlayState.inst = sound;
-                });
-
-                if(PlayState.SONG.needsVoices)
-                {
-                    Sound.loadFromFile(songShit[2]).onComplete(function(sound)
-                    {
-                        PlayState.voices = sound;
-                        goToPlayState();
-                    });
+                    changeSelection(-shiftMult);
+                    holdTime = 0;
                 }
-                else
-                    goToPlayState();
-            });
+                if(controls.UI_DOWN_P)
+                {
+                    changeSelection(shiftMult);
+                    holdTime = 0;
+                }
+    
+                if(controls.UI_DOWN || controls.UI_UP)
+                {
+                    var checkLastHold:Int = Math.floor((holdTime - 0.5) * 10);
+                    holdTime += elapsed;
+                    var checkNewHold:Int = Math.floor((holdTime - 0.5) * 10);
+    
+                    if (holdTime > 0.5 && checkNewHold - checkLastHold > 0)
+                    {
+                        changeSelection((checkNewHold - checkLastHold) * (controls.UI_UP ? -shiftMult : shiftMult));
+                    }
+                }
+            }
+        
+            if(controls.ACCEPT)
+            {
+                var songShit = songsMap.get(songs[curSelected]);
+    
+                var request = js.Browser.createXMLHttpRequest();
+    
+                //gonna make it download the sounds automatically
+                request.addEventListener("load", function()
+                {
+                    blockInputs = true; //WHY IT ISNT WORKINGGGGGGG
 
-            request.open("GET", songShit[0]);
-            request.send();
+                    //to check if it needs voices
+                    PlayState.SONG = Song.loadFromJson(request.responseText, "", true);
+    
+                    Sound.loadFromFile(songShit[1]).onComplete(function(sound)
+                    {
+                        PlayState.inst = sound;
+                    });
+    
+                    if(PlayState.SONG.needsVoices)
+                    {
+                        Sound.loadFromFile(songShit[2]).onComplete(function(sound)
+                        {
+                            PlayState.voices = sound;
+                            goToPlayState();
+                        });
+                    }
+                    else
+                        goToPlayState();
+                });
+    
+                request.open("GET", songShit[0]);
+                request.send();
+                blockInputs = true; //AAAAAAAAAAA
+            }
         }
     }
 
