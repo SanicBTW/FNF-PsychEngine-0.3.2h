@@ -128,4 +128,43 @@ class Main extends Sprite
 			}
 		}
 	}
+
+	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
+	public static var loadLibs:Array<String> = ["shared", "UILib"];
+	public static var dumpExclusions:Array<String> = [
+		'assets/music/freakyMenu.${Paths.SOUND_EXT}',
+		'assets/shared/music/breakfast.${Paths.SOUND_EXT}',
+		'assets/shared/music/tea-time.${Paths.SOUND_EXT}',
+	];
+
+	public static function clearCache(setNulls:Bool = true)
+	{
+		for (i in 0...clearLibs.length)
+		{
+			Assets.cache.clear(clearLibs[i]);
+		}
+
+		clearLibs = ["shared", "UILib", "songs", "images"];
+
+		if (setNulls)
+		{
+			PlayState.inst = null;
+			PlayState.voices = null;
+			PlayState.SONG = null;
+		}
+
+		// uhh is it fine if i put it here??
+		for (key in Paths.currentTrackedSounds.keys())
+		{
+			if (!Paths.localTrackedAssets.contains(key) && !dumpExclusions.contains(key) && key != null)
+			{
+				Assets.cache.clear(key);
+				Paths.currentTrackedSounds.remove(key);
+			}
+		}
+
+		Paths.localTrackedAssets = [];
+
+		System.gc();
+	}
 }

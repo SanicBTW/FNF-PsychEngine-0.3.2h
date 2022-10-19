@@ -12,6 +12,7 @@ import sys.io.File;
 #end
 
 // made to access internal storage for target platform sys
+// now only used to make the necessary folders
 class StorageAccess
 {
 	private static var checkDirs:Map<String, String> = new Map();

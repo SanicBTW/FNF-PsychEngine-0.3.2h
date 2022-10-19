@@ -67,13 +67,13 @@ class TitleState extends MusicBeatState
 			&& Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE)
 			&& ClientPrefs.allowFileSys)
 		{
-			StorageAccess.checkStorage();
+			Paths.checkStorage();
 		}
 		#end
 		#if windows
 		if (ClientPrefs.allowFileSys)
 		{
-			StorageAccess.checkStorage();
+			Paths.checkStorage();
 		}
 		#end
 		#end

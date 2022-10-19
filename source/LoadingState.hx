@@ -161,12 +161,12 @@ class LoadingState extends MusicBeatState
 		MusicBeatState.switchState(target);
 	}
 
-	static function getSongPath()
+	static function getSongPath():Dynamic
 	{
 		return Paths.inst(PlayState.SONG.song);
 	}
 
-	static function getVocalPath()
+	static function getVocalPath():Dynamic
 	{
 		return Paths.voices(PlayState.SONG.song);
 	}

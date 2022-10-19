@@ -106,19 +106,16 @@ class FreeplayState extends MusicBeatState
 		#if STORAGE_ACCESS
 		if (ClientPrefs.allowFileSys)
 		{
-			var internalSongs = StorageAccess.getSongs();
-			for (i in 0...internalSongs.length)
+			var charts = Paths.extFolders("data");
+			var songFiles = Paths.extFolders("songs");
+			for (i in 0...songFiles.length)
 			{
-				var songName = internalSongs[i];
+				var songName = songFiles[i];
 
-				// gotta improve it like adding the got difficulties to a new array and use that array of diffs instead
-				var check = StorageAccess.getCharts(songName);
-				if (check == "exists")
+				if (charts.contains(songName))
 				{
-					addSong(songName, 0, "bf", FlxColor.fromRGB(146, 113, 253), true);
+					addSong(songName, 0, "bf", FlxColor.fromRGB(146, 11, 253), true);
 				}
-
-				System.gc();
 			}
 		}
 		#end
@@ -182,7 +179,8 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy" #if html5 + " | Press TAB to open the online song selection" #end;
+		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy" #if html5 +
+		" | Press TAB to open the online song selection" #end;
 		var size:Int = 18;
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
 		text.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, RIGHT);
@@ -307,18 +305,18 @@ class FreeplayState extends MusicBeatState
 			#if STORAGE_ACCESS
 			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
 			{
-				var songLowercase:String = songs[curSelected].songName.toLowerCase().replace(' ', '-');
-				if (!StorageAccess.exists(StorageAccess.getChart(songLowercase, curDifficulty)))
+				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				if (!Paths.fileExists(haxe.io.Path.join(["data", songLowercase, poop]), TEXT))
 				{
+					poop = songLowercase;
 					curDifficulty = 1;
-					trace("Couldnt find file on local storage");
+					trace("Couldn't find file on local storage");
 				}
 
-				PlayState.SONG = Song.parseJSONshit(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)));
+				PlayState.SONG = Song.loadFromJson(File.getContent(Paths.extJson(haxe.io.Path.join([songLowercase, poop]))), "", true);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
-				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
-				PlayState.voices = StorageAccess.getVoices(songs[curSelected].songName);
 				PlayState.storyWeek = 0;
 
 				goToPlayState();
