@@ -154,6 +154,12 @@ class MusicBeatState extends FlxUIState
 		if (oldStep != curStep && curStep > 0)
 			stepHit();
 
+		if(FlxG.keys.pressed.CONTROL)
+		{
+			if(FlxG.mouse.wheel != 0)
+				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
+		}
+
 		super.update(elapsed);
 	}
 

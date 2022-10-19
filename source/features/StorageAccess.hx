@@ -15,8 +15,6 @@ import sys.io.File;
 class StorageAccess
 {
 	public static var checkDirs:Map<String, String> = new Map();
-	// filename, filepath, filecontent
-	public static var checkFiles:Map<String, Array<String>> = new Map();
 
 	public static function checkStorage()
 	{
@@ -31,9 +29,7 @@ class StorageAccess
 		{
 			trace("Checking: " + varName + " - " + dirPath);
 			if (!exists(dirPath))
-			{
 				FileSystem.createDirectory(dirPath);
-			}
 		}
 
 		openfl.system.System.gc();
@@ -45,9 +41,7 @@ class StorageAccess
 		#if STORAGE_ACCESS
 		var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Inst$ext']);
 		if (exists(filePath))
-		{
 			return Sound.fromFile(filePath);
-		}
 		return null;
 		#end
 	}
@@ -57,37 +51,7 @@ class StorageAccess
 		#if STORAGE_ACCESS
 		var filePath = Path.join([checkDirs.get("songs"), song.toLowerCase(), 'Voices$ext']);
 		if (exists(filePath))
-		{
 			return Sound.fromFile(filePath);
-		}
-		return null;
-		#end
-	}
-
-	public static function getChart(song:String, diff:Int = 1):String
-	{
-		#if STORAGE_ACCESS
-		var diffString:String = "";
-		switch (diff)
-		{
-			case 0:
-				diffString = "-easy";
-			case 1:
-				diffString = "";
-			case 2:
-				diffString = "-hard";
-		}
-		var chartFile:String = song.toLowerCase() + diffString + ".json";
-		var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
-
-		var chartPath:String = Path.join([mainSongPath, chartFile]);
-
-		if (exists(chartPath))
-		{
-			return chartPath;
-		}
-		return null;
-		#else
 		return null;
 		#end
 	}
@@ -99,17 +63,10 @@ class StorageAccess
 		#end
 	}
 
-	public static function getCharts(song:String)
+	public static function getCharts()
 	{
 		#if STORAGE_ACCESS
-		var mainSongPath:String = Path.join([checkDirs.get("data"), song.toLowerCase()]);
-
-		if (exists(mainSongPath))
-		{
-			var possibleCharts = FileSystem.readDirectory(mainSongPath);
-			return "exists";
-		}
-		return null;
+		return FileSystem.readDirectory(checkDirs.get("data"));
 		#end
 	}
 
@@ -118,13 +75,9 @@ class StorageAccess
 	{
 		#if STORAGE_ACCESS
 		if (FileSystem.exists(file))
-		{
 			return true;
-		}
 		else
-		{
 			return false;
-		}
 		#end
 	}
 }

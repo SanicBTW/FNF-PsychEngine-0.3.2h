@@ -127,11 +127,6 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if(FlxG.keys.justPressed.TAB) //gonna leave it here just for fun
-		{
-			openSubState(new HPrompt("Hola", 0, function(){ FlxG.log.add("sex"); }, function(){ FlxG.log.add("no sex"); }, false, "Sex", "No sex"));
-		}
-
 		if (controls.UI_UP_P) {
 			changeSelection(-1);
 		}

@@ -98,16 +98,14 @@ class FreeplayState extends MusicBeatState
 		if (ClientPrefs.allowFileSys)
 		{
 			var internalSongs = StorageAccess.getSongs();
+			var charts = StorageAccess.getCharts();
+
 			for (i in 0...internalSongs.length)
 			{
 				var songName = internalSongs[i];
 
-				// gotta improve it like adding the got difficulties to a new array and use that array of diffs instead
-				var check = StorageAccess.getCharts(songName);
-				if (check == "exists")
-				{
+				if (charts.contains(songName))
 					addSong(songName, 0, "bf", FlxColor.fromRGB(146, 113, 253), true);
-				}
 
 				System.gc();
 			}
@@ -305,13 +303,15 @@ class FreeplayState extends MusicBeatState
 			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
 			{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
-				if (!StorageAccess.exists(StorageAccess.getChart(songLowercase, curDifficulty)))
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				if (!StorageAccess.exists(haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json"))
 				{
+					poop = songLowercase;
 					curDifficulty = 1;
 					trace("Couldnt find file on local storage");
 				}
 
-				PlayState.SONG = Song.loadFromJson(File.getContent(StorageAccess.getChart(songLowercase, curDifficulty)), "", true);
+				PlayState.SONG = Song.loadFromJson(File.getContent(haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json"), "", true);
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
