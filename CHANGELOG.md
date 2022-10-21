@@ -4,6 +4,16 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-15] - 22-10-2022
+### Added
+- An option to make the rating small
+### Changed
+- Some note code
+### Removed
+- Local settings file, because needs to be improved and more worked on
+- Asking for permissions on opening
+- Loading settings on opening
+
 ## [1.2_UNRELEASED-14] - 21-10-2022
 ### Added
 - Local settings file - needs to be improved / more worked on

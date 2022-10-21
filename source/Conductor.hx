@@ -7,6 +7,7 @@ typedef BPMChangeEvent =
 	var stepTime:Int;
 	var songTime:Float;
 	var bpm:Float;
+	@:optional var stepCrochet:Float;
 }
 
 class Conductor
@@ -64,7 +65,8 @@ class Conductor
 				var event:BPMChangeEvent = {
 					stepTime: totalSteps,
 					songTime: totalPos,
-					bpm: curBPM
+					bpm: curBPM,
+					stepCrochet: calculateCrochet(curBPM) / 4
 				};
 				bpmChangeMap.push(event);
 			}
@@ -80,7 +82,12 @@ class Conductor
 	{
 		bpm = newBpm;
 
-		crochet = ((60 / bpm) * 1000);
+		crochet = calculateCrochet(bpm);
 		stepCrochet = crochet / 4;
+	}
+
+	inline public static function calculateCrochet(bpm:Float)
+	{
+		return (60 / bpm) * 1000;
 	}
 }

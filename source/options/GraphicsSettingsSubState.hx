@@ -74,6 +74,14 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 			"Classic",
 			["Classic", "Kade New", "Kade Old"]);
 		addOption(option);
+
+		var option:Option = new Option('Small Ratings',
+			"If enabled, the ratings sprite will be small",
+			"smallRatingSize",
+			"bool",
+			true);
+		addOption(option);
+
 		super();
 	}
 

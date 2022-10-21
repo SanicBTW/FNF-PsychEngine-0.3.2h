@@ -11,6 +11,9 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import haxe.Constraints.Function;
+#if android
+import com.player03.android6.Permissions;
+#end
 
 using StringTools;
 
@@ -97,7 +100,20 @@ class PermissionsPrompt extends MusicBeatState
 			case "Online Fetching":
 				promptShit(onlineSongsPrompt, storagePrompt, "allowOnlineFetching", true);
 			case "FileSystem Access":
+				#if !android
 				promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
+				#else
+				Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
+				Permissions.onPermissionsDenied.add(function(args)
+				{
+					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", false);
+				});
+
+				Permissions.onPermissionsGranted.add(function(args)
+				{
+					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
+				});
+				#end
 		}
 	}
 

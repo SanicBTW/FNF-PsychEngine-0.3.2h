@@ -258,6 +258,7 @@ class PlayState extends MusicBeatState
 		instance = this;
 
 		PauseSubState.songName = null; // Reset to default
+		Conductor.recalculateTimings();
 
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
@@ -3586,6 +3587,11 @@ class PlayState extends MusicBeatState
 
 			if (!isPixelStage)
 			{
+				if(ClientPrefs.smallRatingSize)
+				{
+					rating.setGraphicSize(Std.int(rating.width * 0.7));
+					rating.antialiasing = ClientPrefs.globalAntialiasing;
+				}
 				numScore.antialiasing = ClientPrefs.globalAntialiasing;
 				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
 			}
@@ -4463,7 +4469,7 @@ class PlayState extends MusicBeatState
 		{
 			if (SONG.notes[Math.floor(curStep / 16)].changeBPM)
 			{
-				FlxG.watch.addQuick("BPM Change, new BPM: ", SONG.notes[Math.floor(curStep / 16)].bpm);
+				FlxG.log.add("BPM Change, new BPM: " + SONG.notes[Math.floor(curStep / 16)].bpm);
 				Conductor.changeBPM(SONG.notes[Math.floor(curStep / 16)].bpm);
 			}
 		}
