@@ -97,8 +97,8 @@ class FreeplayState extends MusicBeatState
 		#if STORAGE_ACCESS
 		if (ClientPrefs.allowFileSys)
 		{
-			var internalSongs = StorageAccess.getSongs();
-			var charts = StorageAccess.getCharts();
+			var internalSongs = StorageAccess.getFolderFiles(SONGS);
+			var charts = StorageAccess.getFolderFiles(DATA);
 
 			for (i in 0...internalSongs.length)
 			{
@@ -304,14 +304,25 @@ class FreeplayState extends MusicBeatState
 			{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-				if (!StorageAccess.exists(haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json"))
+
+				var chartPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json";
+				var eventPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, "events"]) + ".json";
+				if (!StorageAccess.exists(chartPath))
 				{
 					poop = songLowercase;
 					curDifficulty = 1;
+					chartPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json";
 					trace("Couldnt find file on local storage");
 				}
+				trace(chartPath);
 
-				PlayState.SONG = Song.loadFromJson(File.getContent(haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json"), "", true);
+				PlayState.SONG = Song.loadFromRaw(File.getContent(chartPath));
+
+				//events file exists??
+				trace(eventPath);
+				if(StorageAccess.exists(eventPath))
+					PlayState.songEvents = Song.loadFromRaw(File.getContent(eventPath)).events;
+
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);

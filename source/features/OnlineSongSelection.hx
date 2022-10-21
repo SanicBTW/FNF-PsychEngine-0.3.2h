@@ -41,13 +41,14 @@ class OnlineSongSelection extends MusicBeatState
             var onlineSongItems:Dynamic = cast haxe.Json.parse(request.responseText).items;
 			for(i in 0...onlineSongItems.length)
 			{
-				var onlineSongItemName = onlineSongItems[i].song_name;
+				var onlineSongItemName = onlineSongItems[i].song;
 
-				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart;
+                var eventPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].events;
+				var instPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
+				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
 
-				songsMap.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
+				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
             }
         });
@@ -57,27 +58,32 @@ class OnlineSongSelection extends MusicBeatState
             //to avoid having errors, we generate the shit when it finishes loading
             regenMenu();
         });
-        request.open("GET", 'http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records');
+        request.open("GET", 'http://sancopublic.ddns.net:5430/api/collections/funkin/records');
         request.send();
         #else
-        var http = new haxe.Http("http://sancopublic.ddns.net:5430/api/collections/fnf_charts/records");
+        var http = new haxe.Http("http://sancopublic.ddns.net:5430/api/collections/funkin/records");
         http.onData = function(data:String)
         {
             var onlineSongItems:Dynamic = cast haxe.Json.parse(data).items;
 			for(i in 0...onlineSongItems.length)
 			{
-				var onlineSongItemName = onlineSongItems[i].song_name;
+				var onlineSongItemName = onlineSongItems[i].song;
 
-				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart_file;
-				var instPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/fnf_charts/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart;
+                var eventPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].events;
+				var instPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
+				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
 
-				songsMap.set(onlineSongItemName, [chartPath, instPath, voicesPath, onlineSongItems[i].difficulty]);
+				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
             }
             regenMenu();
         }
         http.request();
+        #end
+
+        #if android
+        addVirtualPad(LEFT_FULL, A_B);
         #end
     }
 
@@ -132,6 +138,9 @@ class OnlineSongSelection extends MusicBeatState
     
                 #if html5
                 var request = js.Browser.createXMLHttpRequest();
+                var eventsReq = js.Browser.createXMLHttpRequest();
+
+                eventsReq.open("GET", songShit[1]);
     
                 //gonna make it download the sounds automatically
                 request.addEventListener("load", function()
@@ -139,16 +148,18 @@ class OnlineSongSelection extends MusicBeatState
                     blockInputs = true; //WHY IT ISNT WORKINGGGGGGG
 
                     //to check if it needs voices
-                    PlayState.SONG = Song.loadFromJson(request.responseText, "", true);
+                    PlayState.SONG = Song.loadFromRaw(request.responseText);
+
+                    eventsReq.send();
     
-                    Sound.loadFromFile(songShit[1]).onComplete(function(sound)
+                    Sound.loadFromFile(songShit[2]).onComplete(function(sound)
                     {
                         PlayState.inst = sound;
                     });
     
                     if(PlayState.SONG.needsVoices)
                     {
-                        Sound.loadFromFile(songShit[2]).onComplete(function(sound)
+                        Sound.loadFromFile(songShit[3]).onComplete(function(sound)
                         {
                             PlayState.voices = sound;
                             goToPlayState();
@@ -157,27 +168,42 @@ class OnlineSongSelection extends MusicBeatState
                     else
                         goToPlayState();
                 });
+
+                eventsReq.addEventListener("load", function()
+                {
+                    PlayState.songEvents = Song.loadFromRaw(eventsReq.responseText).events;
+                });
     
                 request.open("GET", songShit[0]);
                 request.send();
                 #else
                 var http = new haxe.Http(songShit[0]);
+                var reqEvents = new haxe.Http(songShit[1]);
                 http.onData = function(data:String)
                 {
                     blockInputs = true; //WHY IT ISNT WORKINGGGGGGG
 
-                    PlayState.SONG = Song.loadFromJson(data, "", true);
+                    PlayState.SONG = Song.loadFromRaw(data);
 
-                    PlayState.inst = new Sound(new URLRequest(songShit[1]));
+                    reqEvents.request();
+
+                    PlayState.inst = new Sound(new URLRequest(songShit[2]));
                     if(PlayState.SONG.needsVoices)
                     {
-                        PlayState.voices = new Sound(new URLRequest(songShit[2]));
+                        PlayState.voices = new Sound(new URLRequest(songShit[3]));
                         goToPlayState();
                     }
                     else
                         goToPlayState();
                 }
+
+                reqEvents.onData = function(data:String)
+                {
+                    PlayState.songEvents = Song.loadFromRaw(data).events;
+                }
+
                 http.request();
+
                 #end
                 blockInputs = true; //AAAAAAAAAAA
             }

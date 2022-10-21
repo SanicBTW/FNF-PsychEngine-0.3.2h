@@ -4,6 +4,23 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-14] - 21-10-2022
+### Added
+- Local settings file - needs to be improved / more worked on
+- Online Events
+- Custom function to load raw inputs for songs
+- Support for local songs events
+- Android controls for Online song selection state
+### Changed
+- Requests filesystem access on opening app for easier operations
+- PocketBase API (moved from fnf_charts collection to funkin collection to add events)
+- Some code on loading Internal Storage songs 
+- Storage Access code
+- Loading settings on opening
+### Fixed
+- Events system (Kinda?)
+- Android controls
+
 ## [1.2_UNRELEASED-13] - 19-10-2022
 ### Added
 - Change volume by pressing Control and scrolling the mouse wheel up or down
@@ -30,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2_UNRELEASED-10] - 18-10-2022
 ### Added
-- Some funky alpha fade in and out on cutscenes
+- Some funky alpha fade in and out for FPS and Memory counters on cutscenes
 - Miss camera displacements
 - A hint on Freeplay text to show the key to open the online song selection screen
 - Old event pushing system (Because I'm getting a bunch of errors for not checking > -1 on song generation bruh)

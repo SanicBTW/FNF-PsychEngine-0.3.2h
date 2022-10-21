@@ -249,6 +249,10 @@ class PlayState extends MusicBeatState
 
 	public static var instance:PlayState; // for the dumb week 7 shit
 
+	//used for events coming from online or storage song, ik i should use
+	//the get content on generate song shit but nahhh gonna make it much easier lol
+	public static var songEvents:Array<Dynamic> = null;
+
 	override public function create()
 	{
 		instance = this;
@@ -1875,14 +1879,11 @@ class PlayState extends MusicBeatState
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
-		var songName:String = Paths.formatToSongPath(SONG.song);
-		var file:String = Paths.json(songName + '/events');
-		if (OpenFlAssets.exists(file))
+		if(songEvents != null)
 		{
-			var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
-			for (event in eventsData) //Event Notes
+			for(event in songEvents)
 			{
-				for (i in 0...event[1].length)
+				for(i in 0...event[1].length)
 				{
 					var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
 					var subEvent:EventNote = {
@@ -1894,6 +1895,32 @@ class PlayState extends MusicBeatState
 					subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
 					eventNotes.push(subEvent);
 					eventPushed(subEvent);
+				}
+			}
+		}
+		else
+		{
+			//make it compatible with filesys shit
+			var songName:String = Paths.formatToSongPath(SONG.song);
+			var file:String = Paths.json(songName + '/events');
+			if (OpenFlAssets.exists(file))
+			{
+				var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
+				for (event in eventsData) //Event Notes
+				{
+					for (i in 0...event[1].length)
+					{
+						var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
+						var subEvent:EventNote = {
+							strumTime: newEventNote[0] + ClientPrefs.noteOffset,
+							event: newEventNote[1],
+							value1: newEventNote[2],
+							value2: newEventNote[3]
+						};
+						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
+						eventNotes.push(subEvent);
+						eventPushed(subEvent);
+					}
 				}
 			}
 		}
@@ -1971,18 +1998,24 @@ class PlayState extends MusicBeatState
 				}
 				else //THE FUCKING STUPID EVENT NOTES GOD
 				{
-					//wtf??? do i push songNotes or this shit
+					//wtf??? do i push songNotes or this shit 
+					for(i in 0...songNotes[1].length)
+					{
+						var newEventNote:Array<Dynamic> = [songNotes[0], songNotes[1][i][0], songNotes[1][i][1], songNotes[1][i][2]];
+						var subEvent:EventNote = 
+						{
+							strumTime: newEventNote[0] + ClientPrefs.noteOffset,
+							event: newEventNote[1],
+							value1: newEventNote[2],
+							value2: newEventNote[3]
+						};
+						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
+						eventNotes.push(subEvent);
+						eventPushed(subEvent);
+					}
 					/*
-					var newEventNote:Array<Dynamic> = [songNotes[0], songNotes[1][i][0], songNotes[1][i][1], songNotes[1][i][2]];
-					var subEvent:EventNote = {
-						strumTime: newEventNote[0] + ClientPrefs.noteOffset,
-						event: newEventNote[1],
-						value1: newEventNote[2],
-						value2: newEventNote[3]
-					};
-					subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);*/
 					eventNotes.push(songNotes);
-					eventPushed(songNotes);
+					eventPushed(songNotes);*/
 				}
 			}
 			daBeats += 1;

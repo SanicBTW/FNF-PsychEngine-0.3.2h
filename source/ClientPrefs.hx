@@ -1,5 +1,12 @@
 package;
 
+#if STORAGE_ACCESS
+import features.StorageAccess;
+import features.StorageAccess.FunkySettings;
+#end
+#if android
+import com.player03.android6.Permissions;
+#end
 import Controls;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
@@ -87,57 +94,73 @@ class ClientPrefs
 		//trace(defaultKeys);
 	}
 
+	static var settingShit:FunkySettings =
+	{
+		downScroll: false,
+		middleScroll: false,
+		showFPS: true,
+		flashing: true,
+		globalAntialiasing: true,
+		noteSplashes: true,
+		lowQuality: false,
+		framerate: 60,
+		camZooms: true,
+		hideHud: false,
+		noteOffset: 0,
+		arrowHSV: [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		ghostTapping: true,
+		hideTime: false,
+
+		showMemory: true,
+		optScoreZoom: true,
+		cameraMovement: true,
+		iconBoping: false,
+		pauseMusic: "Tea Time",
+		missVolume: 0.2,
+		hitsoundVolume: 0,
+		scoreTextDesign: "Engine",
+		comboOffset: [0, 0, 0, 0],
+		inputType: "Kade 1.5.3",
+		smoothCamZoom: true,
+		opponentNoteSplash: true,
+		ratingOffset: 0,
+		sickWindow: 45,
+		goodWindow: 90,
+		badWindow: 135,
+		safeFrames: 10,
+		allowFileSys: false,
+		answeredReq: false,
+		ghostTappingBFSing: true,
+		comboStacking: true,
+		cameraMovementDisplacement: 15,
+		pauseOnFocusLost: true,
+		snapCameraOnGameover: true,
+		counterFont: "Funkin",
+		osuManiaSimulation: true,
+		ratingsStyle: "Classic",
+		allowOnlineFetching: false
+	}
+
 	// ayo i might change this, im too fucking tired of adding FlxG.save.data for each new option
 	public static function saveSettings()
 	{
-		FlxG.save.data.downScroll = downScroll;
-		FlxG.save.data.middleScroll = middleScroll;
-		FlxG.save.data.showFPS = showFPS;
-		FlxG.save.data.flashing = flashing;
-		FlxG.save.data.globalAntialiasing = globalAntialiasing;
-		FlxG.save.data.noteSplashes = noteSplashes;
-		FlxG.save.data.lowQuality = lowQuality;
-		FlxG.save.data.framerate = framerate;
-		FlxG.save.data.cursing = cursing;
-		FlxG.save.data.violence = violence;
-		FlxG.save.data.camZooms = camZooms;
-		FlxG.save.data.noteOffset = noteOffset;
-		FlxG.save.data.hideHud = hideHud;
-		FlxG.save.data.arrowHSV = arrowHSV;
-		FlxG.save.data.imagesPersist = imagesPersist;
-		FlxG.save.data.ghostTapping = ghostTapping;
-		FlxG.save.data.hideTime = hideTime;
-
-		FlxG.save.data.showMemory = showMemory;
-		FlxG.save.data.optScoreZoom = optScoreZoom;
-		FlxG.save.data.cameraMovement = cameraMovement;
-		FlxG.save.data.iconBoping = iconBoping;
-		FlxG.save.data.pauseMusic = pauseMusic;
-		FlxG.save.data.missVolume = missVolume;
-		FlxG.save.data.hitsoundVolume = hitsoundVolume;
-		FlxG.save.data.scoreTextDesign = scoreTextDesign;
-		FlxG.save.data.comboOffset = comboOffset;
-		FlxG.save.data.inputType = inputType;
-		FlxG.save.data.smoothCamZoom = smoothCamZoom;
-		FlxG.save.data.opponentNoteSplash = opponentNoteSplash;
-		FlxG.save.data.ratingOffset = ratingOffset;
-		FlxG.save.data.sickWindow = sickWindow;
-		FlxG.save.data.goodWindow = goodWindow;
-		FlxG.save.data.badWindow = badWindow;
-		FlxG.save.data.safeFrames = safeFrames;
-		FlxG.save.data.allowFileSys = allowFileSys;
-		FlxG.save.data.answeredReq = answeredReq;
-		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
-		FlxG.save.data.comboStacking = comboStacking;
-		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
-		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
-		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
-		FlxG.save.data.counterFont = counterFont;
-		FlxG.save.data.osuManiaSimulation = osuManiaSimulation;
-		FlxG.save.data.ratingsStyle = ratingsStyle;
-		FlxG.save.data.allowOnlineFetching = allowOnlineFetching;
-
-		FlxG.save.flush();
+		#if STORAGE_ACCESS
+		setJSON();
+		//prob initialized but gonna keep it safe
+		var path = haxe.io.Path.join([lime.system.System.userDirectory, 'sanicbtw_pe_files', "settings.json"]);
+		#if android
+		if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE))
+			sys.io.File.saveContent(path, haxe.Json.stringify(settingShit, null, "\t"));
+		else
+		{
+			trace("Doesn't have permissions to do that! Saving to FlxG");
+			saveFlxGPrefs();
+		}
+		#end
+		sys.io.File.saveContent(path, haxe.Json.stringify(settingShit, null, "\t"));
+		#else
+		saveFlxGPrefs();
+		#end
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls_v2', 'ninjamuffin99'); //Placing this in a separate save so that it can be manually deleted without removing your Score and stuff
@@ -147,6 +170,64 @@ class ClientPrefs
 	}
 
 	public static function loadPrefs()
+	{
+		#if STORAGE_ACCESS
+		//storage access isnt initialized yet
+		var path = haxe.io.Path.join([lime.system.System.userDirectory, 'sanicbtw_pe_files', "settings.json"]);
+		if(StorageAccess.exists(path))
+		{
+			var parsedFile:haxe.DynamicAccess<FunkySettings> = haxe.Json.parse(sys.io.File.getContent(path));
+			for(key => value in parsedFile)
+			{
+				trace(key, value);
+				Reflect.setProperty(FlxG.save.data, key, value);
+				Reflect.setProperty(ClientPrefs, key, Reflect.getProperty(FlxG.save.data, key));
+			}
+		}
+		else
+		{
+			trace("Oops, settings file doesn't exists, creating one and loading normal prefs");
+			#if android
+			if(Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE) && Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE))
+			{
+				sys.io.File.saveContent(path, haxe.Json.stringify(settingShit, null, "\t"));
+			}
+			else
+			{
+				trace("Doesn't have permissions to do that! Loading from FlxG");
+			}
+			#else
+			sys.io.File.saveContent(path, haxe.Json.stringify(settingShit, null, "\t"));
+			#end
+			loadFlxGPrefs();
+		}
+		#else
+		loadFlxGPrefs();
+		#end
+
+		// flixel automatically saves your volume!
+		if(FlxG.save.data.volume != null)
+		{
+			FlxG.sound.volume = FlxG.save.data.volume;
+		}
+		if (FlxG.save.data.mute != null)
+		{
+			FlxG.sound.muted = FlxG.save.data.mute;
+		}
+
+		//uhhhh do i try to make this a settings file too or???
+		var save:FlxSave = new FlxSave();
+		save.bind('controls_v2', 'ninjamuffin99');
+		if(save != null && save.data.customControls != null) {
+			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
+			for (control => keys in loadedControls) {
+				keyBinds.set(control, keys);
+			}
+			reloadControls();
+		}
+	}
+
+	static function loadFlxGPrefs()
 	{
 		if (FlxG.save.data.downScroll != null)
 			downScroll = FlxG.save.data.downScroll;
@@ -254,26 +335,105 @@ class ClientPrefs
 			ratingsStyle = FlxG.save.data.ratingsStyle;
 		if (FlxG.save.data.allowOnlineFetching != null)
 			allowOnlineFetching = FlxG.save.data.allowOnlineFetching;
+	}
 
-		// flixel automatically saves your volume!
-		if(FlxG.save.data.volume != null)
-		{
-			FlxG.sound.volume = FlxG.save.data.volume;
-		}
-		if (FlxG.save.data.mute != null)
-		{
-			FlxG.sound.muted = FlxG.save.data.mute;
-		}
+	static function saveFlxGPrefs()
+	{
+		FlxG.save.data.downScroll = downScroll;
+		FlxG.save.data.middleScroll = middleScroll;
+		FlxG.save.data.showFPS = showFPS;
+		FlxG.save.data.flashing = flashing;
+		FlxG.save.data.globalAntialiasing = globalAntialiasing;
+		FlxG.save.data.noteSplashes = noteSplashes;
+		FlxG.save.data.lowQuality = lowQuality;
+		FlxG.save.data.framerate = framerate;
+		FlxG.save.data.cursing = cursing;
+		FlxG.save.data.violence = violence;
+		FlxG.save.data.camZooms = camZooms;
+		FlxG.save.data.noteOffset = noteOffset;
+		FlxG.save.data.hideHud = hideHud;
+		FlxG.save.data.arrowHSV = arrowHSV;
+		FlxG.save.data.imagesPersist = imagesPersist;
+		FlxG.save.data.ghostTapping = ghostTapping;
+		FlxG.save.data.hideTime = hideTime;
 
-		var save:FlxSave = new FlxSave();
-		save.bind('controls_v2', 'ninjamuffin99');
-		if(save != null && save.data.customControls != null) {
-			var loadedControls:Map<String, Array<FlxKey>> = save.data.customControls;
-			for (control => keys in loadedControls) {
-				keyBinds.set(control, keys);
-			}
-			reloadControls();
-		}
+		FlxG.save.data.showMemory = showMemory;
+		FlxG.save.data.optScoreZoom = optScoreZoom;
+		FlxG.save.data.cameraMovement = cameraMovement;
+		FlxG.save.data.iconBoping = iconBoping;
+		FlxG.save.data.pauseMusic = pauseMusic;
+		FlxG.save.data.missVolume = missVolume;
+		FlxG.save.data.hitsoundVolume = hitsoundVolume;
+		FlxG.save.data.scoreTextDesign = scoreTextDesign;
+		FlxG.save.data.comboOffset = comboOffset;
+		FlxG.save.data.inputType = inputType;
+		FlxG.save.data.smoothCamZoom = smoothCamZoom;
+		FlxG.save.data.opponentNoteSplash = opponentNoteSplash;
+		FlxG.save.data.ratingOffset = ratingOffset;
+		FlxG.save.data.sickWindow = sickWindow;
+		FlxG.save.data.goodWindow = goodWindow;
+		FlxG.save.data.badWindow = badWindow;
+		FlxG.save.data.safeFrames = safeFrames;
+		FlxG.save.data.allowFileSys = allowFileSys;
+		FlxG.save.data.answeredReq = answeredReq;
+		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
+		FlxG.save.data.comboStacking = comboStacking;
+		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
+		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
+		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
+		FlxG.save.data.counterFont = counterFont;
+		FlxG.save.data.osuManiaSimulation = osuManiaSimulation;
+		FlxG.save.data.ratingsStyle = ratingsStyle;
+		FlxG.save.data.allowOnlineFetching = allowOnlineFetching;
+
+		FlxG.save.flush();
+	}
+
+	static function setJSON()
+	{
+		settingShit.downScroll = downScroll;
+		settingShit.middleScroll = middleScroll;
+		settingShit.showFPS = showFPS;
+		settingShit.flashing = flashing;
+		settingShit.globalAntialiasing = globalAntialiasing;
+		settingShit.noteSplashes = noteSplashes;
+		settingShit.lowQuality = lowQuality;
+		settingShit.framerate = framerate;
+		settingShit.camZooms = camZooms;
+		settingShit.hideHud = hideHud;
+		settingShit.noteOffset = noteOffset;
+		settingShit.arrowHSV = arrowHSV;
+		settingShit.ghostTapping = ghostTapping;
+		settingShit.hideTime = hideTime;
+
+		settingShit.showMemory = showMemory;
+		settingShit.optScoreZoom = optScoreZoom;
+		settingShit.cameraMovement = cameraMovement;
+		settingShit.iconBoping = iconBoping;
+		settingShit.pauseMusic = pauseMusic;
+		settingShit.missVolume = missVolume;
+		settingShit.hitsoundVolume = hitsoundVolume;
+		settingShit.scoreTextDesign = scoreTextDesign;
+		settingShit.comboOffset = comboOffset;
+		settingShit.inputType = inputType;
+		settingShit.smoothCamZoom = smoothCamZoom;
+		settingShit.opponentNoteSplash = opponentNoteSplash;
+		settingShit.ratingOffset = ratingOffset;
+		settingShit.sickWindow = sickWindow;
+		settingShit.goodWindow = goodWindow;
+		settingShit.badWindow = badWindow;
+		settingShit.safeFrames = safeFrames;
+		settingShit.allowFileSys = allowFileSys;
+		settingShit.answeredReq = answeredReq;
+		settingShit.ghostTappingBFSing = ghostTappingBFSing;
+		settingShit.comboStacking = comboStacking;
+		settingShit.cameraMovementDisplacement = cameraMovementDisplacement;
+		settingShit.pauseOnFocusLost = pauseOnFocusLost;
+		settingShit.snapCameraOnGameover = snapCameraOnGameover;
+		settingShit.counterFont = counterFont;
+		settingShit.osuManiaSimulation = osuManiaSimulation;
+		settingShit.ratingsStyle = ratingsStyle;
+		settingShit.allowOnlineFetching = allowOnlineFetching;
 	}
 
 	public static function reloadControls() {

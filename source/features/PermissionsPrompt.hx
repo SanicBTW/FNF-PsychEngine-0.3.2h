@@ -14,10 +14,6 @@ import haxe.Constraints.Function;
 
 using StringTools;
 
-#if android
-import com.player03.android6.Permissions;
-#end
-
 class PermissionsPrompt extends MusicBeatState
 {
 	var storagePrompt:Prompt;
@@ -101,20 +97,7 @@ class PermissionsPrompt extends MusicBeatState
 			case "Online Fetching":
 				promptShit(onlineSongsPrompt, storagePrompt, "allowOnlineFetching", true);
 			case "FileSystem Access":
-				#if !android
 				promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
-				#else
-				Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
-				Permissions.onPermissionsDenied.add(function(args)
-				{
-					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", false);
-				});
-
-				Permissions.onPermissionsGranted.add(function(args)
-				{
-					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
-				});
-				#end
 		}
 	}
 

@@ -85,13 +85,9 @@ class Song
 	}
 
 	// i hate myself sometimes
-	public static function loadFromJson(jsonInput:String, ?folder:String, isRaw:Bool = false):SwagSong
+	public static function loadFromJson(jsonInput:String, ?folder:String):SwagSong
 	{
-		var rawJson:String = "";
-		if(isRaw)
-			rawJson = jsonInput;
-		else
-			rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
+		var rawJson = Assets.getText(Paths.json(folder.toLowerCase() + '/' + jsonInput.toLowerCase())).trim();
 
 		while (!rawJson.endsWith("}"))
 		{
@@ -102,6 +98,22 @@ class Song
 		if(jsonInput != 'events') StageData.loadDirectory(songJson);
 		onLoadJson(songJson);
 		return songJson;
+	}
+
+	public static function loadFromRaw(rawInput:String):SwagSong
+	{
+		//to be allowed to modify it? i geuss
+		var rawShit = rawInput;
+
+		while (!rawShit.endsWith("}"))
+		{
+			rawShit = rawShit.substr(0, rawShit.length - 1);
+		}
+
+		var songShit:SwagSong = parseJSONshit(rawShit);
+		//dont load directory for now
+		onLoadJson(songShit);
+		return songShit;
 	}
 
 	public static function parseJSONshit(rawJson:String):SwagSong
