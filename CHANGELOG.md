@@ -4,6 +4,20 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-14] - 21-10-2022
+### Added
+- Local settings file
+- Online Events
+- Custom function to load raw inputs for songs
+- Support for local songs events
+- Support for characters coming from internal storage (REALLY BAD)
+### Changed
+- PocketBase API (moved from fnf_charts collection to funkin collection to add events)
+- Some code on loading Internal Storage songs 
+- Storage Access code
+### Fixed
+- Events system (Kinda?)
+
 ## [1.2_UNRELEASED-13] - 19-10-2022
 ### Added
 - Avoid hitsound lag

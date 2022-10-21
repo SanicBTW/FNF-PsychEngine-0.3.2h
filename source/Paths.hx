@@ -159,7 +159,30 @@ class Paths
 	// soon
 	inline static public function getSparrowAtlas(key:String, ?library:String)
 	{
+		#if STORAGE_ACCESS 
+		if(ClientPrefs.allowFileSys)
+		{
+			if(PlayState.internalSong == false)
+			{
+				return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+			}
+			else
+			{
+				var extImagePath = haxe.io.Path.join([StorageAccess.getFolderPath(IMAGES), key]) + ".png";
+				var extXMLPath = haxe.io.Path.join([StorageAccess.getFolderPath(IMAGES), key]) + ".xml";
+				var imageShit:BitmapData = BitmapData.fromFile(extImagePath);
+				var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(imageShit);
+				
+				return FlxAtlasFrames.fromSparrow(imageShit, sys.io.File.getContent(extXMLPath));
+			}
+		}
+		else
+		{
+			return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		}
+		#else
 		return FlxAtlasFrames.fromSparrow(image(key, library), file('images/$key.xml', library));
+		#end
 	}
 
 	// soon
