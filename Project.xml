@@ -82,8 +82,6 @@
 
 	<haxelib name="android6permissions" if="android"/>
 
-	<haxelib name="Flixel-TextureAtlas"/> <!-- haxelib git Flixel-TextureAtlas https://github.com/Smokey555/Flixel-TextureAtlas -->
-
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />

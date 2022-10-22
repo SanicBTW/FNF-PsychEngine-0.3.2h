@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2_UNRELEASED-16] - 22-10-2022
+### Changed
+- Added AnimateAtlas Files instead of having to install a Haxelib
+
 ## [1.2_UNRELEASED-15] - 22-10-2022
 ### Added
 - An option to make the rating small
