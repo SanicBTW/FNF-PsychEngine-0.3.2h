@@ -4,6 +4,10 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0-Hotfix] - 23-10-2022
+### Fixed
+- Not being able to connect to the servers through secure connections
+
 ## [1.2.0] - 22-10-2022
 ### Added
 - Antialiasing on HUD
