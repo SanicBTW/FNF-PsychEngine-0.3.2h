@@ -89,9 +89,16 @@ class OnlineSongSelection extends MusicBeatState
                 var fixedID = extensionFilesURL.replace(":id", onlineSongItems[i].id);
 
                 var chartPath = baseURL + fixedID.replace(":file", onlineSongItems[i].chart);
-                var eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+
+                var eventPath = "";
+                if (onlineSongItems[i].events != "")
+                    eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+
                 var instPath = baseURL + fixedID.replace(":file", onlineSongItems[i].inst);
-                var voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
+
+                var voicesPath = "";
+                if (onlineSongItems[i].voices != "")
+                    voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
 
 				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
@@ -197,14 +204,15 @@ class OnlineSongSelection extends MusicBeatState
                     //to check if it needs voices
                     PlayState.SONG = Song.loadFromRaw(request.responseText);
 
-                    eventsReq.send();
+                    if(songShit[1] != "")
+                        eventsReq.send();
     
                     Sound.loadFromFile(songShit[2]).onComplete(function(sound)
                     {
                         PlayState.inst = sound;
                     });
     
-                    if(PlayState.SONG.needsVoices)
+                    if(PlayState.SONG.needsVoices && songShit[3] != "")
                     {
                         Sound.loadFromFile(songShit[3]).onComplete(function(sound)
                         {
@@ -224,6 +232,7 @@ class OnlineSongSelection extends MusicBeatState
                 request.open("GET", songShit[0]);
                 request.send();
                 #else
+                //sys mfs doesnt care if something is null or not
                 var http = new haxe.Http(songShit[0]);
                 var reqEvents = new haxe.Http(songShit[1]);
                 http.onData = function(data:String)

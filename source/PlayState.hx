@@ -263,6 +263,7 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
+		//gotta check this up
 		if (inst == null)
 			inst = Paths.inst(PlayState.SONG.song);
 		if (PlayState.SONG.needsVoices && voices == null)
