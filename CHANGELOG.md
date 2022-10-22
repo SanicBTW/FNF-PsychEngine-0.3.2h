@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.2.1] - 23-10-2022
 ### Fixed
 - Not being able to connect to the servers through secure connections
+- Not being able to load some songs due to code errors
 
 ## [1.2.0] - 22-10-2022
 ### Added
