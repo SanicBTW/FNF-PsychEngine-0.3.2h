@@ -4,6 +4,13 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 22-10-2022
+### Added
+- Antialiasing on HUD
+- An alert when not finding the chart on local storage (avoids crashes if it doesn't find the normal difficulty)
+### Changed
+- Fonts on PlayState (Moved from VCR to Funkin)
+
 ## [1.2_UNRELEASED-16] - 22-10-2022
 ### Changed
 - Added AnimateAtlas Files instead of having to install a Haxelib
