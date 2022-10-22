@@ -7,6 +7,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.FlxG;
 
+using StringTools;
+
 class OnlineSongSelection extends MusicBeatState
 {
     var songsMap:Map<String, Array<String>> = new Map();
@@ -14,6 +16,11 @@ class OnlineSongSelection extends MusicBeatState
     var grpSongs:FlxTypedGroup<Alphabet>;
     var curSelected:Int = 0;
     var blockInputs:Bool = false;
+    var fetchThis:String = "https://raw.githubusercontent.com/SanicBTW/FNF-PsychEngine-0.3.2h/master/server.sanco";
+    var baseURL:String = "http://sancopublic.ddns.net:5430/api/";
+    var extensionRecordsURL:String = "collections/funkin/records";
+    var extensionFilesURL:String = "api/files/funkin/:id/:file"; //replace :id with the id and :file with file path lol
+    var isHTTPS:Bool = false;
 
     //will add scores for the next commit/update
     //maybe i will add a difficulty display too?
@@ -21,6 +28,37 @@ class OnlineSongSelection extends MusicBeatState
 
     override function create()
     {
+        if(js.Browser.location.protocol == "https:")
+        {
+            isHTTPS = true;
+            trace("I hate my life so fucking much");
+        }
+
+        #if html5
+        var checkShit = js.Browser.createXMLHttpRequest();
+
+        checkShit.addEventListener('load', function()
+        {
+            var servershit = checkShit.responseText.split("\n");
+
+            for(line in servershit)
+            {
+                var details = line.split("|");
+                trace(details[0]);
+                trace(details[1]);
+
+                if(isHTTPS && details[0] == "secure") //uh
+                {
+                    baseURL = details[1];
+                    break;
+                }
+            }
+        });
+
+        checkShit.open("GET", fetchThis);
+        checkShit.send();
+        #end
+
         super.create();
 
         Main.clearCache(); //why not, though we cleared it in freeplay already
@@ -58,10 +96,10 @@ class OnlineSongSelection extends MusicBeatState
             //to avoid having errors, we generate the shit when it finishes loading
             regenMenu();
         });
-        request.open("GET", 'http://sancopublic.ddns.net:5430/api/collections/funkin/records');
+        request.open("GET", baseURL + extensionRecordsURL);
         request.send();
         #else
-        var http = new haxe.Http("http://sancopublic.ddns.net:5430/api/collections/funkin/records");
+        var http = new haxe.Http(baseURL + extensionsRecordsURL);
         http.onData = function(data:String)
         {
             var onlineSongItems:Dynamic = cast haxe.Json.parse(data).items;
