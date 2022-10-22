@@ -19,22 +19,24 @@ class OnlineSongSelection extends MusicBeatState
     var fetchThis:String = "https://raw.githubusercontent.com/SanicBTW/FNF-PsychEngine-0.3.2h/master/server.sanco";
     var baseURL:String = "http://sancopublic.ddns.net:5430/api/";
     var extensionRecordsURL:String = "collections/funkin/records";
-    var extensionFilesURL:String = "api/files/funkin/:id/:file"; //replace :id with the id and :file with file path lol
+    var extensionFilesURL:String = "files/funkin/:id/:file"; //replace :id with the id and :file with file path lol
     var isHTTPS:Bool = false;
 
     //will add scores for the next commit/update
     //maybe i will add a difficulty display too?
     //no progress bar because it doesnt properly set the progress for some reason
 
-    override function create()
+    override public function new()
     {
+        super();
+
+        #if html5
         if(js.Browser.location.protocol == "https:")
         {
             isHTTPS = true;
             trace("I hate my life so fucking much");
         }
-
-        #if html5
+    
         var checkShit = js.Browser.createXMLHttpRequest();
 
         checkShit.addEventListener('load', function()
@@ -58,7 +60,10 @@ class OnlineSongSelection extends MusicBeatState
         checkShit.open("GET", fetchThis);
         checkShit.send();
         #end
+    }
 
+    override function create()
+    {
         super.create();
 
         Main.clearCache(); //why not, though we cleared it in freeplay already
@@ -81,10 +86,12 @@ class OnlineSongSelection extends MusicBeatState
 			{
 				var onlineSongItemName = onlineSongItems[i].song;
 
-				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart;
-                var eventPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].events;
-				var instPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+                var fixedID = extensionFilesURL.replace(":id", onlineSongItems[i].id);
+
+                var chartPath = baseURL + fixedID.replace(":file", onlineSongItems[i].chart);
+                var eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+                var instPath = baseURL + fixedID.replace(":file", onlineSongItems[i].inst);
+                var voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
 
 				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
@@ -99,7 +106,7 @@ class OnlineSongSelection extends MusicBeatState
         request.open("GET", baseURL + extensionRecordsURL);
         request.send();
         #else
-        var http = new haxe.Http(baseURL + extensionsRecordsURL);
+        var http = new haxe.Http(baseURL + extensionRecordsURL);
         http.onData = function(data:String)
         {
             var onlineSongItems:Dynamic = cast haxe.Json.parse(data).items;
@@ -107,10 +114,12 @@ class OnlineSongSelection extends MusicBeatState
 			{
 				var onlineSongItemName = onlineSongItems[i].song;
 
-				var chartPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].chart;
-                var eventPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].events;
-				var instPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].inst;
-				var voicesPath = 'http://sancopublic.ddns.net:5430/api/files/funkin/' + onlineSongItems[i].id + "/" + onlineSongItems[i].voices;
+                var fixedID = extensionFilesURL.replace(":id", onlineSongItems[i].id);
+
+                var chartPath = baseURL + fixedID.replace(":file", onlineSongItems[i].chart);
+                var eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+                var instPath = baseURL + fixedID.replace(":file", onlineSongItems[i].inst);
+                var voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
 
 				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
