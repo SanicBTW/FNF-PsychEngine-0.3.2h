@@ -1,5 +1,7 @@
 # Psych Engine 0.3.2h
 
+wtf this readme needs to be updated
+
 # What is this?
 
 This is another fork of Psych Engine 0.3.2h that I made to add Android compatibility and more features (because I like 0.3.2h a lot and shit is easier to port to HTML5)
