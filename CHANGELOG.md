@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Strum Note code
 - Difficulty code
 - The HUD Font back to the default one (VCR)
+- Some code moved to 0.6.2
 
 ## [1.2.1] - 23-10-2022
 ### Fixed

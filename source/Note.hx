@@ -59,6 +59,14 @@ class Note extends FlxSprite
 
 	public var offsetX:Float = 0;
 	public var offsetY:Float = 0;
+	public var offsetAngle:Float = 0;
+	public var multAlpha:Float = 1;
+	public var multSpeed(default, set):Float = 1;
+
+	public var copyX:Bool = true;
+	public var copyY:Bool = true;
+	public var copyAngle:Bool = true;
+	public var copyAlpha:Bool = true;
 
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
@@ -69,10 +77,27 @@ class Note extends FlxSprite
 	public var texture(default, set):String = null;
 
 	public var noAnimation:Bool = false;
+	public var distance:Float = 2000;
 
 	public var hitsoundDisabled:Bool = false;
 
 	public var isLiftNote:Bool = false;
+
+	private function set_multSpeed(value:Float):Float
+	{
+		resizeByRatio(value / multSpeed);
+		multSpeed = value;
+		return value;
+	}
+
+	public function resizeByRatio(ratio:Float)
+	{
+		if (isSustainNote && !animation.curAnim.name.endsWith("end"))
+		{
+			scale.y *= ratio;
+			updateHitbox();
+		}
+	}
 
 	private function set_texture(value:String):String
 	{
@@ -156,11 +181,13 @@ class Note extends FlxSprite
 		if (isSustainNote && prevNote != null)
 		{
 			alpha = 0.6;
+			multAlpha = 0.6;
 			hitsoundDisabled = true;
 			if (ClientPrefs.downScroll)
 				flipY = true;
 
 			offsetX += width / 2;
+			copyAngle = false;
 
 			switch (noteData)
 			{
@@ -195,7 +222,11 @@ class Note extends FlxSprite
 						prevNote.animation.play('redhold');
 				}
 
-				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05 * PlayState.SONG.speed;
+				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
+				if (PlayState.instance != null)
+				{
+					prevNote.scale.y *= PlayState.instance.songSpeed;
+				}
 
 				if (PlayState.isPixelStage)
 				{
