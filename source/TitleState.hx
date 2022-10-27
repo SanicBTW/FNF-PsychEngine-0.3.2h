@@ -57,6 +57,9 @@ class TitleState extends MusicBeatState
 
 	override public function create():Void
 	{
+		AssetManager.clearStoredMemory();
+		AssetManager.clearUnusedMemory();
+
 		FlxG.game.focusLostFramerate = 30;
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
@@ -215,7 +218,7 @@ class TitleState extends MusicBeatState
 		if (FlxG.keys.justPressed.F)
 		{
 			//FlxG.fullscreen = !FlxG.fullscreen;
-			//osu.BeatMapParser.parseBeatMap();
+			osu.BeatMapParser.parseBeatMap();
 		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;

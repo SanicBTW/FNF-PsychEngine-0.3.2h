@@ -1,5 +1,6 @@
 package osu;
 
+import flixel.system.FlxSound;
 import flixel.FlxG;
 import Song.SwagSong;
 
@@ -30,7 +31,8 @@ class BeatMapParser
 
     public static function parseBeatMap()
     {
-        var testMapPath = Paths.getLibraryPath('beatmap1.osu', 'osu!beatmaps');
+        //var testMapPath = Paths.getLibraryPath('beatmap1.osu', 'osu!beatmaps');
+        var testMapPath = AssetManager.getAsset('beatmap1.osu', TEXT, null, "osu!beatmaps");
         var testMap = CoolUtil.coolTextFile(testMapPath);
 
         trace('Found ' + (testMap.length - findLine(testMap, '[HitObjects]') + 1) + " notes");
@@ -119,7 +121,7 @@ class BeatMapParser
             fnfChart.notes[curSection] = 
             {
                 typeOfSection: 0,
-                lengthInSteps: 16,
+                sectionBeats: 4,
                 sectionNotes: [],
                 mustHitSection: true,
                 gfSection: false,
@@ -159,12 +161,14 @@ class BeatMapParser
 
         trace("Setting PlayState");
 
-        Main.clearCache(false);
+        AssetManager.clearStoredMemory();
+		AssetManager.clearUnusedMemory();
 
         PlayState.SONG = fnfChart;
         PlayState.storyDifficulty = 2;
         CoolUtil.difficulties = CoolUtil.defaultDifficulties;
-        PlayState.inst = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
+        PlayState.inst = AssetManager.getAsset("audio.mp3", SOUND, null, "osu!beatmaps");
+        //PlayState.inst = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
 
         trace("Going to loading state");
 

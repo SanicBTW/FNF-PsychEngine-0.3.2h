@@ -82,12 +82,12 @@ class LoadingState extends MusicBeatState
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
 			}
-			for(i in 0...Main.loadLibs.length)
-				checkLibrary(Main.loadLibs[i]);
+			for(i in 0...AssetManager.loadLibs.length)
+				checkLibrary(AssetManager.loadLibs[i]);
 			if (directory != null && directory.length > 0 && directory != 'shared')
 			{
 				checkLibrary(directory);
-				Main.clearLibs.push(directory);
+				AssetManager.clearLibs.push(directory);
 			}
 
 			var fadeTime = 0.5;
@@ -233,11 +233,10 @@ class LoadingState extends MusicBeatState
 	//i dont belive this is working butttt alright
 	static function areLibrariesLoaded():Bool
 	{
-		for(i in 0...Main.loadLibs.length)
+		for(i in 0...AssetManager.loadLibs.length)
 		{
-			trace(Main.loadLibs[i]);
-			trace(Assets.getLibrary(Main.loadLibs[i]) != null);
-			return Assets.getLibrary(Main.loadLibs[i]) != null;
+			trace(Assets.getLibrary(AssetManager.loadLibs[i]) != null);
+			return Assets.getLibrary(AssetManager.loadLibs[i]) != null;
 		}
 		return false;
 	}

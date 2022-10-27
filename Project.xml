@@ -58,7 +58,7 @@
 		<library name="week6"         preload="false" />
 		<library name="week7"		  preload="false" />
 		<library name="UILib"		  preload="false" />
-		<library name="osu!beatmaps"  preload="false" />
+		<library name="osu!beatmaps"  preload="true" />
 	</section>
 	
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3"/>

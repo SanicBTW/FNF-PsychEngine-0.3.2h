@@ -66,7 +66,8 @@ class OnlineSongSelection extends MusicBeatState
     {
         super.create();
 
-        Main.clearCache(); //why not, though we cleared it in freeplay already
+		AssetManager.clearStoredMemory();
+		AssetManager.clearUnusedMemory();
 
         var bg = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;

@@ -78,8 +78,8 @@ class OnlineLoadingState extends MusicBeatState
 		{
 			callbacks = new MultiCallback(onLoad);
 			var introComplete = callbacks.add("introComplete");
-			for(i in 0...Main.loadLibs.length)
-				checkLibrary(Main.loadLibs[i]);
+			for(i in 0...AssetManager.loadLibs.length)
+				checkLibrary(AssetManager.loadLibs[i]);
 
 			var fadeTime = 0.5;
 			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
@@ -183,11 +183,10 @@ class OnlineLoadingState extends MusicBeatState
 	#if NO_PRELOAD_ALL
 	static function areLibrariesLoaded():Bool
 	{
-		for(i in 0...Main.loadLibs.length)
+		for(i in 0...AssetManager.loadLibs.length)
 		{
-			trace(Main.loadLibs[i]);
-			trace(Assets.getLibrary(Main.loadLibs[i]) != null);
-			return Assets.getLibrary(Main.loadLibs[i]) != null;
+			trace(Assets.getLibrary(AssetManager.loadLibs[i]) != null);
+			return Assets.getLibrary(AssetManager.loadLibs[i]) != null;
 		}
 		return false;
 	}

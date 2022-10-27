@@ -17,11 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Charting State
 ### Removed
 - The ability to change the score text design
+- Paths.hx (not yet, just testing for now)
 ### Changed
 - Strum Note code
 - Difficulty code
 - The HUD Font back to the default one (VCR)
 - Some code moved to 0.6.2
+- Moved to AssetManager
+- Clear cache to AssetManager
 
 ## [1.2.1] - 23-10-2022
 ### Fixed

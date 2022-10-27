@@ -131,27 +131,4 @@ class Main extends Sprite
 			}
 		}
 	}
-
-	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
-	public static var loadLibs:Array<String> = ["shared", "UILib"];
-
-	public static function clearCache(setNulls:Bool = true)
-	{
-		for(i in 0...clearLibs.length)
-		{
-			Assets.cache.clear(clearLibs[i]);
-		}
-
-		clearLibs = ["shared", "UILib", "songs", "images"];
-
-		if(setNulls)
-		{
-			PlayState.inst = null;
-			PlayState.voices = null;
-			PlayState.SONG = null;
-			PlayState.songEvents = null;
-		}
-
-		System.gc();
-	}
 }
