@@ -193,7 +193,7 @@ class PlayState extends MusicBeatState
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
-	public var songMisses:Int = 0;
+	public static var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
 
 	var timeTxt:FlxText;
@@ -223,10 +223,10 @@ class PlayState extends MusicBeatState
 	var detailsPausedText:String = "";
 	#end
 
-	public var sicks:Int = 0;
-	public var goods:Int = 0;
-	public var bads:Int = 0;
-	public var shits:Int = 0;
+	public static var sicks:Int = 0;
+	public static var goods:Int = 0;
+	public static var bads:Int = 0;
+	public static var shits:Int = 0;
 
 	public var boyfriendCameraOffset:Array<Float> = null;
 	public var opponentCameraOffset:Array<Float> = null;
@@ -2422,7 +2422,7 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		scoreTxt.text = getScoreTextFormat();
+		scoreTxt.text = Ratings.CalculateRanking(songScore, songMisses, ratingPercent);
 
 		if (cpuControlled)
 		{
@@ -3346,7 +3346,7 @@ class PlayState extends MusicBeatState
 		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 350;
 
-		var daRating = Conductor.judgeNote(note, noteDiff);
+		var daRating = Ratings.CalculateRating(noteDiff);
 
 		// this shit comin from the 0.5.2h kade input thing
 		switch (daRating)
@@ -4530,81 +4530,10 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public var ratingString:String;
 	public var ratingPercent:Float;
-	public var ratingFC:String;
-
 	public function RecalculateRating()
 	{
-		if (totalPlayed < 1)
-		{
-			switch (ClientPrefs.scoreTextDesign)
-			{
-				case 'Engine':
-					ratingString = "N/A";
-				case 'Psych':
-					ratingString = "?";
-			}
-		}
-		else
-		{
-			ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
-			if (ratingPercent >= 1)
-			{
-				ratingString = ratingStuff[ratingStuff.length - 1][0];
-			}
-			else
-			{
-				for (i in 0...ratingStuff.length - 1)
-				{
-					if (ratingPercent < ratingStuff[i][1])
-					{
-						ratingString = ratingStuff[i][0];
-						break;
-					}
-				}
-			}
-		}
-
-		ratingFC = "";
-		if (sicks > 0)
-			ratingFC = "SFC";
-		if (goods > 0)
-			ratingFC = "GFC";
-		if (bads > 0 || shits > 0)
-			ratingFC = "FC";
-		if (songMisses > 0 && songMisses < 10)
-			ratingFC = "SDCB";
-		else if (songMisses >= 10)
-			ratingFC = "Clear";
-	}
-
-	function getScoreTextFormat():String
-	{
-		switch (ClientPrefs.scoreTextDesign)
-		{
-			case 'Engine':
-				if (ratingString == 'N/A')
-				{
-					return 'Score: ' + songScore + ' | Misses: ' + songMisses + ' | ' + ratingString;
-				}
-				else
-				{
-					return 'Score: ' + songScore + ' | Misses: ' + songMisses + ' | Accuracy: ' + Highscore.floorDecimal(ratingPercent * 100, 2) + '%'
-						+ ' | ' + ratingString + ' (' + ratingFC + ')';
-				}
-			case 'Psych':
-				if (ratingString == '?')
-				{
-					return 'Score: ' + songScore + ' | Misses: ' + songMisses + ' | Rating: ' + ratingString;
-				}
-				else
-				{
-					return 'Score: ' + songScore + ' | Misses: ' + songMisses + ' | Rating: ' + ratingString + ' ('
-						+ Highscore.floorDecimal(ratingPercent * 100, 2) + '%) - ' + ratingFC;
-				}
-		}
-		return "";
+		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
 	}
 
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1

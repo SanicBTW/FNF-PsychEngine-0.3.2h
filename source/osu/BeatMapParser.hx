@@ -5,6 +5,7 @@ import Song.SwagSong;
 
 using StringTools;
 
+//this shit needs to get better maybe in another commit
 class BeatMapParser
 {
     static var fnfChart:Song.SwagSong = 

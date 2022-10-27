@@ -11,14 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Roadmap](https://github.com/users/SanicBTW/projects/2/views/1)
 
 ### Added
-- OSU!Mania chart convertion ([Translated JS code](https://github.com/TheLeerName/mania-converter/blob/html/index.html#L562) to Haxe code) needs to be improved however (27-10-2022)
+- OSU!Mania chart convertion ([Translated JS code](https://github.com/TheLeerName/mania-converter/blob/html/index.html#L562) to Haxe code) needs to be improved however
+- Kade 1.5.3 Ratings, slightly modified
 ### Fixed
-- Charting State (25-10-2022)
+- Charting State
 ### Removed
+- The ability to change the score text design
 ### Changed
-- Strum Note code (25-10-2022)
-- Difficulty code (25-10-2022)
-- The HUD Font back to the default one (VCR) (25-10-2022)
+- Strum Note code
+- Difficulty code
+- The HUD Font back to the default one (VCR)
 
 ## [1.2.1] - 23-10-2022
 ### Fixed
