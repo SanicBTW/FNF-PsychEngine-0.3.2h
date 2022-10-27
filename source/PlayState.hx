@@ -262,6 +262,14 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
+		//because this shit wont reset for some fucking reason
+		songMisses = 0;
+		songScore = 0;
+		sicks = 0;
+		goods = 0;
+		bads = 0;
+		shits = 0;
+
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
 
@@ -3417,6 +3425,12 @@ class PlayState extends MusicBeatState
 		var score:Int = 350;
 
 		var daRating = Ratings.CalculateRating(noteDiff);
+
+		if (daRating == "miss")
+		{
+			noteMiss(note);
+			return;
+		}
 
 		// this shit comin from the 0.5.2h kade input thing
 		switch (daRating)
