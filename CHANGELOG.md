@@ -4,6 +4,22 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+### Info
+- These changes are for the update 1.3.0
+- Started the 25th of October
+- [Roadmap](https://github.com/users/SanicBTW/projects/2/views/1)
+
+### Added
+- OSU!Mania chart convertion ([Translated JS code](https://github.com/TheLeerName/mania-converter/blob/html/index.html#L562) to Haxe code) needs to be improved however (27-10-2022)
+### Fixed
+- Charting State (25-10-2022)
+### Removed
+### Changed
+- Strum Note code (25-10-2022)
+- Difficulty code (25-10-2022)
+- The HUD Font back to the default one (VCR) (25-10-2022)
+
 ## [1.2.1] - 23-10-2022
 ### Fixed
 - Not being able to connect to the servers through secure connections

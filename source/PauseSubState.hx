@@ -35,13 +35,6 @@ class PauseSubState extends MusicBeatSubstate
 		super();
 		menuItems = menuItemsOG;
 
-		for (i in 0...CoolUtil.difficultyStuff.length)
-		{
-			var diff:String = '' + CoolUtil.difficultyStuff[i][0];
-			difficultyChoices.push(diff);
-		}
-		difficultyChoices.push('BACK');
-
 		pauseMusic = new FlxSound();
 		if (songName != null)
 		{

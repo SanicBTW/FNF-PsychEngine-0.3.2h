@@ -34,6 +34,7 @@ class FreeplayState extends MusicBeatState
 	public static var curSelected:Int = 0;
 
 	var curDifficulty:Int = 1;
+	private static var lastDifficultyName:String = '';
 
 	var scoreBG:FlxSprite;
 	var scoreText:FlxText;
@@ -162,6 +163,12 @@ class FreeplayState extends MusicBeatState
 			curSelected = 0;
 		bg.color = songs[curSelected].color;
 		intendedColor = bg.color;
+
+		if(lastDifficultyName == '')
+		{
+			lastDifficultyName = CoolUtil.defaultDifficulty;
+		}
+		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
 
 		changeSelection();
 		changeDiff();
@@ -336,19 +343,19 @@ class FreeplayState extends MusicBeatState
 			}
 			else #end if (!songs[curSelected].intStorage)
 			{
-				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
-				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
-				{
-					poop = songLowercase;
-					curDifficulty = 1;
-					trace('Couldnt find file');
-				}
-				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-				PlayState.isStoryMode = false;
-				PlayState.storyDifficulty = curDifficulty;
-				PlayState.storyWeek = songs[curSelected].week;
-				goToPlayState();
+			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
+			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+			if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
+			{
+				poop = songLowercase;
+				curDifficulty = 1;
+				trace('Couldnt find file');
+			}
+			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+			PlayState.isStoryMode = false;
+			PlayState.storyDifficulty = curDifficulty;
+			PlayState.storyWeek = songs[curSelected].week;
+			goToPlayState();
 			}
 		}
 		else if (controls.RESET)
@@ -379,9 +386,11 @@ class FreeplayState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficultyStuff.length - 1;
-		if (curDifficulty >= CoolUtil.difficultyStuff.length)
+			curDifficulty = CoolUtil.difficulties.length - 1;
+		if (curDifficulty >= CoolUtil.difficulties.length)
 			curDifficulty = 0;
+
+		lastDifficultyName = CoolUtil.difficulties[curDifficulty];
 
 		#if !switch
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
@@ -449,6 +458,46 @@ class FreeplayState extends MusicBeatState
 		}
 
 		PlayState.storyWeek = songs[curSelected].week;
+
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
+		var diffStr:String = WeekData.getCurrentWeek().difficulties;
+		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
+
+		if(diffStr != null && diffStr.length > 0)
+		{
+			var diffs:Array<String> = diffStr.split(',');
+			var i:Int = diffs.length - 1;
+			while (i > 0)
+			{
+				if(diffs[i] != null)
+				{
+					diffs[i] = diffs[i].trim();
+					if(diffs[i].length < 1) diffs.remove(diffs[i]);
+				}
+				--i;
+			}
+
+			if(diffs.length > 0 && diffs[0].length > 0)
+			{
+				CoolUtil.difficulties = diffs;
+			}
+		}
+		
+		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
+		{
+			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
+		}
+		else
+		{
+			curDifficulty = 0;
+		}
+
+		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
+		//trace('Pos of ' + lastDifficultyName + ' is ' + newPos);
+		if(newPos > -1)
+		{
+			curDifficulty = newPos;
+		}
 	}
 
 	private function positionHighscore()

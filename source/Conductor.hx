@@ -30,7 +30,7 @@ class Conductor
 
 	public static function recalculateTimings()
 	{
-		Conductor.safeZoneOffset = Math.floor((ClientPrefs.safeFrames / 60) * 1000);
+		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000;
 		Conductor.timeScale = Conductor.safeZoneOffset / 166;
 	}
 

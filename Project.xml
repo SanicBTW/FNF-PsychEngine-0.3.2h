@@ -2,7 +2,7 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Psych Engine" file="PsychEngine" packageName="com.sanicbtw.psychengine" package="com.sanicbtw.psychengine" main="Main" version="1.2.1" company="SanicBTW" />
+	<app title="Psych Engine" file="PsychEngine" packageName="com.sanicbtw.psychengine" package="com.sanicbtw.psychengine" main="Main" version="1.3.0" company="SanicBTW" />
 
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 
@@ -45,6 +45,7 @@
 		<library name="week6"         preload="true" />
 		<library name="week7"		  preload="true" />
 		<library name="UILib"		  preload="true" />
+		<library name="osu!beatmaps"  preload="true" />
 	</section>
 	
 	<section if="NO_PRELOAD_ALL">
@@ -57,6 +58,7 @@
 		<library name="week6"         preload="false" />
 		<library name="week7"		  preload="false" />
 		<library name="UILib"		  preload="false" />
+		<library name="osu!beatmaps"  preload="true" />
 	</section>
 	
 	<assets path="assets/songs"         library="songs"         exclude="*.mp3"/>
@@ -68,6 +70,7 @@
 	<assets path="assets/week6"         library="week6"         exclude="*.mp3"/>
 	<assets path="assets/week7"         library="week7"         exclude="*.mp3"/>
 	<assets path="assets/UILib"			library="UILib"			exclude="*.mp3"/> <!-- why would i wanto to exclude mp3 files if there are none :skull: -->
+	<assets path="assets/osu!beatmaps"  library="osu!beatmaps" />
 	<assets path="assets/android" if="android"/>
 
 	<assets path="assets/fonts" embed='true'/>
@@ -81,6 +84,7 @@
 	<haxelib name="discord_rpc" if="desktop"/>
 
 	<haxelib name="android6permissions" if="android"/>
+	<!--<haxelib name="hxjs-fengari"/>-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

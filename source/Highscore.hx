@@ -108,7 +108,7 @@ class Highscore
 
 	public static function formatSong(song:String, diff:Int):String
 	{
-		return song.toLowerCase().replace(' ', '-') + CoolUtil.difficultyStuff[diff][1];
+		return Paths.formatToSongPath(song) + CoolUtil.getDifficultyFilePath(diff);
 	}
 
 	public static function getScore(song:String, diff:Int):Int

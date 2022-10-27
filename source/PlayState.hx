@@ -294,7 +294,7 @@ class PlayState extends MusicBeatState
 		displaySongName = StringTools.replace(songName, '-', ' ');
 
 		#if desktop
-		storyDifficultyText = '' + CoolUtil.difficultyStuff[storyDifficulty][0];
+		storyDifficultyText = CoolUtil.difficulties[storyDifficulty];
 
 		// String that contains the mode defined here so it isn't necessary to call changePresence for each mode
 		if (isStoryMode)
@@ -389,7 +389,7 @@ class PlayState extends MusicBeatState
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
 		if (curFont == null)
-			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("funkin.otf"));
+			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
 
 		switch (curStage)
 		{
@@ -905,7 +905,6 @@ class PlayState extends MusicBeatState
 		timeTxt.alpha = 0;
 		timeTxt.borderSize = 2;
 		timeTxt.visible = !ClientPrefs.hideTime;
-		timeTxt.antialiasing = ClientPrefs.globalAntialiasing;
 		if (ClientPrefs.downScroll)
 			timeTxt.y = FlxG.height - 45;
 
@@ -1000,7 +999,6 @@ class PlayState extends MusicBeatState
 		scoreTxt.scrollFactor.set();
 		scoreTxt.borderSize = 1.25;
 		scoreTxt.visible = !ClientPrefs.hideHud;
-		scoreTxt.antialiasing = ClientPrefs.globalAntialiasing;
 		add(scoreTxt);
 
 		botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
@@ -1008,7 +1006,6 @@ class PlayState extends MusicBeatState
 		botplayTxt.scrollFactor.set();
 		botplayTxt.borderSize = 1.25;
 		botplayTxt.visible = cpuControlled;
-		botplayTxt.antialiasing = ClientPrefs.globalAntialiasing;
 		add(botplayTxt);
 		if (ClientPrefs.downScroll)
 		{
@@ -2099,92 +2096,9 @@ class PlayState extends MusicBeatState
 	{
 		for (i in 0...4)
 		{
-			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i);
-
-			switch (curStage)
-			{
-				case 'school' | 'schoolEvil':
-					babyArrow.loadGraphic(Paths.image('pixelUI/NOTE_assets'));
-					babyArrow.width = babyArrow.width / 4;
-					babyArrow.height = babyArrow.height / 5;
-					babyArrow.loadGraphic(Paths.image('pixelUI/NOTE_assets'), true, Math.floor(babyArrow.width), Math.floor(babyArrow.height));
-					babyArrow.animation.add('green', [6]);
-					babyArrow.animation.add('red', [7]);
-					babyArrow.animation.add('blue', [5]);
-					babyArrow.animation.add('purplel', [4]);
-
-					babyArrow.setGraphicSize(Std.int(babyArrow.width * daPixelZoom));
-					babyArrow.updateHitbox();
-					babyArrow.antialiasing = false;
-
-					switch (Math.abs(i))
-					{
-						case 0:
-							babyArrow.x += Note.swagWidth * 0;
-							babyArrow.animation.add('static', [0]);
-							babyArrow.animation.add('pressed', [4, 8], 12, false);
-							babyArrow.animation.add('confirm', [12, 16], 24, false);
-						case 1:
-							babyArrow.x += Note.swagWidth * 1;
-							babyArrow.animation.add('static', [1]);
-							babyArrow.animation.add('pressed', [5, 9], 12, false);
-							babyArrow.animation.add('confirm', [13, 17], 24, false);
-						case 2:
-							babyArrow.x += Note.swagWidth * 2;
-							babyArrow.animation.add('static', [2]);
-							babyArrow.animation.add('pressed', [6, 10], 12, false);
-							babyArrow.animation.add('confirm', [14, 18], 12, false);
-						case 3:
-							babyArrow.x += Note.swagWidth * 3;
-							babyArrow.animation.add('static', [3]);
-							babyArrow.animation.add('pressed', [7, 11], 12, false);
-							babyArrow.animation.add('confirm', [15, 19], 24, false);
-					}
-
-				default:
-					var skin:String = 'NOTE_assets';
-					if (SONG.arrowSkin != null && SONG.arrowSkin.length > 1)
-						skin = SONG.arrowSkin;
-
-					if(Paths.getSparrowAtlas(skin) == null)
-						skin = "NOTE_assets";
-					babyArrow.frames = Paths.getSparrowAtlas(skin);
-					babyArrow.animation.addByPrefix('green', 'arrowUP');
-					babyArrow.animation.addByPrefix('blue', 'arrowDOWN');
-					babyArrow.animation.addByPrefix('purple', 'arrowLEFT');
-					babyArrow.animation.addByPrefix('red', 'arrowRIGHT');
-
-					babyArrow.antialiasing = ClientPrefs.globalAntialiasing;
-					babyArrow.setGraphicSize(Std.int(babyArrow.width * 0.7));
-
-					switch (Math.abs(i))
-					{
-						case 0:
-							babyArrow.x += Note.swagWidth * 0;
-							babyArrow.animation.addByPrefix('static', 'arrowLEFT');
-							babyArrow.animation.addByPrefix('pressed', 'left press', 24, false);
-							babyArrow.animation.addByPrefix('confirm', 'left confirm', 24, false);
-						case 1:
-							babyArrow.x += Note.swagWidth * 1;
-							babyArrow.animation.addByPrefix('static', 'arrowDOWN');
-							babyArrow.animation.addByPrefix('pressed', 'down press', 24, false);
-							babyArrow.animation.addByPrefix('confirm', 'down confirm', 24, false);
-						case 2:
-							babyArrow.x += Note.swagWidth * 2;
-							babyArrow.animation.addByPrefix('static', 'arrowUP');
-							babyArrow.animation.addByPrefix('pressed', 'up press', 24, false);
-							babyArrow.animation.addByPrefix('confirm', 'up confirm', 24, false);
-						case 3:
-							babyArrow.x += Note.swagWidth * 3;
-							babyArrow.animation.addByPrefix('static', 'arrowRIGHT');
-							babyArrow.animation.addByPrefix('pressed', 'right press', 24, false);
-							babyArrow.animation.addByPrefix('confirm', 'right confirm', 24, false);
-					}
-			}
-
-			babyArrow.updateHitbox();
-			babyArrow.scrollFactor.set();
-
+			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
+			babyArrow.downScroll = ClientPrefs.downScroll;
+			
 			if (!isStoryMode && !skipArrowStartTween)
 			{
 				babyArrow.y -= 10;
@@ -2196,8 +2110,6 @@ class PlayState extends MusicBeatState
 				babyArrow.alpha = 1;
 			}
 
-			babyArrow.ID = i;
-
 			switch (player)
 			{
 				case 0:
@@ -2206,11 +2118,8 @@ class PlayState extends MusicBeatState
 					playerStrums.add(babyArrow);
 			}
 
-			babyArrow.playAnim('static');
-			babyArrow.x += 50;
-			babyArrow.x += ((FlxG.width / 2) * player);
-
 			strumLineNotes.add(babyArrow);
+			babyArrow.postAddedToGroup();
 		}
 	}
 
@@ -3349,13 +3258,13 @@ class PlayState extends MusicBeatState
 			{
 				// btw DID I JUST FUCKING FIX THE FINISH SONG ISSUE, BRO I CANT BELIVE IT WAS THIS EASY FUCK
 				// i swear to god, i need to learn how to name variables :skull:
-				var difficulty:String = '' + CoolUtil.difficultyStuff[storyDifficulty][1];
-				var nextSong = PlayState.storyPlaylist[0].toLowerCase().replace(" ", "-");
+				var difficulty:String = CoolUtil.getDifficultyFilePath();
+				var nextSong = Paths.formatToSongPath(PlayState.storyPlaylist[0]);
 
 				trace('LOADING NEXT SONG');
 				trace(nextSong + difficulty);
 
-				var winterHorrorlandNext = (SONG.song.toLowerCase().replace(" ", "-") == "eggnog");
+				var winterHorrorlandNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
 				if (winterHorrorlandNext)
 				{
 					var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
@@ -3877,10 +3786,7 @@ class PlayState extends MusicBeatState
 				{
 					spr.playAnim('pressed');
 					spr.resetAnim = 0;
-					if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
-					{
-						boyfriend.playAnim(singAnims[spr.ID]);
-					}
+					funkyFreestyle(spr.ID);
 				}
 				if (releaseArray[spr.ID])
 				{
@@ -3994,10 +3900,7 @@ class PlayState extends MusicBeatState
 				{
 					spr.playAnim('pressed');
 					spr.resetAnim = 0;
-					if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing)
-					{
-						boyfriend.playAnim(singAnims[spr.ID]);
-					}
+					funkyFreestyle(spr.ID);
 				}
 				if (controlReleaseArray[spr.ID])
 				{
@@ -4790,6 +4693,15 @@ class PlayState extends MusicBeatState
 			camFollow.set(boyfriend.getMidpoint().x - 100, boyfriend.getMidpoint().y - 100);
 			camFollow.x -= boyfriend.cameraPosition[0] - boyfriendCameraOffset[0];
 			camFollow.y += boyfriend.cameraPosition[1] + boyfriendCameraOffset[1];
+		}
+	}
+
+	//dumb
+	function funkyFreestyle(direction:Int)
+	{
+		if (ClientPrefs.ghostTapping && !cpuControlled && ClientPrefs.ghostTappingBFSing && !boyfriend.specialAnim)
+		{
+			boyfriend.playAnim(singAnims[direction]);
 		}
 	}
 

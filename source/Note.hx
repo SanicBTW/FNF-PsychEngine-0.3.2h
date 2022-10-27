@@ -363,7 +363,7 @@ class Note extends FlxSprite
 			//copied from psych x kade
 			if (isSustainNote)
 			{
-				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * 1.5)
+				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * earlyHitMult)
 					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
 					canBeHit = true;
 				else

@@ -214,7 +214,8 @@ class TitleState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.F)
 		{
-			FlxG.fullscreen = !FlxG.fullscreen;
+			//FlxG.fullscreen = !FlxG.fullscreen;
+			osu.BeatMapParser.parseBeatMap();
 		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
