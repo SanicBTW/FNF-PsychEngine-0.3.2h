@@ -90,16 +90,15 @@ class Character extends FlxSprite
 		this.isPlayer = isPlayer;
 		antialiasing = ClientPrefs.globalAntialiasing;
 
-		var library:String = null;
 		switch (curCharacter)
 		{
 			// case 'your character name in case you want to hardcode him instead':
 
 			default:
-				var path:String = AssetManager.getAsset(curCharacter, DIRECTORY, "characters");
+				var path:String = 'assets/characters/' + curCharacter + ".json";
 				if (!Assets.exists(path))
 				{
-					path = AssetManager.getAsset(DEFAULT_CHARACTER, DIRECTORY, "characters");
+					path = 'assets/characters/' + DEFAULT_CHARACTER + ".json";
 				}
 
 				var rawJson = Assets.getText(path);
@@ -238,11 +237,9 @@ class Character extends FlxSprite
 			if (!isPlayer)
 			{
 				if (animation.curAnim.name.startsWith('sing'))
-				{
 					holdTimer += elapsed;
-				}
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
+				if (holdTimer >= (Conductor.stepCrochet * singDuration) * 1000)
 				{
 					dance();
 					holdTimer = 0;

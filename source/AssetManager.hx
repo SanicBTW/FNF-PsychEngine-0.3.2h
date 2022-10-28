@@ -29,6 +29,12 @@ class AssetManager
     public static var currentTrackedSounds:Map<String, Sound> = [];
     public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
 	public static var loadLibs:Array<String> = ["shared", "UILib"];
+    static var currentLevel:String;
+
+    public static function setCurrentLevel(name:String)
+    {
+        currentLevel = name.toLowerCase();
+    }
 
     public static var dumpExclusions:Array<String> =
 	[
@@ -108,19 +114,25 @@ class AssetManager
 
     public static function getPath(directory:String, group:Null<String> = null, type:AssetType = DIRECTORY, library:Null<String> = null):String
     {
-        var pathBase:String = "";
+        var fullDirectory:String = "assets/";
 
         if (library != null && library != "preload" && library != "default" && library != "")
-            pathBase = '$library:assets/$library/';
-        else
-            pathBase = "assets/";
+            fullDirectory = '$library:assets/$library/';
+
+        if (currentLevel != null)
+        {
+            if (currentLevel != "shared")
+                fullDirectory = '$currentLevel:assets/$currentLevel/';
+
+            fullDirectory = 'shared:assets/shared/';
+        }
 
         var directoryExtension = "";
         if (group != null && group.length > 0)
             directoryExtension += group + "/";
         directoryExtension += directory;
         
-        return filterExtensions('$pathBase$directoryExtension', type);
+        return filterExtensions('$fullDirectory$directoryExtension', type);
     }
 
     public static function filterExtensions(directory:String, type:String)
@@ -225,8 +237,10 @@ class AssetManager
 		System.gc();
     }
 
-    inline static public function formatToSongPath(path:String)
+    inline public static function formatToSongPath(path:String)
 	{
 		return path.toLowerCase().replace(' ', '-');
 	}
+
+    //do the same as paths, make a function to get preload path and that shit or something
 }

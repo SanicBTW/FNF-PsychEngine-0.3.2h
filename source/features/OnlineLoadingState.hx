@@ -161,6 +161,7 @@ class OnlineLoadingState extends MusicBeatState
 		var directory:String = 'shared';
 
 		Paths.setCurrentLevel(directory);
+		AssetManager.setCurrentLevel(directory);
 		trace('Setting asset folder to ' + directory);
 
 		#if NO_PRELOAD_ALL
