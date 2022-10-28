@@ -300,7 +300,7 @@ class OnlineSongSelection extends MusicBeatState
         PlayState.storyDifficulty = 2;
         PlayState.storyWeek = 0;
 
-        OnlineLoadingState.loadAndSwitchState(new PlayState());
+        LoadingState.loadAndSwitchState(new PlayState(), false);
 
         System.gc();
     }

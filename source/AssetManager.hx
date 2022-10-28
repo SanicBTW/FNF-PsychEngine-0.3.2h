@@ -241,6 +241,4 @@ class AssetManager
 	{
 		return path.toLowerCase().replace(' ', '-');
 	}
-
-    //do the same as paths, make a function to get preload path and that shit or something
 }

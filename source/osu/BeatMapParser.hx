@@ -172,7 +172,7 @@ class BeatMapParser
 
         trace("Going to loading state");
 
-        features.OnlineLoadingState.loadAndSwitchState(new PlayState());
+        LoadingState.loadAndSwitchState(new PlayState(), false);
     }
 
     static function findLine(array:Array<String>, toFind:String, fromLine:Int = 0, toLine:Dynamic = null):Int

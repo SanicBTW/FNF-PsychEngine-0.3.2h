@@ -25,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Some code moved to 0.6.2
 - Moved to AssetManager
 - Clear cache to AssetManager
+- Downgraded the LoadingState design (to base psych)
+- The LoadingState used when loading online songs
 
 ## [1.2.1] - 23-10-2022
 ### Fixed

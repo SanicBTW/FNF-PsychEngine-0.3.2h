@@ -5,7 +5,6 @@ import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.math.FlxMath;
 import flixel.ui.FlxBar;
 import flixel.util.FlxTimer;
@@ -19,81 +18,73 @@ import openfl.utils.Assets;
 
 using StringTools;
 
-// update to the loading state, originally from scarlet melopeia port
 class LoadingState extends MusicBeatState
 {
 	inline static var MIN_TIME = 1.0;
 
-	// Browsers will load create(), you can make your song load a custom directory there
-	// If you're compiling to desktop (or something that doesn't use NO_PRELOAD_ALL), search for getNextState instead
-	// I'd recommend doing it on both actually lol
-	// TO DO: Make this easier
 	var target:FlxState;
-	var stopMusic = false;
 	var directory:String;
+	var loadSong:Bool;
 	var callbacks:MultiCallback;
 	var targetShit:Float = 0;
 
-	function new(target:FlxState, stopMusic:Bool, directory:String)
+	function new(target:FlxState, loadSong:Bool, directory:String)
 	{
 		super();
 		this.target = target;
-		this.stopMusic = stopMusic;
+		this.loadSong = loadSong;
 		this.directory = directory;
 	}
 
-	var bg:FlxSprite;
-	var loadBar:FlxBar;
-	var gfDance:FlxSprite;
-	var danceLeft:Bool = false;
-	var bgColorTween:FlxTween;
-	var lastColor:FlxColor;
+	var funkay:FlxSprite;
+	var loadBar:FlxSprite;
 
 	override function create()
 	{
-		Conductor.changeBPM(102);
-
-		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
 		add(bg);
-		lastColor = bg.color;
 
-		gfDance = new FlxSprite(552, 0);
-		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
-		add(gfDance);
+		funkay = new FlxSprite(0, 0).loadGraphic(AssetManager.returnGraphic('assets/images/funkay.png'));
+		funkay.setGraphicSize(0, FlxG.height);
+		funkay.updateHitbox();
+		funkay.antialiasing = ClientPrefs.globalAntialiasing;
+		add(funkay);
+		funkay.scrollFactor.set();
+		funkay.screenCenter();
 
-		loadBar = new FlxBar();
-		loadBar.screenCenter();
-		loadBar.y = FlxG.height * 0.97;
+		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.screenCenter(X);
-		loadBar.scale.set(12, 1);
 		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
 		add(loadBar);
 
-		initSongsManifest().onComplete(function(lib)
-		{
-			callbacks = new MultiCallback(onLoad);
-			var introComplete = callbacks.add("introComplete");
-			if (PlayState.SONG != null)
+		initSongsManifest().onComplete
+		(
+			function(lib)
 			{
-				checkLoadSong(getSongPath());
-				if (PlayState.SONG.needsVoices)
-					checkLoadSong(getVocalPath());
-			}
-			for(i in 0...AssetManager.loadLibs.length)
-				checkLibrary(AssetManager.loadLibs[i]);
-			if (directory != null && directory.length > 0 && directory != 'shared')
-			{
-				checkLibrary(directory);
-				AssetManager.clearLibs.push(directory);
-			}
+				callbacks = new MultiCallback(onLoad);
+				var introComplete = callbacks.add("introComplete");
 
-			var fadeTime = 0.5;
-			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-			new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
-		});
+				if (PlayState.SONG != null && loadSong)
+				{
+					checkLoadSong(getSongPath());
+					if (PlayState.SONG.needsVoices)
+						checkLoadSong(getVocalPath());
+				}
+
+				for(i in 0...AssetManager.loadLibs.length)
+					checkLibrary(AssetManager.loadLibs[i]);
+
+				if (directory != null && directory.length > 0 && directory != 'shared')
+				{
+					checkLibrary(directory);
+					AssetManager.clearLibs.push(directory);
+				}
+
+				var fadeTime = 0.5;
+				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
+				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+			}
+		);
 	}
 
 	function checkLoadSong(path:String)
@@ -128,45 +119,24 @@ class LoadingState extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		Conductor.songPosition = FlxG.sound.music.time;
+		funkay.setGraphicSize(Std.int(0.88 * FlxG.width + 0.9 * (funkay.width - 0.88 * FlxG.width)));
+		funkay.updateHitbox();
+		if (controls.ACCEPT)
+		{
+			funkay.setGraphicSize(Std.int(funkay.width + 60));
+			funkay.updateHitbox();
+		}
 
 		if (callbacks != null)
 		{
 			targetShit = FlxMath.remapToRange(callbacks.numRemaining / callbacks.length, 1, 0, 0, 1);
-			loadBar.percent = 100 * targetShit;
-		}
-	}
-
-	override function beatHit()
-	{
-		super.beatHit();
-
-		if (gfDance != null)
-		{
-			danceLeft = !danceLeft;
-
-			if (danceLeft)
-				gfDance.animation.play('danceRight');
-			else
-				gfDance.animation.play('danceLeft');
-		}
-
-		if (curBeat % 4 == 0)
-		{
-			var curNewColor:FlxColor = FlxG.random.color();
-			if(bgColorTween != null)
-				bgColorTween.cancel();
-			bgColorTween = FlxTween.color(bg, 1, lastColor, curNewColor, { onComplete: function(twn:FlxTween)
-			{
-				lastColor = curNewColor;
-				bgColorTween = null;
-			}});
+			loadBar.scale.x += 0.5 * (targetShit - loadBar.scale.x);
 		}
 	}
 
 	function onLoad()
 	{
-		if (stopMusic && FlxG.sound.music != null)
+		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
 		MusicBeatState.switchState(target);
@@ -182,12 +152,12 @@ class LoadingState extends MusicBeatState
 		return Paths.voices(PlayState.SONG.song);
 	}
 
-	inline static public function loadAndSwitchState(target:FlxState, stopMusic = false)
+	inline static public function loadAndSwitchState(target:FlxState, loadSong:Bool = true)
 	{
-		MusicBeatState.switchState(getNextState(target, stopMusic));
+		MusicBeatState.switchState(getNextState(target, loadSong));
 	}
 
-	static function getNextState(target:FlxState, stopMusic = false):FlxState
+	static function getNextState(target:FlxState, loadSong:Bool):FlxState
 	{
 		var directory:String = 'shared';
 		var weekDir:String = StageData.forceNextDirectory;
@@ -197,6 +167,8 @@ class LoadingState extends MusicBeatState
 			directory = weekDir;
 
 		Paths.setCurrentLevel(directory);
+		AssetManager.setCurrentLevel(directory);
+
 		trace('Setting asset folder to ' + directory);
 
 		#if NO_PRELOAD_ALL
@@ -204,16 +176,24 @@ class LoadingState extends MusicBeatState
 
 		if (PlayState.SONG != null)
 		{
-			loaded = isSoundLoaded(getSongPath())
-				&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
-				&& isLibraryLoaded(directory)
-				&& areLibrariesLoaded();
+			if (loadSong)
+			{
+				loaded = isSoundLoaded(getSongPath())
+					&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
+					&& isLibraryLoaded(directory)
+					&& areLibrariesLoaded();
+			}
+			else
+			{
+				loaded = isLibraryLoaded(directory)
+					&& areLibrariesLoaded();
+			}
 		}
 
 		if (!loaded)
-			return new LoadingState(target, stopMusic, directory);
+			return new LoadingState(target, loadSong, directory);
 		#end
-		if (stopMusic && FlxG.sound.music != null)
+		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
 		return target;
@@ -247,7 +227,6 @@ class LoadingState extends MusicBeatState
 		super.destroy();
 
 		callbacks = null;
-		bgColorTween = null;
 	}
 
 	static function initSongsManifest()
@@ -315,64 +294,4 @@ class LoadingState extends MusicBeatState
 
 		return promise.future;
 	}
-}
-
-class MultiCallback
-{
-	public var callback:Void->Void;
-	public var logId:String = null;
-	public var length(default, null) = 0;
-	public var numRemaining(default, null) = 0;
-
-	var unfired = new Map<String, Void->Void>();
-	var fired = new Array<String>();
-
-	public function new(callback:Void->Void, logId:String = null)
-	{
-		this.callback = callback;
-		this.logId = logId;
-	}
-
-	public function add(id = "untitled")
-	{
-		id = '$length:$id';
-		length++;
-		numRemaining++;
-		var func:Void->Void = null;
-		func = function()
-		{
-			if (unfired.exists(id))
-			{
-				unfired.remove(id);
-				fired.push(id);
-				numRemaining--;
-
-				if (logId != null)
-					log('fired $id, $numRemaining remaining');
-
-				if (numRemaining == 0)
-				{
-					if (logId != null)
-						log('all callbacks fired');
-					callback();
-				}
-			}
-			else
-				log('already fired $id');
-		}
-		unfired[id] = func;
-		return func;
-	}
-
-	inline function log(msg):Void
-	{
-		if (logId != null)
-			trace('$logId: $msg');
-	}
-
-	public function getFired()
-		return fired.copy();
-
-	public function getUnfired()
-		return [for (id in unfired.keys()) id];
 }
