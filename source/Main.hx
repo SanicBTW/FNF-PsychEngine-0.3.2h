@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -71,6 +72,7 @@ class Main extends Sprite
 		}
 
 		ClientPrefs.loadDefaultKeys();
+		FlxGraphic.defaultPersist = true;
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);

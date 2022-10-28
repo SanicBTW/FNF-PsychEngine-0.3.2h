@@ -239,7 +239,7 @@ class Character extends FlxSprite
 				if (animation.curAnim.name.startsWith('sing'))
 					holdTimer += elapsed;
 
-				if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
+				if (holdTimer >= Conductor.stepCrochet * 0.0011 * singDuration)
 				{
 					dance();
 					holdTimer = 0;

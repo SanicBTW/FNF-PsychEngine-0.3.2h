@@ -260,6 +260,8 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
+		AssetManager.clearStoredMemory(false, false);
+
 		instance = this;
 
 		//because this shit wont reset for some fucking reason
@@ -1166,6 +1168,7 @@ class PlayState extends MusicBeatState
 
 		openfl.system.System.gc();
 
+		AssetManager.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
@@ -4597,7 +4600,16 @@ class PlayState extends MusicBeatState
 	
 			if (SONG.notes[curSection].changeBPM)
 			{
+				var lastBPM = Conductor.bpm;
+				var lastSpeed = songSpeed;
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
+				var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
+				
+				FlxG.log.add("BPM Change!
+				(Last BPM: " + lastBPM + " / New BPM: " + Conductor.bpm + " / BPM Diff: " + (Conductor.bpm - lastBPM) + ")
+				(Last Song Speed: " + lastSpeed + " / New Song Speed " + newSpeed + " / Speed Diff: " + (newSpeed - lastSpeed) + ")");
+
+				songSpeed = newSpeed;
 			}
 		}
 	}

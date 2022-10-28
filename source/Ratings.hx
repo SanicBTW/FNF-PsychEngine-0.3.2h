@@ -131,7 +131,7 @@ class Ratings
         var scoreString = "Score: " + score;
         var missesString = "Misses: " + misses;
         var accuracyFloorDec = Highscore.floorDecimal(accuracy * 100, 2);
-        var accuracyString = "Accuracy: " + (Math.isNaN(accuracyFloorDec) ? "00.00" : '$accuracyFloorDec') + "%";
+        var accuracyString = "Accuracy: " + (Math.isNaN(accuracyFloorDec) ? "0" : '$accuracyFloorDec') + "%";
         var ratingString = GenerateLetterRank(accuracyFloorDec);
 
         return scoreString + " | " + missesString + " | " + accuracyString + " | " + ratingString ;

@@ -31,8 +31,7 @@ class BeatMapParser
 
     public static function parseBeatMap()
     {
-        //var testMapPath = Paths.getLibraryPath('beatmap1.osu', 'osu!beatmaps');
-        var testMapPath = AssetManager.getAsset('beatmap1.osu', TEXT, null, "osu!beatmaps");
+        var testMapPath = AssetManager.getAsset('beatmap1.osu', DIRECTORY, null, "osu!beatmaps");
         var testMap = CoolUtil.coolTextFile(testMapPath);
 
         trace('Found ' + (testMap.length - findLine(testMap, '[HitObjects]') + 1) + " notes");
@@ -161,9 +160,6 @@ class BeatMapParser
 
         trace("Setting PlayState");
 
-        AssetManager.clearStoredMemory();
-		AssetManager.clearUnusedMemory();
-
         PlayState.SONG = fnfChart;
         PlayState.storyDifficulty = 2;
         CoolUtil.difficulties = CoolUtil.defaultDifficulties;
@@ -235,7 +231,6 @@ class BeatMapParser
         if(string != null)
         {
             var array:Array<String> = string.split(split);
-            trace(string + " turned into " + array + " required index " + index + " returned " + array[index]);
             return array[index];
         }
 

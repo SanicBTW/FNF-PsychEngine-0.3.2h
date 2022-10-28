@@ -184,7 +184,7 @@ class AssetManager
                 @:privateAccess
                 if (obj != null)
                 {
-                    Assets.cache.removeBitmapData(key);
+                    openfl.Assets.cache.removeBitmapData(key);
                     FlxG.bitmap._cache.remove(key);
                     currentTrackedAssets.remove(key);
                     obj.destroy();
@@ -194,7 +194,7 @@ class AssetManager
         System.gc();
     }
 
-    public static function clearStoredMemory(setNulls:Bool = true)
+    public static function clearStoredMemory(clearLibraries:Bool = true, setNulls:Bool = true)
     {
         @:privateAccess
         for (key in FlxG.bitmap._cache.keys())
@@ -202,7 +202,7 @@ class AssetManager
             var obj = FlxG.bitmap._cache.get(key);
             if (obj != null && currentTrackedAssets.exists(key))
             {
-                Assets.cache.removeBitmapData(key);
+                openfl.Assets.cache.removeBitmapData(key);
                 FlxG.bitmap._cache.remove(key);
                 obj.destroy();
             }
@@ -218,21 +218,25 @@ class AssetManager
             }
         }
 
-        for(i in 0...clearLibs.length)
-		{
-			Assets.cache.clear(clearLibs[i]);
-		}
+        if (clearLibraries)
+        {
+            for(i in 0...clearLibs.length)
+            {
+                Assets.cache.clear(clearLibs[i]);
+            }
+
+            clearLibs = ["shared", "UILib", "songs", "images"];
+        }
+
+        if(setNulls)
+        {
+            PlayState.inst = null;
+            PlayState.voices = null;
+            PlayState.SONG = null;
+            PlayState.songEvents = null;
+        }
 
         localTrackedAssets = [];
-		clearLibs = ["shared", "UILib", "songs", "images"];
-        
-		if(setNulls)
-		{
-			PlayState.inst = null;
-			PlayState.voices = null;
-			PlayState.SONG = null;
-			PlayState.songEvents = null;
-		}
 
 		System.gc();
     }
