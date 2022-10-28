@@ -96,30 +96,28 @@ class Character extends FlxSprite
 			// case 'your character name in case you want to hardcode him instead':
 
 			default:
-				var characterPath:String = 'characters/' + curCharacter + '.json';
-				var path:String = Paths.getPreloadPath(characterPath);
+				var path:String = AssetManager.getAsset(curCharacter, DIRECTORY, "characters");
 				if (!Assets.exists(path))
 				{
-					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER +
-						'.json'); // If a character couldn't be found, change him to BF just to prevent a crash
+					path = AssetManager.getAsset(DEFAULT_CHARACTER, DIRECTORY, "characters");
 				}
 
 				var rawJson = Assets.getText(path);
 				var spriteType = "sparrow";
 
 				var json:CharacterFile = cast Json.parse(rawJson);
-				if (Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT)))
+				if (Assets.exists(AssetManager.getAsset(json.image + ".txt", DIRECTORY, "images")))
 					spriteType = "packer";
 
-				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
+				if (Assets.exists(AssetManager.getAsset(json.image + "/Animation.json", DIRECTORY, "images")))
 					spriteType = "texture";
 
 				switch (spriteType)
 				{
 					case "packer":
-						frames = Paths.getPackerAtlas(json.image);
+						frames = AssetManager.getAsset(json.image, PACKER, "images");
 					case "sparrow":
-						frames = Paths.getSparrowAtlas(json.image);
+						frames = AssetManager.getAsset(json.image, SPARROW, "images");
 					case "texture":
 						frames = AtlasFrameMaker.construct(json.image);
 				}
@@ -317,7 +315,7 @@ class Character extends FlxSprite
 
 	function loadMappedAnims():Void
 	{
-		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song)).notes;
+		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', AssetManager.formatToSongPath(PlayState.SONG.song)).notes;
 		for (section in noteData) {
 			for (songNotes in section.sectionNotes) {
 				animationNotes.push(songNotes);

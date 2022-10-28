@@ -224,4 +224,9 @@ class AssetManager
 
 		System.gc();
     }
+
+    inline static public function formatToSongPath(path:String)
+	{
+		return path.toLowerCase().replace(' ', '-');
+	}
 }
