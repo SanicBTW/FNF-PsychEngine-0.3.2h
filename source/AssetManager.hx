@@ -42,23 +42,24 @@ class AssetManager
         var gottenPath = getPath(directory, group, type, library);
         switch(type)
         {
-            case JSON:
+            case JSON | XML | TEXT:
                 return Assets.getText(gottenPath);
             case IMAGE:
                 return returnGraphic(gottenPath);
             case SOUND:
                 return returnSound(gottenPath);
             case SPARROW:
-                var graphicPath = getPath(directory, IMAGE, group);
+                var graphicPath = getPath(directory, group, IMAGE, library);
                 trace('sparrow graphic path $graphicPath');
                 var graphic:FlxGraphic = returnGraphic(graphicPath);
                 trace('sparrow xml path $gottenPath');
                 return FlxAtlasFrames.fromSparrow(graphic, Assets.getText(gottenPath));
-            case PACKER: //move this to graphic
-                var imagePath = getPath(directory, group, IMAGE, library);
-                trace('packer image path $imagePath');
+            case PACKER:
+                var graphicPath = getPath(directory, group, IMAGE, library);
+                trace('packer graphic path $graphicPath');
+                var graphic:FlxGraphic = returnGraphic(graphicPath);
                 trace('packer txt path $gottenPath');
-                return FlxAtlasFrames.fromSpriteSheetPacker(imagePath, Assets.getText(gottenPath));
+                return FlxAtlasFrames.fromSpriteSheetPacker(graphic, Assets.getText(gottenPath));
             default:
                 trace('returning directory $gottenPath');
                 return gottenPath;
@@ -109,7 +110,7 @@ class AssetManager
     {
         var pathBase:String = "";
 
-        if (library != null || library != "preload" || library != "default" || library != "")
+        if (library != null && library != "preload" && library != "default" && library != "")
             pathBase = '$library:assets/$library/';
         else
             pathBase = "assets/";
