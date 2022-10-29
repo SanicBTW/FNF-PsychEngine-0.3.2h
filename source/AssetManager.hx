@@ -20,6 +20,7 @@ enum abstract AssetType(String) to String
     var PACKER = "packer";
     var TEXT = "text";
     var XML = "xml";
+    var LUA = "lua";
 }
 
 class AssetManager
@@ -33,14 +34,15 @@ class AssetManager
 
     public static function setCurrentLevel(name:String)
     {
+        trace("new asset level " + name);
         currentLevel = name.toLowerCase();
     }
 
     public static var dumpExclusions:Array<String> =
 	[
 		'assets/music/freakyMenu.ogg',
-		'assets/shared/music/breakfast.ogg',
-		'assets/shared/music/tea-time.ogg',
+		'shared:assets/shared/music/breakfast.ogg',
+		'shared:assets/shared/music/tea-time.ogg',
 	];
 
     public static function getAsset(directory:String, type:AssetType = DIRECTORY, group:Null<String> = null, library:Null<String> = null):Dynamic
@@ -52,7 +54,7 @@ class AssetManager
                 return Assets.getText(gottenPath);
             case IMAGE:
                 return returnGraphic(gottenPath);
-            case SOUND:
+            case SOUND: //removed for now
                 return returnSound(gottenPath);
             case SPARROW:
                 var graphicPath = getPath(directory, group, IMAGE, library);
@@ -84,7 +86,7 @@ class AssetManager
                 localTrackedAssets.push(key);
                 currentTrackedAssets.set(key, newGraphic);
             }
-			trace('graphic returning $key');
+			//trace('graphic returning $key');
 			return currentTrackedAssets.get(key);
         }
         trace('graphic returning null at $key');
@@ -102,10 +104,10 @@ class AssetManager
                 #else
                 currentTrackedSounds.set(key, Sound.fromFile('./' + key));
                 #end
-                trace('new sound $key');
+                localTrackedAssets.push(key);
+                //trace('new sound $key');
             }
-            trace('sound returning $key');
-            localTrackedAssets.push(key);
+            //trace('sound returning $key');
 			return currentTrackedSounds.get(key);
         }
         trace('sound returning null at $key');
@@ -119,7 +121,7 @@ class AssetManager
         if (library != null && library != "preload" && library != "default" && library != "")
             fullDirectory = '$library:assets/$library/';
 
-        if (currentLevel != null)
+        if (currentLevel != null && library == null)
         {
             if (currentLevel != "shared")
                 fullDirectory = '$currentLevel:assets/$currentLevel/';
@@ -154,21 +156,23 @@ class AssetManager
                     extensions = ['.ogg', '.mp3'];
                 case FONT:
                     extensions = ['.ttf', '.otf'];
+                case LUA:
+                    extensions = [".lua"];
             }
-            trace(extensions);
+            //trace(extensions);
 
             for(i in extensions)
             {
                 var returnDirectory:String = '$directory$i';
-                trace('attempting directory $returnDirectory');
+                //trace('attempting directory $returnDirectory');
                 if(Assets.exists(returnDirectory))
                 {
-                    trace('successful extension $i');
+                    //trace('successful extension $i');
                     return returnDirectory;
                 }
             }
         }
-        trace('no extension needed, returning $directory');
+        //trace('no extension needed, returning $directory');
         return directory;
     }
 
@@ -177,13 +181,14 @@ class AssetManager
     {
         for (key in currentTrackedAssets.keys())
         {
-            if (!localTrackedAssets.contains(key)
-                && !dumpExclusions.contains(key))
+            if (localTrackedAssets.contains(key) == false
+                && dumpExclusions.contains(key) == false)
             {
                 var obj = currentTrackedAssets.get(key);
                 @:privateAccess
                 if (obj != null)
                 {
+                    trace("removed " + key + " from unused memory (graphic)");
                     openfl.Assets.cache.removeBitmapData(key);
                     FlxG.bitmap._cache.remove(key);
                     currentTrackedAssets.remove(key);
@@ -202,6 +207,7 @@ class AssetManager
             var obj = FlxG.bitmap._cache.get(key);
             if (obj != null && currentTrackedAssets.exists(key))
             {
+                trace("cleared " + key + " from memory (graphic)");
                 openfl.Assets.cache.removeBitmapData(key);
                 FlxG.bitmap._cache.remove(key);
                 obj.destroy();
@@ -210,11 +216,12 @@ class AssetManager
 
         for (key in currentTrackedSounds.keys())
         {
-            if (!localTrackedAssets.contains(key)
-                && !dumpExclusions.contains(key) && key != null)
+            if (localTrackedAssets.contains(key) == true
+                && dumpExclusions.contains(key) == false && key != null)
             {
+                trace("cleared " + key + " from memory (sound)");
                 Assets.cache.clear(key);
-                currentTrackedAssets.remove(key);
+                currentTrackedSounds.remove(key);
             }
         }
 

@@ -319,18 +319,11 @@ class FreeplayState extends MusicBeatState
 				{
 					lime.app.Application.current.window.alert("Couldn't find the chart on your Local Storage", "Chart not found");
 					return;
-					/*
-					poop = songLowercase;
-					curDifficulty = 1;
-					chartPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json";
-					trace("Couldnt find file on local storage");*/
 				}
-				trace(chartPath);
 
 				PlayState.SONG = Song.loadFromRaw(File.getContent(chartPath));
 
 				//events file exists??
-				trace(eventPath);
 				if(StorageAccess.exists(eventPath))
 					PlayState.songEvents = Song.loadFromRaw(File.getContent(eventPath)).events;
 
@@ -344,19 +337,19 @@ class FreeplayState extends MusicBeatState
 			}
 			else #end if (!songs[curSelected].intStorage)
 			{
-			var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
-			var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
-			if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
-			{
-				poop = songLowercase;
-				curDifficulty = 1;
-				trace('Couldnt find file');
-			}
-			PlayState.SONG = Song.loadFromJson(poop, songLowercase);
-			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
-			PlayState.storyWeek = songs[curSelected].week;
-			goToPlayState();
+				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
+				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
+				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
+				{
+					poop = songLowercase;
+					curDifficulty = 1;
+					trace('Couldnt find file');
+				}
+				PlayState.SONG = Song.loadFromJson(poop, songLowercase);
+				PlayState.isStoryMode = false;
+				PlayState.storyDifficulty = curDifficulty;
+				PlayState.storyWeek = songs[curSelected].week;
+				goToPlayState();
 			}
 		}
 		else if (controls.RESET)

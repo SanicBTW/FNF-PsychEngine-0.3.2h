@@ -34,6 +34,7 @@ class ClientPrefs
 	public static var pauseMusic:String = "Tea Time";
 	public static var missVolume:Float = 0.2;
 	public static var hitsoundVolume:Float = 0;
+	public static var scoreTextDesign:String = "Engine";
 	public static var comboOffset:Array<Int> = [0, 0, 0, 0];
 	public static var inputType:String = "Kade 1.5.3";
 	public static var smoothCamZoom:Bool = true;
@@ -192,6 +193,8 @@ class ClientPrefs
 			missVolume = FlxG.save.data.missVolume;
 		if (FlxG.save.data.hitsoundVolume != null)
 			hitsoundVolume = FlxG.save.data.hitsoundVolume;
+		if (FlxG.save.data.scoreTextDesign != null)
+			scoreTextDesign = FlxG.save.data.scoreTextDesign;
 		if (FlxG.save.data.comboOffset != null)
 			comboOffset = FlxG.save.data.comboOffset;
 		if (FlxG.save.data.inputType != null)
@@ -265,6 +268,7 @@ class ClientPrefs
 		FlxG.save.data.pauseMusic = pauseMusic;
 		FlxG.save.data.missVolume = missVolume;
 		FlxG.save.data.hitsoundVolume = hitsoundVolume;
+		FlxG.save.data.scoreTextDesign = scoreTextDesign;
 		FlxG.save.data.comboOffset = comboOffset;
 		FlxG.save.data.inputType = inputType;
 		FlxG.save.data.smoothCamZoom = smoothCamZoom;

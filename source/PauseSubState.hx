@@ -38,11 +38,11 @@ class PauseSubState extends MusicBeatSubstate
 		pauseMusic = new FlxSound();
 		if (songName != null)
 		{
-			pauseMusic.loadEmbedded(Paths.music(songName), true, true);
+			pauseMusic.loadEmbedded(AssetManager.getAsset(songName, SOUND, "music", "shared"), true, true);
 		}
 		else if (songName != "None")
 		{
-			pauseMusic.loadEmbedded(Paths.music(ClientPrefs.pauseMusic.toLowerCase().replace(" ", "-")), true, true);
+			pauseMusic.loadEmbedded(AssetManager.getAsset(AssetManager.formatToSongPath(ClientPrefs.pauseMusic), SOUND, "music", "shared"), true, true);
 		}
 		pauseMusic.volume = 0;
 		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));

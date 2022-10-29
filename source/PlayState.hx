@@ -198,7 +198,7 @@ class PlayState extends MusicBeatState
 
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
-	public static var songMisses:Int = 0;
+	public var songMisses:Int = 0;
 	public var scoreTxt:FlxText;
 
 	var timeTxt:FlxText;
@@ -228,10 +228,10 @@ class PlayState extends MusicBeatState
 	var detailsPausedText:String = "";
 	#end
 
-	public static var sicks:Int = 0;
-	public static var goods:Int = 0;
-	public static var bads:Int = 0;
-	public static var shits:Int = 0;
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
 
 	public var boyfriendCameraOffset:Array<Float> = null;
 	public var opponentCameraOffset:Array<Float> = null;
@@ -260,17 +260,9 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		AssetManager.clearStoredMemory(false, false);
+		//AssetManager.clearStoredMemory(false, false);
 
 		instance = this;
-
-		//because this shit wont reset for some fucking reason
-		songMisses = 0;
-		songScore = 0;
-		sicks = 0;
-		goods = 0;
-		bads = 0;
-		shits = 0;
 
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
@@ -1050,6 +1042,8 @@ class PlayState extends MusicBeatState
 		startingSong = true;
 		updateTime = true;
 
+		precache();
+
 		var daSong:String = curSong.toLowerCase();
 		if (isStoryMode && !seenCutscene)
 		{
@@ -1145,28 +1139,20 @@ class PlayState extends MusicBeatState
 			CoolUtil.precacheSound('missnote3');
 		}
 
+		/*
 		if (ClientPrefs.hitsoundVolume > 0)
-		{
 			CoolUtil.precacheSound('hitsound');
-		}
 
 		if (PauseSubState.songName != null)
-		{
 			CoolUtil.precacheMusic(PauseSubState.songName);
-		}
 		else if (ClientPrefs.pauseMusic != null)
-		{
-			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
-		}
-
+			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));*/
 		#if desktop
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
 		#end
 
 		super.create();
-
-		openfl.system.System.gc();
 
 		AssetManager.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
@@ -1769,7 +1755,7 @@ class PlayState extends MusicBeatState
 				case 0:
 					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 				case 1:
-					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
+					var ready:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[0], IMAGE, "images"));
 					ready.cameras = [camHUD];
 					ready.scrollFactor.set();
 					ready.updateHitbox();
@@ -1789,7 +1775,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+					var set:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[1], IMAGE, "images"));
 					set.cameras = [camHUD];
 					set.scrollFactor.set();
 					set.updateHitbox();
@@ -1809,7 +1795,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
+					var go:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[2], IMAGE, "images"));
 					go.cameras = [camHUD];
 					go.scrollFactor.set();
 					go.updateHitbox();
@@ -2459,7 +2445,7 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		scoreTxt.text = Ratings.CalculateRanking(songScore, songMisses, ratingPercent);
+		scoreTxt.text = getScoreText();
 
 		if (cpuControlled)
 		{
@@ -3428,7 +3414,7 @@ class PlayState extends MusicBeatState
 		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 350;
 
-		var daRating = Ratings.CalculateRating(noteDiff);
+		var daRating = Conductor.judgeNote(noteDiff, Conductor.timeScale);
 
 		if (daRating == "miss")
 		{
@@ -3518,7 +3504,8 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = "-pixel";
 		}
 
-		rating.loadGraphic(Paths.getLibraryPath(ClientPrefs.ratingsStyle + "/" + daRating + pixelShitPart2 + ".png", "UILib"));
+		rating.loadGraphic(AssetManager.getAsset(daRating + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib"));
+		//rating.loadGraphic(Paths.getLibraryPath(ClientPrefs.ratingsStyle + "/" + daRating + pixelShitPart2 + ".png", "UILib"));
 		rating.cameras = [camHUD];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
@@ -3574,7 +3561,8 @@ class PlayState extends MusicBeatState
 		}
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(pixelShitPart1 + "num" + Std.int(i) + pixelShitPart2, IMAGE, "images", "default"));
+			//var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
 			numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
@@ -4079,6 +4067,7 @@ class PlayState extends MusicBeatState
 		if (!note.wasGoodHit)
 		{
 			if (ClientPrefs.hitsoundVolume > 0 && !note.hitsoundDisabled)
+				//FlxG.sound.play(AssetManager.getAsset('hitsound', SOUND, "sounds", "shared"), ClientPrefs.hitsoundVolume);
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 
 			if (!note.isSustainNote || released && note.isLiftNote)
@@ -4452,7 +4441,6 @@ class PlayState extends MusicBeatState
 		if (lastBeatHit >= curBeat)
 		{
 			trace('BEAT HIT: ' + curBeat + ', LAST HIT: ' + lastBeatHit);
-			openfl.system.System.gc();
 			return;
 		}
 
@@ -4461,8 +4449,6 @@ class PlayState extends MusicBeatState
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);
 		}
 
-		//iconP1.setGraphicSize(Std.int(iconP1.width + 30));
-		//iconP2.setGraphicSize(Std.int(iconP2.width + 30));
 		iconP1.scale.set(1.2, 1.2);
 		iconP2.scale.set(1.2, 1.2);
 
@@ -4642,10 +4628,78 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public var ratingString:String;
 	public var ratingPercent:Float;
+	public var ratingFC:String;
 	public function RecalculateRating()
 	{
-		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+		if (totalPlayed < 1)
+		{
+			switch (ClientPrefs.scoreTextDesign)
+			{
+				case 'Engine':
+					ratingString = "N/A";
+				case 'Psych':
+					ratingString = "?";
+			}
+		}
+		else
+		{
+			ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+			if (ratingPercent >= 1)
+			{
+				ratingString = ratingStuff[ratingStuff.length - 1][0];
+			}
+			else
+			{
+				for (i in 0...ratingStuff.length - 1)
+				{
+					if (ratingPercent < ratingStuff[i][1])
+					{
+						ratingString = ratingStuff[i][0];
+						break;
+					}
+				}
+			}
+		}
+
+		ratingFC = "";
+		if (sicks > 0)
+			ratingFC = "SFC";
+		if (goods > 0)
+			ratingFC = "GFC";
+		if (bads > 0 || shits > 0)
+			ratingFC = "FC";
+		if (songMisses > 0 && songMisses < 10)
+			ratingFC = "SDCB";
+		else if (songMisses >= 10)
+			ratingFC = "Clear";
+	}
+
+	function getScoreText():String
+	{
+		switch (ClientPrefs.scoreTextDesign)
+		{
+			case 'Engine':
+				if (ratingString == 'N/A')
+				{
+					return 'Score: $songScore | Misses: $songMisses | $ratingString';
+				}
+				else
+				{
+					return 'Score $songScore | Misses: $songMisses | Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingString ($ratingFC)';
+				}
+			case 'Psych':
+				if (ratingString == '?')
+				{
+					return 'Score: $songScore | Misses : $songMisses | Rating: $ratingString';
+				}
+				else
+				{
+					return 'Score: $songScore | Misses : $songMisses | Rating: $ratingString (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';
+				}
+		}
+		return "";
 	}
 
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
@@ -4744,6 +4798,55 @@ class PlayState extends MusicBeatState
 		{
 			boyfriend.playAnim(singAnims[direction]);
 		}
+	}
+
+	function precache()
+	{
+		// gotta look into this
+		// precache if vol higher than 0
+		if (ClientPrefs.missVolume > 0)
+		{
+			AssetManager.getAsset('missnote1', SOUND, "sounds", "shared");
+			AssetManager.getAsset('missnote2', SOUND, "sounds", "shared");
+			AssetManager.getAsset('missnote3', SOUND, "sounds", "shared");
+		}
+
+		if (ClientPrefs.hitsoundVolume > 0)
+			AssetManager.getAsset('hitsound', SOUND, "sounds", "shared");
+
+		if (PauseSubState.songName != null)
+			AssetManager.getAsset(PauseSubState.songName, SOUND, "music", "shared");
+		else if (ClientPrefs.pauseMusic != null)
+			AssetManager.getAsset(AssetManager.formatToSongPath(ClientPrefs.pauseMusic), SOUND, "music", "shared");
+
+		var pixelShitPart1:String = "";
+		var pixelShitPart2:String = '';
+
+		if (isPixelStage)
+		{
+			pixelShitPart1 = "pixelUI/";
+			pixelShitPart2 = "-pixel";
+		}
+
+		//precche ratings
+		AssetManager.getAsset("sick" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
+		AssetManager.getAsset("good" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
+		AssetManager.getAsset("bad" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
+		AssetManager.getAsset("shit" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
+
+		//precache numscore
+		for (i in 0...10)
+		{
+			AssetManager.getAsset(pixelShitPart1 + "num" + Std.int(i) + pixelShitPart2, IMAGE, "images", "default");
+		}
+
+		//precache intro
+		/*
+		for (i in 1...3)
+		{
+			AssetManager.getAsset('intro' + i + introSoundsSuffix, SOUND, "sounds");
+		}
+		AssetManager.getAsset('introGo' + introSoundsSuffix, SOUND, "sounds");*/
 	}
 
 	var curLight:Int = 0;

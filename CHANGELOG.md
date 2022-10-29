@@ -17,7 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Charting State
 ### Removed
-- The ability to change the score text design
 - Paths.hx (not yet, just testing for now)
 ### Changed
 - Strum Note code
@@ -28,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clear cache to AssetManager
 - Downgraded the LoadingState design (to base psych)
 - The LoadingState used when loading online songs
-- FlxGraphic persistent to true
 
 ## [1.2.1] - 23-10-2022
 ### Fixed

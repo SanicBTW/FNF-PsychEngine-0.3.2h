@@ -93,6 +93,14 @@ class VisualsUISubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
+		var option:Option = new Option('Score Text Design:',
+			"Type of formatting on score text\nEngine: Score Misses Accuracy Rating (Full Combo Rating)\nPsych: Score Misses Rating (Accuracy) - Full Combo Rating",
+			"scoreTextDesign",
+			"string",
+			"Engine",
+			["Engine", "Psych"]);
+		addOption(option);
+
 		var option:Option = new Option('Score Text Zoom on Hit',
 			"If unchecked, disables the Score text zooming\neverytime you hit a note.",
 			'optScoreZoom', //dumb ass

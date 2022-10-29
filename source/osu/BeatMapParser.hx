@@ -83,7 +83,7 @@ class BeatMapParser
         }
         what = 0;
 
-        if ((findLine(testMap, '[TimingPoints]') + 1) != null)
+        if (#if html5 (findLine(testMap, '[TimingPoints]') + 1) != null #else Std.isOfType((findLine(testMap, '[TimingPoints]') + 1), null) #end)
         {
             trace("Calculating BPM");
             var bpm:Float = 0;
@@ -163,7 +163,7 @@ class BeatMapParser
         PlayState.SONG = fnfChart;
         PlayState.storyDifficulty = 2;
         CoolUtil.difficulties = CoolUtil.defaultDifficulties;
-        PlayState.inst = AssetManager.getAsset("audio.mp3", SOUND, null, "osu!beatmaps");
+        PlayState.inst = AssetManager.getAsset("audio", SOUND, null, "osu!beatmaps");
         //PlayState.inst = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
 
         trace("Going to loading state");
