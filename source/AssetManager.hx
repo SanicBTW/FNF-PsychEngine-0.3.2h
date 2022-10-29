@@ -1,5 +1,10 @@
 package;
 
+import openfl.display.BitmapData;
+#if sys
+import sys.io.File;
+import sys.FileSystem;
+#end
 import openfl.system.System;
 import openfl.media.Sound;
 import flixel.graphics.FlxGraphic;
@@ -51,7 +56,7 @@ class AssetManager
         switch(type)
         {
             case JSON | XML | TEXT:
-                return Assets.getText(gottenPath);
+                return #if !sys Assets.getText #else File.getContent #end(gottenPath);
             case IMAGE:
                 return returnGraphic(gottenPath);
             case SOUND: //removed for now
@@ -76,13 +81,25 @@ class AssetManager
         return null;
     }
 
-    public static function returnGraphic(key:String)
+    public static function returnGraphic(key:String, outsideAssets:Bool = false)
     {
-        if (Assets.exists(key))
+        if (Assets.exists(key) && outsideAssets == false)
         {
             if (!currentTrackedAssets.exists(key))
             {
                 var newGraphic:FlxGraphic = FlxG.bitmap.add(key, false, key);
+                localTrackedAssets.push(key);
+                currentTrackedAssets.set(key, newGraphic);
+            }
+			//trace('graphic returning $key');
+			return currentTrackedAssets.get(key);
+        }
+        else if (FileSystem.exists(key) && outsideAssets == true)
+        {
+            if (!currentTrackedAssets.exists(key))
+            {
+                var newBitmap:BitmapData = BitmapData.fromFile(key);
+                var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, key);
                 localTrackedAssets.push(key);
                 currentTrackedAssets.set(key, newGraphic);
             }
@@ -95,7 +112,7 @@ class AssetManager
 
     public static function returnSound(key:String)
     {
-        if (Assets.exists(key))
+        if (#if !sys Assets.exists #else FileSystem.exists #end(key))
         {
             if (!currentTrackedSounds.exists(key))
             {
@@ -139,7 +156,7 @@ class AssetManager
 
     public static function filterExtensions(directory:String, type:String)
     {
-        if(!Assets.exists(directory))
+        if(! #if !sys Assets.exists #else FileSystem.exists #end(directory))
         {
             var extensions:Array<String> = [];
             switch(type)

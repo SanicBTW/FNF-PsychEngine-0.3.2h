@@ -14,8 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - OSU!Mania chart convertion ([Translated JS code](https://github.com/TheLeerName/mania-converter/blob/html/index.html#L562) to Haxe code) needs to be improved however
 - Kade 1.5.3 Ratings, slightly modified
 - Changing song speed when bpm changes
+- Character support from local storage
+- Icons support from local storage
+- Stages support from local storage
 ### Fixed
 - Charting State
+- Change Character event
 ### Removed
 ### Changed
 - Strum Note code
