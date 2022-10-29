@@ -1138,7 +1138,7 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
-		AssetManager.clearUnusedMemory();
+		//AssetManager.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
