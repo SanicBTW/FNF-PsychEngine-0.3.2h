@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Charting State
 - Change Character event
+- Story Menu State
 ### Removed
 ### Changed
 - Strum Note code

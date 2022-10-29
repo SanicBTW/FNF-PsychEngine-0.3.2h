@@ -29,6 +29,7 @@ class StoryMenuState extends MusicBeatState
 
 	var scoreText:FlxText;
 
+	private static var lastDifficultyName:String = '';
 	var curDifficulty:Int = 1;
 
 	var txtWeekTitle:FlxText;
@@ -44,13 +45,11 @@ class StoryMenuState extends MusicBeatState
 	var grpLocks:FlxTypedGroup<FlxSprite>;
 
 	var difficultySelectors:FlxGroup;
-	var sprDifficultyGroup:FlxTypedGroup<FlxSprite>;
 	var sprDifficulty:FlxSprite;
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 
 	var loadedWeeks:Array<WeekData> = [];
-	private static var lastDifficultyName:String = '';
 
 	override function create()
 	{
@@ -159,7 +158,7 @@ class StoryMenuState extends MusicBeatState
 		
 		sprDifficulty = new FlxSprite(0, leftArrow.y);
 		sprDifficulty.antialiasing = ClientPrefs.globalAntialiasing;
-		difficultySelectors.add(sprDifficultyGroup);
+		difficultySelectors.add(sprDifficulty);
 
 		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
 		rightArrow.frames = ui_tex;
@@ -187,6 +186,7 @@ class StoryMenuState extends MusicBeatState
 		add(txtWeekTitle);
 
 		changeWeek();
+		changeDifficulty();
 
 		#if android
 		addVirtualPad(LEFT_FULL, A_B_C);
@@ -210,8 +210,6 @@ class StoryMenuState extends MusicBeatState
 			lerpScore = intendedScore;
 
 		scoreText.text = "WEEK SCORE:" + lerpScore;
-
-		// FlxG.watch.addQuick('font', scoreText.font);
 
 		if (!movedBack && !selectedWeek)
 		{
@@ -342,7 +340,7 @@ class StoryMenuState extends MusicBeatState
 			curDifficulty = 0;
 
 		var diff:String = CoolUtil.difficulties[curDifficulty];
-		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.formatToSongPath(diff));
+		var newImage:FlxGraphic = AssetManager.getAsset(AssetManager.formatToSongPath(diff), IMAGE, "images/menudifficulties");
 
 		if(sprDifficulty.graphic != newImage)
 		{
