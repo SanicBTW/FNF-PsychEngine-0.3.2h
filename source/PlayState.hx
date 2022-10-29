@@ -2599,7 +2599,8 @@ class PlayState extends MusicBeatState
 		FlxG.watch.addQuick("secShit", curSection);
 		FlxG.watch.addQuick("beatShit", curBeat);
 		FlxG.watch.addQuick("stepShit", curStep);
-		FlxG.watch.addQuick("curBPM", Conductor.bpm);
+		FlxG.watch.addQuick("bpmShit", Conductor.bpm);
+		FlxG.watch.addQuick("speedShit", songSpeed);
 
 		// RESET = Quick Game Over Screen
 		if (controls.RESET && !inCutscene && !endingSong)
@@ -4601,15 +4602,23 @@ class PlayState extends MusicBeatState
 			if (SONG.notes[curSection].changeBPM)
 			{
 				var lastBPM = Conductor.bpm;
-				var lastSpeed = songSpeed;
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
-				var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
-				
-				FlxG.log.add("BPM Change!
-				(Last BPM: " + lastBPM + " / New BPM: " + Conductor.bpm + " / BPM Diff: " + (Conductor.bpm - lastBPM) + ")
-				(Last Song Speed: " + lastSpeed + " / New Song Speed " + newSpeed + " / Speed Diff: " + (newSpeed - lastSpeed) + ")");
+				//var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
 
-				songSpeed = newSpeed;
+				var newSpeed = SONG.speed + (SONG.speed * ((Conductor.bpm / SONG.bpm) / 10));
+
+				//var newSpeed = SONG.speed + (SONG.speed * ((SONG.bpm / Conductor.bpm) * 0.1)); //gotta check this one it might be better but my maths kind of suck
+
+				//bad maybe?
+				if(songSpeedTween != null)
+					songSpeedTween.cancel();
+
+				songSpeedTween = FlxTween.tween(this, {songSpeed: newSpeed}, 1, {ease: FlxEase.linear, onComplete:
+					function (twn:FlxTween)
+					{
+						songSpeedTween = null;
+					}
+				});
 			}
 		}
 	}
