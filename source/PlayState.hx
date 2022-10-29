@@ -1131,22 +1131,6 @@ class PlayState extends MusicBeatState
 		}
 		RecalculateRating();
 
-		// precache if vol higher than 0
-		if (ClientPrefs.missVolume > 0)
-		{
-			CoolUtil.precacheSound('missnote1');
-			CoolUtil.precacheSound('missnote2');
-			CoolUtil.precacheSound('missnote3');
-		}
-
-		/*
-		if (ClientPrefs.hitsoundVolume > 0)
-			CoolUtil.precacheSound('hitsound');
-
-		if (PauseSubState.songName != null)
-			CoolUtil.precacheMusic(PauseSubState.songName);
-		else if (ClientPrefs.pauseMusic != null)
-			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));*/
 		#if desktop
 		// Updating Discord Rich Presence.
 		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
@@ -3504,8 +3488,7 @@ class PlayState extends MusicBeatState
 			pixelShitPart2 = "-pixel";
 		}
 
-		rating.loadGraphic(AssetManager.getAsset(daRating + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib"));
-		//rating.loadGraphic(Paths.getLibraryPath(ClientPrefs.ratingsStyle + "/" + daRating + pixelShitPart2 + ".png", "UILib"));
+		rating.loadGraphic(Paths.getLibraryPath(ClientPrefs.ratingsStyle + "/" + daRating + pixelShitPart2 + ".png", "UILib"));
 		rating.cameras = [camHUD];
 		rating.screenCenter();
 		rating.x = coolText.x - 40;
@@ -3561,8 +3544,7 @@ class PlayState extends MusicBeatState
 		}
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(pixelShitPart1 + "num" + Std.int(i) + pixelShitPart2, IMAGE, "images", "default"));
-			//var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
+			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
 			numScore.cameras = [camHUD];
 			numScore.screenCenter();
 			numScore.x = coolText.x + (43 * daLoop) - 90;
@@ -4067,7 +4049,6 @@ class PlayState extends MusicBeatState
 		if (!note.wasGoodHit)
 		{
 			if (ClientPrefs.hitsoundVolume > 0 && !note.hitsoundDisabled)
-				//FlxG.sound.play(AssetManager.getAsset('hitsound', SOUND, "sounds", "shared"), ClientPrefs.hitsoundVolume);
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 
 			if (!note.isSustainNote || released && note.isLiftNote)
@@ -4802,51 +4783,21 @@ class PlayState extends MusicBeatState
 
 	function precache()
 	{
-		// gotta look into this
 		// precache if vol higher than 0
 		if (ClientPrefs.missVolume > 0)
 		{
-			AssetManager.getAsset('missnote1', SOUND, "sounds", "shared");
-			AssetManager.getAsset('missnote2', SOUND, "sounds", "shared");
-			AssetManager.getAsset('missnote3', SOUND, "sounds", "shared");
+			CoolUtil.precacheSound('missnote1');
+			CoolUtil.precacheSound('missnote2');
+			CoolUtil.precacheSound('missnote3');
 		}
 
 		if (ClientPrefs.hitsoundVolume > 0)
-			AssetManager.getAsset('hitsound', SOUND, "sounds", "shared");
+			CoolUtil.precacheSound('hitsound');
 
 		if (PauseSubState.songName != null)
-			AssetManager.getAsset(PauseSubState.songName, SOUND, "music", "shared");
+			CoolUtil.precacheMusic(PauseSubState.songName);
 		else if (ClientPrefs.pauseMusic != null)
-			AssetManager.getAsset(AssetManager.formatToSongPath(ClientPrefs.pauseMusic), SOUND, "music", "shared");
-
-		var pixelShitPart1:String = "";
-		var pixelShitPart2:String = '';
-
-		if (isPixelStage)
-		{
-			pixelShitPart1 = "pixelUI/";
-			pixelShitPart2 = "-pixel";
-		}
-
-		//precche ratings
-		AssetManager.getAsset("sick" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
-		AssetManager.getAsset("good" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
-		AssetManager.getAsset("bad" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
-		AssetManager.getAsset("shit" + pixelShitPart2, IMAGE, ClientPrefs.ratingsStyle, "UILib");
-
-		//precache numscore
-		for (i in 0...10)
-		{
-			AssetManager.getAsset(pixelShitPart1 + "num" + Std.int(i) + pixelShitPart2, IMAGE, "images", "default");
-		}
-
-		//precache intro
-		/*
-		for (i in 1...3)
-		{
-			AssetManager.getAsset('intro' + i + introSoundsSuffix, SOUND, "sounds");
-		}
-		AssetManager.getAsset('introGo' + introSoundsSuffix, SOUND, "sounds");*/
+			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 	}
 
 	var curLight:Int = 0;

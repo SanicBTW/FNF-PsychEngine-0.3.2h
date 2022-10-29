@@ -17,13 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Charting State
 ### Removed
-- Paths.hx (not yet, just testing for now)
 ### Changed
 - Strum Note code
 - Difficulty code
 - The HUD Font back to the default one (VCR)
 - Some code moved to 0.6.2
-- Moved to AssetManager
 - Clear cache to AssetManager
 - Downgraded the LoadingState design (to base psych)
 - The LoadingState used when loading online songs
