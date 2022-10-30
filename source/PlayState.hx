@@ -261,7 +261,7 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		Paths.clearStoredMemory(false, false);
+		//Paths.clearStoredMemory(false, false);
 
 		instance = this;
 
