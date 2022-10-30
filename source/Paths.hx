@@ -269,7 +269,7 @@ class Paths
 				localTrackedAssets.push(key);
 				return currentTrackedSounds.get(soundKey);
 			}
-			else if (features.StorageAccess.exists(soundKey) == false)
+			else
 				return getSoundFromAssets(path, key, library);
 		}
 		else
@@ -277,8 +277,6 @@ class Paths
 		#else
 		return getSoundFromAssets(path, key, library);
 		#end
-		trace("returning null sound at " + key);
-		return null;
 	}
 
 	static private function getGraphicFromAssets(key:String, ?library:String)
@@ -301,10 +299,9 @@ class Paths
 	static private function getSoundFromAssets(path:String, key:String, ?library:String)
 	{
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
-		var coolPath:String = gottenPath;
 		gottenPath = gottenPath.substring(gottenPath.indexOf(":") + 1, gottenPath.length);
 
-		if (Assets.exists(coolPath))
+		if (Assets.exists(gottenPath))
 		{
 			if (!currentTrackedSounds.exists(gottenPath))
 				currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(getPath('$path/$key.$SOUND_EXT', SOUND, library)));
