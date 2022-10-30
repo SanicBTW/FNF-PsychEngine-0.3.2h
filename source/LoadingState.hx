@@ -44,7 +44,7 @@ class LoadingState extends MusicBeatState
 		var bg:FlxSprite = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, 0xffcaff4d);
 		add(bg);
 
-		funkay = new FlxSprite(0, 0).loadGraphic(Paths.image('funkay'));
+		funkay = new FlxSprite(0, 0).loadGraphic(AssetManager.returnGraphic('assets/images/funkay.png'));
 		funkay.setGraphicSize(0, FlxG.height);
 		funkay.updateHitbox();
 		funkay.antialiasing = ClientPrefs.globalAntialiasing;
@@ -71,13 +71,13 @@ class LoadingState extends MusicBeatState
 						checkLoadSong(getVocalPath());
 				}
 
-				for(i in 0...Paths.loadLibs.length)
-					checkLibrary(Paths.loadLibs[i]);
+				for(i in 0...AssetManager.loadLibs.length)
+					checkLibrary(AssetManager.loadLibs[i]);
 
 				if (directory != null && directory.length > 0 && directory != 'shared')
 				{
 					checkLibrary(directory);
-					Paths.clearLibs.push(directory);
+					AssetManager.clearLibs.push(directory);
 				}
 
 				var fadeTime = 0.5;
@@ -144,14 +144,12 @@ class LoadingState extends MusicBeatState
 
 	static function getSongPath()
 	{
-		var songKey:String = '${Paths.formatToSongPath(PlayState.SONG.song)}/Inst.${Paths.SOUND_EXT}';
-		return 'songs:assets/songs/$songKey';
+		return Paths.inst(PlayState.SONG.song);
 	}
 
 	static function getVocalPath()
 	{
-		var songKey:String = '${Paths.formatToSongPath(PlayState.SONG.song)}/Voices.${Paths.SOUND_EXT}';
-		return 'songs:assets/songs/$songKey';
+		return Paths.voices(PlayState.SONG.song);
 	}
 
 	inline static public function loadAndSwitchState(target:FlxState, loadSong:Bool = true)
@@ -169,6 +167,7 @@ class LoadingState extends MusicBeatState
 			directory = weekDir;
 
 		Paths.setCurrentLevel(directory);
+		AssetManager.setCurrentLevel(directory);
 
 		trace('Setting asset folder to ' + directory);
 
@@ -214,10 +213,10 @@ class LoadingState extends MusicBeatState
 	//i dont belive this is working butttt alright
 	static function areLibrariesLoaded():Bool
 	{
-		for(i in 0...Paths.loadLibs.length)
+		for(i in 0...AssetManager.loadLibs.length)
 		{
-			trace(Assets.getLibrary(Paths.loadLibs[i]) != null);
-			return Assets.getLibrary(Paths.loadLibs[i]) != null;
+			trace(Assets.getLibrary(AssetManager.loadLibs[i]) != null);
+			return Assets.getLibrary(AssetManager.loadLibs[i]) != null;
 		}
 		return false;
 	}

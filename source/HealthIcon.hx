@@ -36,13 +36,52 @@ class HealthIcon extends FlxSprite
 		if (this.char != char)
 		{
 			var name:String = 'icons/' + char;
+			var fullPath:String = "";
+			var file:Dynamic = null;
+			#if STORAGE_ACCESS
+			if (ClientPrefs.allowFileSys)
+			{
+				fullPath = haxe.io.Path.join([StorageAccess.getFolderPath(IMAGES), name + ".png"]);
 
+				if (!StorageAccess.exists(fullPath))
+				{
+					name = "icons/icon-" + char;
+					fullPath = haxe.io.Path.join([StorageAccess.getFolderPath(IMAGES), name + ".png"]);
+				}
+				if (!StorageAccess.exists(fullPath))
+				{
+					fullPath = "assets/images/";
+					if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+						name = 'icons/icon-' + char; // Older versions of psych engine's support
+					if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+						name = 'icons/icon-face'; // Prevents crash from missing icon
+					fullPath += name + ".png";
+				}
+
+				if (fullPath.contains("assets/"))
+					file = AssetManager.returnGraphic(fullPath, false);
+				else
+					file = AssetManager.returnGraphic(fullPath, true);
+			}
+			else
+			{
+				fullPath = "assets/images/";
+				if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+					name = 'icons/icon-' + char; // Older versions of psych engine's support
+				if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+					name = 'icons/icon-face'; // Prevents crash from missing icon
+				fullPath += name + ".png";
+				file = AssetManager.returnGraphic(fullPath, false);
+			}
+			#else
+			fullPath = "assets/images/";
 			if (!Paths.fileExists('images/' + name + '.png', IMAGE))
 				name = 'icons/icon-' + char; // Older versions of psych engine's support
 			if (!Paths.fileExists('images/' + name + '.png', IMAGE))
 				name = 'icons/icon-face'; // Prevents crash from missing icon
-			
-			var file:Dynamic = Paths.image(name);
+			fullPath += name + ".png";
+			file = AssetManager.returnGraphic(fullPath, false);
+			#end
 
 			loadGraphic(file); // Load stupidly first for getting the file size
 			loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); // Then load it fr

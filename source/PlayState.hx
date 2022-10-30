@@ -257,11 +257,10 @@ class PlayState extends MusicBeatState
 	//used for events coming from online or storage song, ik i should use
 	//the get content on generate song shit but nahhh gonna make it much easier lol
 	public static var songEvents:Array<Dynamic> = null;
-	var precacheList:Map<String, String> = new Map<String, String>();
 
 	override public function create()
 	{
-		Paths.clearStoredMemory(false, false);
+		//AssetManager.clearStoredMemory(false, false);
 
 		instance = this;
 
@@ -444,8 +443,8 @@ class PlayState extends MusicBeatState
 				halloweenWhite.blend = ADD;
 
 				// PRECACHE SOUNDS
-				precacheList.set('thunder_1', 'sound');
-				precacheList.set('thunder_2', 'sound');
+				CoolUtil.precacheSound('thunder_1');
+				CoolUtil.precacheSound('thunder_2');
 
 			case 'philly': // Week 3
 				if (!ClientPrefs.lowQuality)
@@ -481,6 +480,7 @@ class PlayState extends MusicBeatState
 				add(phillyTrain);
 
 				trainSound = new FlxSound().loadEmbedded(Paths.sound('train_passes'));
+				CoolUtil.precacheSound('train_passes');
 				FlxG.sound.list.add(trainSound);
 
 				var street:BGSprite = new BGSprite('philly/street', -40, 50);
@@ -543,7 +543,7 @@ class PlayState extends MusicBeatState
 					resetLimoKill();
 
 					// PRECACHE SOUND
-					precacheList.set('dancerdeath', 'sound');
+					CoolUtil.precacheSound('dancerdeath');
 				}
 
 				limo = new BGSprite('limo/limoDrive', -120, 550, 1, 1, ['Limo stage'], true);
@@ -585,7 +585,7 @@ class PlayState extends MusicBeatState
 
 				santa = new BGSprite('christmas/santa', -840, 150, 1, 1, ['santa idle in fear']);
 				add(santa);
-				precacheList.set('Lights_Shut_off', 'sound');
+				CoolUtil.precacheSound('Lights_Shut_off');
 
 			case 'mallEvil': // Week 5 - Winter Horrorland
 				var bg:BGSprite = new BGSprite('christmas/evilBG', -400, -500, 0.2, 0.2);
@@ -1138,21 +1138,7 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
-		Paths.clearUnusedMemory();
-
-		for (key => type in precacheList)
-		{
-			//trace('Key $key is type $type');
-			switch(type)
-			{
-				case 'image':
-					Paths.image(key);
-				case 'sound':
-					Paths.sound(key);
-				case 'music':
-					Paths.music(key);
-			}
-		}
+		AssetManager.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
@@ -1244,8 +1230,8 @@ class PlayState extends MusicBeatState
 			inCutscene = true;
 			Main.tweenFPS(false, 0.5);
 			Main.tweenMemory(false, 0.5);
-			precacheList.set('dialogue', 'sound');
-			precacheList.set('dialogueClose', 'sound');
+			CoolUtil.precacheSound('dialogue');
+			CoolUtil.precacheSound('dialogueClose');
 			psychDialogue = new DialogueBoxPsych(dialogueFile, song);
 			psychDialogue.scrollFactor.set();
 			if (endingSong)
@@ -1421,9 +1407,9 @@ class PlayState extends MusicBeatState
 				cutsceneHandler.endTime = 12;
 				cutsceneHandler.music = 'DISTORTO';
 
-				precacheList.set('wellWellWell', 'sound');
-				precacheList.set('killYou', 'sound');
-				precacheList.set('bfBeep', 'sound');
+				CoolUtil.precacheSound("wellWellWell");
+				CoolUtil.precacheSound("killYou");
+				CoolUtil.precacheSound("bfBeep");
 
 				var wellWellWell:FlxSound = new FlxSound().loadEmbedded(Paths.sound('wellWellWell'));
 				FlxG.sound.list.add(wellWellWell);
@@ -1469,7 +1455,7 @@ class PlayState extends MusicBeatState
 				tankman.x += 40;
 				tankman.y += 10;
 
-				precacheList.set('tankSong2', 'sound');
+				CoolUtil.precacheSound("tankSong2");
 
 				var tightBars:FlxSound = new FlxSound().loadEmbedded(Paths.sound('tankSong2'));
 				FlxG.sound.list.add(tightBars);
@@ -1508,7 +1494,7 @@ class PlayState extends MusicBeatState
 					spr.y += 100;
 				});
 				
-				precacheList.set('stressCutscene', 'sound');
+				CoolUtil.precacheSound("stressCutscene");
 
 				tankman2.frames = Paths.getSparrowAtlas('cutscenes/stress2');
 				insert(members.indexOf(dadGroup), tankman2);
@@ -1753,8 +1739,7 @@ class PlayState extends MusicBeatState
 				case 0:
 					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 				case 1:
-
-					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
+					var ready:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[0], IMAGE, "images"));
 					ready.cameras = [camHUD];
 					ready.scrollFactor.set();
 					ready.updateHitbox();
@@ -1774,7 +1759,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+					var set:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[1], IMAGE, "images"));
 					set.cameras = [camHUD];
 					set.scrollFactor.set();
 					set.updateHitbox();
@@ -1794,7 +1779,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
+					var go:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[2], IMAGE, "images"));
 					go.cameras = [camHUD];
 					go.scrollFactor.set();
 					go.updateHitbox();
@@ -4808,18 +4793,18 @@ class PlayState extends MusicBeatState
 		// precache if vol higher than 0
 		if (ClientPrefs.missVolume > 0)
 		{
-			precacheList.set('missnote1', 'sound');
-			precacheList.set('missnote2', 'sound');
-			precacheList.set('missnote3', 'sound');
+			CoolUtil.precacheSound('missnote1');
+			CoolUtil.precacheSound('missnote2');
+			CoolUtil.precacheSound('missnote3');
 		}
 
 		if (ClientPrefs.hitsoundVolume > 0)
-			precacheList.set('hitsound', "sounds");
+			CoolUtil.precacheSound('hitsound');
 
 		if (PauseSubState.songName != null)
-			precacheList.set(PauseSubState.songName, 'music');
+			CoolUtil.precacheMusic(PauseSubState.songName);
 		else if (ClientPrefs.pauseMusic != null)
-			precacheList.set(Paths.formatToSongPath(ClientPrefs.pauseMusic), 'music');
+			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
 	}
 
 	var curLight:Int = 0;

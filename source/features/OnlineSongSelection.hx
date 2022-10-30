@@ -66,8 +66,8 @@ class OnlineSongSelection extends MusicBeatState
     {
         super.create();
 
-		Paths.clearStoredMemory();
-		Paths.clearUnusedMemory();
+		AssetManager.clearStoredMemory();
+		AssetManager.clearUnusedMemory();
 
         var bg = new FlxSprite().loadGraphic(Paths.image('menuBGBlue'));
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
