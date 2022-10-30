@@ -148,8 +148,8 @@ class Character extends FlxSprite
 						frames = AssetManager.getAsset(json.image, SPARROW, "images");
 					else
 					{
-						var graphicPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS), json.image.replace("characters/", "") + ".png"]);
-						var xmlPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS), json.image.replace("characters/", "") + ".xml"]);
+						var graphicPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS_GRAPHICS), json.image.replace("characters/", "") + ".png"]);
+						var xmlPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS_GRAPHICS), json.image.replace("characters/", "") + ".xml"]);
 
 						var graphic = AssetManager.returnGraphic(graphicPath, true);
 						frames = FlxAtlasFrames.fromSparrow(graphic, sys.io.File.getContent(xmlPath));

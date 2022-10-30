@@ -98,4 +98,5 @@ enum abstract StorageFolders(String) to String
 	var IMAGES = "images";
 	var CHARACTERS = "characters";
 	var STAGES = "stages";
+	var CHARACTERS_GRAPHICS = "charactersGraphic";
 }
