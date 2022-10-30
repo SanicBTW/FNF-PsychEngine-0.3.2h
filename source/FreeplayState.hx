@@ -57,8 +57,8 @@ class FreeplayState extends MusicBeatState
 	{
 		songs = [];
 
-		AssetManager.clearStoredMemory();
-		AssetManager.clearUnusedMemory();
+		Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
 
 		transIn = FlxTransitionableState.defaultTransIn;
 		transOut = FlxTransitionableState.defaultTransOut;
@@ -313,8 +313,8 @@ class FreeplayState extends MusicBeatState
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 
-				var chartPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, poop]) + ".json";
-				var eventPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, "events"]) + ".json";
+				var chartPath = haxe.io.Path.join([StorageAccess.getFolderPath(DATA), songLowercase, poop]) + ".json";
+				var eventPath = haxe.io.Path.join([StorageAccess.getFolderPath(DATA), songLowercase, "events"]) + ".json";
 				if (!StorageAccess.exists(chartPath))
 				{
 					lime.app.Application.current.window.alert("Couldn't find the chart on your Local Storage", "Chart not found");

@@ -918,11 +918,12 @@ class ChartingState extends MusicBeatState
 			// vocals.stop();
 		}
 
-		var file:String = Paths.voices(currentSongName);
+		var songKey:String = '${Paths.formatToSongPath(PlayState.SONG.song)}/Voices.${Paths.SOUND_EXT}';
+		var file:String = 'songs:assets/songs/$songKey';
 		vocals = new FlxSound();
 		if (OpenFlAssets.exists(file))
 		{
-			vocals.loadEmbedded(file);
+			vocals.loadEmbedded(Paths.voices(currentSongName));
 			FlxG.sound.list.add(vocals);
 		}
 		generateSong();

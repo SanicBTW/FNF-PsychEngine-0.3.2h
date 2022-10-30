@@ -31,6 +31,8 @@ class StorageAccess
 		checkDirs.set("charactersGraphic", Path.join([checkDirs.get("images"), "characters"]));
 		checkDirs.set("icons", Path.join([checkDirs.get("images"), "icons"]));
 		checkDirs.set("stages", Path.join([checkDirs.get("main"), "stages"]));
+		checkDirs.set("music", Path.join([checkDirs.get("main"), "music"]));
+		checkDirs.set("sounds", Path.join([checkDirs.get("main"), "sounds"]));
 
 		for (varName => dirPath in checkDirs)
 		{
@@ -98,4 +100,6 @@ enum abstract StorageFolders(String) to String
 	var IMAGES = "images";
 	var CHARACTERS = "characters";
 	var STAGES = "stages";
+	var SOUNDS = "sounds";
+	var MUSIC = "music";
 }

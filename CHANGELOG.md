@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - OSU!Mania chart convertion ([Translated JS code](https://github.com/TheLeerName/mania-converter/blob/html/index.html#L562) to Haxe code) needs to be improved however
-- Kade 1.5.3 Ratings, slightly modified
 - Changing song speed when bpm changes
 - Character support from local storage
 - Icons support from local storage
@@ -27,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Difficulty code
 - The HUD Font back to the default one (VCR)
 - Some code moved to 0.6.2
-- Clear cache to AssetManager
+- Clear cache to Paths
 - Downgraded the LoadingState design (to base psych)
 - The LoadingState used when loading online songs
 
