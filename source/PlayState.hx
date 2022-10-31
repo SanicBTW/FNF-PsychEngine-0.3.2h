@@ -3394,7 +3394,8 @@ class PlayState extends MusicBeatState
 
 	private function popUpScore(note:Note = null):Void
 	{
-		var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+		//var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		vocals.volume = 1;
 
 		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
@@ -3406,6 +3407,9 @@ class PlayState extends MusicBeatState
 		var score:Int = 350;
 
 		var daRating = Conductor.judgeNote(noteDiff, Conductor.timeScale);
+		var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
+
+		//totalNotesHit += wife;
 
 		if (daRating == "miss")
 		{
@@ -3997,15 +4001,19 @@ class PlayState extends MusicBeatState
 			switch (daNote.noteType)
 			{
 				default:
-					combo = 0;
 					health -= daNote.missHealth;
-					songMisses++;
-					vocals.volume = 0;
-					if (!practiceMode)
-						songScore -= 10;
+					combo = 0;
 
-					totalPlayed++;
-					RecalculateRating();
+					if (!practiceMode)
+						songScore -= 5;
+					if (!endingSong)
+					{
+						songMisses++;
+						songScore -= 15;
+						totalNotesHit -= 1;
+					}
+
+					vocals.volume = 0;
 
 					var char:Character = boyfriend;
 					if (daNote.gfNote)
@@ -4022,6 +4030,8 @@ class PlayState extends MusicBeatState
 
 					if (ClientPrefs.missVolume > 0)
 						FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
+
+					RecalculateRating();
 			}
 		}
 	}
@@ -4034,11 +4044,15 @@ class PlayState extends MusicBeatState
 			combo = 0;
 
 			if (!practiceMode)
-				songScore -= 10;
+				songScore -= 5;
 			if (!endingSong)
+			{
 				songMisses++;
-			totalPlayed++;
-			RecalculateRating();
+				songScore -= 15;
+				totalNotesHit -= 1;
+			}
+
+			vocals.volume = 0;
 
 			var char:Character = boyfriend;
 
@@ -4048,6 +4062,8 @@ class PlayState extends MusicBeatState
 			vocals.volume = 0;
 			if (ClientPrefs.missVolume > 0)
 				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
+
+			RecalculateRating();
 		}
 	}
 
