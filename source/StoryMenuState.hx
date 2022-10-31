@@ -16,6 +16,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.net.curl.CURLCode;
 import openfl.system.System;
+import substates.*;
 
 using StringTools;
 
@@ -246,8 +247,11 @@ class StoryMenuState extends MusicBeatState
 			if (controls.RESET)
 			{
 				persistentUpdate = false;
+				#if android
+				openSubState(new SubstatesMenu(['', curDifficulty, '', curWeek]));
+				#else
 				openSubState(new ResetScoreSubState('', curDifficulty, '', curWeek));
-				// FlxG.sound.play(Paths.sound('scrollMenu'));
+				#end
 			}
 			else if (controls.ACCEPT)
 			{

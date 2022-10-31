@@ -56,6 +56,26 @@ class ClientPrefs
 	public static var ratingsStyle:String = "Classic";
 	public static var allowOnlineFetching:Bool = false;
 	public static var smallRatingSize:Bool = true;
+	public static var gameplaySettings:Map<String, Dynamic> = [
+		'scrollspeed' => 1.0,
+		'scrolltype' => 'multiplicative', 
+		// anyone reading this, amod is multiplicative speed mod, cmod is constant speed mod, and xmod is bpm based speed mod.
+		// an amod example would be chartSpeed * multiplier
+		// cmod would just be constantSpeed = chartSpeed
+		// and xmod basically works by basing the speed on the bpm.
+		// iirc (beatsPerSecond * (conductorToNoteDifference / 1000)) * noteSize (110 or something like that depending on it, prolly just use note.height)
+		// bps is calculated by bpm / 60
+		// oh yeah and you'd have to actually convert the difference to seconds which I already do, because this is based on beats and stuff. but it should work
+		// just fine. but I wont implement it because I don't know how you handle sustains and other stuff like that.
+		// oh yeah when you calculate the bps divide it by the songSpeed or rate because it wont scroll correctly when speeds exist.
+		'songspeed' => 1.0,
+		'healthgain' => 1.0,
+		'healthloss' => 1.0,
+		'instakill' => false,
+		'practice' => false,
+		'botplay' => false,
+		'opponentplay' => false
+	];
 
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
 		//Key Bind, Name for ControlsSubState
@@ -235,6 +255,14 @@ class ClientPrefs
 			smallRatingSize = FlxG.save.data.smallRatingSize;
 		if (FlxG.save.data.shitWindow != null)
 			shitWindow = FlxG.save.data.shitWindow;
+		if(FlxG.save.data.gameplaySettings != null)
+		{
+			var savedMap:Map<String, Dynamic> = FlxG.save.data.gameplaySettings;
+			for (name => value in savedMap)
+			{
+				gameplaySettings.set(name, value);
+			}
+		}
 	}
 
 	static function saveFlxGPrefs()
@@ -286,6 +314,7 @@ class ClientPrefs
 		FlxG.save.data.allowOnlineFetching = allowOnlineFetching;
 		FlxG.save.data.smallRatingSize = smallRatingSize;
 		FlxG.save.data.shitWindow = shitWindow;
+		FlxG.save.data.gameplaySettings = gameplaySettings;
 
 		FlxG.save.flush();
 	}
@@ -314,5 +343,9 @@ class ClientPrefs
 			len = copiedArray.length;
 		}
 		return copiedArray;
+	}
+
+	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic {
+		return (gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue);
 	}
 }

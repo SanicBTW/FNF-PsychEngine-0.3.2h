@@ -47,6 +47,7 @@ import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import Note.EventNote;
 import animateatlas.AtlasFrameMaker;
+import substates.*;
 
 using StringTools;
 
@@ -93,6 +94,7 @@ class PlayState extends MusicBeatState
 
 	public var songSpeedTween:FlxTween;
 	public var songSpeed(default, set):Float = 1;
+	public var songSpeedType:String = "multiplicative";
 	public var noteKillOffset:Float = 350;
 
 	public var spawnTime:Float = 2000;
@@ -146,11 +148,14 @@ class PlayState extends MusicBeatState
 	private var endingSong:Bool = false;
 	private var startingSong:Bool = false;
 	private var updateTime:Bool = false;
+	public static var chartingMode:Bool = false;
 
-	public static var practiceMode:Bool = false;
-	public static var usedPractice:Bool = false;
-	public static var changedDifficulty:Bool = false;
-	public static var cpuControlled:Bool = false;
+	//Gameplay settings
+	public var healthGain:Float = 1;
+	public var healthLoss:Float = 1;
+	public var instakillOnMiss:Bool = false;
+	public var cpuControlled:Bool = false;
+	public var practiceMode:Bool = false;
 
 	var botplaySine:Float = 0;
 	var botplayTxt:FlxText;
@@ -268,11 +273,23 @@ class PlayState extends MusicBeatState
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 
-		//gotta check this up
-		if (inst == null)
-			inst = Paths.inst(PlayState.SONG.song);
-		if (PlayState.SONG.needsVoices && voices == null)
-			voices = Paths.voices(PlayState.SONG.song);
+		healthGain = ClientPrefs.getGameplaySetting('healthgain', 1);
+		healthLoss = ClientPrefs.getGameplaySetting('healthloss', 1);
+		instakillOnMiss = ClientPrefs.getGameplaySetting('instakill', false);
+		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
+		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
+
+		if (Assets.exists(Paths.inst(PlayState.SONG.song)))
+		{
+			if (inst == null)
+				inst = Paths.inst(PlayState.SONG.song);
+		}
+
+		if (Assets.exists(Paths.voices(PlayState.SONG.song)))
+		{
+			if (voices == null && PlayState.SONG.needsVoices)
+				voices = Paths.voices(PlayState.SONG.song);
+		}
 
 		practiceMode = false;
 		camGame = new FlxCamera();
@@ -319,6 +336,7 @@ class PlayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(SONG.song);
 
 		curStage = PlayState.SONG.stage;
+		trace('stage is: ' + curStage);
 		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
 		{
 			switch (songName)
@@ -989,12 +1007,12 @@ class PlayState extends MusicBeatState
 		healthBarBG.sprTracker = healthBar;
 
 		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - (iconP1.height / 2);
+		iconP1.y = healthBar.y - 75;
 		iconP1.visible = !ClientPrefs.hideHud;
 		add(iconP1);
 
 		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - (iconP2.height / 2);
+		iconP2.y = healthBar.y - 75;
 		iconP2.visible = !ClientPrefs.hideHud;
 		add(iconP2);
 		reloadHealthBarColors();
@@ -1853,7 +1871,15 @@ class PlayState extends MusicBeatState
 	{
 		System.gc();
 
-		songSpeed = SONG.speed;
+		songSpeedType = ClientPrefs.getGameplaySetting('scrolltype','multiplicative');
+		
+		switch(songSpeedType)
+		{
+			case "multiplicative":
+				songSpeed = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1);
+			case "constant":
+				songSpeed = ClientPrefs.getGameplaySetting('scrollspeed', 1);
+		}
 
 		var songData = SONG;
 		Conductor.changeBPM(songData.bpm);
@@ -3030,12 +3056,14 @@ class PlayState extends MusicBeatState
 				}
 
 			case 'Change Scroll Speed':
+				if (songSpeedType == "constant")
+					return;
 				var val1:Float = Std.parseFloat(value1);
 				var val2:Float = Std.parseFloat(value2);
 				if(Math.isNaN(val1)) val1 = 1;
 				if(Math.isNaN(val2)) val2 = 0;
 
-				var newValue:Float = SONG.speed * val1;
+				var newValue:Float = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1) * val1;
 
 				if(val2 <= 0)
 				{
@@ -3228,6 +3256,7 @@ class PlayState extends MusicBeatState
 		}
 	}
 
+	public var transitioning = false;
 	function endSong():Void
 	{
 		timeBarBG.visible = false;
@@ -3243,106 +3272,95 @@ class PlayState extends MusicBeatState
 		seenCutscene = false;
 		KillNotes();
 
-		if (SONG.validScore && !cpuControlled && !changedDifficulty && !usedPractice)
+		var practice = ClientPrefs.getGameplaySetting('practice', false);
+		var botplay = ClientPrefs.getGameplaySetting('botplay', false);
+
+		if (!transitioning)
 		{
-			#if !switch
-			var percent:Float = ratingPercent;
-			if (Math.isNaN(percent))
-				percent = 0;
-			Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
-			#end
-		}
-
-		if (isStoryMode)
-		{
-			campaignScore += songScore;
-			campaignMisses += songMisses;
-
-			storyPlaylist.remove(storyPlaylist[0]);
-
-			if (storyPlaylist.length <= 0)
+			if (SONG.validScore && practice == false && botplay == false)
 			{
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
-
-				if (FlxTransitionableState.skipNextTransIn)
-				{
-					CustomFadeTransition.nextCamera = null;
-				}
-				MusicBeatState.switchState(new StoryMenuState());
-
-				if (usedPractice == false && changedDifficulty == false && cpuControlled == false)
-				{
-					StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
-
-					if (SONG.validScore)
-					{
-						Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
-					}
-
-					FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
-					FlxG.save.flush();
-				}
-				usedPractice = false;
-				changedDifficulty = false;
-				cpuControlled = false;
+				#if !switch
+				var percent:Float = ratingPercent;
+				if (Math.isNaN(percent))
+					percent = 0;
+				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
+				#end
 			}
-			else
+
+			if (isStoryMode)
 			{
-				// btw DID I JUST FUCKING FIX THE FINISH SONG ISSUE, BRO I CANT BELIVE IT WAS THIS EASY FUCK
-				// i swear to god, i need to learn how to name variables :skull:
-				var difficulty:String = CoolUtil.getDifficultyFilePath();
-				var nextSong = Paths.formatToSongPath(PlayState.storyPlaylist[0]);
+				campaignScore += songScore;
+				campaignMisses += songMisses;
 
-				trace('LOADING NEXT SONG');
-				trace(nextSong + difficulty);
+				storyPlaylist.remove(storyPlaylist[0]);
 
-				var winterHorrorlandNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
-				if (winterHorrorlandNext)
+				if (storyPlaylist.length <= 0)
 				{
-					var blackShit:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom,
-						-FlxG.height * FlxG.camera.zoom).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
-					blackShit.scrollFactor.set();
-					add(blackShit);
-					camHUD.visible = false;
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
-					FlxG.sound.play(Paths.sound('Lights_Shut_off'));
-				}
+					if (FlxTransitionableState.skipNextTransIn)
+						CustomFadeTransition.nextCamera = null;
 
-				prevCamFollow = camFollow;
-				prevCamFollowPos = camFollowPos;
+					MusicBeatState.switchState(new StoryMenuState());
 
-				PlayState.SONG = Song.loadFromJson(nextSong + difficulty, nextSong);
-				// make these null to avoid any errors in the future
-				PlayState.inst = null;
-				PlayState.voices = null;
-				System.gc();
-				FlxG.sound.music.stop();
-
-				if (winterHorrorlandNext)
-				{
-					new FlxTimer().start(1.5, function(tmr:FlxTimer)
+					if (practice == false && cpuControlled == false)
 					{
-						LoadingState.loadAndSwitchState(new PlayState());
-					});
+						StoryMenuState.weekCompleted.set(WeekData.weeksList[storyWeek], true);
+
+						if (SONG.validScore)
+							Highscore.saveWeekScore(WeekData.getWeekFileName(), campaignScore, storyDifficulty);
+
+						FlxG.save.data.weekCompleted = StoryMenuState.weekCompleted;
+						FlxG.save.flush();
+					}
 				}
 				else
 				{
-					LoadingState.loadAndSwitchState(new PlayState());
+					var diff:String = CoolUtil.getDifficultyFilePath();
+					var next = Paths.formatToSongPath(PlayState.storyPlaylist[0]);
+
+					trace('loading next song', next + diff);
+
+					var winterHorrorNext = (Paths.formatToSongPath(SONG.song) == "eggnog");
+					if (winterHorrorNext)
+					{
+						var black:FlxSprite = new FlxSprite(-FlxG.width * FlxG.camera.zoom, -FlxG.height * FlxG.camera.zoom).makeGraphic(FlxG.width * 3, FlxG.height * 3, FlxColor.BLACK);
+						black.scrollFactor.set();
+						add(black);
+						camHUD.visible = false;
+
+						FlxG.sound.play(Paths.sound('Lights_Shut_off'));
+					}
+
+					prevCamFollow = camFollow;
+					prevCamFollowPos = camFollowPos;
+
+					PlayState.SONG = Song.loadFromJson(next + diff, next);
+					PlayState.inst = null;
+					PlayState.voices = null;
+					System.gc();
+					FlxG.sound.music.stop();
+
+					if (winterHorrorNext)
+					{
+						new FlxTimer().start(1.5, function(tmr:FlxTimer)
+						{
+							LoadingState.loadAndSwitchState(new PlayState());
+						});
+					}
+					else
+						LoadingState.loadAndSwitchState(new PlayState());
 				}
 			}
-		}
-		else
-		{
-			trace('WENT BACK TO FREEPLAY??');
-			if (FlxTransitionableState.skipNextTransIn)
+			else
 			{
-				CustomFadeTransition.nextCamera = null;
+				if (FlxTransitionableState.skipNextTransIn)
+					CustomFadeTransition.nextCamera = null;
+
+				MusicBeatState.switchState(new FreeplayState());
+				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			}
-			MusicBeatState.switchState(new FreeplayState());
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
-			usedPractice = false;
-			changedDifficulty = false;
-			cpuControlled = false;
+			transitioning = true;
 		}
 	}
 
@@ -3979,7 +3997,12 @@ class PlayState extends MusicBeatState
 			switch (daNote.noteType)
 			{
 				default:
-					health -= daNote.missHealth;
+					health -= daNote.missHealth * healthLoss;
+					if(instakillOnMiss)
+					{
+						vocals.volume = 0;
+						doDeathCheck(true);
+					}
 					combo = 0;
 
 					if (!practiceMode)
@@ -4018,7 +4041,12 @@ class PlayState extends MusicBeatState
 	{
 		if (!boyfriend.stunned)
 		{
-			health -= 0.05;
+			health -= 0.05 * healthLoss;
+			if(instakillOnMiss)
+			{
+				vocals.volume = 0;
+				doDeathCheck(true);
+			}
 			combo = 0;
 
 			if (!practiceMode)
@@ -4062,7 +4090,7 @@ class PlayState extends MusicBeatState
 			else if (note.isSustainNote)
 				totalNotesHit++;
 
-			health += note.hitHealth;
+			health += note.hitHealth * healthGain;
 
 			if (!note.noAnimation)
 			{
@@ -4575,13 +4603,18 @@ class PlayState extends MusicBeatState
 			{
 				var lastBPM = Conductor.bpm;
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
-				//var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
 
-				var newSpeed = SONG.speed + (SONG.speed * ((Conductor.bpm / SONG.bpm) / 10));
+				//uh
+				if (songSpeedType != "constant")
+				{
+					//var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
 
-				//var newSpeed = SONG.speed + (SONG.speed * ((SONG.bpm / Conductor.bpm) * 0.1)); //gotta check this one it might be better but my maths kind of suck
+					var newSpeed = SONG.speed + (SONG.speed * ((Conductor.bpm / SONG.bpm) / 10));
 
-				songSpeed = newSpeed;
+					//var newSpeed = SONG.speed + (SONG.speed * ((SONG.bpm / Conductor.bpm) * 0.1)); //gotta check this one it might be better but my maths kind of suck
+
+					songSpeed = newSpeed;
+				}
 			}
 		}
 	}

@@ -1,5 +1,6 @@
-package;
+package substates;
 
+import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -20,6 +21,8 @@ class ResetScoreSubState extends MusicBeatSubstate
 	var song:String;
 	var difficulty:Int;
 	var week:Int;
+
+	public var blockInputs:Bool = true;
 
 	// Week -1 = Freeplay
 	public function new(song:String, difficulty:Int, character:String, week:Int = -1)
@@ -81,6 +84,17 @@ class ResetScoreSubState extends MusicBeatSubstate
 		#end
 	}
 
+	override function create()
+	{
+		//bruh
+		new FlxTimer().start(0.5, function(tmr:FlxTimer)
+		{
+			blockInputs = false;
+		});
+
+		super.create();
+	}
+
 	override function update(elapsed:Float)
 	{
 		bg.alpha += elapsed * 1.5;
@@ -95,37 +109,41 @@ class ResetScoreSubState extends MusicBeatSubstate
 		if (week == -1)
 			icon.alpha += elapsed * 2.5;
 
-		if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
+		if (!blockInputs)
 		{
-			FlxG.sound.play(Paths.sound('scrollMenu'), 1);
-			onYes = !onYes;
-			updateOptions();
-		}
-		if (controls.BACK)
-		{
-			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-			close();
-		}
-		else if (controls.ACCEPT)
-		{
-			if (onYes)
+			if (controls.UI_LEFT_P || controls.UI_RIGHT_P)
 			{
-				if (week == -1)
-				{
-					Highscore.resetSong(song, difficulty);
-				}
-				else
-				{
-					Highscore.resetWeek(WeekData.weeksList[week], difficulty);
-				}
+				FlxG.sound.play(Paths.sound('scrollMenu'), 1);
+				onYes = !onYes;
+				updateOptions();
 			}
-			FlxTransitionableState.skipNextTransOut = true;
-			FlxG.resetState();
-			FlxG.sound.play(Paths.sound('cancelMenu'), 1);
-			close();
+			if (controls.BACK)
+			{
+				FlxTransitionableState.skipNextTransOut = true;
+				FlxG.resetState();
+				FlxG.sound.play(Paths.sound('cancelMenu'), 1);
+				close();
+			}
+			else if (controls.ACCEPT)
+			{
+				if (onYes)
+				{
+					if (week == -1)
+					{
+						Highscore.resetSong(song, difficulty);
+					}
+					else
+					{
+						Highscore.resetWeek(WeekData.weeksList[week], difficulty);
+					}
+				}
+				FlxTransitionableState.skipNextTransOut = true;
+				FlxG.resetState();
+				FlxG.sound.play(Paths.sound('cancelMenu'), 1);
+				close();
+			}
 		}
+
 		super.update(elapsed);
 	}
 

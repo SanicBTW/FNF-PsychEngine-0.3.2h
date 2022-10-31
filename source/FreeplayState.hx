@@ -1,5 +1,6 @@
 package;
 
+import substates.*;
 import WeekData;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -177,7 +178,7 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = "Press " + #if android "C" #else "Reset" #end + " to reset your Score and Accuracy";
+		var leText:String = #if !android "Press Reset to reset your Score and Accuracy" #else "Press C to open the substates menu" #end;
 		var size:Int = 16;
 		#if ONLINE_SONGS
 		if(ClientPrefs.allowOnlineFetching)
@@ -354,8 +355,19 @@ class FreeplayState extends MusicBeatState
 		else if (controls.RESET)
 		{
 			persistentUpdate = false;
+			#if android
+			//needs to get improved
+			openSubState(new SubstatesMenu([songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter]));
+			#else
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+			#end
 			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
+
+		if (FlxG.keys.justPressed.CONTROL)
+		{
+			persistentUpdate = false;
+			openSubState(new GameplayChangersSubstate());
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
