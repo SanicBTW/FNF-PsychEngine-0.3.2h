@@ -49,7 +49,6 @@ class ClientPrefs
 	public static var answeredReq:Bool = false;
 	public static var ghostTappingBFSing:Bool = true;
 	public static var comboStacking:Bool = true;
-	public static var cameraMovementDisplacement:Float = 15; // about to be deprecated
 	public static var pauseOnFocusLost:Bool = true;
 	public static var snapCameraOnGameover:Bool = true;
 	public static var counterFont:String = "Funkin";
@@ -180,7 +179,6 @@ class ClientPrefs
 			if (Main.memoryVar != null)
 				Main.memoryVar.visible = showMemory;
 		}
-
 		if (FlxG.save.data.optScoreZoom != null)
 			optScoreZoom = FlxG.save.data.optScoreZoom;
 		if (FlxG.save.data.cameraMovement != null)
@@ -221,8 +219,6 @@ class ClientPrefs
 			ghostTappingBFSing = FlxG.save.data.ghostTappingBFSing;
 		if (FlxG.save.data.comboStacking != null)
 			comboStacking = FlxG.save.data.comboStacking;
-		if (FlxG.save.data.cameraMovementDisplacement != null)
-			cameraMovementDisplacement = FlxG.save.data.cameraMovementDisplacement;
 		if (FlxG.save.data.pauseOnFocusLost != null)
 			pauseOnFocusLost = FlxG.save.data.pauseOnFocusLost;
 		if (FlxG.save.data.snapCameraOnGameover != null)
@@ -282,7 +278,6 @@ class ClientPrefs
 		FlxG.save.data.answeredReq = answeredReq;
 		FlxG.save.data.ghostTappingBFSing = ghostTappingBFSing;
 		FlxG.save.data.comboStacking = comboStacking;
-		FlxG.save.data.cameraMovementDisplacement = cameraMovementDisplacement;
 		FlxG.save.data.pauseOnFocusLost = pauseOnFocusLost;
 		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
 		FlxG.save.data.counterFont = counterFont;

@@ -3420,7 +3420,6 @@ class PlayState extends MusicBeatState
 		switch (daRating)
 		{
 			case 'shit':
-				//totalNotesHit += 0.25;
 				note.ratingMod = 0.25;
 				score = -300;
 				combo = 0;
@@ -3431,7 +3430,6 @@ class PlayState extends MusicBeatState
 					shits++;
 				}
 			case 'bad':
-				//totalNotesHit += 0.5;
 				note.ratingMod = 0.5;
 				score = 0;
 				health -= 0.06;
@@ -3440,7 +3438,6 @@ class PlayState extends MusicBeatState
 					bads++;
 				}
 			case 'good':
-				//totalNotesHit += 0.75;
 				note.ratingMod = 0.75;
 				score = 200;
 				if (!note.ratingDisabled)
@@ -3448,7 +3445,6 @@ class PlayState extends MusicBeatState
 					goods++;
 				}
 			case 'sick':
-				//totalNotesHit += 1;
 				note.ratingMod = 1;
 				if (!note.ratingDisabled)
 				{
@@ -3464,7 +3460,10 @@ class PlayState extends MusicBeatState
 
 		songScore += score;
 		if (!note.ratingDisabled)
+		{
+			songHits++;
 			updateAccuracy(false);
+		}
 
 		/*
 		if (!note.ratingDisabled)
@@ -4609,16 +4608,7 @@ class PlayState extends MusicBeatState
 
 				//var newSpeed = SONG.speed + (SONG.speed * ((SONG.bpm / Conductor.bpm) * 0.1)); //gotta check this one it might be better but my maths kind of suck
 
-				//bad maybe?
-				if(songSpeedTween != null)
-					songSpeedTween.cancel();
-
-				songSpeedTween = FlxTween.tween(this, {songSpeed: newSpeed}, 1, {ease: FlxEase.linear, onComplete:
-					function (twn:FlxTween)
-					{
-						songSpeedTween = null;
-					}
-				});
+				songSpeed = newSpeed;
 			}
 		}
 	}
@@ -4717,14 +4707,14 @@ class PlayState extends MusicBeatState
 	}
 
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
+	var camDisp:Float = 8;
 	function cameraDisplacement(character:Character, mustHit:Bool)
 	{
 		if (ClientPrefs.cameraMovement)
 		{
 			if (SONG.notes[Std.int(curStep / 16)] != null)
 			{
-				if (SONG.notes[Std.int(curStep / 16)].mustHitSection
-					&& mustHit
+				if (SONG.notes[Std.int(curStep / 16)].mustHitSection && mustHit
 					|| (!SONG.notes[Std.int(curStep / 16)].mustHitSection && !mustHit))
 				{
 					if (character.animation.curAnim != null)
@@ -4734,23 +4724,23 @@ class PlayState extends MusicBeatState
 						switch (character.animation.curAnim.name)
 						{
 							case 'singUP':
-								camDisplaceY -= ClientPrefs.cameraMovementDisplacement;
+								camDisplaceY -= camDisp;
 							case 'singDOWN':
-								camDisplaceY += ClientPrefs.cameraMovementDisplacement;
+								camDisplaceY += camDisp;
 							case 'singLEFT':
-								camDisplaceX -= ClientPrefs.cameraMovementDisplacement;
+								camDisplaceX -= camDisp;
 							case 'singRIGHT':
-								camDisplaceX += ClientPrefs.cameraMovementDisplacement;
+								camDisplaceX += camDisp;
 
 							//funky - move to the opposite direction as it missed, would be cool to get the note direction to move in that direction lol
 							case 'singUPmiss':
-								camDisplaceY += ClientPrefs.cameraMovementDisplacement;
+								camDisplaceY += camDisp;
 							case "singDOWNmiss":
-								camDisplaceY -= ClientPrefs.cameraMovementDisplacement;
+								camDisplaceY -= camDisp;
 							case "singLEFTmiss":
-								camDisplaceX += ClientPrefs.cameraMovementDisplacement;
+								camDisplaceX += camDisp;
 							case "singRIGHTmiss":
-								camDisplaceX -= ClientPrefs.cameraMovementDisplacement;
+								camDisplaceX -= camDisp;
 						}
 					}
 				}
