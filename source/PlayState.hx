@@ -3408,8 +3408,7 @@ class PlayState extends MusicBeatState
 
 		var daRating = Conductor.judgeNote(noteDiff, Conductor.timeScale);
 		var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
-
-		//totalNotesHit += wife;
+		totalNotesHit += wife;
 
 		if (daRating == "miss")
 		{
@@ -3421,7 +3420,7 @@ class PlayState extends MusicBeatState
 		switch (daRating)
 		{
 			case 'shit':
-				totalNotesHit += 0.25;
+				//totalNotesHit += 0.25;
 				note.ratingMod = 0.25;
 				score = -300;
 				combo = 0;
@@ -3432,7 +3431,7 @@ class PlayState extends MusicBeatState
 					shits++;
 				}
 			case 'bad':
-				totalNotesHit += 0.5;
+				//totalNotesHit += 0.5;
 				note.ratingMod = 0.5;
 				score = 0;
 				health -= 0.06;
@@ -3441,7 +3440,7 @@ class PlayState extends MusicBeatState
 					bads++;
 				}
 			case 'good':
-				totalNotesHit += 0.75;
+				//totalNotesHit += 0.75;
 				note.ratingMod = 0.75;
 				score = 200;
 				if (!note.ratingDisabled)
@@ -3449,7 +3448,7 @@ class PlayState extends MusicBeatState
 					goods++;
 				}
 			case 'sick':
-				totalNotesHit += 1;
+				//totalNotesHit += 1;
 				note.ratingMod = 1;
 				if (!note.ratingDisabled)
 				{
@@ -3465,11 +3464,15 @@ class PlayState extends MusicBeatState
 
 		songScore += score;
 		if (!note.ratingDisabled)
+			updateAccuracy(false);
+
+		/*
+		if (!note.ratingDisabled)
 		{
 			songHits++;
 			totalPlayed++;
 			RecalculateRating();
-		}
+		}*/
 
 		if (ClientPrefs.optScoreZoom)
 		{
@@ -4031,7 +4034,7 @@ class PlayState extends MusicBeatState
 					if (ClientPrefs.missVolume > 0)
 						FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
 
-					RecalculateRating();
+					updateAccuracy();
 			}
 		}
 	}
@@ -4063,7 +4066,7 @@ class PlayState extends MusicBeatState
 			if (ClientPrefs.missVolume > 0)
 				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
 
-			RecalculateRating();
+			updateAccuracy();
 		}
 	}
 
@@ -4081,6 +4084,8 @@ class PlayState extends MusicBeatState
 				if (combo > 9999)
 					combo = 9999;
 			}
+			else if (note.isSustainNote)
+				totalNotesHit++;
 
 			health += note.hitHealth;
 
@@ -4151,6 +4156,8 @@ class PlayState extends MusicBeatState
 				if (boyfriend.holdTimer + 0.2 > targetHold)
 					boyfriend.holdTimer = targetHold - 0.2;
 			}
+
+			updateAccuracy();
 		}
 	}
 
@@ -4649,7 +4656,7 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+			//ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
 			if (ratingPercent >= 1)
 			{
 				ratingString = ratingStuff[ratingStuff.length - 1][0];
@@ -4821,6 +4828,14 @@ class PlayState extends MusicBeatState
 			CoolUtil.precacheMusic(PauseSubState.songName);
 		else if (ClientPrefs.pauseMusic != null)
 			CoolUtil.precacheMusic(Paths.formatToSongPath(ClientPrefs.pauseMusic));
+	}
+
+	function updateAccuracy(incrementTP:Bool = true)
+	{
+		if (incrementTP)
+			totalPlayed++;
+		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+		RecalculateRating();
 	}
 
 	var curLight:Int = 0;
