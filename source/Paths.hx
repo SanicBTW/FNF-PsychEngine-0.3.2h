@@ -1,5 +1,6 @@
 package;
 
+import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -11,6 +12,8 @@ using StringTools;
 
 class Paths
 {
+	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
+	public static var loadLibs:Array<String> = ["shared", "UILib"];
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
 
@@ -146,5 +149,28 @@ class Paths
 	inline static public function formatToSongPath(path:String)
 	{
 		return path.toLowerCase().replace(' ', '-');
+	}
+
+	public static function clearCache(clearLibraries:Bool = true, setNulls:Bool = true)
+	{
+		if (clearLibraries)
+        {
+            for(i in 0...clearLibs.length)
+            {
+                Assets.cache.clear(clearLibs[i]);
+            }
+
+            clearLibs = ["shared", "UILib", "songs", "images"];
+        }
+
+        if(setNulls)
+        {
+            PlayState.inst = null;
+            PlayState.voices = null;
+            PlayState.SONG = null;
+            PlayState.songEvents = null;
+        }
+
+		System.gc();
 	}
 }

@@ -1,6 +1,5 @@
 package;
 
-import features.StorageAccess;
 import animateatlas.AtlasFrameMaker;
 import Section.SwagSection;
 import flixel.FlxG;
@@ -96,94 +95,33 @@ class Character extends FlxSprite
 			// case 'your character name in case you want to hardcode him instead':
 
 			default:
-				var path:String = "";
-				var rawJson = null;
-				var json:CharacterFile = null;
-				var spriteType = "sparrow";
-
-				#if !STORAGE_ACCESS
-				path = 'assets/characters/' + curCharacter + ".json";
+				var characterPath:String = 'characters/' + curCharacter + '.json';
+				var path:String = Paths.getPreloadPath(characterPath);
 				if (!Assets.exists(path))
 				{
-					path = 'assets/characters/' + DEFAULT_CHARACTER + ".json";
+					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER +
+						'.json'); // If a character couldn't be found, change him to BF just to prevent a crash
 				}
 
-				rawJson = Assets.getText(path);
+				var rawJson = Assets.getText(path);
+				var spriteType = "sparrow";
 
-				json = cast Json.parse(rawJson);
-				if (Assets.exists(AssetManager.getAsset(json.image + ".txt", DIRECTORY, "images")))
+				var json:CharacterFile = cast Json.parse(rawJson);
+				if (Assets.exists(Paths.getPath('images/' + json.image + '.txt', TEXT)))
 					spriteType = "packer";
 
-				if (Assets.exists(AssetManager.getAsset(json.image + "/Animation.json", DIRECTORY, "images")))
+				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
 					spriteType = "texture";
 
 				switch (spriteType)
 				{
 					case "packer":
-						frames = AssetManager.getAsset(json.image, PACKER, "images");
+						frames = Paths.getPackerAtlas(json.image);
 					case "sparrow":
-						frames = AssetManager.getAsset(json.image, SPARROW, "images");
+						frames = Paths.getSparrowAtlas(json.image);
 					case "texture":
 						frames = AtlasFrameMaker.construct(json.image);
 				}
-				#else
-				if (ClientPrefs.allowFileSys)
-				{
-					path = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS), curCharacter + ".json"]);
-					if (!StorageAccess.exists(path))
-					{
-						path = 'assets/characters/' + curCharacter + ".json";
-						if (!Assets.exists(path))
-							path = 'assets/characters/' + DEFAULT_CHARACTER + ".json";
-					}
-
-					if (path.contains("assets/"))
-						rawJson = Assets.getText(path);
-					else
-						rawJson = sys.io.File.getContent(path);
-
-					json = cast Json.parse(rawJson);
-
-					if (path.contains("assets/"))
-						frames = AssetManager.getAsset(json.image, SPARROW, "images");
-					else
-					{
-						var graphicPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS_GRAPHICS), json.image.replace("characters/", "") + ".png"]);
-						var xmlPath = haxe.io.Path.join([StorageAccess.getFolderPath(CHARACTERS_GRAPHICS), json.image.replace("characters/", "") + ".xml"]);
-
-						var graphic = AssetManager.returnGraphic(graphicPath, true);
-						frames = FlxAtlasFrames.fromSparrow(graphic, sys.io.File.getContent(xmlPath));
-					}
-				}
-				else
-				{
-					//sorry my bad lol
-					path = 'assets/characters/' + curCharacter + ".json";
-					if (!Assets.exists(path))
-					{
-						path = 'assets/characters/' + DEFAULT_CHARACTER + ".json";
-					}
-	
-					rawJson = Assets.getText(path);
-	
-					json = cast Json.parse(rawJson);
-					if (Assets.exists(AssetManager.getAsset(json.image + ".txt", DIRECTORY, "images")))
-						spriteType = "packer";
-	
-					if (Assets.exists(AssetManager.getAsset(json.image + "/Animation.json", DIRECTORY, "images")))
-						spriteType = "texture";
-	
-					switch (spriteType)
-					{
-						case "packer":
-							frames = AssetManager.getAsset(json.image, PACKER, "images");
-						case "sparrow":
-							frames = AssetManager.getAsset(json.image, SPARROW, "images");
-						case "texture":
-							frames = AtlasFrameMaker.construct(json.image);
-					}
-				}
-				#end
 				imageFile = json.image;
 
 				if (json.scale != 1)
@@ -376,7 +314,7 @@ class Character extends FlxSprite
 
 	function loadMappedAnims():Void
 	{
-		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', AssetManager.formatToSongPath(PlayState.SONG.song)).notes;
+		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song)).notes;
 		for (section in noteData) {
 			for (songNotes in section.sectionNotes) {
 				animationNotes.push(songNotes);

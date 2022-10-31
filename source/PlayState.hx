@@ -260,8 +260,6 @@ class PlayState extends MusicBeatState
 
 	override public function create()
 	{
-		//AssetManager.clearStoredMemory(false, false);
-
 		instance = this;
 
 		PauseSubState.songName = null; // Reset to default
@@ -1138,7 +1136,6 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
-		AssetManager.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
@@ -1739,7 +1736,7 @@ class PlayState extends MusicBeatState
 				case 0:
 					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 				case 1:
-					var ready:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[0], IMAGE, "images"));
+					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.cameras = [camHUD];
 					ready.scrollFactor.set();
 					ready.updateHitbox();
@@ -1759,7 +1756,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[1], IMAGE, "images"));
+					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.cameras = [camHUD];
 					set.scrollFactor.set();
 					set.updateHitbox();
@@ -1779,7 +1776,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(AssetManager.getAsset(introAlts[2], IMAGE, "images"));
+					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.cameras = [camHUD];
 					go.scrollFactor.set();
 					go.updateHitbox();
@@ -1799,7 +1796,6 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('introGo' + introSoundsSuffix), 0.6);
 				case 4:
-					canPause = true;
 			}
 
 			if (generatedMusic)
@@ -2276,7 +2272,7 @@ class PlayState extends MusicBeatState
 
 	private var paused:Bool = false;
 	var startedCountdown:Bool = false;
-	var canPause:Bool = false;
+	var canPause:Bool = true;
 	var limoSpeed:Float = 0;
 
 	override public function update(elapsed:Float)

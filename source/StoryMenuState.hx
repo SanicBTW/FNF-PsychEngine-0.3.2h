@@ -53,8 +53,7 @@ class StoryMenuState extends MusicBeatState
 
 	override function create()
 	{
-		AssetManager.clearStoredMemory();
-		AssetManager.clearUnusedMemory();
+		Paths.clearCache();
 		
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
@@ -340,7 +339,7 @@ class StoryMenuState extends MusicBeatState
 			curDifficulty = 0;
 
 		var diff:String = CoolUtil.difficulties[curDifficulty];
-		var newImage:FlxGraphic = AssetManager.getAsset(AssetManager.formatToSongPath(diff), IMAGE, "images/menudifficulties");
+		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.formatToSongPath(diff));
 
 		if(sprDifficulty.graphic != newImage)
 		{
