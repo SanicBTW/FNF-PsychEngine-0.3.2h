@@ -47,7 +47,7 @@ class NoteSplash extends FlxSprite
 		colorSwap.hue = hueColor;
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
-		offset.set(-26, -17); // yeah i think this offset is fine
+		offset.set(-27.8, -16.8); // yeah i think this offset is fine
 
 		var animNum:Int = FlxG.random.int(1, 2);
 		animation.play('note' + note + '-' + animNum, true);

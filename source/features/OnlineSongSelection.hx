@@ -124,9 +124,16 @@ class OnlineSongSelection extends MusicBeatState
                 var fixedID = extensionFilesURL.replace(":id", onlineSongItems[i].id);
 
                 var chartPath = baseURL + fixedID.replace(":file", onlineSongItems[i].chart);
-                var eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+
+                var eventPath = "";
+                if (onlineSongItems[i].events != "")
+                    eventPath = baseURL + fixedID.replace(":file", onlineSongItems[i].events);
+
                 var instPath = baseURL + fixedID.replace(":file", onlineSongItems[i].inst);
-                var voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
+
+                var voicesPath = "";
+                if (onlineSongItems[i].voices != "")
+                    voicesPath = baseURL + fixedID.replace(":file", onlineSongItems[i].voices);
 
 				songsMap.set(onlineSongItemName, [chartPath, eventPath, instPath, voicesPath]);
                 songs.push(onlineSongItemName);
@@ -232,7 +239,6 @@ class OnlineSongSelection extends MusicBeatState
                 request.open("GET", songShit[0]);
                 request.send();
                 #else
-                //sys mfs doesnt care if something is null or not
                 var http = new haxe.Http(songShit[0]);
                 var reqEvents = new haxe.Http(songShit[1]);
                 http.onData = function(data:String)
@@ -241,10 +247,11 @@ class OnlineSongSelection extends MusicBeatState
 
                     PlayState.SONG = Song.loadFromRaw(data);
 
-                    reqEvents.request();
+                    if(songShit[1] != "")
+                        reqEvents.request();
 
                     PlayState.inst = new Sound(new URLRequest(songShit[2]));
-                    if(PlayState.SONG.needsVoices)
+                    if(PlayState.SONG.needsVoices && songShit[3] != "")
                     {
                         PlayState.voices = new Sound(new URLRequest(songShit[3]));
                         goToPlayState();

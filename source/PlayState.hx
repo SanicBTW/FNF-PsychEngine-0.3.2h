@@ -1899,7 +1899,6 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			//make it compatible with filesys shit
 			var songName:String = Paths.formatToSongPath(SONG.song);
 			var file:String = Paths.json(songName + '/events');
 			if (OpenFlAssets.exists(file))
@@ -1997,7 +1996,6 @@ class PlayState extends MusicBeatState
 				}
 				else //THE FUCKING STUPID EVENT NOTES GOD
 				{
-					//wtf??? do i push songNotes or this shit 
 					for(i in 0...songNotes[1].length)
 					{
 						var newEventNote:Array<Dynamic> = [songNotes[0], songNotes[1][i][0], songNotes[1][i][1], songNotes[1][i][2]];
@@ -2012,9 +2010,6 @@ class PlayState extends MusicBeatState
 						eventNotes.push(subEvent);
 						eventPushed(subEvent);
 					}
-					/*
-					eventNotes.push(songNotes);
-					eventPushed(songNotes);*/
 				}
 			}
 			daBeats += 1;
@@ -2093,7 +2088,7 @@ class PlayState extends MusicBeatState
 	{
 		for (i in 0...4)
 		{
-			var babyArrow:StrumNote = new StrumNote(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, strumLine.y, i, player);
+			var babyArrow:StrumNote = new StrumNote(strumLine.x, strumLine.y, i, player);
 			babyArrow.downScroll = ClientPrefs.downScroll;
 			
 			if (!isStoryMode && !skipArrowStartTween)
@@ -2241,18 +2236,8 @@ class PlayState extends MusicBeatState
 		}
 		#end
 
-		if (!paused && startedCountdown && canPause && !inCutscene && ClientPrefs.pauseOnFocusLost)
-		{
-			persistentUpdate = false;
-			persistentDraw = true;
-			paused = true;
-			if (FlxG.sound.music != null)
-			{
-				FlxG.sound.music.pause();
-				vocals.pause();
-			}
-			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
-		}
+		if(ClientPrefs.pauseOnFocusLost)
+			openPauseMenu();
 
 		super.onFocusLost();
 	}
@@ -2434,17 +2419,9 @@ class PlayState extends MusicBeatState
 		}
 		botplayTxt.visible = cpuControlled;
 
-		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause && !inCutscene)
+		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end)
 		{
-			persistentUpdate = false;
-			persistentDraw = true;
-			paused = true;
-			if (FlxG.sound.music != null)
-			{
-				FlxG.sound.music.pause();
-				vocals.pause();
-			}
-			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+			openPauseMenu();
 
 			#if desktop
 			DiscordClient.changePresence(detailsPausedText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
@@ -4645,7 +4622,6 @@ class PlayState extends MusicBeatState
 		}
 		else
 		{
-			//ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
 			if (ratingPercent >= 1)
 			{
 				ratingString = ratingStuff[ratingStuff.length - 1][0];
@@ -4825,6 +4801,22 @@ class PlayState extends MusicBeatState
 			totalPlayed++;
 		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
 		RecalculateRating();
+	}
+
+	function openPauseMenu()
+	{
+		if (!paused && startedCountdown && canPause && !inCutscene)
+		{
+			persistentUpdate = false;
+			persistentDraw = true;
+			paused = true;
+			if (FlxG.sound.music != null)
+			{
+				FlxG.sound.music.pause();
+				vocals.pause();
+			}
+			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
+		}
 	}
 
 	var curLight:Int = 0;
