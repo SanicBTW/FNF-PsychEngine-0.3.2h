@@ -94,6 +94,7 @@ class AssetManager
 			//trace('graphic returning $key');
 			return currentTrackedAssets.get(key);
         }
+        #if STORAGE_ACCESS
         else if (FileSystem.exists(key) && outsideAssets == true)
         {
             if (!currentTrackedAssets.exists(key))
@@ -106,6 +107,7 @@ class AssetManager
 			//trace('graphic returning $key');
 			return currentTrackedAssets.get(key);
         }
+        #end
         trace('graphic returning null at $key');
 		return null;
     }
