@@ -153,6 +153,22 @@ class Paths
 
 	public static function clearCache(clearLibraries:Bool = true, setNulls:Bool = true)
 	{
+		#if STORAGE_ACCESS
+		@:privateAccess
+        for (key in features.StorageAccess.currentTrackedAssets.keys())
+        {
+            var obj = features.StorageAccess.currentTrackedAssets.get(key);
+            if (obj != null)
+            {
+                trace("cleared " + key + " from memory (graphic)");
+                openfl.Assets.cache.removeBitmapData(key);
+                FlxG.bitmap._cache.remove(key);
+				features.StorageAccess.currentTrackedAssets.remove(key);
+                obj.destroy();
+            }
+        }
+		#end
+
 		if (clearLibraries)
         {
             for(i in 0...clearLibs.length)

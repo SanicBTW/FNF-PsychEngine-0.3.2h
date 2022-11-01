@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import flixel.FlxSprite;
 import openfl.utils.Assets as OpenFlAssets;
 
@@ -34,18 +35,20 @@ class HealthIcon extends FlxSprite
 	{
 		if (this.char != char)
 		{
-			var name:String = 'icons/' + char;
-			if (!Paths.fileExists('images/' + name + '.png', IMAGE))
-				name = 'icons/icon-' + char; // Older versions of psych engine's support
-			if (!Paths.fileExists('images/' + name + '.png', IMAGE))
-				name = 'icons/icon-face'; // Prevents crash from missing icon
-			var file:Dynamic = Paths.image(name);
-
-			loadGraphic(file); // Load stupidly first for getting the file size
-			loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); // Then load it fr
-			iconOffsets[0] = (width - 150) / 2;
-			iconOffsets[1] = (width - 150) / 2;
-			updateHitbox();
+			#if STORAGE_ACCESS
+			if (ClientPrefs.allowFileSys)
+			{
+				var extIcon = features.StorageAccess.getIcon(char);
+				if (extIcon != null)
+					setupExt(extIcon);
+				else
+					setupFromAssets(char);
+			}
+			else
+				setupFromAssets(char);
+			#else
+			setupFromAssets(char);
+			#end
 
 			animation.add(char, [0, 1], 0, false, isPlayer);
 			animation.play(char);
@@ -69,5 +72,30 @@ class HealthIcon extends FlxSprite
 	public function getCharacter():String
 	{
 		return char;
+	}
+
+	private function setupFromAssets(char:String)
+	{
+		var name:String = 'icons/' + char;
+		if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+			name = 'icons/icon-' + char; // Older versions of psych engine's support
+		if (!Paths.fileExists('images/' + name + '.png', IMAGE))
+			name = 'icons/icon-face'; // Prevents crash from missing icon
+		var file:Dynamic = Paths.image(name);
+
+		loadGraphic(file); // Load stupidly first for getting the file size
+		loadGraphic(file, true, Math.floor(width / 2), Math.floor(height)); // Then load it fr
+		iconOffsets[0] = (width - 150) / 2;
+		iconOffsets[1] = (width - 150) / 2;
+		updateHitbox();
+	}
+
+	private function setupExt(graph:FlxGraphic)
+	{
+		loadGraphic(graph);
+		loadGraphic(graph, true, Math.floor(width / 2), Math.floor(height));
+		iconOffsets[0] = (width - 150) / 2;
+		iconOffsets[1] = (width - 150) / 2;
+		updateHitbox();
 	}
 }

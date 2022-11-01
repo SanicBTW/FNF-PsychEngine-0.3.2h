@@ -113,15 +113,24 @@ class Character extends FlxSprite
 				if (Assets.exists(Paths.getPath('images/' + json.image + '/Animation.json', TEXT)))
 					spriteType = "texture";
 
-				switch (spriteType)
+				#if STORAGE_ACCESS
+				if (ClientPrefs.allowFileSys)
 				{
-					case "packer":
-						frames = Paths.getPackerAtlas(json.image);
-					case "sparrow":
-						frames = Paths.getSparrowAtlas(json.image);
-					case "texture":
-						frames = AtlasFrameMaker.construct(json.image);
+					var extChar = features.StorageAccess.getCharacter(curCharacter);
+					if (extChar != null)
+					{
+						json = extChar[0];
+						frames = extChar[1];
+					}
+					else
+						setupFromAssets(spriteType, json);
 				}
+				else
+					setupFromAssets(spriteType, json);
+				#else
+				setupFromAssets(spriteType, json);
+				#end
+
 				imageFile = json.image;
 
 				if (json.scale != 1)
@@ -363,5 +372,18 @@ class Character extends FlxSprite
 	public function quickAnimAdd(name:String, anim:String)
 	{
 		animation.addByPrefix(name, anim, 24, false);
+	}
+
+	private function setupFromAssets(spriteType:String, json:CharacterFile)
+	{
+		switch (spriteType)
+		{
+			case "packer":
+				frames = Paths.getPackerAtlas(json.image);
+			case "sparrow":
+				frames = Paths.getSparrowAtlas(json.image);
+			case "texture":
+				frames = AtlasFrameMaker.construct(json.image);
+		}
 	}
 }

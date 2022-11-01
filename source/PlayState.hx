@@ -4601,10 +4601,11 @@ class PlayState extends MusicBeatState
 	
 			if (SONG.notes[curSection].changeBPM)
 			{
-				var lastBPM = Conductor.bpm;
+				//var lastBPM = Conductor.bpm;
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
 
 				//uh
+				/*
 				if (songSpeedType != "constant")
 				{
 					//var newSpeed = SONG.speed + ((lastBPM / Conductor.bpm) * 0.1);
@@ -4614,7 +4615,7 @@ class PlayState extends MusicBeatState
 					//var newSpeed = SONG.speed + (SONG.speed * ((SONG.bpm / Conductor.bpm) * 0.1)); //gotta check this one it might be better but my maths kind of suck
 
 					songSpeed = newSpeed;
-				}
+				}*/
 			}
 		}
 	}

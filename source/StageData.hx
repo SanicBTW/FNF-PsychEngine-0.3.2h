@@ -76,36 +76,29 @@ class StageData
 
 	public static function getStageFile(stage:String):StageFile
 	{
-		var rawJson:String = null;
-		var path:String = "";
 		#if STORAGE_ACCESS
 		if (ClientPrefs.allowFileSys)
 		{
-			path = haxe.io.Path.join([features.StorageAccess.getFolderPath(STAGES), stage + ".json"]);
-
-			if (features.StorageAccess.exists(path))
-				rawJson = sys.io.File.getContent(path);
-			else
-				return null;
+			var extStage = features.StorageAccess.getStage(stage);
+			if (extStage != null)
+				return extStage;
 		}
 		else 
-		{
-			path = Paths.getPreloadPath('stages/' + stage + '.json');
-
-			if (Assets.exists(path))
-				rawJson = Assets.getText(path);
-			else
-				return null;
-		}
+			return getStageFromAssets(stage);
 		#else
-		path = Paths.getPreloadPath('stages/' + stage + '.json');
-
-		if (Assets.exists(path))
-			rawJson = Assets.getText(path);
-		else
-			return null;
+		return getStageFromAssets(stage);
 		#end
 
-		return cast Json.parse(rawJson);
+		return getStageFromAssets(stage);
+	}
+
+	private static function getStageFromAssets(stage:String)
+	{
+		var path = Paths.getPreloadPath('stages/' + stage + '.json');
+
+		if (Assets.exists(path))
+			return cast Json.parse(Assets.getText(path));
+		else
+			return null;
 	}
 }
