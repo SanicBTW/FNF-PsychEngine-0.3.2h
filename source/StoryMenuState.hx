@@ -343,7 +343,7 @@ class StoryMenuState extends MusicBeatState
 			curDifficulty = 0;
 
 		var diff:String = CoolUtil.difficulties[curDifficulty];
-		var newImage:FlxGraphic = Paths.image('menudifficulties/' + Paths.formatToSongPath(diff));
+		var newImage:FlxGraphic = Paths.getGraphic(Paths.image('menudifficulties/' + Paths.formatToSongPath(diff)));
 
 		if(sprDifficulty.graphic != newImage)
 		{

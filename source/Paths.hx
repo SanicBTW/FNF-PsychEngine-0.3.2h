@@ -1,5 +1,6 @@
 package;
 
+import flixel.graphics.FlxGraphic;
 import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -16,7 +17,7 @@ class Paths
 	public static var loadLibs:Array<String> = ["shared", "UILib"];
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
-
+	public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
 	static var currentLevel:String;
 
 	static public function setCurrentLevel(name:String)
@@ -151,6 +152,17 @@ class Paths
 		return path.toLowerCase().replace(' ', '-');
 	}
 
+	public static function getGraphic(file:String)
+	{
+		if (!currentTrackedAssets.exists(file))
+		{
+			var newGraphic = FlxG.bitmap.add(file, false, file);
+			newGraphic.persist = true;
+			currentTrackedAssets.set(file, newGraphic);
+		}
+		return currentTrackedAssets.get(file);
+	}
+
 	public static function clearCache(clearLibraries:Bool = true, setNulls:Bool = true)
 	{
 		#if STORAGE_ACCESS
@@ -168,6 +180,20 @@ class Paths
             }
         }
 		#end
+
+		@:privateAccess
+        for (key in currentTrackedAssets.keys())
+        {
+            var obj = currentTrackedAssets.get(key);
+            if (obj != null)
+            {
+                trace("cleared " + key + " from memory (graphic)");
+                openfl.Assets.cache.removeBitmapData(key);
+                FlxG.bitmap._cache.remove(key);
+				currentTrackedAssets.remove(key);
+                obj.destroy();
+            }
+        }
 
 		if (clearLibraries)
         {
