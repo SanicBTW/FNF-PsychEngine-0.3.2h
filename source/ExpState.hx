@@ -4,6 +4,7 @@ import flixel.ui.FlxBar;
 import flixel.FlxG;
 import audio.*;
 
+// testing state for the new audio stream
 class ExpState extends MusicBeatState
 {
     var inst:AudioStream = new AudioStream();
@@ -39,15 +40,31 @@ class ExpState extends MusicBeatState
     {
         if (FlxG.keys.justPressed.SPACE)
         {
-            inst.play();
-            voices.play();
+            if (!inst.playing)
+                inst.play();
+            else
+                inst.stop();
+
+            if (!voices.playing)
+                voices.play();
+            else
+                voices.stop();
         }
 
+        /*
+        if (FlxG.keys.justPressed.TWO)
+        {
+            if (inst.playing)
+                inst.time += 1;
+            if (voices.playing)
+                voices.time += 1;
+        }*/
+
         if (inst.playing)
-            instBar.percent = (inst.getTime() / inst.length) * 100;
+            instBar.percent = (inst.time / inst.length) * 100;
 
         if (voices.playing)
-            voicesBar.percent = (voices.getTime() / voices.length) * 100;
+            voicesBar.percent = (voices.time / voices.length) * 100;
 
         super.update(elapsed);
     }

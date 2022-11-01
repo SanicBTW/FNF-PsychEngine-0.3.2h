@@ -16,6 +16,7 @@ class AudioStream
     var sound:Sound;
     var channel:SoundChannel;
     public var playing:Bool = false;
+    @:isVar public var time(get, /*set*/ never):Float = 0;
     public var volume(default, set):Float = FlxG.sound.volume;
     public var length:Float = 0;
     public var loop:Bool = false;
@@ -44,24 +45,8 @@ class AudioStream
             channel = sound.play(lastTime);
             channel.soundTransform = new SoundTransform(volume);
             playing = true;
+        }
     }
-    }
-
-    // because get shit wont update the value at all lol
-    public function getTime():Float
-    {
-        if (channel != null)
-            return channel.position;
-        else
-            return 0;
-    }
-
-    public function setTime(newTime:Float)
-    {
-        if (channel != null)
-            channel.position = newTime;
-    }
-
 
     public function stop()
     {
@@ -83,4 +68,27 @@ class AudioStream
         }
         return 0;
     }
+
+	function get_time():Float 
+    {
+        if (channel != null)
+            return channel.position;
+        else
+            return lastTime;
+	}
+
+    /*
+	function set_time(value:Float):Float 
+    {
+        if (channel != null)
+        {
+            stop();
+            lastTime += value;
+            if (lastTime > length)
+                lastTime = 0;
+            play();
+            return lastTime;
+        }
+        return value;
+	}*/
 }
