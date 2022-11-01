@@ -309,7 +309,7 @@ class PlayState extends MusicBeatState
 				if (voicesPath.contains("sanicbtw_pe_files"))
 					expVoices.loadFromFile(voicesPath);
 
-				if (voicesPath.contains("http://"))
+				if (voicesPath.contains("http://") || voicesPath.contains("https://"))
 					expVoices.loadFromHTTP(voicesPath);
 			}
 			else
@@ -1873,7 +1873,8 @@ class PlayState extends MusicBeatState
 		//vocals.play();
 		expInst.onComplete = finishSong;
 		expInst.play();
-		expVoices.play();
+		if (SONG.needsVoices)
+			expVoices.play();
 
 		if (paused)
 		{
@@ -2316,7 +2317,8 @@ class PlayState extends MusicBeatState
 		//vocals.time = Conductor.songPosition;
 		//vocals.play();
 		expVoices.lastTime = Conductor.songPosition;
-		expVoices.play();
+		if (SONG.needsVoices)
+			expVoices.play();
 	}
 
 	private var paused:Bool = false;
