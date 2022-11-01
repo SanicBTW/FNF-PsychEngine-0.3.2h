@@ -329,8 +329,8 @@ class FreeplayState extends MusicBeatState
 
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
-				PlayState.inst = StorageAccess.getInst(songs[curSelected].songName);
-				PlayState.voices = StorageAccess.getVoices(songs[curSelected].songName);
+				PlayState.instPath = StorageAccess.getInst(songs[curSelected].songName, true);
+				PlayState.voicesPath = StorageAccess.getVoices(songs[curSelected].songName, true);
 				PlayState.storyWeek = 0;
 
 				goToPlayState();

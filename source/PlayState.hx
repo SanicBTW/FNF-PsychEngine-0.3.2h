@@ -48,6 +48,7 @@ import openfl.utils.Assets as OpenFlAssets;
 import Note.EventNote;
 import animateatlas.AtlasFrameMaker;
 import substates.*;
+import audio.AudioStream;
 
 using StringTools;
 
@@ -111,7 +112,6 @@ class PlayState extends MusicBeatState
 	public static var storyPlaylist:Array<String> = [];
 	public static var storyDifficulty:Int = 1;
 
-	public var vocals:FlxSound;
 	public var dad:Character;
 	public var gf:Character;
 	public var boyfriend:Boyfriend;
@@ -243,8 +243,6 @@ class PlayState extends MusicBeatState
 	public var girlfriendCameraOffset:Array<Float> = null;
 	public var introSoundsSuffix:String = '';
 
-	public static var inst:Dynamic = null;
-	public static var voices:Dynamic = null;
 	// stores the last judgement object
 	public static var lastRating:FlxSprite;
 	// stores the last combo sprite object
@@ -263,6 +261,11 @@ class PlayState extends MusicBeatState
 	//the get content on generate song shit but nahhh gonna make it much easier lol
 	public static var songEvents:Array<Dynamic> = null;
 
+	var expInst:AudioStream = new AudioStream();
+    var expVoices:AudioStream = new AudioStream();
+	public static var instPath:String = "";
+    public static var voicesPath:String = "";
+
 	override public function create()
 	{
 		instance = this;
@@ -279,16 +282,38 @@ class PlayState extends MusicBeatState
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 
-		if (Assets.exists(Paths.inst(PlayState.SONG.song)))
+		if (expInst.initialized == false)
 		{
-			if (inst == null)
-				inst = Paths.inst(PlayState.SONG.song);
+			if (Assets.exists(Paths.inst(PlayState.SONG.song)))
+				expInst.loadFromAssets(Paths.inst(PlayState.SONG.song));
+
+			if (instPath != "")
+			{
+				if (instPath.contains("sanicbtw_pe_files"))
+					expInst.loadFromFile(instPath);
+
+				if (instPath.contains("http://"))
+					expInst.loadFromHTTP(instPath);
+			}
 		}
 
-		if (Assets.exists(Paths.voices(PlayState.SONG.song)))
+		if (expVoices.initialized == false)
 		{
-			if (voices == null && PlayState.SONG.needsVoices)
-				voices = Paths.voices(PlayState.SONG.song);
+			if (Assets.exists(Paths.voices(PlayState.SONG.song)))
+				expVoices.loadFromAssets(Paths.voices(PlayState.SONG.song));
+			else
+				SONG.needsVoices = false;
+
+			if (voicesPath != "")
+			{
+				if (voicesPath.contains("sanicbtw_pe_files"))
+					expVoices.loadFromFile(voicesPath);
+
+				if (voicesPath.contains("http://"))
+					expVoices.loadFromHTTP(voicesPath);
+			}
+			else
+				SONG.needsVoices = false;
 		}
 
 		practiceMode = false;
@@ -1843,18 +1868,23 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		FlxG.sound.playMusic(inst, 1, false);
-		FlxG.sound.music.onComplete = finishSong;
-		vocals.play();
+		//FlxG.sound.playMusic(inst, 1, false);
+		//FlxG.sound.music.onComplete = finishSong;
+		//vocals.play();
+		expInst.onComplete = finishSong;
+		expInst.play();
+		expVoices.play();
 
 		if (paused)
 		{
-			FlxG.sound.music.pause();
-			vocals.pause();
+			expInst.stop();
+			expVoices.stop();
+			//FlxG.sound.music.pause();
+			//vocals.pause();
 		}
 
 		// Song duration in a float, useful for the time left feature
-		songLength = FlxG.sound.music.length;
+		songLength = /* FlxG.sound.music.length */ expInst.length;
 		FlxTween.tween(timeBarBG, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
@@ -1886,13 +1916,14 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
+		/* should i add them to the sound list orrrr
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(voices);
 		else
 			vocals = new FlxSound();
 
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(inst));
+		FlxG.sound.list.add(new FlxSound().loadEmbedded(inst));*/
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -2145,11 +2176,14 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
+			expInst.stop();
+			expVoices.stop();
+			/*
 			if (FlxG.sound.music != null)
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
-			}
+			}*/
 
 			if (!startTimer.finished)
 				startTimer.active = false;
@@ -2180,7 +2214,7 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (FlxG.sound.music != null && !startingSong)
+			if (/*FlxG.sound.music != null*/ expInst.initialized && expVoices.initialized && !startingSong)
 			{
 				resyncVocals();
 			}
@@ -2273,12 +2307,16 @@ class PlayState extends MusicBeatState
 		if (finishTimer != null)
 			return;
 
-		vocals.pause();
+		expVoices.stop();
+		//vocals.pause();
 
-		FlxG.sound.music.play();
-		Conductor.songPosition = FlxG.sound.music.time;
-		vocals.time = Conductor.songPosition;
-		vocals.play();
+		expInst.play();
+		//FlxG.sound.music.play();
+		Conductor.songPosition = /*FlxG.sound.music.time*/ expInst.time;
+		//vocals.time = Conductor.songPosition;
+		//vocals.play();
+		expVoices.lastTime = Conductor.songPosition;
+		expVoices.play();
 	}
 
 	private var paused:Bool = false;
@@ -2512,7 +2550,7 @@ class PlayState extends MusicBeatState
 
 				if (updateTime)
 				{
-					var curTime:Float = FlxG.sound.music.time - ClientPrefs.noteOffset;
+					var curTime:Float = /* FlxG.sound.music.time */ expInst.time - ClientPrefs.noteOffset;
 					if (curTime < 0)
 						curTime = 0;
 					songPercent = (curTime / songLength);
@@ -2755,6 +2793,7 @@ class PlayState extends MusicBeatState
 		}
 
 		#if debug
+		/* have to look into this
 		if (!endingSong && !startingSong)
 		{
 			if (FlxG.keys.justPressed.ONE)
@@ -2798,7 +2837,7 @@ class PlayState extends MusicBeatState
 				vocals.time = Conductor.songPosition;
 				vocals.play();
 			}
-		}
+		}*/
 		#end
 	}
 
@@ -2819,8 +2858,10 @@ class PlayState extends MusicBeatState
 			camOther.alpha = 0;
 			boyfriendGroup.alpha = 0;
 
-			vocals.stop();
-			FlxG.sound.music.stop();
+			expVoices.stop();
+			expInst.stop();
+			//vocals.stop();
+			//FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y));
 
@@ -3235,14 +3276,17 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	function finishSong():Void
+	function finishSong(?_):Void
 	{
 		var finishCallback:Void->Void = endSong; // In case you want to change it in a specific song.
 
 		updateTime = false;
-		FlxG.sound.music.volume = 0;
-		vocals.volume = 0;
-		vocals.pause();
+		expInst.volume = 0;
+		expVoices.volume = 0;
+		expVoices.stop();
+		//FlxG.sound.music.volume = 0;
+		//vocals.volume = 0;
+		//vocals.pause();
 		if (ClientPrefs.noteOffset <= 0)
 		{
 			finishCallback();
@@ -3336,10 +3380,11 @@ class PlayState extends MusicBeatState
 					prevCamFollowPos = camFollowPos;
 
 					PlayState.SONG = Song.loadFromJson(next + diff, next);
-					PlayState.inst = null;
-					PlayState.voices = null;
+					//PlayState.inst = null;
+					//PlayState.voices = null;
 					System.gc();
-					FlxG.sound.music.stop();
+					expInst.stop();
+					//FlxG.sound.music.stop();
 
 					if (winterHorrorNext)
 					{
@@ -3387,7 +3432,8 @@ class PlayState extends MusicBeatState
 	{
 		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		//var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
-		vocals.volume = 1;
+		//vocals.volume = 1;
+		expVoices.volume = 1;
 
 		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
 		coolText.screenCenter();
@@ -4000,7 +4046,8 @@ class PlayState extends MusicBeatState
 					health -= daNote.missHealth * healthLoss;
 					if(instakillOnMiss)
 					{
-						vocals.volume = 0;
+						expVoices.volume = 0;
+						//vocals.volume = 0;
 						doDeathCheck(true);
 					}
 					combo = 0;
@@ -4014,7 +4061,8 @@ class PlayState extends MusicBeatState
 						totalNotesHit -= 1;
 					}
 
-					vocals.volume = 0;
+					expVoices.volume = 0;
+					//vocals.volume = 0;
 
 					var char:Character = boyfriend;
 					if (daNote.gfNote)
@@ -4044,7 +4092,8 @@ class PlayState extends MusicBeatState
 			health -= 0.05 * healthLoss;
 			if(instakillOnMiss)
 			{
-				vocals.volume = 0;
+				expVoices.volume = 0;
+				//vocals.volume = 0;
 				doDeathCheck(true);
 			}
 			combo = 0;
@@ -4058,14 +4107,14 @@ class PlayState extends MusicBeatState
 				totalNotesHit -= 1;
 			}
 
-			vocals.volume = 0;
+			expVoices.volume = 0;
+			//vocals.volume = 0;
 
 			var char:Character = boyfriend;
 
 			if (char != null && char.hasMissAnimations)
 				char.playAnim(singAnims[direction] + "miss", true);
 
-			vocals.volume = 0;
 			if (ClientPrefs.missVolume > 0)
 				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), ClientPrefs.missVolume);
 
@@ -4143,7 +4192,8 @@ class PlayState extends MusicBeatState
 			}
 
 			note.wasGoodHit = true;
-			vocals.volume = 1;
+			expVoices.volume = 1;
+			//vocals.volume = 1;
 
 			if (!note.isSustainNote)
 			{
@@ -4202,7 +4252,8 @@ class PlayState extends MusicBeatState
 		}
 
 		if (SONG.needsVoices)
-			vocals.volume = 1;
+			expVoices.volume = 1;
+			//vocals.volume = 1;
 
 		var time:Float = 0.15;
 		if (note.isSustainNote && !note.animation.curAnim.name.endsWith('end'))
@@ -4430,8 +4481,8 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > 20
-			|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > 20))
+		if (Math.abs(/*FlxG.sound.music.time*/expInst.time - (Conductor.songPosition - Conductor.offset)) > 20
+			|| (SONG.needsVoices && Math.abs(/*vocals*/expVoices.time - (Conductor.songPosition - Conductor.offset)) > 20))
 		{
 			resyncVocals();
 		}
@@ -4844,11 +4895,14 @@ class PlayState extends MusicBeatState
 			persistentUpdate = false;
 			persistentDraw = true;
 			paused = true;
+			expInst.stop();
+			expVoices.stop();
+			/*
 			if (FlxG.sound.music != null)
 			{
 				FlxG.sound.music.pause();
 				vocals.pause();
-			}
+			}*/
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 		}
 	}

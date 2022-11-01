@@ -64,22 +64,26 @@ class StorageAccess
 		#end
 	}
 
-	public static function getInst(song:String, ext = ".ogg")
+	public static function getInst(song:String, returnPath:Bool = false):Dynamic
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Inst$ext']);
-		if (exists(filePath))
+		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Inst.ogg']);
+		if (exists(filePath) && returnPath == false)
 			return Sound.fromFile(filePath);
+		else if (exists(filePath) && returnPath == true)
+			return filePath;
 		return null;
 		#end
 	}
 
-	public static function getVoices(song:String, ext = ".ogg")
+	public static function getVoices(song:String, returnPath:Bool = false):Dynamic
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Voices$ext']);
-		if (exists(filePath))
+		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Voices.ogg']);
+		if (exists(filePath) && returnPath == false)
 			return Sound.fromFile(filePath);
+		else if (exists(filePath) && returnPath == true)
+			return filePath;
 		return null;
 		#end
 	}
