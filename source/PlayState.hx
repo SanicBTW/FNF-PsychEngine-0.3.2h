@@ -49,6 +49,7 @@ import Note.EventNote;
 import animateatlas.AtlasFrameMaker;
 import substates.*;
 import audio.AudioStream;
+import openfl.media.Sound;
 
 using StringTools;
 
@@ -261,10 +262,13 @@ class PlayState extends MusicBeatState
 	//the get content on generate song shit but nahhh gonna make it much easier lol
 	public static var songEvents:Array<Dynamic> = null;
 
+	//tf???
 	var expInst:AudioStream = new AudioStream();
     var expVoices:AudioStream = new AudioStream();
 	public static var instPath:String = "";
     public static var voicesPath:String = "";
+	public static var instSound:Sound = null;
+	public static var voicesSound:Sound = null;
 
 	override public function create()
 	{
@@ -284,33 +288,62 @@ class PlayState extends MusicBeatState
 
 		if (expInst.initialized == false)
 		{
+			var key:Dynamic = null;
+			var loadSource:LoadSource = ASSETS;
+
 			if (Assets.exists(Paths.inst(PlayState.SONG.song)))
-				expInst.loadFromAssets(Paths.inst(PlayState.SONG.song));
+				key = Paths.inst(PlayState.SONG.song);
 
 			if (instPath != "")
 			{
-				if (instPath.contains("sanicbtw_pe_files"))
-					expInst.loadFromFile(instPath);
+				key = instPath;
 
-				if (instPath.contains("http://"))
-					expInst.loadFromHTTP(instPath);
+				if (instPath.contains("sanicbtw_pe_files"))
+					loadSource = STORAGE;
+
+				if (instPath.contains("http://") || instPath.contains("https://"))
+					loadSource = ONLINE;
 			}
+
+			if (instSound != null)
+			{
+				key = instSound;
+				loadSource = RAW;
+			}
+
+			if (key != null)
+				expInst.load(loadSource, key);
 		}
 
 		if (expVoices.initialized == false)
 		{
+			var key:Dynamic = null;
+			var loadSource:LoadSource = ASSETS;
+
 			if (Assets.exists(Paths.voices(PlayState.SONG.song)))
-				expVoices.loadFromAssets(Paths.voices(PlayState.SONG.song));
-			else
-				SONG.needsVoices = false;
+				key = Paths.voices(PlayState.SONG.song);
 
 			if (voicesPath != "")
 			{
+				key = voicesPath;
+
 				if (voicesPath.contains("sanicbtw_pe_files"))
-					expVoices.loadFromFile(voicesPath);
+					loadSource = STORAGE;
 
 				if (voicesPath.contains("http://") || voicesPath.contains("https://"))
-					expVoices.loadFromHTTP(voicesPath);
+					loadSource = ONLINE;
+			}
+
+			if (voicesSound != null)
+			{
+				key = voicesSound;
+				loadSource = RAW;
+			}
+
+			if (key != null)
+			{
+				expVoices.load(loadSource, key);
+				SONG.needsVoices = true;
 			}
 			else
 				SONG.needsVoices = false;
@@ -4750,16 +4783,16 @@ class PlayState extends MusicBeatState
 				}
 				else
 				{
-					return 'Score $songScore | Misses: $songMisses | Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingString ($ratingFC)';
+					return 'Score: $songScore | Misses: $songMisses | Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingString ($ratingFC)';
 				}
 			case 'Psych':
 				if (ratingString == '?')
 				{
-					return 'Score: $songScore | Misses : $songMisses | Rating: $ratingString';
+					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
 				}
 				else
 				{
-					return 'Score: $songScore | Misses : $songMisses | Rating: $ratingString (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';
+					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';
 				}
 		}
 		return "";

@@ -16,7 +16,7 @@ class AudioStream
     var channel:SoundChannel;
     public var playing:Bool = false;
     @:isVar public var time(get, /*set*/ never):Float = 0;
-    public var volume(default, set):Float = FlxG.sound.volume;
+    public var volume(default, set):Float = 1;
     public var length:Float = 0;
     public var lastTime:Float = 0;
     public var initialized:Bool = false;
@@ -25,38 +25,32 @@ class AudioStream
     public function new()
     {
         sound = new Sound();
-
     }
 
-    public function loadFromAssets(key:String)
+    public function load(source:LoadSource = ASSETS, key:Dynamic)
     {
         if (sound != null)
         {
-            sound = Assets.getMusic(key);
-            length = sound.length;
-            initialized = true;
-        }
-        else
-            trace("sound is null");
-    }
-
-    public function loadFromFile(path:String)
-    {
-        if (sound != null)
-        {
-            sound = Sound.fromFile(path);
-            length = sound.length;
-            initialized = true;
-        }
-        else
-            trace("sound is null");
-    }
-
-    public function loadFromHTTP(url:String)
-    {
-        if (sound != null)
-        {
-            sound = new Sound(new URLRequest(url));
+            switch(source)
+            {
+                case ASSETS:
+                    sound = Assets.getMusic(key);
+                case ONLINE:
+                    sound = new Sound(new URLRequest(key));
+                    //shit didnt want to work
+                    /*
+                    #if !html5
+                    #else
+                    Sound.loadFromFile(key).onComplete(function(loadedSound)
+                    {
+                        sound = loadedSound;
+                    });
+                    #end*/
+                case STORAGE:
+                    sound = Sound.fromFile(key);
+                case RAW:
+                    sound = key;
+            }
             length = sound.length;
             initialized = true;
         }
@@ -123,4 +117,12 @@ class AudioStream
         }
         return value;
 	}*/
+}
+
+enum LoadSource
+{
+    ASSETS;
+    ONLINE;
+    STORAGE;
+    RAW;
 }
