@@ -295,17 +295,12 @@ class PlayState extends MusicBeatState
 
 		if (expVoices.initialized == false)
 		{
-			if (Assets.exists(Paths.voices(PlayState.SONG.song)))
-				expVoices.source = Paths.voices(PlayState.SONG.song);
-			else
-				SONG.needsVoices = false;
-
-			if (voicesSource != null)
+			if (Assets.exists(Paths.voices(SONG.song)))
+				expVoices.source = Paths.voices(SONG.song);
+			else if (!Assets.exists(Paths.voices(SONG.song)) && voicesSource != null)
 				expVoices.source = voicesSource;
-			else
+			else if (!Assets.exists(Paths.voices(SONG.song)) && voicesSource == null)
 				SONG.needsVoices = false;
-
-			SONG.needsVoices = true;
 		}
 
 		practiceMode = false;
@@ -1871,7 +1866,8 @@ class PlayState extends MusicBeatState
 		if (paused)
 		{
 			expInst.stop();
-			expVoices.stop();
+			if (SONG.needsVoices)
+				expVoices.stop();
 			//FlxG.sound.music.pause();
 			//vocals.pause();
 		}
@@ -2170,7 +2166,8 @@ class PlayState extends MusicBeatState
 		if (paused)
 		{
 			expInst.stop();
-			expVoices.stop();
+			if (SONG.needsVoices)
+				expVoices.stop();
 			/*
 			if (FlxG.sound.music != null)
 			{
@@ -2207,7 +2204,7 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (/*FlxG.sound.music != null*/ expInst.initialized && expVoices.initialized && !startingSong)
+			if (/*FlxG.sound.music != null*/ expInst.initialized && (SONG.needsVoices && expVoices.initialized) && !startingSong)
 			{
 				resyncVocals();
 			}
@@ -2300,7 +2297,8 @@ class PlayState extends MusicBeatState
 		if (finishTimer != null)
 			return;
 
-		expVoices.stop();
+		if (SONG.needsVoices)
+			expVoices.stop();
 		//vocals.pause();
 
 		expInst.play();
@@ -2852,7 +2850,8 @@ class PlayState extends MusicBeatState
 			camOther.alpha = 0;
 			boyfriendGroup.alpha = 0;
 
-			expVoices.stop();
+			if (SONG.needsVoices)
+				expVoices.stop();
 			expInst.stop();
 			//vocals.stop();
 			//FlxG.sound.music.stop();
@@ -3276,8 +3275,11 @@ class PlayState extends MusicBeatState
 
 		updateTime = false;
 		expInst.volume = 0;
-		expVoices.volume = 0;
-		expVoices.stop();
+		if (SONG.needsVoices)
+		{
+			expVoices.volume = 0;
+			expVoices.stop();
+		}
 		//FlxG.sound.music.volume = 0;
 		//vocals.volume = 0;
 		//vocals.pause();
@@ -3427,7 +3429,8 @@ class PlayState extends MusicBeatState
 		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		//var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		//vocals.volume = 1;
-		expVoices.volume = 1;
+		if (SONG.needsVoices)
+			expVoices.volume = 1;
 
 		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
 		coolText.screenCenter();
@@ -4040,7 +4043,8 @@ class PlayState extends MusicBeatState
 					health -= daNote.missHealth * healthLoss;
 					if(instakillOnMiss)
 					{
-						expVoices.volume = 0;
+						if (SONG.needsVoices)
+							expVoices.volume = 0;
 						//vocals.volume = 0;
 						doDeathCheck(true);
 					}
@@ -4055,7 +4059,8 @@ class PlayState extends MusicBeatState
 						totalNotesHit -= 1;
 					}
 
-					expVoices.volume = 0;
+					if (SONG.needsVoices)
+						expVoices.volume = 0;
 					//vocals.volume = 0;
 
 					var char:Character = boyfriend;
@@ -4086,7 +4091,8 @@ class PlayState extends MusicBeatState
 			health -= 0.05 * healthLoss;
 			if(instakillOnMiss)
 			{
-				expVoices.volume = 0;
+				if (SONG.needsVoices)
+					expVoices.volume = 0;
 				//vocals.volume = 0;
 				doDeathCheck(true);
 			}
@@ -4101,7 +4107,8 @@ class PlayState extends MusicBeatState
 				totalNotesHit -= 1;
 			}
 
-			expVoices.volume = 0;
+			if (SONG.needsVoices)
+				expVoices.volume = 0;
 			//vocals.volume = 0;
 
 			var char:Character = boyfriend;
@@ -4186,7 +4193,8 @@ class PlayState extends MusicBeatState
 			}
 
 			note.wasGoodHit = true;
-			expVoices.volume = 1;
+			if (SONG.needsVoices)
+				expVoices.volume = 1;
 			//vocals.volume = 1;
 
 			if (!note.isSustainNote)
@@ -4890,7 +4898,8 @@ class PlayState extends MusicBeatState
 			persistentDraw = true;
 			paused = true;
 			expInst.stop();
-			expVoices.stop();
+			if (SONG.needsVoices)
+				expVoices.stop();
 			/*
 			if (FlxG.sound.music != null)
 			{

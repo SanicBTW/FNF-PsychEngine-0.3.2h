@@ -219,7 +219,7 @@ class OnlineSongSelection extends MusicBeatState
                         PlayState.instSource = sound;
                     });
     
-                    if(PlayState.SONG.needsVoices && songShit[3] != "")
+                    if(songShit[3] != "")
                     {
                         Sound.loadFromFile(songShit[3]).onComplete(function(sound)
                         {
@@ -228,7 +228,10 @@ class OnlineSongSelection extends MusicBeatState
                         });
                     }
                     else
+                    {
+                        PlayState.voicesSource = null;
                         goToPlayState();
+                    }
                 });
 
                 eventsReq.addEventListener("load", function()
