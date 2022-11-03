@@ -207,10 +207,8 @@ class Paths
 
         if(setNulls)
         {
-			PlayState.instPath = "";
-			PlayState.voicesPath = "";
-			PlayState.instSound = null;
-			PlayState.voicesSound = null;
+			PlayState.instSource = null;
+			PlayState.voicesSource = null;
             PlayState.SONG = null;
             PlayState.songEvents = null;
         }

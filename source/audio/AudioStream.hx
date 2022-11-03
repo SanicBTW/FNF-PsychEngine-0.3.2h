@@ -21,46 +21,16 @@ class AudioStream
     public var lastTime:Float = 0;
     public var initialized:Bool = false;
     public var onComplete:Event->Void;
+    public var source(default, set):Dynamic = null;
 
     public function new()
     {
         sound = new Sound();
     }
 
-    public function load(source:LoadSource = ASSETS, key:Dynamic)
-    {
-        if (sound != null)
-        {
-            switch(source)
-            {
-                case ASSETS:
-                    sound = Assets.getMusic(key);
-                case ONLINE:
-                    sound = new Sound(new URLRequest(key));
-                    //shit didnt want to work
-                    /*
-                    #if !html5
-                    #else
-                    Sound.loadFromFile(key).onComplete(function(loadedSound)
-                    {
-                        sound = loadedSound;
-                    });
-                    #end*/
-                case STORAGE:
-                    sound = Sound.fromFile(key);
-                case RAW:
-                    sound = key;
-            }
-            length = sound.length;
-            initialized = true;
-        }
-        else
-            trace("sound is null");
-    }
-
     public function play()
     {
-        if (channel == null)
+        if (channel == null && source != null)
         {
             channel = sound.play(lastTime);
             channel.soundTransform = new SoundTransform(volume);
@@ -103,6 +73,32 @@ class AudioStream
             return lastTime;
 	}
 
+    function set_source(value:Dynamic):Dynamic
+    {
+        if (sound == null)
+            return null;
+
+        if (Std.isOfType(value, Sound))
+            sound = value;
+
+        if (Std.isOfType(value, String))
+        {
+            if (value.contains("assets/"))
+                sound = Assets.getMusic(value);
+            if (value.contains("sanicbtw_pe_files"))
+                sound = Sound.fromFile(value);
+            if (value.contains("http://"))
+                sound = new Sound(new URLRequest(value));
+        }
+
+        lastTime = 0;
+        length = sound.length;
+        playing = false;
+        initialized = true;
+
+        return value;
+    }
+
     /*
 	function set_time(value:Float):Float 
     {
@@ -117,12 +113,4 @@ class AudioStream
         }
         return value;
 	}*/
-}
-
-enum LoadSource
-{
-    ASSETS;
-    ONLINE;
-    STORAGE;
-    RAW;
 }

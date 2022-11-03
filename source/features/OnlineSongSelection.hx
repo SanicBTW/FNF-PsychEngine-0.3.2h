@@ -216,14 +216,14 @@ class OnlineSongSelection extends MusicBeatState
     
                     Sound.loadFromFile(songShit[2]).onComplete(function(sound)
                     {
-                        PlayState.instSound = sound;
+                        PlayState.instSource = sound;
                     });
     
                     if(PlayState.SONG.needsVoices && songShit[3] != "")
                     {
                         Sound.loadFromFile(songShit[3]).onComplete(function(sound)
                         {
-                            PlayState.voicesSound = sound;
+                            PlayState.voicesSource = sound;
                             goToPlayState();
                         });
                     }

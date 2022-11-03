@@ -265,10 +265,8 @@ class PlayState extends MusicBeatState
 	//tf???
 	var expInst:AudioStream = new AudioStream();
     var expVoices:AudioStream = new AudioStream();
-	public static var instPath:String = "";
-    public static var voicesPath:String = "";
-	public static var instSound:Sound = null;
-	public static var voicesSound:Sound = null;
+	public static var instSource:Dynamic = null;
+	public static var voicesSource:Dynamic = null;
 
 	override public function create()
 	{
@@ -288,65 +286,26 @@ class PlayState extends MusicBeatState
 
 		if (expInst.initialized == false)
 		{
-			var key:Dynamic = null;
-			var loadSource:LoadSource = ASSETS;
-
 			if (Assets.exists(Paths.inst(PlayState.SONG.song)))
-				key = Paths.inst(PlayState.SONG.song);
+				expInst.source = Paths.inst(PlayState.SONG.song);
 
-			if (instPath != "")
-			{
-				key = instPath;
-
-				if (instPath.contains("sanicbtw_pe_files"))
-					loadSource = STORAGE;
-
-				if (instPath.contains("http://") || instPath.contains("https://"))
-					loadSource = ONLINE;
-			}
-
-			if (instSound != null)
-			{
-				key = instSound;
-				loadSource = RAW;
-			}
-
-			if (key != null)
-				expInst.load(loadSource, key);
+			if (instSource != null)
+				expInst.source = instSource;
 		}
 
 		if (expVoices.initialized == false)
 		{
-			var key:Dynamic = null;
-			var loadSource:LoadSource = ASSETS;
-
 			if (Assets.exists(Paths.voices(PlayState.SONG.song)))
-				key = Paths.voices(PlayState.SONG.song);
-
-			if (voicesPath != "")
-			{
-				key = voicesPath;
-
-				if (voicesPath.contains("sanicbtw_pe_files"))
-					loadSource = STORAGE;
-
-				if (voicesPath.contains("http://") || voicesPath.contains("https://"))
-					loadSource = ONLINE;
-			}
-
-			if (voicesSound != null)
-			{
-				key = voicesSound;
-				loadSource = RAW;
-			}
-
-			if (key != null)
-			{
-				expVoices.load(loadSource, key);
-				SONG.needsVoices = true;
-			}
+				expVoices.source = Paths.voices(PlayState.SONG.song);
 			else
 				SONG.needsVoices = false;
+
+			if (voicesSource != null)
+				expVoices.source = voicesSource;
+			else
+				SONG.needsVoices = false;
+
+			SONG.needsVoices = true;
 		}
 
 		practiceMode = false;
