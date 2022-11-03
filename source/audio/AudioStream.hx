@@ -8,6 +8,8 @@ import openfl.media.Sound;
 import openfl.media.SoundChannel;
 import openfl.utils.Assets;
 
+using StringTools;
+
 // from fps plus
 class AudioStream
 {
@@ -83,11 +85,12 @@ class AudioStream
 
         if (Std.isOfType(value, String))
         {
-            if (value.contains("assets/"))
+            var shitString = Std.string(value);
+            if (shitString.contains("assets"))
                 sound = Assets.getMusic(value);
-            if (value.contains("sanicbtw_pe_files"))
+            if (shitString.contains("sanicbtw_pe_files"))
                 sound = Sound.fromFile(value);
-            if (value.contains("http://"))
+            if (shitString.contains("http://"))
                 sound = new Sound(new URLRequest(value));
         }
 
