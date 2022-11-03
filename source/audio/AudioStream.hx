@@ -30,7 +30,7 @@ class AudioStream
 
     public function play()
     {
-        if (channel == null && source != null)
+        if (channel == null)
         {
             channel = sound.play(lastTime);
             channel.soundTransform = new SoundTransform(volume);
