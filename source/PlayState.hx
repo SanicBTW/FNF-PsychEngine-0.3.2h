@@ -262,9 +262,7 @@ class PlayState extends MusicBeatState
 	//the get content on generate song shit but nahhh gonna make it much easier lol
 	public static var songEvents:Array<Dynamic> = null;
 
-	//tf???
-	var expInst:AudioStream = new AudioStream();
-    var expVoices:AudioStream = new AudioStream();
+    var vocals:FlxSound;
 	public static var instSource:Dynamic = null;
 	public static var voicesSource:Dynamic = null;
 
@@ -284,24 +282,13 @@ class PlayState extends MusicBeatState
 		practiceMode = ClientPrefs.getGameplaySetting('practice', false);
 		cpuControlled = ClientPrefs.getGameplaySetting('botplay', false);
 
-		if (expInst.initialized == false)
-		{
-			if (Assets.exists(Paths.inst(PlayState.SONG.song)))
-				expInst.source = Paths.inst(PlayState.SONG.song);
+		if (Assets.exists(Paths.inst(SONG.song)) && instSource == null)
+			instSource = Paths.inst(SONG.song);
 
-			if (instSource != null)
-				expInst.source = instSource;
-		}
-
-		if (expVoices.initialized == false)
-		{
-			if (Assets.exists(Paths.voices(SONG.song)))
-				expVoices.source = Paths.voices(SONG.song);
-			else if (!Assets.exists(Paths.voices(SONG.song)) && voicesSource != null)
-				expVoices.source = voicesSource;
-			else if (!Assets.exists(Paths.voices(SONG.song)) && voicesSource == null)
-				SONG.needsVoices = false;
-		}
+		if (Assets.exists(Paths.voices(SONG.song)) && voicesSource == null)
+			voicesSource = Paths.voices(SONG.song);
+		else if (!Assets.exists(Paths.voices(SONG.song)) && voicesSource == null)
+			SONG.needsVoices = false;
 
 		practiceMode = false;
 		camGame = new FlxCamera();
@@ -1855,25 +1842,20 @@ class PlayState extends MusicBeatState
 		previousFrameTime = FlxG.game.ticks;
 		lastReportedPlayheadPosition = 0;
 
-		//FlxG.sound.playMusic(inst, 1, false);
-		//FlxG.sound.music.onComplete = finishSong;
-		//vocals.play();
-		expInst.onComplete = finishSong;
-		expInst.play();
+		FlxG.sound.playMusic(instSource, 1, false);
+		FlxG.sound.music.onComplete = finishSong;
 		if (SONG.needsVoices)
-			expVoices.play();
+			vocals.play();
 
 		if (paused)
 		{
-			expInst.stop();
+			FlxG.sound.music.pause();
 			if (SONG.needsVoices)
-				expVoices.stop();
-			//FlxG.sound.music.pause();
-			//vocals.pause();
+				vocals.pause();
 		}
 
 		// Song duration in a float, useful for the time left feature
-		songLength = /* FlxG.sound.music.length */ expInst.length;
+		songLength = FlxG.sound.music.length;
 		FlxTween.tween(timeBarBG, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
 		FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
@@ -1905,14 +1887,13 @@ class PlayState extends MusicBeatState
 
 		curSong = songData.song;
 
-		/* should i add them to the sound list orrrr
 		if (SONG.needsVoices)
-			vocals = new FlxSound().loadEmbedded(voices);
+			vocals = new FlxSound().loadEmbedded(voicesSource);
 		else
 			vocals = new FlxSound();
 
 		FlxG.sound.list.add(vocals);
-		FlxG.sound.list.add(new FlxSound().loadEmbedded(inst));*/
+		FlxG.sound.list.add(new FlxSound().loadEmbedded(instSource));
 
 		notes = new FlxTypedGroup<Note>();
 		add(notes);
@@ -2165,15 +2146,12 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			expInst.stop();
-			if (SONG.needsVoices)
-				expVoices.stop();
-			/*
 			if (FlxG.sound.music != null)
 			{
 				FlxG.sound.music.pause();
-				vocals.pause();
-			}*/
+				if (SONG.needsVoices)
+					vocals.pause();
+			}
 
 			if (!startTimer.finished)
 				startTimer.active = false;
@@ -2204,7 +2182,7 @@ class PlayState extends MusicBeatState
 	{
 		if (paused)
 		{
-			if (/*FlxG.sound.music != null*/ expInst.initialized && (SONG.needsVoices && expVoices.initialized) && !startingSong)
+			if (FlxG.sound.music != null && !startingSong)
 			{
 				resyncVocals();
 			}
@@ -2298,17 +2276,15 @@ class PlayState extends MusicBeatState
 			return;
 
 		if (SONG.needsVoices)
-			expVoices.stop();
-		//vocals.pause();
+			vocals.pause();
 
-		expInst.play();
-		//FlxG.sound.music.play();
-		Conductor.songPosition = /*FlxG.sound.music.time*/ expInst.time;
-		//vocals.time = Conductor.songPosition;
-		//vocals.play();
-		expVoices.lastTime = Conductor.songPosition;
+		FlxG.sound.music.play();
+		Conductor.songPosition = FlxG.sound.music.time;
 		if (SONG.needsVoices)
-			expVoices.play();
+		{
+			vocals.time = Conductor.songPosition;
+			vocals.play();
+		}
 	}
 
 	private var paused:Bool = false;
@@ -2542,7 +2518,7 @@ class PlayState extends MusicBeatState
 
 				if (updateTime)
 				{
-					var curTime:Float = /* FlxG.sound.music.time */ expInst.time - ClientPrefs.noteOffset;
+					var curTime:Float = FlxG.sound.music.time - ClientPrefs.noteOffset;
 					if (curTime < 0)
 						curTime = 0;
 					songPercent = (curTime / songLength);
@@ -2785,7 +2761,6 @@ class PlayState extends MusicBeatState
 		}
 
 		#if debug
-		/* have to look into this
 		if (!endingSong && !startingSong)
 		{
 			if (FlxG.keys.justPressed.ONE)
@@ -2829,7 +2804,7 @@ class PlayState extends MusicBeatState
 				vocals.time = Conductor.songPosition;
 				vocals.play();
 			}
-		}*/
+		}
 		#end
 	}
 
@@ -2851,10 +2826,8 @@ class PlayState extends MusicBeatState
 			boyfriendGroup.alpha = 0;
 
 			if (SONG.needsVoices)
-				expVoices.stop();
-			expInst.stop();
-			//vocals.stop();
-			//FlxG.sound.music.stop();
+				vocals.stop();
+			FlxG.sound.music.stop();
 
 			openSubState(new GameOverSubstate(boyfriend.x, boyfriend.y));
 
@@ -3269,20 +3242,17 @@ class PlayState extends MusicBeatState
 		camFollowPos.setPosition(x, y);
 	}
 
-	function finishSong(?_):Void
+	function finishSong():Void
 	{
 		var finishCallback:Void->Void = endSong; // In case you want to change it in a specific song.
 
 		updateTime = false;
-		expInst.volume = 0;
+		FlxG.sound.music.volume = 0;
 		if (SONG.needsVoices)
 		{
-			expVoices.volume = 0;
-			expVoices.stop();
+			vocals.volume = 0;
+			vocals.pause();
 		}
-		//FlxG.sound.music.volume = 0;
-		//vocals.volume = 0;
-		//vocals.pause();
 		if (ClientPrefs.noteOffset <= 0)
 		{
 			finishCallback();
@@ -3376,11 +3346,10 @@ class PlayState extends MusicBeatState
 					prevCamFollowPos = camFollowPos;
 
 					PlayState.SONG = Song.loadFromJson(next + diff, next);
-					//PlayState.inst = null;
-					//PlayState.voices = null;
+					PlayState.instSource = null;
+					PlayState.voicesSource = null;
 					System.gc();
-					expInst.stop();
-					//FlxG.sound.music.stop();
+					FlxG.sound.music.stop();
 
 					if (winterHorrorNext)
 					{
@@ -3427,10 +3396,8 @@ class PlayState extends MusicBeatState
 	private function popUpScore(note:Note = null):Void
 	{
 		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
-		//var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
-		//vocals.volume = 1;
 		if (SONG.needsVoices)
-			expVoices.volume = 1;
+			voicesSource.volume = 1;
 
 		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
 		coolText.screenCenter();
@@ -4044,8 +4011,7 @@ class PlayState extends MusicBeatState
 					if(instakillOnMiss)
 					{
 						if (SONG.needsVoices)
-							expVoices.volume = 0;
-						//vocals.volume = 0;
+							vocals.volume = 0;
 						doDeathCheck(true);
 					}
 					combo = 0;
@@ -4060,8 +4026,7 @@ class PlayState extends MusicBeatState
 					}
 
 					if (SONG.needsVoices)
-						expVoices.volume = 0;
-					//vocals.volume = 0;
+						vocals.volume = 0;
 
 					var char:Character = boyfriend;
 					if (daNote.gfNote)
@@ -4092,8 +4057,7 @@ class PlayState extends MusicBeatState
 			if(instakillOnMiss)
 			{
 				if (SONG.needsVoices)
-					expVoices.volume = 0;
-				//vocals.volume = 0;
+					vocals.volume = 0;
 				doDeathCheck(true);
 			}
 			combo = 0;
@@ -4108,8 +4072,7 @@ class PlayState extends MusicBeatState
 			}
 
 			if (SONG.needsVoices)
-				expVoices.volume = 0;
-			//vocals.volume = 0;
+				vocals.volume = 0;
 
 			var char:Character = boyfriend;
 
@@ -4194,8 +4157,7 @@ class PlayState extends MusicBeatState
 
 			note.wasGoodHit = true;
 			if (SONG.needsVoices)
-				expVoices.volume = 1;
-			//vocals.volume = 1;
+				vocals.volume = 1;
 
 			if (!note.isSustainNote)
 			{
@@ -4254,8 +4216,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (SONG.needsVoices)
-			expVoices.volume = 1;
-			//vocals.volume = 1;
+			vocals.volume = 1;
 
 		var time:Float = 0.15;
 		if (note.isSustainNote && !note.animation.curAnim.name.endsWith('end'))
@@ -4483,8 +4444,8 @@ class PlayState extends MusicBeatState
 	override function stepHit()
 	{
 		super.stepHit();
-		if (Math.abs(/*FlxG.sound.music.time*/expInst.time - (Conductor.songPosition - Conductor.offset)) > 20
-			|| (SONG.needsVoices && Math.abs(/*vocals*/expVoices.time - (Conductor.songPosition - Conductor.offset)) > 20))
+		if (Math.abs(FlxG.sound.music.time - (Conductor.songPosition - Conductor.offset)) > 20
+			|| (SONG.needsVoices && Math.abs(vocals.time - (Conductor.songPosition - Conductor.offset)) > 20))
 		{
 			resyncVocals();
 		}
@@ -4897,15 +4858,12 @@ class PlayState extends MusicBeatState
 			persistentUpdate = false;
 			persistentDraw = true;
 			paused = true;
-			expInst.stop();
-			if (SONG.needsVoices)
-				expVoices.stop();
-			/*
 			if (FlxG.sound.music != null)
 			{
 				FlxG.sound.music.pause();
-				vocals.pause();
-			}*/
+				if (SONG.needsVoices)
+					vocals.pause();
+			}
 			openSubState(new PauseSubState(boyfriend.getScreenPosition().x, boyfriend.getScreenPosition().y));
 		}
 	}
