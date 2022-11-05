@@ -29,6 +29,8 @@ class Notification extends FlxSpriteGroup
 
     public var shouldDie:Bool = false;
 
+    var scales = [3, 3];
+
     /**
         Creates a new notification with a title of `title`, description of `description`, and type of `type`.
 
@@ -42,9 +44,9 @@ class Notification extends FlxSpriteGroup
 
         //in case paths has another level
         box = new FlxSprite().loadGraphic(Paths.getPreloadPath("images/notificationBox.png"));
-        box.scale.set(4, 4);
+        box.scale.set(scales[0], scales[1]);
         box.updateHitbox();
-        box.x = FlxG.width - (box.width - 200);
+        box.x = FlxG.width - (box.width - 100);
         add(box);
 
         icon = new FlxSprite(box.x + 13, box.y + 13);
@@ -63,7 +65,7 @@ class Notification extends FlxSpriteGroup
                 icon.animation.play("info");
         }
 
-        icon.scale.set(4, 4);
+        icon.scale.set(scales[0], scales[1]);
         icon.updateHitbox();
         add(icon);
 

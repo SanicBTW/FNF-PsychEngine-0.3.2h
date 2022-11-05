@@ -3397,7 +3397,7 @@ class PlayState extends MusicBeatState
 	{
 		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		if (SONG.needsVoices)
-			voicesSource.volume = 1;
+			vocals.volume = 1;
 
 		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
 		coolText.screenCenter();
@@ -3408,8 +3408,8 @@ class PlayState extends MusicBeatState
 		var score:Int = 350;
 
 		var daRating = Conductor.judgeNote(noteDiff, Conductor.timeScale);
-		var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
-		totalNotesHit += wife;
+		//var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
+		//totalNotesHit += wife;
 
 		if (daRating == "miss")
 		{
@@ -3421,6 +3421,7 @@ class PlayState extends MusicBeatState
 		switch (daRating)
 		{
 			case 'shit':
+				totalNotesHit += 0.25;
 				note.ratingMod = 0.25;
 				score = -300;
 				combo = 0;
@@ -3431,6 +3432,7 @@ class PlayState extends MusicBeatState
 					shits++;
 				}
 			case 'bad':
+				totalNotesHit += 0.5;
 				note.ratingMod = 0.5;
 				score = 0;
 				health -= 0.06;
@@ -3439,6 +3441,7 @@ class PlayState extends MusicBeatState
 					bads++;
 				}
 			case 'good':
+				totalNotesHit += 0.75;
 				note.ratingMod = 0.75;
 				score = 200;
 				if (!note.ratingDisabled)
@@ -3446,6 +3449,7 @@ class PlayState extends MusicBeatState
 					goods++;
 				}
 			case 'sick':
+				totalNotesHit += 1;
 				note.ratingMod = 1;
 				if (!note.ratingDisabled)
 				{

@@ -257,10 +257,10 @@ class OnlineSongSelection extends MusicBeatState
                     if(songShit[1] != "")
                         reqEvents.request();
 
-                    PlayState.instPath = songShit[2];
+                    PlayState.instSource = new Sound(new URLRequest(songShit[2]));
                     if(PlayState.SONG.needsVoices && songShit[3] != "")
                     {
-                        PlayState.voicesPath = songShit[3];
+                        PlayState.voicesSource = new Sound(new URLRequest(songShit[3]));
                         goToPlayState();
                     }
                     else

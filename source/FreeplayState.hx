@@ -178,7 +178,7 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = #if !android "Press Reset to reset your Score and Accuracy" #else "Press C to open the substates menu" #end;
+		var leText:String = #if !android "Press CTRL to open the Gameplay Changers Menu / Press Reset to reset your Score and Accuracy" #else "Press C to open the substates menu" #end;
 		var size:Int = 16;
 		#if ONLINE_SONGS
 		if(ClientPrefs.allowOnlineFetching)
@@ -329,8 +329,8 @@ class FreeplayState extends MusicBeatState
 
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
-				PlayState.instPath = StorageAccess.getInst(songs[curSelected].songName, true);
-				PlayState.voicesPath = StorageAccess.getVoices(songs[curSelected].songName, true);
+				PlayState.instSource = StorageAccess.getInst(songs[curSelected].songName);
+				PlayState.voicesSource = StorageAccess.getVoices(songs[curSelected].songName);
 				PlayState.storyWeek = 0;
 
 				goToPlayState();

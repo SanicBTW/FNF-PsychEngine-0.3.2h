@@ -147,19 +147,6 @@ class MusicBeatState extends FlxUIState
 		if (!FlxTransitionableState.skipNextTransOut)
 			openSubState(new CustomFadeTransition(0.7, true));
 
-		/*
-		FlxG.sound.list.forEachAlive(function(sound:FlxSound)
-		{
-			FlxG.sound.list.remove(sound, true);
-			sound.stop();
-			sound.kill();
-			sound.destroy();
-		});
-		FlxG.sound.list.clear();*/
-
-		FlxG.bitmap.dumpCache();
-		FlxG.bitmap.clearCache();
-
 		System.gc();
 
 		FlxTransitionableState.skipNextTransOut = false;
