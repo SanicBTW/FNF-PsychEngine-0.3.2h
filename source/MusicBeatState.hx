@@ -1,5 +1,9 @@
 package;
 
+import openfl.system.System;
+import flixel.system.FlxSound;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.FlxCamera;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -33,6 +37,10 @@ class MusicBeatState extends FlxUIState
 
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
+
+	public var notificationCamera:FlxCamera;
+	public var notificationGroup:FlxTypedGroup<Notification>;
+	//private static var instance:MusicBeatState;
 
 	#if android
 	var virtualPad:FlxVirtualPad;
@@ -136,17 +144,54 @@ class MusicBeatState extends FlxUIState
 
 	override function create()
 	{
-		var skip:Bool = FlxTransitionableState.skipNextTransOut;
+		if (!FlxTransitionableState.skipNextTransOut)
+			openSubState(new CustomFadeTransition(0.7, true));
+
+		/*
+		FlxG.sound.list.forEachAlive(function(sound:FlxSound)
+		{
+			FlxG.sound.list.remove(sound, true);
+			sound.stop();
+			sound.kill();
+			sound.destroy();
+		});
+		FlxG.sound.list.clear();*/
+
+		FlxG.bitmap.dumpCache();
+		FlxG.bitmap.clearCache();
+
+		System.gc();
+
+		FlxTransitionableState.skipNextTransOut = false;
+
 		super.create();
 
-		if (!skip)
-		{
-			openSubState(new CustomFadeTransition(0.7, true));
-		}
-		FlxTransitionableState.skipNextTransOut = false;
+		if (notificationCamera == null)
+			notificationCamera = new FlxCamera();
+
+		notificationCamera.bgColor = 0x0;
+
+		FlxG.cameras.add(notificationCamera, false);
+
+		if (notificationGroup == null)
+			notificationGroup = new FlxTypedGroup<Notification>();
+
+		notificationGroup.cameras = [notificationCamera];
+		add(notificationGroup);
+
+		//instance = this;
 	}
 
 	override function update(elapsed:Float)
+	{
+		updateSB();
+		updateNotifications();
+		checkKeyFuncs();
+
+		super.update(elapsed);
+	}
+
+	private function updateSB() //update steps and beats
 	{
 		var oldStep:Int = curStep;
 
@@ -166,14 +211,35 @@ class MusicBeatState extends FlxUIState
 					rollbackSection();
 			}
 		}
+	}
 
-		if(FlxG.keys.pressed.CONTROL)
+	private function updateNotifications()
+	{
+		var dumb:Int = 0;
+		if (notificationGroup != null)
 		{
+			notificationGroup.forEachAlive(function(notification:Notification)
+			{
+				notification.scrollFactor.set();
+				notification.y = 20 + ((notification.box.height + 20) * dumb);
+
+				if (notification.shouldDie)
+				{
+					notificationGroup.remove(notification, true);
+					notification.kill();
+					notification.destroy();
+				}
+
+				dumb++;
+			});
+		}
+	}
+
+	private function checkKeyFuncs()
+	{
+		if(FlxG.keys.pressed.CONTROL)
 			if(FlxG.mouse.wheel != 0)
 				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
-		}
-
-		super.update(elapsed);
 	}
 
 	private function updateSection():Void
@@ -227,6 +293,16 @@ class MusicBeatState extends FlxUIState
 
 	public static function switchState(nextState:FlxState)
 	{
+		// just in case some notification was left behind
+		/*if (instance != null)
+			if (instance.notificationGroup != null)
+				instance.notificationGroup.forEachAlive(function(notification:Notification)
+				{
+					instance.notificationGroup.remove(notification, true);
+					notification.kill();
+					notification.destroy();
+				});*/
+
 		// Custom made Trans in
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
@@ -239,7 +315,6 @@ class MusicBeatState extends FlxUIState
 				{
 					FlxG.resetState();
 				};
-				// trace('resetted');
 			}
 			else
 			{
@@ -247,7 +322,6 @@ class MusicBeatState extends FlxUIState
 				{
 					FlxG.switchState(nextState);
 				};
-				// trace('changed state');
 			}
 			return;
 		}

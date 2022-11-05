@@ -207,6 +207,7 @@ class OnlineSongSelection extends MusicBeatState
                 request.addEventListener("load", function()
                 {
                     blockInputs = true; //WHY IT ISNT WORKINGGGGGGG
+                    notificationGroup.add(new Notification("Chart loaded"));
 
                     //to check if it needs voices
                     PlayState.SONG = Song.loadFromRaw(request.responseText);
@@ -216,6 +217,7 @@ class OnlineSongSelection extends MusicBeatState
     
                     Sound.loadFromFile(songShit[2]).onComplete(function(sound)
                     {
+                        notificationGroup.add(new Notification("Inst loaded"));
                         PlayState.instSource = sound;
                     });
     
@@ -223,6 +225,7 @@ class OnlineSongSelection extends MusicBeatState
                     {
                         Sound.loadFromFile(songShit[3]).onComplete(function(sound)
                         {
+                            notificationGroup.add(new Notification("Voices loaded"));
                             PlayState.voicesSource = sound;
                             goToPlayState();
                         });
@@ -236,6 +239,7 @@ class OnlineSongSelection extends MusicBeatState
 
                 eventsReq.addEventListener("load", function()
                 {
+                    notificationGroup.add(new Notification("Events loaded"));
                     PlayState.songEvents = Song.loadFromRaw(eventsReq.responseText).events;
                 });
     
@@ -308,6 +312,8 @@ class OnlineSongSelection extends MusicBeatState
 
         PlayState.storyDifficulty = 2;
         PlayState.storyWeek = 0;
+
+        notificationGroup.add(new Notification("All done!", "Switching to PlayState"));
 
         LoadingState.loadAndSwitchState(new PlayState(), false);
 
