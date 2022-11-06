@@ -317,7 +317,7 @@ class FreeplayState extends MusicBeatState
 				var eventPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, "events"]) + ".json";
 				if (!StorageAccess.exists(chartPath))
 				{
-					lime.app.Application.current.window.alert("Couldn't find the chart on your Local Storage", "Chart not found");
+					notificationGroup.add(new Notification("Oops! That chart doesn't exists", "Check if it has the proper spelling in the storage", Error));
 					return;
 				}
 

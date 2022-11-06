@@ -69,12 +69,14 @@ class Notification extends FlxSpriteGroup
         icon.updateHitbox();
         add(icon);
 
-        this.title = new FlxText(icon.x + (icon.width + 20), icon.y, 0, title);
-        this.title.setFormat(Paths.font("vcr.ttf"), 17);
+        this.title = new FlxText(icon.x + (icon.width + 5), icon.y - 5, 0, title);
+        this.title.setFormat(Paths.font("vcr.ttf"), 20);
+        this.title.antialiasing = ClientPrefs.globalAntialiasing;
         add(this.title);
 
         this.description = new FlxText(this.title.x, this.title.y + 30, 0, description);
-        this.description.setFormat(Paths.font("vcr.ttf"), 12);
+        this.description.setFormat(Paths.font("vcr.ttf"), 14);
+        this.description.antialiasing = ClientPrefs.globalAntialiasing;
         add(this.description);
 
         x = box.width;
