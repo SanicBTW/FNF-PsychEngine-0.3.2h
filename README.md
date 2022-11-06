@@ -24,9 +24,9 @@ This was originally a base for mod ports but a youtube comment on one of my vide
 
 # Special thanks
 
-HTML5 Players - For testing latest changes
+HTML5 Players - For testing latest changes (before stable release v1.2)
 
-Dulce - For beta testing the Android version
+Dulce - For beta testing the Android version, helping, giving ideas and reporting issues
 
 # Issues
 

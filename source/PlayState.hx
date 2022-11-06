@@ -912,7 +912,8 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
-		strumLine = new FlxSprite(ClientPrefs.middleScroll ? STRUM_X_MIDDLESCROLL : STRUM_X, 50).makeGraphic(FlxG.width, 10);
+		//shitty fix sorry :(
+		strumLine = new FlxSprite(ClientPrefs.middleScroll ? (playAsOpponent ? Math.abs(STRUM_X_MIDDLESCROLL) + 85.5 : STRUM_X_MIDDLESCROLL) : STRUM_X, 50).makeGraphic(FlxG.width, 10);
 		if (ClientPrefs.downScroll)
 			strumLine.y = FlxG.height - 150;
 		strumLine.scrollFactor.set();

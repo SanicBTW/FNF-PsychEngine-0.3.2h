@@ -53,9 +53,11 @@ class ClientPrefs
 	public static var snapCameraOnGameover:Bool = true;
 	public static var counterFont:String = "Funkin";
 	public static var osuManiaSimulation:Bool = true; //not exactly a simulation but yeah
-	public static var ratingsStyle:String = "Classic";
 	public static var allowOnlineFetching:Bool = false;
 	public static var smallRatingSize:Bool = true;
+	public static var legacyRatingsStyle:String = "Classic";
+	public static var useLegacyRatings:Bool = false;
+	public static var ratingsStyle:String = "";
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
