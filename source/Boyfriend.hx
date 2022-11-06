@@ -18,14 +18,17 @@ class Boyfriend extends Character
 
 	override function update(elapsed:Float)
 	{
+		//bruh
 		if (!debugMode && animation.curAnim != null)
 		{
 			if (animation.curAnim.name.startsWith('sing'))
-			{
 				holdTimer += elapsed;
-			}
-			else
+
+			if (holdTimer >= Conductor.stepCrochet * 0.0011 * singDuration)
+			{
+				dance();
 				holdTimer = 0;
+			}
 
 			if (animation.curAnim.name.endsWith('miss') && animation.curAnim.finished && !debugMode)
 			{
