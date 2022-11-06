@@ -178,12 +178,12 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = #if !android "Press CTRL to open the Gameplay Changers Menu / Press Reset to reset your Score and Accuracy" #else "Press C to open the substates menu" #end;
+		var leText:String = "Press " + #if !android "CTRL" #else "X" #end + " to open the Gameplay Changers Menu / Press " + #if !android "Reset" #else "C" #end + " to reset your Score and Accuracy";
 		var size:Int = 16;
 		#if ONLINE_SONGS
 		if(ClientPrefs.allowOnlineFetching)
 		{
-			leText += " / Press " + #if android "S" #else "TAB" #end + " to open the Online song list";
+			leText += " / Press " + #if android "Y" #else "TAB" #end + " to open the Online song list";
 		}
 		#end
 		var text:FlxText = new FlxText(textBG.x, textBG.y + 4, FlxG.width, leText, size);
@@ -193,9 +193,9 @@ class FreeplayState extends MusicBeatState
 
 		#if android
 		if(ClientPrefs.allowOnlineFetching)
-			addVirtualPad(LEFT_FULL, A_B_C_S);
+			addVirtualPad(LEFT_FULL, A_B_C_X_Y);
 		else
-			addVirtualPad(LEFT_FULL, A_B_C);
+			addVirtualPad(LEFT_FULL, A_B_C_X);
 		#end
 
 		super.create();
@@ -301,7 +301,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		#if ONLINE_SONGS
-		if (ClientPrefs.allowOnlineFetching && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonS.justPressed #end))
+		if (ClientPrefs.allowOnlineFetching && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonY.justPressed #end))
 		{
 			MusicBeatState.switchState(new features.OnlineSongSelection());
 		}
@@ -355,19 +355,14 @@ class FreeplayState extends MusicBeatState
 		else if (controls.RESET)
 		{
 			persistentUpdate = false;
-			#if android
-			//needs to get improved
-			openSubState(new SubstatesMenu([songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter]));
-			#else
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-			#end
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
-
-		if (FlxG.keys.justPressed.CONTROL)
+		else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
 		{
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
