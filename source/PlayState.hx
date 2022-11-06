@@ -77,15 +77,9 @@ class PlayState extends MusicBeatState
 	// event variables
 	private var isCameraOnForcedPos:Bool = false;
 
-	#if (haxe >= "4.0.0")
 	public var boyfriendMap:Map<String, Boyfriend> = new Map();
 	public var dadMap:Map<String, Character> = new Map();
 	public var gfMap:Map<String, Character> = new Map();
-	#else
-	public var boyfriendMap:Map<String, Boyfriend> = new Map<String, Boyfriend>();
-	public var dadMap:Map<String, Character> = new Map<String, Character>();
-	public var gfMap:Map<String, Character> = new Map<String, Character>();
-	#end
 
 	public var BF_X:Float = 770;
 	public var BF_Y:Float = 100;
@@ -115,7 +109,7 @@ class PlayState extends MusicBeatState
 
 	public var dad:Character;
 	public var gf:Character;
-	public var boyfriend:Boyfriend;
+	public var boyfriend:Character;
 	public var notes:FlxTypedGroup<Note>;
 	public var unspawnNotes:Array<Note> = [];
 	public var eventNotes:Array<Dynamic> = [];
@@ -2481,8 +2475,10 @@ class PlayState extends MusicBeatState
 			- (150 * iconP2.scale.x) / 2
 			- iconOffset * 2;
 
-		if (health >= 2 && !playAsOpponent)
+		if (health >= 2)
 			health = 2;
+		if (health <= 0)
+			health = 0;
 
 		if (healthBar.percent < 20)
 			iconP1.animation.curAnim.curFrame = 1;
@@ -2582,7 +2578,7 @@ class PlayState extends MusicBeatState
 		// RESET = Quick Game Over Screen
 		if (controls.RESET && !inCutscene && !endingSong)
 		{
-			health = 0;
+			health = (playAsOpponent ? 2 : 0);
 			trace("RESET = True");
 		}
 
@@ -2763,7 +2759,7 @@ class PlayState extends MusicBeatState
 			{
 				if (dad.holdTimer > Conductor.stepCrochet * 0.001 * dad.singDuration
 					&& dad.animation.curAnim.name.startsWith("sing")
-					&& dad.animation.curAnim.name.endsWith("miss"))
+					&& !dad.animation.curAnim.name.endsWith("miss"))
 					dad.dance();
 			}
 			cameraDisplacement(boyfriend, true);
@@ -3637,6 +3633,7 @@ class PlayState extends MusicBeatState
 	private function keyShit():Void
 	{
 		var curStrums = (playAsOpponent ? opponentStrums : playerStrums);
+		var char = (playAsOpponent ? dad : boyfriend);
 		if (ClientPrefs.inputType == "Kade 1.5.3")
 		{
 			var holdArray:Array<Bool> = [controls.NOTE_LEFT, controls.NOTE_DOWN, controls.NOTE_UP, controls.NOTE_RIGHT];
@@ -3653,11 +3650,11 @@ class PlayState extends MusicBeatState
 				controls.NOTE_RIGHT_R
 			];
 
-			if (!boyfriend.stunned && generatedMusic)
+			if (!char.stunned && generatedMusic)
 			{
 				if (controlArray.contains(true))
 				{
-					boyfriend.holdTimer = 0;
+					char.holdTimer = 0;
 
 					var possibleNotes:Array<Note> = [];
 					var directionList:Array<Int> = [];
@@ -3759,7 +3756,7 @@ class PlayState extends MusicBeatState
 
 				if (releaseArray.contains(true) && ClientPrefs.osuManiaSimulation)
 				{
-					boyfriend.holdTimer = 0;
+					char.holdTimer = 0;
 
 					var possibleNotes:Array<Note> = [];
 					var directionList:Array<Int> = [];
@@ -3860,15 +3857,15 @@ class PlayState extends MusicBeatState
 					if (cpuControlled && daNote.canBeHit && daNote.mustPress || cpuControlled && daNote.tooLate && daNote.mustPress)
 					{
 						goodNoteHit(daNote);
-						boyfriend.holdTimer = daNote.sustainLength;
+						char.holdTimer = daNote.sustainLength;
 					}
 				}
 			});
 
-			if (boyfriend.holdTimer > Conductor.stepCrochet * 4 * 0.001 && (!holdArray.contains(true) || cpuControlled))
+			if (char.holdTimer > Conductor.stepCrochet * 4 * 0.001 && (!holdArray.contains(true) || cpuControlled))
 			{
-				if (boyfriend.animation.curAnim.name.startsWith("sing") && !boyfriend.animation.curAnim.name.endsWith("miss"))
-					boyfriend.playAnim('idle');
+				if (char.animation.curAnim.name.startsWith("sing") && !char.animation.curAnim.name.endsWith("miss"))
+					char.playAnim('idle');
 			}
 
 			curStrums.forEach(function(spr:StrumNote)
@@ -3908,7 +3905,7 @@ class PlayState extends MusicBeatState
 			var controlReleaseArray:Array<Bool> = [leftR, downR, upR, rightR];
 			var controlHoldArray:Array<Bool> = [left, down, up, right];
 
-			if (!boyfriend.stunned && generatedMusic)
+			if (!char.stunned && generatedMusic)
 			{
 				// rewritten inputs???
 				notes.forEachAlive(function(daNote:Note)
@@ -3977,11 +3974,11 @@ class PlayState extends MusicBeatState
 						}
 					}
 				}
-				else if (boyfriend.holdTimer > Conductor.stepCrochet * 0.001 * boyfriend.singDuration
-					&& boyfriend.animation.curAnim.name.startsWith('sing')
-					&& !boyfriend.animation.curAnim.name.endsWith('miss'))
+				else if (char.holdTimer > Conductor.stepCrochet * 0.001 * char.singDuration
+					&& char.animation.curAnim.name.startsWith('sing')
+					&& !char.animation.curAnim.name.endsWith('miss'))
 				{
-					boyfriend.dance();
+					char.dance();
 				}
 			}
 
@@ -4004,7 +4001,9 @@ class PlayState extends MusicBeatState
 
 	function noteMiss(daNote:Note):Void
 	{
-		if (!boyfriend.stunned)
+		var acchar = (playAsOpponent ? dad : boyfriend);
+
+		if (!acchar.stunned)
 		{
 			notes.forEachAlive(function(note:Note)
 			{
@@ -4072,7 +4071,9 @@ class PlayState extends MusicBeatState
 
 	function noteMissPress(direction:Int = 1):Void
 	{
-		if (!boyfriend.stunned)
+		var acchar = (playAsOpponent ? dad : boyfriend);
+
+		if (!acchar.stunned)
 		{
 			if (playAsOpponent)
 				health += 0.05 * healthLoss;
@@ -4193,19 +4194,21 @@ class PlayState extends MusicBeatState
 			if (SONG.needsVoices)
 				vocals.volume = 1;
 
+			var acchar = (playAsOpponent ? dad : boyfriend);
+
 			if (!note.isSustainNote)
 			{
 				if (cpuControlled)
-					boyfriend.holdTimer = 0;
+					acchar.holdTimer = 0;
 				note.kill();
 				notes.remove(note, true);
 				note.destroy();
 			}
 			else if (cpuControlled)
 			{
-				var targetHold:Float = Conductor.stepCrochet * 0.001 * boyfriend.singDuration;
-				if (boyfriend.holdTimer + 0.2 > targetHold)
-					boyfriend.holdTimer = targetHold - 0.2;
+				var targetHold:Float = Conductor.stepCrochet * 0.001 * acchar.singDuration;
+				if (acchar.holdTimer + 0.2 > targetHold)
+					acchar.holdTimer = targetHold - 0.2;
 			}
 
 			updateAccuracy();
