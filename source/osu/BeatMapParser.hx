@@ -163,7 +163,7 @@ class BeatMapParser
         PlayState.SONG = fnfChart;
         PlayState.storyDifficulty = 2;
         CoolUtil.difficulties = CoolUtil.defaultDifficulties;
-        PlayState.inst = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
+        PlayState.instSource = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
 
         trace("Going to loading state");
 
