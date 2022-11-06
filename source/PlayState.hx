@@ -4659,6 +4659,14 @@ class PlayState extends MusicBeatState
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
 
 				//uh
+				if (songSpeedType == "constant")
+					return;
+				var baseSpeed = SONG.speed * ClientPrefs.getGameplaySetting('scrollspeed', 1);
+				var newSpeed = baseSpeed + (baseSpeed * ((Conductor.bpm / SONG.bpm) / 10));
+				songSpeed = newSpeed;
+				/*var BPS = (Conductor.bpm / 60) / songSpeed;
+				trace(BPS);
+				var newSpeed = songSpeed + BPS;*/
 				/*
 				if (songSpeedType != "constant")
 				{
