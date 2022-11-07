@@ -1142,6 +1142,8 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 		RecalculateRating();
+		displayRating('sick', "early", true);
+		popUpCombo(true);
 
 		#if desktop
 		// Updating Discord Rich Presence.
@@ -3402,7 +3404,7 @@ class PlayState extends MusicBeatState
 	public var totalNotesHit:Float = 0.0;
 	private var createdColor = FlxColor.fromRGB(204, 66, 66);
 
-	private function popUpCombo(note:Note = null)
+	private function popUpCombo(cache:Bool = false)
 	{
 		var comboString:String = Std.string(combo);
 		var negative:Bool = false;
@@ -3421,7 +3423,7 @@ class PlayState extends MusicBeatState
 
 		for (scoreInt in 0...stringArray.length)
 		{
-			var numScore = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative, createdColor, scoreInt, camHUD);
+			var numScore = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative, createdColor, scoreInt);
 			
 			if (!ClientPrefs.comboStacking)
 				lastScore.push(numScore);
@@ -3435,6 +3437,12 @@ class PlayState extends MusicBeatState
 				},
 				startDelay: Conductor.crochet * 0.001
 			});
+
+			if (!cache)
+				numScore.cameras = [camHUD];
+
+			numScore.y += 50;
+			numScore.x += 100;
 		}
 	}
 
@@ -3512,9 +3520,9 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	private function displayRating(daRating:String)
+	private function displayRating(daRating:String, timing:String, cache:Bool = false)
 	{
-		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), isPixelStage, camHUD);
+		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), timing, isPixelStage);
 		insert(members.indexOf(strumLineNotes), rating);
 
 		if (!ClientPrefs.comboStacking)
@@ -3531,6 +3539,11 @@ class PlayState extends MusicBeatState
 			},
 			startDelay: Conductor.crochet * 0.00125
 		});
+
+		if (!cache)
+		{
+			rating.cameras = [camHUD];
+		}
 	}
 
 	private function generateLegacyRating(pixelShitPart1:String, pixelShitPart2:String, daRating:String, coolText:FlxText):FlxSprite
@@ -3571,6 +3584,7 @@ class PlayState extends MusicBeatState
 		return rating;
 	}
 
+	// rewrite the whole thing or smth
 	private function popUpScore(note:Note = null):Void
 	{
 		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
@@ -3582,10 +3596,15 @@ class PlayState extends MusicBeatState
 		coolText.x = FlxG.width * 0.35;
 		coolText.cameras = [camHUD];
 
-		var rating:FlxSprite = new FlxSprite();
 		var score:Int = 350;
 
-		var daRating = Conductor.judgeNote(noteDiff, Conductor.timeScale);
+		var daRating = Ratings.judgeNote(noteDiff);
+		var timing = "";
+
+		if (note.strumTime < Conductor.songPosition)
+			timing = "late";
+		else
+			timing = "early";
 		//var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
 		//totalNotesHit += wife;
 
@@ -3595,34 +3614,39 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
+		var judgementInfo = Ratings.judgementsMap.get(daRating);
+		score = judgementInfo[2];
+		totalNotesHit += judgementInfo[3];
+		note.ratingMod = judgementInfo[3];
+
 		// this shit comin from the 0.5.2h kade input thing
 		switch (daRating)
 		{
 			case 'shit':
-				totalNotesHit += 0.25;
-				note.ratingMod = 0.25;
-				score = -300;
+				//totalNotesHit += 0.25;
+				//note.ratingMod = 0.25;
+				//score = -300;
 				combo = 0;
 				songMisses++;
 				health -= 0.2;
 				if (!note.ratingDisabled)
 					shits++;
 			case 'bad':
-				totalNotesHit += 0.5;
-				note.ratingMod = 0.5;
-				score = 0;
+				//totalNotesHit += 0.5;
+				//note.ratingMod = 0.5;
+				//score = 0;
 				health -= 0.06;
 				if (!note.ratingDisabled)
 					bads++;
 			case 'good':
-				totalNotesHit += 0.75;
-				note.ratingMod = 0.75;
-				score = 200;
+				//totalNotesHit += 0.75;
+				//note.ratingMod = 0.75;
+				//score = 200;
 				if (!note.ratingDisabled)
 					goods++;
 			case 'sick':
-				totalNotesHit += 1;
-				note.ratingMod = 1;
+				//totalNotesHit += 1;
+				//note.ratingMod = 1;
 				if (!note.ratingDisabled)
 					sicks++;
 		}
@@ -3686,7 +3710,7 @@ class PlayState extends MusicBeatState
 		else
 		{
 			popUpCombo();
-			displayRating(daRating);
+			displayRating(daRating, timing);
 		}
 	}
 
@@ -4973,7 +4997,7 @@ class PlayState extends MusicBeatState
 
 		if (!ClientPrefs.useLegacyRatings)
 		{
-			displayRating("miss");
+			displayRating("miss", "late");
 			popUpCombo();
 		}
 	}

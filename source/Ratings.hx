@@ -10,11 +10,23 @@ using StringTools;
 //yeah dunno where to put these
 class Ratings
 {
-    public static function generateCombo(number:String, allSicks:Bool, isPixel:Bool, negative:Bool, createdColor:FlxColor, scoreInt:Int, cam:FlxCamera):FlxSprite
+    //gotta add timings fuck
+    // follows the timings.hx judgementsMap structure on Forever Engine Legacy
+    public static var judgementsMap:Map<String, Array<Dynamic>> = 
+    [
+        "sick" => [0, ClientPrefs.sickWindow, 350, 1],
+        "good" => [1, ClientPrefs.goodWindow, 150, 0.75],
+        "bad" => [2, ClientPrefs.badWindow, 0, 0.5],
+        "shit" => [3, ClientPrefs.shitWindow, -50, 0.25], //-300 or 
+        "miss" => [4, 180, -100, -1], //no missWindow or smth so 180, idk if i should -1 on totalNotesHit uhh
+    ];
+
+    public static function generateCombo(number:String, allSicks:Bool, isPixel:Bool, negative:Bool, createdColor:FlxColor, scoreInt:Int):FlxSprite
     {
         var width = 100;
         var height = 140;
         var path = Paths.getLibraryPath("Forever/" + ClientPrefs.ratingsStyle + "/combo" + (isPixel ? "-pixel" : "") + ".png", "UILib");
+        var graphic = Paths.getGraphic(path);
 
         if (isPixel)
         {
@@ -22,9 +34,8 @@ class Ratings
             height = 12;
         }
 
-        var newSprite:FlxSprite = new FlxSprite().loadGraphic(path, true, width, height);
+        var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
         newSprite.alpha = 1;
-        newSprite.cameras = [cam];
         newSprite.screenCenter();
         newSprite.x += (43 * scoreInt) + 20;
         newSprite.y += 60;
@@ -58,22 +69,12 @@ class Ratings
 
         return newSprite;
     }
-
-    //gotta add timings fuck
-    /*private static var timings:Map<String, Array<Dynamic>> = 
-    [
-        "sick" => [0],
-        "good" => [1],
-        "bad" => [2],
-        "shit" => [3],
-        "miss" => [4],
-    ];*/
-    private static var timings = ["sick", "good", "bad", "shit", "miss"]; //shitty pplaceholder sorry
-    public static function generateRating(ratingName:String, perfectSick:Bool, isPixel:Bool, cam:FlxCamera):FlxSprite
+    public static function generateRating(ratingName:String, perfectSick:Bool, timing:String, isPixel:Bool):FlxSprite
     {
         var width = 500;
         var height = 163;
         var path = Paths.getLibraryPath("Forever/" + ClientPrefs.ratingsStyle + "/judgements" + (isPixel ? "-pixel" : "") + ".png", "UILib");
+        var graphic = Paths.getGraphic(path);
 
         if (isPixel)
         {
@@ -81,9 +82,8 @@ class Ratings
             height = 32;
         }
 
-        var rating:FlxSprite = new FlxSprite().loadGraphic(path, true, width, height);
+        var rating:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
         rating.alpha = 1;
-        rating.cameras = [cam];
         rating.screenCenter();
         rating.x = (FlxG.width * 0.55) - 40;
         rating.y -= 60;
@@ -94,7 +94,7 @@ class Ratings
 
         rating.animation.add('base',
         [
-            Std.int((timings.indexOf(ratingName) * 2) + (perfectSick ? 0 : 2) + 0)
+            Std.int((judgementsMap.get(ratingName)[0] * 2) + (perfectSick ? 0 : 2) + (timing == "late" ? 1 : 0))
         ], 24, false);
         rating.animation.play('base');
 
@@ -112,5 +112,30 @@ class Ratings
 		rating.velocity.x -= FlxG.random.int(0, 10);
 
         return rating;
+    }
+
+    public static function judgeNote(ms:Float)
+    {
+        var ts:Float = Conductor.timeScale;
+        //dumb ass
+        var timingWindows = 
+        [
+            judgementsMap.get("sick")[1],
+            judgementsMap.get("good")[1],
+            judgementsMap.get("bad")[1],
+            judgementsMap.get("shit")[1],
+            judgementsMap.get("miss")[1],
+        ];
+        var ratings = ["sick", "good", "bad", "shit"];
+
+        for (i in 0...timingWindows.length)
+        {
+            if (ms <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))] * ts)
+            {
+                return ratings[i];
+            }
+        }
+
+        return 'miss';
     }
 }
