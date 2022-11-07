@@ -4971,7 +4971,11 @@ class PlayState extends MusicBeatState
 			totalNotesHit -= 1;
 		}
 
-		popUpCombo();
+		if (!ClientPrefs.useLegacyRatings)
+		{
+			displayRating("miss");
+			popUpCombo();
+		}
 	}
 
 	// wtf
