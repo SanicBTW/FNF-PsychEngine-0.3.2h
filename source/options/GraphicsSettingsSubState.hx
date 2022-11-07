@@ -67,14 +67,6 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		option.onChange = onChangeFramerate;
 		#end
 
-		var option:Option = new Option('Ratings Style:',
-			"The style of the ratings (Sick!, Good, Bad, Shit)",
-			"ratingsStyle",
-			'string',
-			"Classic",
-			["Classic", "Kade New", "Kade Old"]);
-		addOption(option);
-
 		var option:Option = new Option('Small Ratings',
 			"If enabled, the ratings sprite will be small",
 			"smallRatingSize",

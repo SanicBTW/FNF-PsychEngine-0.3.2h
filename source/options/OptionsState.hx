@@ -30,7 +30,7 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Gameplay', 'Input', 'Camera', 'Visuals and UI', 'Audio', #if android 'Mobile Controls', #end #if (STORAGE_ACCESS || ONLINE_SONGS) 'Revoke permissions' #end];
+	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Gameplay', 'Input', 'Camera', 'Visuals and UI', 'Audio', 'Ratings', #if android 'Mobile Controls', #end #if (STORAGE_ACCESS || ONLINE_SONGS) 'Revoke permissions' #end];
 	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
 	public static var menuBG:FlxSprite;
@@ -38,21 +38,23 @@ class OptionsState extends MusicBeatState
 	function openSelectedSubstate(label:String) {
 		switch(label) {
 			case 'Note Colors':
-				openSubState(new options.NotesSubState());
+				openSubState(new NotesSubState());
 			case 'Controls':
-				openSubState(new options.ControlsSubState());
+				openSubState(new ControlsSubState());
 			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
+				openSubState(new GraphicsSettingsSubState());
 			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
+				openSubState(new GameplaySettingsSubState());
 			case 'Input':
-				openSubState(new options.InputSettingsSubState());
+				openSubState(new InputSettingsSubState());
 			case 'Camera':
-				openSubState(new options.CameraSettingsSubState());
+				openSubState(new CameraSettingsSubState());
 			case 'Visuals and UI':
-				openSubState(new options.VisualsUISubState());
+				openSubState(new VisualsUISubState());
 			case 'Audio':
-				openSubState(new options.AudioSettingsSubState());
+				openSubState(new AudioSettingsSubState());
+			case 'Ratings':
+				openSubState(new RatingsSubState());
 			case 'Adjust Delay and Combo':
 				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
 			#if android

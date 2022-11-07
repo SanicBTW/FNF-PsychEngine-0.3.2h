@@ -57,7 +57,7 @@ class ClientPrefs
 	public static var smallRatingSize:Bool = true;
 	public static var legacyRatingsStyle:String = "Classic";
 	public static var useLegacyRatings:Bool = false;
-	public static var ratingsStyle:String = "";
+	public static var ratingsStyle:String = "Default";
 	public static var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
@@ -249,8 +249,6 @@ class ClientPrefs
 			counterFont = FlxG.save.data.counterFont;
 		if (FlxG.save.data.osuManiaSimulation != null)
 			osuManiaSimulation = FlxG.save.data.osuManiaSimulation;
-		if (FlxG.save.data.ratingsStyle != null)
-			ratingsStyle = FlxG.save.data.ratingsStyle;
 		if (FlxG.save.data.allowOnlineFetching != null)
 			allowOnlineFetching = FlxG.save.data.allowOnlineFetching;
 		if (FlxG.save.data.smallRatingSize != null)
@@ -265,6 +263,12 @@ class ClientPrefs
 				gameplaySettings.set(name, value);
 			}
 		}
+		if (FlxG.save.data.legacyRatingsStyle != null)
+			legacyRatingsStyle = FlxG.save.data.legacyRatingsStyle;
+		if (FlxG.save.data.useLegacyRatings != null)
+			useLegacyRatings = FlxG.save.data.useLegacyRatings;
+		if (FlxG.save.data.ratingsStyle != null)
+			ratingsStyle = FlxG.save.data.ratingsStyle;
 	}
 
 	static function saveFlxGPrefs()
@@ -312,11 +316,13 @@ class ClientPrefs
 		FlxG.save.data.snapCameraOnGameover = snapCameraOnGameover;
 		FlxG.save.data.counterFont = counterFont;
 		FlxG.save.data.osuManiaSimulation = osuManiaSimulation;
-		FlxG.save.data.ratingsStyle = ratingsStyle;
 		FlxG.save.data.allowOnlineFetching = allowOnlineFetching;
 		FlxG.save.data.smallRatingSize = smallRatingSize;
 		FlxG.save.data.shitWindow = shitWindow;
 		FlxG.save.data.gameplaySettings = gameplaySettings;
+		FlxG.save.data.legacyRatingsStyle = legacyRatingsStyle;
+		FlxG.save.data.useLegacyRatings = useLegacyRatings;
+		FlxG.save.data.ratingsStyle = ratingsStyle;
 
 		FlxG.save.flush();
 	}

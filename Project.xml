@@ -24,6 +24,8 @@
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
+	<!-- might need to rewrite the ui shit -->
+
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
 	<set name="BUILD_DIR" value="export/release" unless="debug" />
 	<set name="BUILD_DIR" value="export/32bit" if="32bit" />
