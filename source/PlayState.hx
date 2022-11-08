@@ -1142,8 +1142,6 @@ class PlayState extends MusicBeatState
 			startCountdown();
 		}
 		RecalculateRating();
-		displayRating('sick', "early", true);
-		popUpCombo(true);
 
 		#if desktop
 		// Updating Discord Rich Presence.
@@ -3423,13 +3421,14 @@ class PlayState extends MusicBeatState
 
 		for (scoreInt in 0...stringArray.length)
 		{
-			var numScore = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative, createdColor, scoreInt);
+			var numScore:FlxSprite = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative, createdColor, scoreInt);
 			
 			if (!ClientPrefs.comboStacking)
 				lastScore.push(numScore);
 
-			insert(members.indexOf(strumLineNotes), numScore);
+			add(numScore);
 
+			add(numScore);
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
@@ -3447,7 +3446,7 @@ class PlayState extends MusicBeatState
 	}
 
 	//bruh
-	private function popUpLegacyCombo(pixelShitPart1:String, pixelShitPart2:String, coolText:FlxText, rating:FlxSprite)
+	private function popUpLegacyCombo(cache:Bool = false)
 	{
 		var seperatedScore:Array<Int> = [];
 
@@ -3471,43 +3470,15 @@ class PlayState extends MusicBeatState
 
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite().loadGraphic(Paths.image(pixelShitPart1 + 'num' + Std.int(i) + pixelShitPart2));
-			numScore.cameras = [camHUD];
-			numScore.screenCenter();
-			numScore.x = coolText.x + (43 * daLoop) - 90;
-			numScore.y += 80;
-
-			numScore.x += ClientPrefs.comboOffset[2];
-			numScore.y -= ClientPrefs.comboOffset[3];
+			var numScore:FlxSprite = Ratings.generateLegacyCombo(i, isPixelStage, daLoop);
 
 			if (!ClientPrefs.comboStacking)
 				lastScore.push(numScore);
 
-			if (!isPixelStage)
-			{
-				if(ClientPrefs.smallRatingSize)
-				{
-					rating.setGraphicSize(Std.int(rating.width * 0.7));
-					rating.antialiasing = ClientPrefs.globalAntialiasing;
-				}
-				numScore.antialiasing = ClientPrefs.globalAntialiasing;
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-			}
-			else
-			{
-				numScore.setGraphicSize(Std.int(numScore.width * daPixelZoom));
-			}
+			add(numScore);
 
-			numScore.updateHitbox();
-
-			numScore.acceleration.y = FlxG.random.int(200, 300);
-			numScore.velocity.y -= FlxG.random.int(140, 160);
-			numScore.velocity.x = FlxG.random.float(-5, 5);
-
-			numScore.visible = !ClientPrefs.hideHud;
-
-			insert(members.indexOf(strumLineNotes), numScore);
-
+			// ??? forever had this way of doing it i dont understand
+			add(numScore);
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
@@ -3516,6 +3487,12 @@ class PlayState extends MusicBeatState
 				startDelay: Conductor.crochet * 0.001
 			});
 
+			if (!cache)
+				numScore.cameras = [camHUD];
+
+			numScore.y += 50;
+			numScore.x += 100;
+
 			daLoop++;
 		}
 	}
@@ -3523,7 +3500,7 @@ class PlayState extends MusicBeatState
 	private function displayRating(daRating:String, timing:String, cache:Bool = false)
 	{
 		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), timing, isPixelStage);
-		insert(members.indexOf(strumLineNotes), rating);
+		add(rating);
 
 		if (!ClientPrefs.comboStacking)
 		{
@@ -3532,6 +3509,7 @@ class PlayState extends MusicBeatState
 			lastRating = rating;
 		}
 
+		add(rating);
 		FlxTween.tween(rating, {alpha: 0}, 0.2, {
 			onComplete: function(tween:FlxTween)
 			{
@@ -3541,25 +3519,13 @@ class PlayState extends MusicBeatState
 		});
 
 		if (!cache)
-		{
 			rating.cameras = [camHUD];
-		}
 	}
 
-	private function generateLegacyRating(pixelShitPart1:String, pixelShitPart2:String, daRating:String, coolText:FlxText):FlxSprite
+	private function displayLegacyRating(daRating:String, cache:Bool = false)
 	{
-		var rating = new FlxSprite().loadGraphic(Paths.getLibraryPath(ClientPrefs.legacyRatingsStyle + "/" + daRating + pixelShitPart2 + ".png", "UILib"));
-		rating.cameras = [camHUD];
-		rating.screenCenter();
-		rating.x = coolText.x - 40;
-		rating.y -= 60;
-		rating.acceleration.y = 550;
-		rating.velocity.y -= FlxG.random.int(140, 175);
-		rating.velocity.x -= FlxG.random.int(0, 10);
-
-		rating.visible = (!ClientPrefs.hideHud);
-		rating.x += ClientPrefs.comboOffset[0];
-		rating.y -= ClientPrefs.comboOffset[1];
+		var rating = Ratings.generateLegacyRating(daRating, isPixelStage);
+		add(rating);
 
 		if (!ClientPrefs.comboStacking)
 		{
@@ -3568,113 +3534,85 @@ class PlayState extends MusicBeatState
 			lastRating = rating;
 		}
 
-		if (!isPixelStage)
-		{
-			rating.setGraphicSize(Std.int(rating.width * 0.7));
-			rating.antialiasing = ClientPrefs.globalAntialiasing;
-		}
-		else
-		{
-			rating.setGraphicSize(Std.int(rating.width * daPixelZoom * 0.7));
-		}
+		add(rating);
+		FlxTween.tween(rating, {alpha: 0}, 0.2, {
+			onComplete: function(tween:FlxTween)
+			{
+				rating.destroy();
+			},
+			startDelay: Conductor.crochet * 0.00125
+		});
 
-		rating.updateHitbox();
-		rating.cameras = [camHUD];
-
-		return rating;
+		if (!cache)
+			rating.cameras = [camHUD];
 	}
 
-	// rewrite the whole thing or smth
-	private function popUpScore(note:Note = null):Void
+	private function popUpScore(daNote:Note = null)
 	{
-		var noteDiff:Float = -(note.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+		var noteDiff:Float = -(daNote.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		if (SONG.needsVoices)
 			vocals.volume = 1;
 
-		var coolText:FlxText = new FlxText(0, 0, 0, "", 32);
-		coolText.screenCenter();
-		coolText.x = FlxG.width * 0.35;
-		coolText.cameras = [camHUD];
-
 		var score:Int = 350;
-
 		var daRating = Ratings.judgeNote(noteDiff);
 		var timing = "";
 
-		if (note.strumTime < Conductor.songPosition)
+		if (daNote.strumTime < Conductor.songPosition + ClientPrefs.ratingOffset) //?
 			timing = "late";
 		else
 			timing = "early";
-		//var wife:Float = EtternaFunctions.wife3(-noteDiff, Conductor.timeScale);
-		//totalNotesHit += wife;
 
+		// look into this
 		if (daRating == "miss")
 		{
-			noteMiss(note);
+			noteMiss(daNote);
 			return;
 		}
 
 		var judgementInfo = Ratings.judgementsMap.get(daRating);
 		score = judgementInfo[2];
 		totalNotesHit += judgementInfo[3];
-		note.ratingMod = judgementInfo[3];
+		songScore += score;
 
-		// this shit comin from the 0.5.2h kade input thing
+		daNote.ratingMod = judgementInfo[3];
+		daNote.rating = daRating;
+
+		// make it more dynamic?
 		switch (daRating)
 		{
-			case 'shit':
-				//totalNotesHit += 0.25;
-				//note.ratingMod = 0.25;
-				//score = -300;
+			case "shit":
 				combo = 0;
 				songMisses++;
 				health -= 0.2;
-				if (!note.ratingDisabled)
-					shits++;
-			case 'bad':
-				//totalNotesHit += 0.5;
-				//note.ratingMod = 0.5;
-				//score = 0;
+				if (!daNote.ratingDisabled) shits++;
+			case "bad":
 				health -= 0.06;
-				if (!note.ratingDisabled)
-					bads++;
-			case 'good':
-				//totalNotesHit += 0.75;
-				//note.ratingMod = 0.75;
-				//score = 200;
-				if (!note.ratingDisabled)
-					goods++;
-			case 'sick':
-				//totalNotesHit += 1;
-				//note.ratingMod = 1;
-				if (!note.ratingDisabled)
-					sicks++;
-		}
-		note.rating = daRating;
-
-		if (daRating == "sick" && !note.noteSplashDisabled)
-		{
-			spawnNoteSplashOnNote(note, playAsOpponent);
+				if (!daNote.ratingDisabled) bads++;
+			case "good":
+				if (!daNote.ratingDisabled) goods++;
+			case "sick":
+				if (!daNote.ratingDisabled) sicks++;
 		}
 
-		songScore += score;
-		if (!note.ratingDisabled)
+		if (daRating == "sick" && !daNote.noteSplashDisabled)
+			spawnNoteSplashOnNote(daNote, playAsOpponent);
+
+		if (!daNote.ratingDisabled)
 		{
 			songHits++;
 			updateAccuracy(false);
 		}
 
-		if (ClientPrefs.optScoreZoom)
+		if (ClientPrefs.optScoreZoom) // goofy ahh name
 		{
 			if (!cpuControlled)
 			{
 				if (scoreTxtTween != null)
-				{
 					scoreTxtTween.cancel();
-				}
-				scoreTxt.scale.x = 1.075;
-				scoreTxt.scale.y = 1.075;
-				scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
+
+				scoreTxt.scale.set(1.075, 1.075);
+				scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, 
+				{
 					onComplete: function(twn:FlxTween)
 					{
 						scoreTxtTween = null;
@@ -3683,34 +3621,15 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		var pixelShitPart1:String = "";
-		var pixelShitPart2:String = '';
-
-		if (isPixelStage)
-		{
-			pixelShitPart1 = "pixelUI/";
-			pixelShitPart2 = "-pixel";
-		}
-
 		if (ClientPrefs.useLegacyRatings)
 		{
-			var rating = generateLegacyRating(pixelShitPart1, pixelShitPart2, daRating, coolText);
-			insert(members.indexOf(strumLineNotes), rating);
-			popUpLegacyCombo(pixelShitPart1, pixelShitPart2, coolText, rating);
-
-			FlxTween.tween(rating, {alpha: 0}, 0.2, {
-				onComplete: function(tween:FlxTween)
-				{
-					coolText.destroy();
-					rating.destroy();
-				},
-				startDelay: Conductor.crochet * 0.001
-			});
+			displayLegacyRating(daRating);
+			popUpLegacyCombo();
 		}
 		else
 		{
-			popUpCombo();
 			displayRating(daRating, timing);
+			popUpCombo();
 		}
 	}
 

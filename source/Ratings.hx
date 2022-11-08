@@ -25,7 +25,7 @@ class Ratings
     {
         var width = 100;
         var height = 140;
-        var path = Paths.getLibraryPath("Forever/" + ClientPrefs.ratingsStyle + "/combo" + (isPixel ? "-pixel" : "") + ".png", "UILib");
+        var path = Paths.getLibraryPath('Forever/${ClientPrefs.ratingsStyle}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
         var graphic = Paths.getGraphic(path);
 
         if (isPixel)
@@ -64,8 +64,39 @@ class Ratings
 
         newSprite.updateHitbox();
         newSprite.acceleration.y = FlxG.random.int(200, 300);
-        newSprite.velocity.y -= FlxG.random.int(140, 160);
         newSprite.velocity.x = FlxG.random.float(-5, 5);
+        newSprite.velocity.y -= FlxG.random.int(140, 160);
+
+        return newSprite;
+    }
+
+    public static function generateLegacyCombo(number:Int, isPixel:Bool, daLoop:Int /* how the fuck do i call this */):FlxSprite
+    {
+        var path = Paths.image('${isPixel ? "pixelUI/" : ""}num$number${isPixel ? "-pixel" : ""}');
+        var graphic = Paths.getGraphic(path);
+
+        var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic);
+        newSprite.alpha = 1;
+        newSprite.screenCenter();
+        newSprite.x += (43 * daLoop) + 20;
+        newSprite.y += 60;
+
+        newSprite.visible = (!ClientPrefs.hideHud);
+        newSprite.x += ClientPrefs.comboOffset[2];
+        newSprite.y -= ClientPrefs.comboOffset[3];
+
+        if (isPixel)
+            newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
+        else
+        {
+            newSprite.antialiasing = ClientPrefs.globalAntialiasing;
+            newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
+        }
+
+        newSprite.updateHitbox();
+        newSprite.acceleration.y = FlxG.random.int(200, 300);
+        newSprite.velocity.x = FlxG.random.float(-5, 5);
+        newSprite.velocity.y -= FlxG.random.int(140, 160);
 
         return newSprite;
     }
@@ -73,7 +104,7 @@ class Ratings
     {
         var width = 500;
         var height = 163;
-        var path = Paths.getLibraryPath("Forever/" + ClientPrefs.ratingsStyle + "/judgements" + (isPixel ? "-pixel" : "") + ".png", "UILib");
+        var path = Paths.getLibraryPath('Forever/${ClientPrefs.ratingsStyle}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
         var graphic = Paths.getGraphic(path);
 
         if (isPixel)
@@ -103,13 +134,44 @@ class Ratings
         else
         {
             rating.antialiasing = ClientPrefs.globalAntialiasing;
-            rating.setGraphicSize(Std.int(rating.width * 0.7)); //legacy uses 0.5
+            rating.setGraphicSize(Std.int(rating.width * 0.7));
         }
 
         rating.updateHitbox();
         rating.acceleration.y = 550;
-		rating.velocity.y -= FlxG.random.int(140, 175);
 		rating.velocity.x -= FlxG.random.int(0, 10);
+		rating.velocity.y -= FlxG.random.int(140, 175);
+
+        return rating;
+    }
+
+    public static function generateLegacyRating(ratingName:String, isPixel:Bool):FlxSprite
+    {
+        var path = Paths.getLibraryPath('${ClientPrefs.legacyRatingsStyle}/$ratingName${isPixel ? "-pixel" : ""}.png', "UILib");
+        var graphic = Paths.getGraphic(path);
+
+        var rating:FlxSprite = new FlxSprite().loadGraphic(graphic);
+        rating.alpha = 1;
+        rating.screenCenter();
+        rating.x = (FlxG.width * 0.55) - 40;
+        rating.y -= 60;
+
+        rating.visible = (!ClientPrefs.hideHud);
+        rating.x += ClientPrefs.comboOffset[0];
+        rating.y -= ClientPrefs.comboOffset[1];
+
+        if (isPixel)
+            rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
+        else
+        {
+            rating.antialiasing = ClientPrefs.globalAntialiasing;
+            rating.setGraphicSize(Std.int(rating.width * 0.7));
+        }
+
+        rating.updateHitbox();
+        rating.acceleration.y = 550;
+		rating.velocity.x -= FlxG.random.int(0, 10);
+		rating.velocity.y -= FlxG.random.int(140, 175);
 
         return rating;
     }

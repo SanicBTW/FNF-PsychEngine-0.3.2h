@@ -154,35 +154,4 @@ class Conductor
 		crochet = calculateCrochet(bpm);
 		stepCrochet = crochet / 4;
 	}
-
-	public static function judgeNote(ms:Float, ts:Float)
-	{
-		var rating:String = "miss";
-
-        var timingWindows:Array<Int> = [ClientPrefs.sickWindow, ClientPrefs.goodWindow, ClientPrefs.badWindow, ClientPrefs.shitWindow];
-
-        // shit
-        if (ms < timingWindows[3] * ts && ms > timingWindows[2] * ts)
-            rating = "shit";
-        if (ms > -timingWindows[3] * ts && ms < -timingWindows[2] * ts)
-            rating = "shit";
-
-        // bad
-        if (ms < timingWindows[2] * ts && ms > timingWindows[1] * ts)
-            rating = "bad";
-        if (ms > -timingWindows[2] * ts && ms < -timingWindows[1] * ts)
-            rating = "bad";
-
-        // good
-        if (ms < timingWindows[1] * ts && ms > timingWindows[0] * ts)
-            rating = "good";
-        if (ms > -timingWindows[1] * ts && ms < -timingWindows[0] * ts)
-            rating = "good";
-
-        // sick
-        if (ms < timingWindows[0] * ts && ms > -timingWindows[0] * ts)
-            rating = "sick";
-
-        return rating;
-	}
 }
