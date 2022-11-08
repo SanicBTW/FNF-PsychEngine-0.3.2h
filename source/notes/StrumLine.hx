@@ -36,7 +36,7 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 
         for (i in 0...keyAmount)
         {
-            var staticArrow:UIStaticArrow = generateUIArrows(-25 + x, 25 + (ClientPrefs.downScroll ? FlxG.height - 200 : 0), i, PlayState.isPixelStage);
+            var staticArrow:UIStaticArrow = generateUIArrows(-25 + x, 25 + (ClientPrefs.downScroll ? FlxG.height - 150 : 0), i, PlayState.isPixelStage);
             staticArrow.ID = i;
 
             staticArrow.x -= ((keyAmount / 2) * Note.swagWidth);
@@ -45,7 +45,6 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 
             staticArrow.initialX = Math.floor(staticArrow.x);
             staticArrow.initialY = Math.floor(staticArrow.y);
-            staticArrow.angleTo = 0;
             staticArrow.y -= 10;
             staticArrow.playAnim('static');
 
