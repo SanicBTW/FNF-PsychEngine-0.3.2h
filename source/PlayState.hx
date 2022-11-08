@@ -3547,20 +3547,14 @@ class PlayState extends MusicBeatState
 			rating.cameras = [camHUD];
 	}
 
-	private function popUpScore(daNote:Note = null)
+	private function popUpScore(daNote:Note = null, timing:String)
 	{
-		var noteDiff:Float = -(daNote.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
+		var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition + ClientPrefs.ratingOffset);
 		if (SONG.needsVoices)
 			vocals.volume = 1;
 
 		var score:Int = 350;
 		var daRating = Ratings.judgeNote(noteDiff);
-		var timing = "";
-
-		if (daNote.strumTime < Conductor.songPosition + ClientPrefs.ratingOffset) //?
-			timing = "late";
-		else
-			timing = "early";
 
 		// look into this
 		if (daRating == "miss")
@@ -4103,16 +4097,25 @@ class PlayState extends MusicBeatState
 	function goodNoteHit(note:Note, released:Bool = false):Void // i hate myself
 	{
 		var curStrums = (playAsOpponent ? opponentStrums : playerStrums);
+		var timing = "";
 
 		if (!note.wasGoodHit)
 		{
 			if (ClientPrefs.hitsoundVolume > 0 && !note.hitsoundDisabled)
 				FlxG.sound.play(Paths.sound('hitsound'), ClientPrefs.hitsoundVolume);
 
+			if (!note.ratingDisabled)
+			{
+				if (note.strumTime < Conductor.songPosition + ClientPrefs.ratingOffset)
+					timing = "late";
+				else
+					timing = "early";
+			}
+
 			if (!note.isSustainNote || released && note.isLiftNote)
 			{
 				increaseCombo();
-				popUpScore(note);
+				popUpScore(note, timing);
 				if (combo > 9999)
 					combo = 9999;
 			}
