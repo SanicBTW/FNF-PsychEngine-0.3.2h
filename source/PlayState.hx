@@ -920,9 +920,9 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
         var placement = (FlxG.width / 2);
-        dadStrums = new StrumLine(placement - (FlxG.width / 4), this, dad, false, 4);
-        dadStrums.visible = !ClientPrefs.middleScroll;
-        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll ? (FlxG.width / 4) : 0), this, boyfriend, false, 4);
+        // im so fucking confused with the "!" bullshit on boolean shit
+        dadStrums = new StrumLine(placement - (!ClientPrefs.middleScroll && playAsOpponent ? (FlxG.width / 4) : 0), this, dad, false, 4);
+        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll && !playAsOpponent ? (FlxG.width / 4) : 0), this, boyfriend, false, 4);
 
         strumLines.add(dadStrums);
         strumLines.add(boyfriendStrums);
