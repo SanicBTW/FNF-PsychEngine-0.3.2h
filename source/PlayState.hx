@@ -2619,7 +2619,6 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-        // note calls stmh
         noteCalls();
 		checkEventNote();
 
