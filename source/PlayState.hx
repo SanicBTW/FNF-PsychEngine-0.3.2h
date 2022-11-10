@@ -3079,7 +3079,8 @@ class PlayState extends MusicBeatState
 						hudZoom = 0.03;
 
 					FlxG.camera.zoom += camZoom;
-					camHUD.zoom += hudZoom;
+					for (hud in allUIs)
+						hud.zoom += hudZoom;
 				}
 
 			case 'Trigger BG Ghouls':
@@ -4391,12 +4392,14 @@ class PlayState extends MusicBeatState
 		if (ClientPrefs.camZooms)
 		{
 			FlxG.camera.zoom += 0.015;
-			camHUD.zoom += 0.03;
+			for (hud in allUIs)
+				hud.zoom += 0.03;
 
 			if (!camZooming)
 			{ // Just a way for preventing it to be permanently zoomed until Skid & Pump hits a note
 				FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 0.5);
-				FlxTween.tween(camHUD, {zoom: 1}, 0.5);
+				for (hud in allUIs)
+					FlxTween.tween(hud, {zoom: 1}, 0.5);
 			}
 		}
 
@@ -4625,9 +4628,8 @@ class PlayState extends MusicBeatState
 			if (camZooming && FlxG.camera.zoom < 1.35 && ClientPrefs.camZooms && curBeat % 4 == 0)
 			{
                 FlxG.camera.zoom += 0.015;
-                camHUD.zoom += 0.05;
-                for (hud in strumHUD)
-                    hud.zoom += 0.05;
+				for (hud in allUIs)
+					hud.zoom += 0.05;
 			}
 	
 			if (SONG.notes[curSection].changeBPM)
