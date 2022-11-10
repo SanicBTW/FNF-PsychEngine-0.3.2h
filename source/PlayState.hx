@@ -123,7 +123,6 @@ class PlayState extends MusicBeatState
 	private static var prevCamFollow:FlxPoint;
 	private static var prevCamFollowPos:FlxObject;
 
-	private var grpNoteSplashes:FlxTypedGroup<NoteSplash>;
 	private var camZooming:Bool = true;
 	private var curSong:String = "";
 	private var gfSpeed:Int = 1;
@@ -303,7 +302,6 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.add(camHUD);
         allUIs.push(camHUD);
 		FlxG.cameras.add(camOther);
-		grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
 
 		FlxCamera.defaultCameras = [camGame];
 		CustomFadeTransition.nextCamera = camOther;
@@ -920,8 +918,8 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
         var placement = (FlxG.width / 2);
-        dadStrums = new StrumLine(placement - FlxG.width / 4, 0, false, 4);
-        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll ? (FlxG.width / 4) : 0), 1, false, 4);
+        dadStrums = new StrumLine(placement - FlxG.width / 4, 4);
+        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll ? (FlxG.width / 4) : 0), 4);
 
         strumLines.add(dadStrums);
         strumLines.add(boyfriendStrums);
@@ -970,12 +968,6 @@ class PlayState extends MusicBeatState
 		add(timeBar);
 		add(timeTxt);
 		timeBarBG.sprTracker = timeBar;
-
-		add(grpNoteSplashes);
-
-		var splash:NoteSplash = new NoteSplash(100, 100, 0);
-		grpNoteSplashes.add(splash);
-		splash.alpha = 0.0;
 
 		generateSong(SONG.song);
 
@@ -1048,7 +1040,6 @@ class PlayState extends MusicBeatState
 			botplayTxt.y = timeBarBG.y - 78;
 		}
 
-		grpNoteSplashes.cameras = [camHUD];
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
@@ -2693,16 +2684,6 @@ class PlayState extends MusicBeatState
 
     function noteCalls()
     {
-        /* blocked cuz not using
-        for (strumLine in strumLines)
-        {
-            for (uiNote in strumLine.receptors)
-            {
-                //botplay shit lol
-            }
-
-            //splashes shit
-        }*/
 
         if (generatedMusic)
         {
@@ -3899,7 +3880,7 @@ class PlayState extends MusicBeatState
 					char.playAnim('idle');
 			}
 
-            curStrums.receptors.forEach(function(spr:StrumNote)
+            curStrums.receptors.forEach(function(spr:UIStaticArrow)
             {
                 if (controlArray[spr.ID] && spr.animation.curAnim.name != "confirm")
                 {
@@ -4012,7 +3993,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-            curStrums.receptors.forEach(function(spr:StrumNote)
+            curStrums.receptors.forEach(function(spr:UIStaticArrow)
             {
                 if (controlArray[spr.ID] && spr.animation.curAnim.name != "confirm")
                 {
@@ -4208,7 +4189,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				curStrums.receptors.forEach(function(spr:StrumNote)
+				curStrums.receptors.forEach(function(spr:UIStaticArrow)
 				{
 					if (Math.abs(note.noteData) == spr.ID)
 						spr.playAnim('confirm', true);
@@ -4297,40 +4278,17 @@ class PlayState extends MusicBeatState
 
 	function spawnNoteSplashOnNote(note:Note, isDad:Bool = false)
 	{
-        /*
 		if (ClientPrefs.noteSplashes && note != null)
 		{
-			var strum:StrumNote = null;
+			var strum:StrumLine = null;
 			if (isDad)
-				strum = opponentStrums.members[note.noteData];
+				strum = dadStrums;
 			else
-				strum = playerStrums.members[note.noteData];
+				strum = boyfriendStrums;
 
 			if (strum != null)
-				spawnNoteSplash(strum.x, strum.y, note.noteData, note);
-		}*/
-	}
-
-	public function spawnNoteSplash(x:Float, y:Float, data:Int, ?note:Note = null)
-	{
-		var skin:String = 'noteSplashes';
-		if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0)
-			skin = PlayState.SONG.splashSkin;
-
-		var hue:Float = ClientPrefs.arrowHSV[data % 4][0] / 360;
-		var sat:Float = ClientPrefs.arrowHSV[data % 4][1] / 100;
-		var brt:Float = ClientPrefs.arrowHSV[data % 4][2] / 100;
-		if (note != null)
-		{
-			skin = note.noteSplashTexture;
-			hue = note.noteSplashHue;
-			sat = note.noteSplashSat;
-			brt = note.noteSplashBrt;
+				strum.createSplash(note.noteData, note);
 		}
-
-		var splash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-		splash.setupNoteSplash(x, y, data, skin, hue, sat, brt);
-		grpNoteSplashes.add(splash);
 	}
 
 	var fastCarCanDrive:Bool = true;
@@ -4688,7 +4646,7 @@ class PlayState extends MusicBeatState
 
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float)
 	{
-		var spr:StrumNote = null;
+		var spr:UIStaticArrow = null;
 		if (isDad)
 			spr = dadStrums.receptors.members[id];
 		else
