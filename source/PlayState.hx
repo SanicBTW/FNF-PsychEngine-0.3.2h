@@ -920,9 +920,8 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
         var placement = (FlxG.width / 2);
-        // im so fucking confused with the "!" bullshit on boolean shit
-        dadStrums = new StrumLine(placement - (!ClientPrefs.middleScroll && playAsOpponent ? (FlxG.width / 4) : 0), this, dad, false, 4);
-        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll && !playAsOpponent ? (FlxG.width / 4) : 0), this, boyfriend, false, 4);
+        dadStrums = new StrumLine(placement - FlxG.width / 4, 0, false, 4);
+        boyfriendStrums = new StrumLine(placement + (!ClientPrefs.middleScroll ? (FlxG.width / 4) : 0), 1, false, 4);
 
         strumLines.add(dadStrums);
         strumLines.add(boyfriendStrums);
@@ -2755,11 +2754,8 @@ class PlayState extends MusicBeatState
                     if (daNote.copyAlpha)
                         daNote.alpha = strumAlpha;
     
-                    // hard coded because I DIDNT KNOW HOW TO FUCKING PROPERLY SET THE X SALJKLASGJ
                     if (daNote.copyX)
-                        daNote.x = (strumX + Math.cos(angleDir) * daNote.distance) + 24;
-
-                    daNote.x = (strumX + Math.cos(angleDir) * daNote.distance) + 24;
+                        daNote.x = strumX + Math.cos(angleDir) * daNote.distance;
 
                     if (daNote.copyY)
                     {
@@ -3903,7 +3899,7 @@ class PlayState extends MusicBeatState
 					char.playAnim('idle');
 			}
 
-            curStrums.receptors.forEach(function(spr:UIStaticArrow)
+            curStrums.receptors.forEach(function(spr:StrumNote)
             {
                 if (controlArray[spr.ID] && spr.animation.curAnim.name != "confirm")
                 {
@@ -4016,7 +4012,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 
-            curStrums.receptors.forEach(function(spr:UIStaticArrow)
+            curStrums.receptors.forEach(function(spr:StrumNote)
             {
                 if (controlArray[spr.ID] && spr.animation.curAnim.name != "confirm")
                 {
@@ -4212,7 +4208,7 @@ class PlayState extends MusicBeatState
 			}
 			else
 			{
-				curStrums.receptors.forEach(function(spr:UIStaticArrow)
+				curStrums.receptors.forEach(function(spr:StrumNote)
 				{
 					if (Math.abs(note.noteData) == spr.ID)
 						spr.playAnim('confirm', true);
@@ -4692,7 +4688,7 @@ class PlayState extends MusicBeatState
 
 	function StrumPlayAnim(isDad:Bool, id:Int, time:Float)
 	{
-		var spr:UIStaticArrow = null;
+		var spr:StrumNote = null;
 		if (isDad)
 			spr = dadStrums.receptors.members[id];
 		else

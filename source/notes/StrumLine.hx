@@ -9,33 +9,42 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 
 class StrumLine extends FlxTypedGroup<FlxBasic>
 {
-    //add colorswap, texture and shit from strumnote
     //add compatibility for external usage
-    public var receptors:FlxTypedGroup<UIStaticArrow>;
+    public var receptors:FlxTypedGroup<StrumNote>;
     public var splashNotes:FlxTypedGroup<NoteSplash>;
     public var notesGroup:FlxTypedGroup<Note>;
     public var holdsGroup:FlxTypedGroup<Note>;
     public var allNotes:FlxTypedGroup<Note>;
 
-    public var character:Character;
-    public var playState:PlayState;
-
-    public function new(x:Float = 0, playState:PlayState, ?character:Character, noteSplashes:Bool = false, keyAmount:Int = 4, ?parent:StrumLine)
+    public function new(x:Float = 0, player:Int, noteSplashes:Bool = false, keyAmount:Int = 4 /*, ?parent:StrumLine what is this for */)
     {
         super();
 
-        receptors = new FlxTypedGroup<UIStaticArrow>();
+        receptors = new FlxTypedGroup<StrumNote>();
         splashNotes = new FlxTypedGroup<NoteSplash>();
         notesGroup = new FlxTypedGroup<Note>();
         holdsGroup = new FlxTypedGroup<Note>();
 
         allNotes = new FlxTypedGroup<Note>();
 
-        this.character = character;
-        this.playState = playState;
-
         for (i in 0...keyAmount)
         {
+            var staticArrow:StrumNote = new StrumNote(x, 25 + (ClientPrefs.downScroll ? FlxG.height - 150 : 0), i, player);
+            staticArrow.downScroll = ClientPrefs.downScroll;
+            staticArrow.ID = i;
+
+            staticArrow.x -= ((keyAmount / 2) * Note.swagWidth);
+            staticArrow.x += (Note.swagWidth * i);
+            //staticArrow.x += 50;
+            receptors.add(staticArrow);
+
+            staticArrow.y -= 10;
+            staticArrow.alpha = 0;
+            staticArrow.playAnim('static');
+
+            FlxTween.tween(staticArrow, {y: staticArrow.y + 10, alpha: 1}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
+
+            /*
             var staticArrow:UIStaticArrow = generateUIArrows(-25 + x, 25 + (ClientPrefs.downScroll ? FlxG.height - 150 : 0), i, PlayState.isPixelStage);
             staticArrow.ID = i;
 
