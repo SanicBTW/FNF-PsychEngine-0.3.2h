@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
 
+// rewrite soon
 class NoteSplash extends FlxSprite
 {
 	public var colorSwap:ColorSwap = null;
@@ -48,7 +49,11 @@ class NoteSplash extends FlxSprite
 		colorSwap.saturation = satColor;
 		colorSwap.brightness = brtColor;
 		offset.set(-26.2, -17);
+	}
 
+	public function playAnim(note:Int = 0)
+	{
+		visible = true;
 		var animNum:Int = FlxG.random.int(1, 2);
 		animation.play('note' + note + '-' + animNum, true);
 		if (animation.curAnim != null)
@@ -71,7 +76,7 @@ class NoteSplash extends FlxSprite
 	{
 		if (animation.curAnim != null)
 			if (animation.curAnim.finished)
-				kill();
+				visible = false;
 
 		super.update(elapsed);
 	}

@@ -43,11 +43,10 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
             staticArrow.alpha = 0;
 
             FlxTween.tween(staticArrow, {y: staticArrow.initialY, alpha: staticArrow.setAlpha}, 1, {ease: FlxEase.circOut, startDelay: 0.5 + (0.2 * i)});
+            var splash:NoteSplash = new NoteSplash(100, 100, i);
+            splash.alpha = 0.0;
+            splashNotes.add(splash);
         }
-
-        var splash:NoteSplash = new NoteSplash(100, 100, 0);
-        splash.alpha = 0.0;
-        splashNotes.add(splash);
 
         add(holdsGroup);
         add(receptors);
@@ -81,9 +80,12 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 			brt = note.noteSplashBrt;
         }
 
-        var splash:NoteSplash = splashNotes.recycle(NoteSplash);
+        //var splash:NoteSplash = splashNotes.recycle(NoteSplash);
         var strum:UIStaticArrow = receptors.members[note.noteData];
-        splash.setupNoteSplash(strum.x, strum.y, data, skin, hue, sat, brt);
-        splashNotes.add(splash);
+        splashNotes.members[note.noteData].setupNoteSplash(strum.x, strum.y, data, skin, hue, sat, brt);
+        splashNotes.members[note.noteData].playAnim(data);
+
+        //splash.setupNoteSplash(strum.x, strum.y, data, skin, hue, sat, brt);
+        //splashNotes.add(splash);
     }
 }
