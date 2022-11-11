@@ -30,6 +30,8 @@ class PermissionsPrompt extends MusicBeatState
 		FlxG.save.bind('funkin', 'ninjamuffin99');
 		ClientPrefs.loadPrefs();
 
+		SaveData.loadSettings();
+
 		#if (!STORAGE_ACCESS && !ONLINE_SONGS) // send to title state if none of the features are enabled
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;

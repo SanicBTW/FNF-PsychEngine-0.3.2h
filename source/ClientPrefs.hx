@@ -58,12 +58,11 @@ class ClientPrefs
 	public static var legacyRatingsStyle:String = "Classic";
 	public static var useLegacyRatings:Bool = false;
 	public static var ratingsStyle:String = "Default";
-	public static var gameplaySettings:Map<String, Dynamic> = [
+
+	public static var gameplaySettings:Map<String, Dynamic> = 
+	[
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative', 
-		// anyone reading this, amod is multiplicative speed mod, cmod is constant speed mod, and xmod is bpm based speed mod.
-		// an amod example would be chartSpeed * multiplier
-		// cmod would just be constantSpeed = chartSpeed
 		// and xmod basically works by basing the speed on the bpm.
 		// iirc (beatsPerSecond * (conductorToNoteDifference / 1000)) * noteSize (110 or something like that depending on it, prolly just use note.height)
 		// bps is calculated by bpm / 60
@@ -79,7 +78,8 @@ class ClientPrefs
 		'opponentplay' => false
 	];
 
-	public static var keyBinds:Map<String, Array<FlxKey>> = [
+	public static var keyBinds:Map<String, Array<FlxKey>> = 
+	[
 		//Key Bind, Name for ControlsSubState
 		'note_left'		=> [A, LEFT],
 		'note_down'		=> [S, DOWN],
@@ -327,7 +327,8 @@ class ClientPrefs
 		FlxG.save.flush();
 	}
 
-	public static function reloadControls() {
+	public static function reloadControls() 
+	{
 		PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Solo);
 
 		TitleState.muteKeys = copyKey(keyBinds.get('volume_mute'));
@@ -337,13 +338,16 @@ class ClientPrefs
 		FlxG.sound.volumeDownKeys = TitleState.volumeDownKeys;
 		FlxG.sound.volumeUpKeys = TitleState.volumeUpKeys;
 	}
-	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> {
+	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> 
+	{
 		var copiedArray:Array<FlxKey> = arrayToCopy.copy();
 		var i:Int = 0;
 		var len:Int = copiedArray.length;
 
-		while (i < len) {
-			if(copiedArray[i] == NONE) {
+		while (i < len) 
+		{
+			if(copiedArray[i] == NONE) 
+			{
 				copiedArray.remove(NONE);
 				--i;
 			}
@@ -353,7 +357,6 @@ class ClientPrefs
 		return copiedArray;
 	}
 
-	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic {
+	inline public static function getGameplaySetting(name:String, defaultValue:Dynamic):Dynamic 
 		return (gameplaySettings.exists(name) ? gameplaySettings.get(name) : defaultValue);
-	}
 }
