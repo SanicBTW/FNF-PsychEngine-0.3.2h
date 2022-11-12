@@ -1,125 +1,56 @@
 package options;
 
 import openfl.text.TextFormat;
-#if desktop
-import Discord.DiscordClient;
-#end
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import lime.utils.Assets;
-import flixel.FlxSubState;
-import flash.text.TextField;
-import flixel.FlxG;
-import flixel.FlxSprite;
-import flixel.util.FlxSave;
-import haxe.Json;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxTimer;
-import flixel.input.keyboard.FlxKey;
-import flixel.graphics.FlxGraphic;
-import Controls;
-
-using StringTools;
 
 class VisualsUISubState extends BaseOptionsMenu
 {
 	public function new()
 	{
 		title = 'Visuals and UI';
-		rpcTitle = 'Visuals & UI Settings Menu'; //for Discord Rich Presence
+		rpcTitle = 'Visuals & UI Settings Menu'; // for Discord Rich Presence
 
-		var option:Option = new Option('FPS Counter',
-			'If unchecked, hides FPS Counter.',
-			'showFPS',
-			'bool',
-			true);
+		var option:Option = new Option('FPS Counter', 'If unchecked, hides FPS Counter.', SHOW_FRAMERATE, 'bool', true);
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 
-		var option:Option = new Option('Memory Counter',
-			'If unchecked, hides Memory Counter.',
-			'showMemory',
-			'bool',
-			true);
+		var option:Option = new Option('Memory Counter', 'If unchecked, hides Memory Counter.', SHOW_MEMORY, 'bool', true);
 		addOption(option);
 		option.onChange = onChangeMemoryCounter;
 
-		var option:Option = new Option('Note Splashes',
-			"If unchecked, hitting \"Sick!\" notes won't show particles.",
-			'noteSplashes',
-			'bool',
+		var option:Option = new Option('Note Splashes', "If unchecked, hitting \"Sick!\" notes won't show particles.", NOTE_SPLASHES, 'bool', true);
+		addOption(option);
+
+		var option:Option = new Option('Opponent Note Splashes', "If enabled, note splashes will show on opponent note hit", OPPONENT_NOTE_SPLASHES, "bool",
 			true);
 		addOption(option);
 
-		var option:Option = new Option('Opponent Note Splashes',
-			"If enabled, note splashes will show on opponent note hit",
-			"opponentNoteSplash",
-			"bool",
-			true);
+		var option:Option = new Option('Hide HUD', 'If checked, hides most HUD elements.', HIDE_HUD, 'bool', false);
 		addOption(option);
 
-		var option:Option = new Option('Hide HUD',
-			'If checked, hides most HUD elements.',
-			'hideHud',
-			'bool',
-			false);
-		addOption(option);
-		
-		var option:Option = new Option('Hide Song Length',
-			"If checked, the bar showing how much time is left\nwill be hidden.",
-			'hideTime',
-			'bool',
-			false);
+		var option:Option = new Option('Hide Song Length', "If checked, the bar showing how much time is left\nwill be hidden.", HIDE_TIME, 'bool', false);
 		addOption(option);
 
-		var option:Option = new Option('Flashing Lights',
-			"Uncheck this if you're sensitive to flashing lights!",
-			'flashing',
-			'bool',
-			true);
+		var option:Option = new Option('Flashing Lights', "Uncheck this if you're sensitive to flashing lights!", FLASHING, 'bool', true);
 		addOption(option);
 
-		var option:Option = new Option('Icon Boping',
-			"If checked, icons bop",
-			"iconBoping",
-			"bool",
-			true);
+		var option:Option = new Option('Icon Boping', "If checked, icons bop", ICON_BOPING, "bool", true);
 		addOption(option);
 
-		var option:Option = new Option('Score Text Design:',
-			"Type of formatting on score text\nEngine: Score Misses Accuracy Rating (Full Combo Rating)\nPsych: Score Misses Rating (Accuracy) - Full Combo Rating",
-			"scoreTextDesign",
-			"string",
-			"Engine",
-			["Engine", "Psych"]);
+		var option:Option = new Option('Score Text Design: ',
+			"Type of formatting on score text\nEngine: S M A R (FCR)\nPsych: S M R (A) - FCR\nForever: S A [FCR] CB R", SCORE_TEXT_STYLE, "string", "Engine",
+			["Engine", "Psych", "Forever"]);
 		addOption(option);
 
-		var option:Option = new Option('Score Text Zoom on Hit',
-			"If unchecked, disables the Score text zooming\neverytime you hit a note.",
-			'optScoreZoom', //dumb ass
-			'bool',
-			true);
+		var option:Option = new Option('Score Text Zoom on Hit', "If unchecked, disables the Score text zooming\neverytime you hit a note.",
+			SCORE_ZOOM, // dumb ass
+			'bool', true);
 		addOption(option);
 
 		var option:Option = new Option('Combo Stacking',
-			"If unchecked, Ratings and Combo won't stack\nsaving on System Memory and making them easier to read",
-			'comboStacking',
-			'bool',
-			true);
+			"If unchecked, Ratings and Combo won't stack\nsaving on System Memory and making them easier to read", COMBO_STACKING, 'bool', true);
 		addOption(option);
 
-		var option:Option = new Option('Counters Font:',
-			'Change the FPS Counter and Memory Counter fonts',
-			'counterFont',
-			'string',
-			"Funkin",
+		var option:Option = new Option('Counters Font:', 'Change the FPS Counter and Memory Counter fonts', COUNTERS_FONT, 'string', "Funkin",
 			["Funkin", "VCR OSD Mono", "Sans", "Pixel"]);
 		addOption(option);
 		option.onChange = updateFont;
@@ -129,20 +60,20 @@ class VisualsUISubState extends BaseOptionsMenu
 
 	function onChangeFPSCounter()
 	{
-		if(Main.fpsVar != null)
+		if (Main.fpsVar != null)
 		{
-			Main.fpsVar.visible = ClientPrefs.showFPS;
-			if(Main.fpsVar.alpha == 0)
+			Main.fpsVar.visible = SaveData.get(SHOW_FRAMERATE);
+			if (Main.fpsVar.alpha == 0)
 				Main.tweenFPS();
 		}
 	}
 
 	function onChangeMemoryCounter()
 	{
-		if(Main.memoryVar != null)
+		if (Main.memoryVar != null)
 		{
-			Main.memoryVar.visible = ClientPrefs.showMemory;
-			if(Main.memoryVar.alpha == 0)
+			Main.memoryVar.visible = SaveData.get(SHOW_MEMORY);
+			if (Main.memoryVar.alpha == 0)
 				Main.tweenMemory();
 		}
 	}
@@ -150,8 +81,8 @@ class VisualsUISubState extends BaseOptionsMenu
 	function updateFont()
 	{
 		var formatSize:Int = 12;
-		var propername:String = ClientPrefs.counterFont;
-		switch(ClientPrefs.counterFont)
+		var propername:String = SaveData.get(COUNTERS_FONT);
+		switch (SaveData.get(COUNTERS_FONT))
 		{
 			case "Funkin":
 				formatSize = 18;

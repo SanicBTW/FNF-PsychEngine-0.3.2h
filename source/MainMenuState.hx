@@ -59,7 +59,7 @@ class MainMenuState extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.175));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = SaveData.get(ANTIALIASING);
 		add(bg);
 
 		camFollow = new FlxObject(0, 0, 1, 1);
@@ -73,7 +73,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = ClientPrefs.globalAntialiasing;
+		magenta.antialiasing = SaveData.get(ANTIALIASING);
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 
@@ -95,14 +95,19 @@ class MainMenuState extends MusicBeatState
 			if (optionShit.length < 6)
 				scr = 0;
 			menuItem.scrollFactor.set(0, scr);
-			menuItem.antialiasing = ClientPrefs.globalAntialiasing;
-			// menuItem.setGraphicSize(Std.int(menuItem.width * 0.58));
+			menuItem.antialiasing = SaveData.get(ANTIALIASING);
 			menuItem.updateHitbox();
 		}
 
 		FlxG.camera.follow(camFollowPos, null, 1);
 
-		var versionShit:FlxText = new FlxText(8, FlxG.height - 64, 0, "Engine v" + Application.current.meta.get('version') + " DEVELOPMENT BUILD (" + Application.current.meta.get("build") + ")", 12);
+		var versionShit:FlxText = new FlxText(8, FlxG.height
+			- 64, 0,
+			"Engine v"
+			+ Application.current.meta.get('version')
+			+ " DEVELOPMENT BUILD ("
+			+ Application.current.meta.get("build")
+			+ ")", 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -161,7 +166,7 @@ class MainMenuState extends MusicBeatState
 					selectedSomethin = true;
 					FlxG.sound.play(Paths.sound('confirmMenu'));
 
-					if (ClientPrefs.flashing)
+					if (SaveData.get(FLASHING))
 						FlxFlicker.flicker(magenta, 1.1, 0.15, false);
 
 					menuItems.forEach(function(spr:FlxSprite)

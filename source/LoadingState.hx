@@ -1,12 +1,12 @@
 package;
 
-import flixel.util.FlxColor;
-import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.math.FlxMath;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxBar;
+import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import haxe.io.Path;
 import lime.app.Future;
@@ -47,44 +47,41 @@ class LoadingState extends MusicBeatState
 		funkay = new FlxSprite(0, 0).loadGraphic(Paths.image('funkay'));
 		funkay.setGraphicSize(0, FlxG.height);
 		funkay.updateHitbox();
-		funkay.antialiasing = ClientPrefs.globalAntialiasing;
+		funkay.antialiasing = SaveData.get(ANTIALIASING);
 		add(funkay);
 		funkay.scrollFactor.set();
 		funkay.screenCenter();
 
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xffff16d2);
 		loadBar.screenCenter(X);
-		loadBar.antialiasing = ClientPrefs.globalAntialiasing;
+		loadBar.antialiasing = SaveData.get(ANTIALIASING);
 		add(loadBar);
 
-		initSongsManifest().onComplete
-		(
-			function(lib)
+		initSongsManifest().onComplete(function(lib)
+		{
+			callbacks = new MultiCallback(onLoad);
+			var introComplete = callbacks.add("introComplete");
+
+			if (PlayState.SONG != null && loadSong)
 			{
-				callbacks = new MultiCallback(onLoad);
-				var introComplete = callbacks.add("introComplete");
-
-				if (PlayState.SONG != null && loadSong)
-				{
-					checkLoadSong(getSongPath());
-					if (PlayState.SONG.needsVoices)
-						checkLoadSong(getVocalPath());
-				}
-
-				for(i in 0...Paths.loadLibs.length)
-					checkLibrary(Paths.loadLibs[i]);
-
-				if (directory != null && directory.length > 0 && directory != 'shared')
-				{
-					checkLibrary(directory);
-					Paths.clearLibs.push(directory);
-				}
-
-				var fadeTime = 0.5;
-				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+				checkLoadSong(getSongPath());
+				if (PlayState.SONG.needsVoices)
+					checkLoadSong(getVocalPath());
 			}
-		);
+
+			for (i in 0...Paths.loadLibs.length)
+				checkLibrary(Paths.loadLibs[i]);
+
+			if (directory != null && directory.length > 0 && directory != 'shared')
+			{
+				checkLibrary(directory);
+				Paths.clearLibs.push(directory);
+			}
+
+			var fadeTime = 0.5;
+			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
+			new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+		});
 	}
 
 	function checkLoadSong(path:String)
@@ -184,8 +181,7 @@ class LoadingState extends MusicBeatState
 			}
 			else
 			{
-				loaded = isLibraryLoaded(directory)
-					&& areLibrariesLoaded();
+				loaded = isLibraryLoaded(directory) && areLibrariesLoaded();
 			}
 		}
 
@@ -209,10 +205,10 @@ class LoadingState extends MusicBeatState
 		return Assets.getLibrary(library) != null;
 	}
 
-	//i dont belive this is working butttt alright
+	// i dont belive this is working butttt alright
 	static function areLibrariesLoaded():Bool
 	{
-		for(i in 0...Paths.loadLibs.length)
+		for (i in 0...Paths.loadLibs.length)
 		{
 			return Assets.getLibrary(Paths.loadLibs[i]) != null;
 		}

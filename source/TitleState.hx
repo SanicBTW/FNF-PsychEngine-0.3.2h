@@ -1,6 +1,5 @@
 package;
 
-import openfl.text.TextFormat;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -23,6 +22,7 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
+import openfl.text.TextFormat;
 
 using StringTools;
 
@@ -66,13 +66,13 @@ class TitleState extends MusicBeatState
 		FlxG.android.preventDefaultKeys = [BACK];
 		if (Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE)
 			&& Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE)
-			&& ClientPrefs.allowFileSys)
+			&& SaveData.get(ALLOW_FILESYS))
 		{
 			StorageAccess.checkStorage();
 		}
 		#end
 		#if windows
-		if (ClientPrefs.allowFileSys)
+		if (SaveData.get(ALLOW_FILESYS))
 		{
 			StorageAccess.checkStorage();
 		}
@@ -138,7 +138,7 @@ class TitleState extends MusicBeatState
 
 		logoBl = new FlxSprite(-150, -100);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-		logoBl.antialiasing = ClientPrefs.globalAntialiasing;
+		logoBl.antialiasing = SaveData.get(ANTIALIASING);
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24);
 		logoBl.animation.play('bump');
 		logoBl.updateHitbox();
@@ -148,7 +148,7 @@ class TitleState extends MusicBeatState
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
 		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		gfDance.antialiasing = ClientPrefs.globalAntialiasing;
+		gfDance.antialiasing = SaveData.get(ANTIALIASING);
 		add(gfDance);
 		gfDance.shader = swagShader.shader;
 		add(logoBl);
@@ -157,7 +157,7 @@ class TitleState extends MusicBeatState
 		titleText.frames = Paths.getSparrowAtlas('titleEnter');
 		titleText.animation.addByPrefix('idle', "Press Enter to Begin", 24);
 		titleText.animation.addByPrefix('press', "ENTER PRESSED", 24);
-		titleText.antialiasing = ClientPrefs.globalAntialiasing;
+		titleText.antialiasing = SaveData.get(ANTIALIASING);
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		add(titleText);
@@ -180,7 +180,7 @@ class TitleState extends MusicBeatState
 		logoSpr.setGraphicSize(Std.int(logoSpr.width * 0.55));
 		logoSpr.updateHitbox();
 		logoSpr.screenCenter(X);
-		logoSpr.antialiasing = ClientPrefs.globalAntialiasing;
+		logoSpr.antialiasing = SaveData.get(ANTIALIASING);
 
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
@@ -214,9 +214,9 @@ class TitleState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.F)
 		{
-			//FlxG.fullscreen = !FlxG.fullscreen;
-			//osu.BeatMapParser.parseBeatMap();
-			//MusicBeatState.switchState(new ExpState());
+			// FlxG.fullscreen = !FlxG.fullscreen;
+			// osu.BeatMapParser.parseBeatMap();
+			// MusicBeatState.switchState(new ExpState());
 		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
@@ -382,8 +382,8 @@ class TitleState extends MusicBeatState
 	function setupFonts()
 	{
 		var formatSize:Int = 12;
-		var propername:String = ClientPrefs.counterFont;
-		switch(ClientPrefs.counterFont)
+		var propername:String = SaveData.get(COUNTERS_FONT);
+		switch (SaveData.get(COUNTERS_FONT))
 		{
 			case "Funkin":
 				formatSize = 18;

@@ -9,18 +9,22 @@ using StringTools;
 class StrumNote extends FlxSprite
 {
 	private var colorSwap:ColorSwap;
+
 	public var resetAnim:Float = 0;
+
 	private var noteData:Int = 0;
-	public var direction:Float = 90;//plan on doing scroll directions soon -bb
-	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
+
+	public var direction:Float = 90; // plan on doing scroll directions soon -bb
+	public var downScroll:Bool = false; // plan on doing scroll directions soon -bb
 	public var sustainReduce:Bool = true;
-	
+
 	private var player:Int;
-	
+
 	public var texture(default, set):String = null;
+
 	private function set_texture(value:String):String
 	{
-		if(texture != value)
+		if (texture != value)
 		{
 			texture = value;
 			reloadNote();
@@ -38,10 +42,11 @@ class StrumNote extends FlxSprite
 		super(x, y);
 
 		var skin:String = 'NOTE_assets';
-		if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1) skin = PlayState.SONG.arrowSkin;
+		if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1)
+			skin = PlayState.SONG.arrowSkin;
 		if (Paths.getSparrowAtlas(skin) == null)
 			skin = "NOTE_assets";
-		texture = skin; //Load texture and anims
+		texture = skin; // Load texture and anims
 
 		scrollFactor.set();
 	}
@@ -49,7 +54,8 @@ class StrumNote extends FlxSprite
 	public function reloadNote()
 	{
 		var lastAnim:String = null;
-		if (animation.curAnim != null) lastAnim = animation.curAnim.name;
+		if (animation.curAnim != null)
+			lastAnim = animation.curAnim.name;
 
 		if (PlayState.isPixelStage)
 		{
@@ -93,7 +99,7 @@ class StrumNote extends FlxSprite
 			animation.addByPrefix('purple', 'arrowLEFT');
 			animation.addByPrefix('red', 'arrowRIGHT');
 
-			antialiasing = ClientPrefs.globalAntialiasing;
+			antialiasing = SaveData.get(ANTIALIASING);
 			setGraphicSize(Std.int(width * 0.7));
 
 			switch (Math.abs(noteData))
@@ -122,7 +128,7 @@ class StrumNote extends FlxSprite
 			playAnim(lastAnim, true);
 	}
 
-	public function postAddedToGroup() 
+	public function postAddedToGroup()
 	{
 		playAnim('static');
 		x += Note.swagWidth * noteData;
@@ -133,23 +139,23 @@ class StrumNote extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if(resetAnim > 0) 
+		if (resetAnim > 0)
 		{
 			resetAnim -= elapsed;
-			if(resetAnim <= 0) 
+			if (resetAnim <= 0)
 			{
 				playAnim('static');
 				resetAnim = 0;
 			}
 		}
 
-		if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage) 
+		if (animation.curAnim.name == 'confirm' && !PlayState.isPixelStage)
 			centerOrigin();
 
 		super.update(elapsed);
 	}
 
-	public function playAnim(anim:String, ?force:Bool = false) 
+	public function playAnim(anim:String, ?force:Bool = false)
 	{
 		animation.play(anim, force);
 		centerOffsets();
@@ -162,11 +168,11 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-			colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-			colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+			colorSwap.hue = SaveData.get(ARROW_HSV)[noteData % 4][0] / 360;
+			colorSwap.saturation = SaveData.get(ARROW_HSV)[noteData % 4][1] / 100;
+			colorSwap.brightness = SaveData.get(ARROW_HSV)[noteData % 4][2] / 100;
 
-			if(animation.curAnim.name == 'confirm' && !PlayState.isPixelStage)
+			if (animation.curAnim.name == 'confirm' && !PlayState.isPixelStage)
 				centerOrigin();
 		}
 	}

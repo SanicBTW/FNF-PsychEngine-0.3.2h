@@ -1,16 +1,16 @@
 package;
 
-import flixel.addons.ui.FlxUISubState;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxSubState;
+import flixel.addons.ui.FlxUISubState;
 #if android
 import android.flixel.FlxVirtualPad;
 import flixel.input.actions.FlxActionInput;
 import flixel.util.FlxDestroyUtil;
 #end
 
-class MusicBeatSubstate extends FlxUISubState //why tf is musicbeatstate extending flxuistate and this isnt extending flxuisubstate
+class MusicBeatSubstate extends FlxUISubState // why tf is musicbeatstate extending flxuistate and this isnt extending flxuisubstate
 {
 	public function new()
 	{
@@ -93,9 +93,9 @@ class MusicBeatSubstate extends FlxUISubState //why tf is musicbeatstate extendi
 		if (oldStep != curStep && curStep > 0)
 			stepHit();
 
-		if(FlxG.keys.pressed.CONTROL)
+		if (FlxG.keys.pressed.CONTROL)
 		{
-			if(FlxG.mouse.wheel != 0)
+			if (FlxG.mouse.wheel != 0)
 				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
 		}
 
@@ -112,7 +112,7 @@ class MusicBeatSubstate extends FlxUISubState //why tf is musicbeatstate extendi
 	{
 		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
 
-		var shit = ((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime ) / lastChange.stepCrochet;
+		var shit = ((Conductor.songPosition - SaveData.get(NOTE_OFFSET)) - lastChange.songTime) / lastChange.stepCrochet;
 
 		curDecStep = lastChange.stepTime + shit;
 		curStep = lastChange.stepTime + Math.floor(shit);

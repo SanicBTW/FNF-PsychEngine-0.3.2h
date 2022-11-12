@@ -492,7 +492,7 @@ class Controls extends FlxActionSet
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonNOTES(action, VirtualPad.buttonA, state));
 			case B:
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonNOTES(action, VirtualPad.buttonB, state));
-			case A_B | A_B_C | A_B_E | A_B_X_Y | A_B_C_X_Y | A_B_C_X_Y_Z | A_B_C_D_V_X_Y_Z | A_B_C_X :
+			case A_B | A_B_C | A_B_E | A_B_X_Y | A_B_C_X_Y | A_B_C_X_Y_Z | A_B_C_D_V_X_Y_Z | A_B_C_X:
 				inline forEachBound(Control.ACCEPT, (action, state) -> addbuttonNOTES(action, VirtualPad.buttonA, state));
 				inline forEachBound(Control.BACK, (action, state) -> addbuttonNOTES(action, VirtualPad.buttonB, state));
 			case NONE: // do nothing
@@ -788,7 +788,7 @@ class Controls extends FlxActionSet
 			removeKeyboard();
 
 		keyboardScheme = scheme;
-		var keysMap = ClientPrefs.keyBinds;
+		var keysMap = SaveData.keyBinds;
 
 		#if (haxe >= "4.0.0")
 		switch (scheme)
@@ -904,7 +904,7 @@ class Controls extends FlxActionSet
 
 		#if (haxe >= "4.0.0")
 		for (control => buttons in buttonMap)
-			inline bindButtons(control, id, buttons);
+		inline bindButtons(control, id, buttons);
 		#else
 		for (control in buttonMap.keys())
 			bindButtons(control, id, buttonMap[control]);
@@ -917,7 +917,7 @@ class Controls extends FlxActionSet
 
 		#if (haxe >= "4.0.0")
 		for (control => buttons in buttonMap)
-			inline bindButtons(control, id, buttons);
+		inline bindButtons(control, id, buttons);
 		#else
 		for (control in buttonMap.keys())
 			bindButtons(control, id, buttonMap[control]);
@@ -944,11 +944,19 @@ class Controls extends FlxActionSet
 	{
 		#if !switch
 		addGamepadLiteral(id, [
-			Control.ACCEPT => [A], Control.BACK => [B], Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
-			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN], Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
-			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT], Control.NOTE_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
-			Control.NOTE_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN], Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
-			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT], Control.PAUSE => [START], Control.RESET => [Y]]);
+			Control.ACCEPT => [A],
+			Control.BACK => [B],
+			Control.UI_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
+			Control.UI_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
+			Control.UI_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
+			Control.UI_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
+			Control.NOTE_UP => [DPAD_UP, LEFT_STICK_DIGITAL_UP],
+			Control.NOTE_DOWN => [DPAD_DOWN, LEFT_STICK_DIGITAL_DOWN],
+			Control.NOTE_LEFT => [DPAD_LEFT, LEFT_STICK_DIGITAL_LEFT],
+			Control.NOTE_RIGHT => [DPAD_RIGHT, LEFT_STICK_DIGITAL_RIGHT],
+			Control.PAUSE => [START],
+			Control.RESET => [Y]
+		]);
 		#else
 		addGamepadLiteral(id, [
 			// Swap A and B for switch

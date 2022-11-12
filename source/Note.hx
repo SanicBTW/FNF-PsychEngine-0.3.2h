@@ -9,7 +9,7 @@ import flixel.util.FlxColor;
 
 using StringTools;
 
-typedef EventNote = 
+typedef EventNote =
 {
 	strumTime:Float,
 	event:String,
@@ -112,9 +112,9 @@ class Note extends FlxSprite
 	private function set_noteType(value:String):String
 	{
 		noteSplashTexture = PlayState.SONG.splashSkin;
-		colorSwap.hue = ClientPrefs.arrowHSV[noteData % 4][0] / 360;
-		colorSwap.saturation = ClientPrefs.arrowHSV[noteData % 4][1] / 100;
-		colorSwap.brightness = ClientPrefs.arrowHSV[noteData % 4][2] / 100;
+		colorSwap.hue = SaveData.get(ARROW_HSV)[noteData % 4][0] / 360;
+		colorSwap.saturation = SaveData.get(ARROW_HSV)[noteData % 4][1] / 100;
+		colorSwap.brightness = SaveData.get(ARROW_HSV)[noteData % 4][2] / 100;
 
 		if (noteData > -1 && noteType != value)
 		{
@@ -147,7 +147,7 @@ class Note extends FlxSprite
 		y -= 2000;
 		this.strumTime = strumTime;
 		if (!inEditor)
-			this.strumTime += ClientPrefs.noteOffset;
+			this.strumTime += SaveData.get(NOTE_OFFSET);
 
 		this.noteData = noteData;
 
@@ -181,7 +181,7 @@ class Note extends FlxSprite
 			alpha = 0.6;
 			multAlpha = 0.6;
 			hitsoundDisabled = true;
-			if (ClientPrefs.downScroll)
+			if (SaveData.get(DOWN_SCROLL))
 				flipY = true;
 
 			offsetX += width / 2;
@@ -272,7 +272,7 @@ class Note extends FlxSprite
 			}
 		}
 
-		if(Paths.getSparrowAtlas(skin) == null)
+		if (Paths.getSparrowAtlas(skin) == null)
 			skin = "NOTE_assets";
 
 		var animName:String = null;
@@ -318,7 +318,7 @@ class Note extends FlxSprite
 		{
 			frames = Paths.getSparrowAtlas(blahblah);
 			loadNoteAnims();
-			antialiasing = ClientPrefs.globalAntialiasing;
+			antialiasing = SaveData.get(ANTIALIASING);
 		}
 		if (isSustainNote)
 		{
@@ -389,7 +389,7 @@ class Note extends FlxSprite
 
 		if (mustPress)
 		{
-			//copied from psych x kade
+			// copied from psych x kade
 			if (isSustainNote)
 			{
 				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * earlyHitMult)

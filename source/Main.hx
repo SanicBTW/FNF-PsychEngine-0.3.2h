@@ -1,10 +1,9 @@
 package;
 
-import flixel.graphics.FlxGraphic;
-import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.graphics.FlxGraphic;
 import flixel.tweens.FlxTween;
 import openfl.Assets;
 import openfl.Lib;
@@ -12,6 +11,7 @@ import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.display.StageScaleMode;
 import openfl.events.Event;
+import openfl.system.System;
 
 class Main extends Sprite
 {
@@ -71,14 +71,14 @@ class Main extends Sprite
 			gameHeight = Math.ceil(stageHeight / zoom);
 		}
 
-		ClientPrefs.loadDefaultKeys();
+		SaveData.loadDefaultKeys();
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);
 		addChild(fpsVar);
 		if (fpsVar != null)
 		{
-			fpsVar.visible = ClientPrefs.showFPS;
+			fpsVar.visible = SaveData.get(SHOW_FRAMERATE);
 			fpsVar.alpha = 0;
 		}
 
@@ -86,7 +86,7 @@ class Main extends Sprite
 		addChild(memoryVar);
 		if (memoryVar != null)
 		{
-			memoryVar.visible = ClientPrefs.showMemory;
+			memoryVar.visible = SaveData.get(SHOW_MEMORY);
 			memoryVar.alpha = 0;
 		}
 
@@ -94,7 +94,7 @@ class Main extends Sprite
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
-		FlxG.fixedTimestep = false; //when going leaving playstate there is not set timestep back to true so lets just set it to false globally
+		FlxG.fixedTimestep = false; // when going leaving playstate there is not set timestep back to true so lets just set it to false globally
 		FlxG.mouse.useSystemCursor = true;
 		FlxG.mouse.visible = true;
 		#if !android
@@ -105,7 +105,7 @@ class Main extends Sprite
 	// deez comin from fof repo, i liked it
 	public static function tweenFPS(show:Bool = true, duration:Float = 1)
 	{
-		if (ClientPrefs.showFPS && fpsVar != null)
+		if (SaveData.get(SHOW_FRAMERATE) && fpsVar != null)
 		{
 			if (show)
 			{
@@ -120,7 +120,7 @@ class Main extends Sprite
 
 	public static function tweenMemory(show:Bool = true, duration:Float = 1)
 	{
-		if (ClientPrefs.showMemory && memoryVar != null)
+		if (SaveData.get(SHOW_MEMORY) && memoryVar != null)
 		{
 			if (show)
 			{

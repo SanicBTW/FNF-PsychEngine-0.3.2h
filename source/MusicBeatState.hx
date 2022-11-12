@@ -1,21 +1,21 @@
 package;
 
-import openfl.system.System;
-import flixel.system.FlxSound;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.FlxCamera;
 import Conductor.BPMChangeEvent;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
+import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxRect;
+import flixel.system.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
 import flixel.util.FlxTimer;
+import openfl.system.System;
 #if android
 import android.AndroidControls;
 import android.flixel.FlxVirtualPad;
@@ -40,8 +40,8 @@ class MusicBeatState extends FlxUIState
 
 	public var notificationCamera:FlxCamera;
 	public var notificationGroup:FlxTypedGroup<Notification>;
-	//private static var instance:MusicBeatState;
 
+	// private static var instance:MusicBeatState;
 	#if android
 	var virtualPad:FlxVirtualPad;
 	var androidControls:AndroidControls;
@@ -166,7 +166,7 @@ class MusicBeatState extends FlxUIState
 		notificationGroup.cameras = [notificationCamera];
 		add(notificationGroup);
 
-		//instance = this;
+		// instance = this;
 	}
 
 	override function update(elapsed:Float)
@@ -178,7 +178,7 @@ class MusicBeatState extends FlxUIState
 		super.update(elapsed);
 	}
 
-	private function updateSB() //update steps and beats
+	private function updateSB() // update steps and beats
 	{
 		var oldStep:Int = curStep;
 
@@ -224,14 +224,15 @@ class MusicBeatState extends FlxUIState
 
 	private function checkKeyFuncs()
 	{
-		if(FlxG.keys.pressed.CONTROL)
-			if(FlxG.mouse.wheel != 0)
+		if (FlxG.keys.pressed.CONTROL)
+			if (FlxG.mouse.wheel != 0)
 				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
 	}
 
 	private function updateSection():Void
 	{
-		if (stepsToDo < 1) stepsToDo = Math.round(getBeatsOnSection() * 4);
+		if (stepsToDo < 1)
+			stepsToDo = Math.round(getBeatsOnSection() * 4);
 		while (curStep >= stepsToDo)
 		{
 			curSection++;
@@ -243,7 +244,8 @@ class MusicBeatState extends FlxUIState
 
 	private function rollbackSection():Void
 	{
-		if (curStep < 0) return;
+		if (curStep < 0)
+			return;
 
 		var lastSection:Int = curSection;
 		curSection = 0;
@@ -253,13 +255,15 @@ class MusicBeatState extends FlxUIState
 			if (PlayState.SONG.notes[i] != null)
 			{
 				stepsToDo += Math.round(getBeatsOnSection() * 4);
-				if (stepsToDo > curStep) break;
+				if (stepsToDo > curStep)
+					break;
 
 				curSection++;
 			}
 		}
 
-		if (curSection > lastSection) sectionHit();
+		if (curSection > lastSection)
+			sectionHit();
 	}
 
 	private function updateBeat():Void
@@ -272,7 +276,7 @@ class MusicBeatState extends FlxUIState
 	{
 		var lastChange = Conductor.getBPMFromSeconds(Conductor.songPosition);
 
-		var shit = ((Conductor.songPosition - ClientPrefs.noteOffset) - lastChange.songTime ) / lastChange.stepCrochet;
+		var shit = ((Conductor.songPosition - SaveData.get(NOTE_OFFSET)) - lastChange.songTime) / lastChange.stepCrochet;
 
 		curDecStep = lastChange.stepTime + shit;
 		curStep = lastChange.stepTime + Math.floor(shit);
@@ -280,16 +284,6 @@ class MusicBeatState extends FlxUIState
 
 	public static function switchState(nextState:FlxState)
 	{
-		// just in case some notification was left behind
-		/*if (instance != null)
-			if (instance.notificationGroup != null)
-				instance.notificationGroup.forEachAlive(function(notification:Notification)
-				{
-					instance.notificationGroup.remove(notification, true);
-					notification.kill();
-					notification.destroy();
-				});*/
-
 		// Custom made Trans in
 		var curState:Dynamic = FlxG.state;
 		var leState:MusicBeatState = curState;
@@ -341,7 +335,6 @@ class MusicBeatState extends FlxUIState
 
 	public function sectionHit():Void
 	{
-
 	}
 
 	function getBeatsOnSection()

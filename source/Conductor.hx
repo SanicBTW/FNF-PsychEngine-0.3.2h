@@ -19,7 +19,7 @@ class Conductor
 	public static var lastSongPos:Float;
 	public static var offset:Float = 0;
 
-	public static var safeZoneOffset:Float = (ClientPrefs.safeFrames / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
+	public static var safeZoneOffset:Float = (SaveData.get(SAFE_FRAMES) / 60) * 1000; // is calculated in create(), is safeFrames in milliseconds
 	public static var timeScale:Float = Conductor.safeZoneOffset / 166;
 
 	public static var bpmChangeMap:Array<BPMChangeEvent> = [];
@@ -30,7 +30,7 @@ class Conductor
 
 	public static function recalculateTimings()
 	{
-		Conductor.safeZoneOffset = (ClientPrefs.safeFrames / 60) * 1000;
+		Conductor.safeZoneOffset = (SaveData.get(SAFE_FRAMES) / 60) * 1000;
 		Conductor.timeScale = Conductor.safeZoneOffset / 166;
 	}
 
@@ -42,8 +42,7 @@ class Conductor
 
 	public static function getBPMFromSeconds(time:Float)
 	{
-		var lastChange:BPMChangeEvent = 
-		{
+		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
 			songTime: 0,
 			bpm: bpm,
@@ -61,8 +60,7 @@ class Conductor
 
 	public static function getBPMFromStep(step:Float)
 	{
-		var lastChange:BPMChangeEvent = 
-		{
+		var lastChange:BPMChangeEvent = {
 			stepTime: 0,
 			songTime: 0,
 			bpm: bpm,
@@ -138,7 +136,8 @@ class Conductor
 	static function getSectionBeats(song:SwagSong, section:Int)
 	{
 		var val:Null<Float> = null;
-		if (song.notes[section] != null) val = song.notes[section].sectionBeats;
+		if (song.notes[section] != null)
+			val = song.notes[section].sectionBeats;
 		return val != null ? val : 4;
 	}
 

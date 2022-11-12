@@ -77,13 +77,13 @@ class StageData
 	public static function getStageFile(stage:String):StageFile
 	{
 		#if STORAGE_ACCESS
-		if (ClientPrefs.allowFileSys)
+		if (SaveData.get(ALLOW_FILESYS))
 		{
 			var extStage = features.StorageAccess.getStage(stage);
 			if (extStage != null)
 				return extStage;
 		}
-		else 
+		else
 			return getStageFromAssets(stage);
 		#else
 		return getStageFromAssets(stage);

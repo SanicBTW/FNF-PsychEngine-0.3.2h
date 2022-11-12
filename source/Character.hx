@@ -1,7 +1,7 @@
 package;
 
-import animateatlas.AtlasFrameMaker;
 import Section.SwagSection;
+import animateatlas.AtlasFrameMaker;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.animation.FlxBaseAnimation;
@@ -88,7 +88,7 @@ class Character extends FlxSprite
 		#end
 		curCharacter = character;
 		this.isPlayer = isPlayer;
-		antialiasing = ClientPrefs.globalAntialiasing;
+		antialiasing = SaveData.get(ANTIALIASING);
 
 		switch (curCharacter)
 		{
@@ -114,7 +114,7 @@ class Character extends FlxSprite
 					spriteType = "texture";
 
 				#if STORAGE_ACCESS
-				if (ClientPrefs.allowFileSys)
+				if (SaveData.get(ALLOW_FILESYS))
 				{
 					var extChar = features.StorageAccess.getCharacter(curCharacter);
 					if (extChar != null)
@@ -153,7 +153,7 @@ class Character extends FlxSprite
 					healthColorArray = json.healthbar_colors;
 
 				antialiasing = !noAntialiasing;
-				if (!ClientPrefs.globalAntialiasing)
+				if (!SaveData.get(ANTIALIASING))
 					antialiasing = false;
 
 				animationsArray = json.animations;
@@ -198,7 +198,7 @@ class Character extends FlxSprite
 			flipX = !flipX;
 		}
 
-		switch(curCharacter)
+		switch (curCharacter)
 		{
 			case 'pico-speaker':
 				skipDance = true;
@@ -230,19 +230,21 @@ class Character extends FlxSprite
 				dance();
 			}
 
-			switch(curCharacter)
+			switch (curCharacter)
 			{
 				case 'pico-speaker':
-					if(animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
+					if (animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
 					{
 						var noteData:Int = 1;
-						if(animationNotes[0][1] > 2) noteData = 3;
+						if (animationNotes[0][1] > 2)
+							noteData = 3;
 
 						noteData += FlxG.random.int(0, 1);
 						playAnim('shoot' + noteData, true);
 						animationNotes.shift();
 					}
-					if(animation.curAnim.finished) playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
+					if (animation.curAnim.finished)
+						playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
 			}
 
 			if (!isPlayer)
@@ -324,8 +326,10 @@ class Character extends FlxSprite
 	function loadMappedAnims():Void
 	{
 		var noteData:Array<SwagSection> = Song.loadFromJson('picospeaker', Paths.formatToSongPath(PlayState.SONG.song)).notes;
-		for (section in noteData) {
-			for (songNotes in section.sectionNotes) {
+		for (section in noteData)
+		{
+			for (songNotes in section.sectionNotes)
+			{
 				animationNotes.push(songNotes);
 			}
 		}

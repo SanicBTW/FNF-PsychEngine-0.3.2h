@@ -1,5 +1,6 @@
 package;
 
+import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
@@ -17,7 +18,8 @@ import sys.io.File;
 class CoolUtil
 {
 	// [Difficulty name, Chart file suffix]
-	public static var defaultDifficulties:Array<String> = [
+	public static var defaultDifficulties:Array<String> = 
+	[
 		'Easy',
 		'Normal',
 		'Hard'
@@ -111,5 +113,24 @@ class CoolUtil
 		num = num * Math.pow(10, precision);
 		num = Math.round(num) / Math.pow(10, precision);
 		return num;
+	}
+
+	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> 
+	{
+		var copiedArray:Array<FlxKey> = arrayToCopy.copy();
+		var i:Int = 0;
+		var len:Int = copiedArray.length;
+
+		while (i < len) 
+		{
+			if(copiedArray[i] == NONE) 
+			{
+				copiedArray.remove(NONE);
+				--i;
+			}
+			i++;
+			len = copiedArray.length;
+		}
+		return copiedArray;
 	}
 }

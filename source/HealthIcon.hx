@@ -1,7 +1,7 @@
 package;
 
-import flixel.graphics.FlxGraphic;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import openfl.utils.Assets as OpenFlAssets;
 
 using StringTools;
@@ -36,7 +36,7 @@ class HealthIcon extends FlxSprite
 		if (this.char != char)
 		{
 			#if STORAGE_ACCESS
-			if (ClientPrefs.allowFileSys)
+			if (SaveData.get(ALLOW_FILESYS))
 			{
 				var extIcon = features.StorageAccess.getIcon(char);
 				if (extIcon != null)
@@ -54,7 +54,7 @@ class HealthIcon extends FlxSprite
 			animation.play(char);
 			this.char = char;
 
-			antialiasing = ClientPrefs.globalAntialiasing;
+			antialiasing = SaveData.get(ANTIALIASING);
 			if (char.endsWith('-pixel'))
 			{
 				antialiasing = false;

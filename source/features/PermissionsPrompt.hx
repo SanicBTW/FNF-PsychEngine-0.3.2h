@@ -27,9 +27,7 @@ class PermissionsPrompt extends MusicBeatState
 	{
 		PlayerSettings.init();
 
-		FlxG.save.bind('funkin', 'ninjamuffin99');
-		ClientPrefs.loadPrefs();
-
+		FlxG.save.bind('funkin', 'sanicbtw');
 		SaveData.loadSettings();
 
 		#if (!STORAGE_ACCESS && !ONLINE_SONGS) // send to title state if none of the features are enabled
