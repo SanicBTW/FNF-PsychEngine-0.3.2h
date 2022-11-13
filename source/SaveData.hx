@@ -94,12 +94,8 @@ class SaveData
 	public static function loadDefaultKeys()
 		defaultKeys = keyBinds.copy();
 
-	public static function get(setting:Settings, strSearch:String = "")
-	{
-		if (strSearch.length > 0)
-			trace(Reflect.getProperty(Settings, strSearch));
+	public static function get(setting:Settings)
 		return settings[setting];
-	}
 
 	// goofy fix lol
 	public static function set(setting:Settings, value:Dynamic, index:Int = 0, index2:Int = 0)

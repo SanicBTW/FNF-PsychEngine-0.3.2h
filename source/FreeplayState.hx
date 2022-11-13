@@ -1,6 +1,5 @@
 package;
 
-import substates.*;
 import WeekData;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -17,6 +16,7 @@ import haxe.Json;
 import lime.utils.Assets;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
+import substates.*;
 
 using StringTools;
 
@@ -35,6 +35,7 @@ class FreeplayState extends MusicBeatState
 	public static var curSelected:Int = 0;
 
 	var curDifficulty:Int = 1;
+
 	private static var lastDifficultyName:String = '';
 
 	var scoreBG:FlxSprite;
@@ -97,7 +98,7 @@ class FreeplayState extends MusicBeatState
 		}
 
 		#if STORAGE_ACCESS
-		if (ClientPrefs.allowFileSys)
+		if (SaveData.get(ALLOW_FILESYS))
 		{
 			var internalSongs = StorageAccess.getFolderFiles(SONGS);
 			var charts = StorageAccess.getFolderFiles(DATA);
@@ -115,7 +116,7 @@ class FreeplayState extends MusicBeatState
 		#end
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = SaveData.get(ANTIALIASING);
 		add(bg);
 		bg.screenCenter();
 
@@ -165,7 +166,7 @@ class FreeplayState extends MusicBeatState
 		bg.color = songs[curSelected].color;
 		intendedColor = bg.color;
 
-		if(lastDifficultyName == '')
+		if (lastDifficultyName == '')
 		{
 			lastDifficultyName = CoolUtil.defaultDifficulty;
 		}
@@ -178,10 +179,11 @@ class FreeplayState extends MusicBeatState
 		textBG.alpha = 0.6;
 		add(textBG);
 
-		var leText:String = "Press " + #if !android "CTRL" #else "X" #end + " to open the Gameplay Changers Menu / Press " + #if !android "Reset" #else "C" #end + " to reset your Score and Accuracy";
+		var leText:String = "Press " + #if !android "CTRL" #else "X" #end + " to open the Gameplay Changers Menu / Press "
+			+ #if !android "Reset" #else "C" #end + " to reset your Score and Accuracy";
 		var size:Int = 16;
 		#if ONLINE_SONGS
-		if(ClientPrefs.allowOnlineFetching)
+		if (SaveData.get(ALLOW_ONLINE))
 		{
 			leText += " / Press " + #if android "Y" #else "TAB" #end + " to open the Online song list";
 		}
@@ -192,7 +194,7 @@ class FreeplayState extends MusicBeatState
 		add(text);
 
 		#if android
-		if(ClientPrefs.allowOnlineFetching)
+		if (SaveData.get(ALLOW_ONLINE))
 			addVirtualPad(LEFT_FULL, A_B_C_X_Y);
 		else
 			addVirtualPad(LEFT_FULL, A_B_C_X);
@@ -301,14 +303,15 @@ class FreeplayState extends MusicBeatState
 		}
 
 		#if ONLINE_SONGS
-		if (ClientPrefs.allowOnlineFetching && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonY.justPressed #end))
+		if (SaveData.get(ALLOW_ONLINE) && (FlxG.keys.justPressed.TAB #if android || virtualPad.buttonY.justPressed #end))
 		{
 			MusicBeatState.switchState(new features.OnlineSongSelection());
 		}
-		else #end if (accepted)
-		{
+		else
+		#end if (accepted)
+	{
 			#if STORAGE_ACCESS
-			if (songs[curSelected].intStorage && ClientPrefs.allowFileSys)
+			if (songs[curSelected].intStorage && SaveData.get(ALLOW_FILESYS))
 			{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
@@ -323,8 +326,8 @@ class FreeplayState extends MusicBeatState
 
 				PlayState.SONG = Song.loadFromRaw(File.getContent(chartPath));
 
-				//events file exists??
-				if(StorageAccess.exists(eventPath))
+				// events file exists??
+				if (StorageAccess.exists(eventPath))
 					PlayState.songEvents = Song.loadFromRaw(File.getContent(eventPath)).events;
 
 				PlayState.isStoryMode = false;
@@ -335,8 +338,9 @@ class FreeplayState extends MusicBeatState
 
 				goToPlayState();
 			}
-			else #end if (!songs[curSelected].intStorage)
-			{
+			else
+			#end if (!songs[curSelected].intStorage)
+	{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
@@ -350,20 +354,20 @@ class FreeplayState extends MusicBeatState
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.storyWeek = songs[curSelected].week;
 				goToPlayState();
-			}
-		}
-		else if (controls.RESET)
-		{
+	}
+	}
+	else if (controls.RESET)
+	{
 			persistentUpdate = false;
 			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}
-		else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
-		{
+	}
+	else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
+	{
 			persistentUpdate = false;
 			openSubState(new GameplayChangersSubstate());
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}
+	}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
@@ -461,29 +465,31 @@ class FreeplayState extends MusicBeatState
 
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		var diffStr:String = WeekData.getCurrentWeek().difficulties;
-		if(diffStr != null) diffStr = diffStr.trim(); //Fuck you HTML5
+		if (diffStr != null)
+			diffStr = diffStr.trim(); // Fuck you HTML5
 
-		if(diffStr != null && diffStr.length > 0)
+		if (diffStr != null && diffStr.length > 0)
 		{
 			var diffs:Array<String> = diffStr.split(',');
 			var i:Int = diffs.length - 1;
 			while (i > 0)
 			{
-				if(diffs[i] != null)
+				if (diffs[i] != null)
 				{
 					diffs[i] = diffs[i].trim();
-					if(diffs[i].length < 1) diffs.remove(diffs[i]);
+					if (diffs[i].length < 1)
+						diffs.remove(diffs[i]);
 				}
 				--i;
 			}
 
-			if(diffs.length > 0 && diffs[0].length > 0)
+			if (diffs.length > 0 && diffs[0].length > 0)
 			{
 				CoolUtil.difficulties = diffs;
 			}
 		}
-		
-		if(CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
+
+		if (CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
 		{
 			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
 		}
@@ -493,8 +499,8 @@ class FreeplayState extends MusicBeatState
 		}
 
 		var newPos:Int = CoolUtil.difficulties.indexOf(lastDifficultyName);
-		//trace('Pos of ' + lastDifficultyName + ' is ' + newPos);
-		if(newPos > -1)
+		// trace('Pos of ' + lastDifficultyName + ' is ' + newPos);
+		if (newPos > -1)
 		{
 			curDifficulty = newPos;
 		}

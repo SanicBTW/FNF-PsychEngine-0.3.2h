@@ -1,7 +1,7 @@
 package;
 
-import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
+import flixel.input.keyboard.FlxKey;
 import flixel.math.FlxMath;
 import flixel.util.FlxColor;
 import lime.utils.AssetLibrary;
@@ -18,22 +18,18 @@ import sys.io.File;
 class CoolUtil
 {
 	// [Difficulty name, Chart file suffix]
-	public static var defaultDifficulties:Array<String> = 
-	[
-		'Easy',
-		'Normal',
-		'Hard'
-	];
-	public static var defaultDifficulty:String = 'Normal'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+	public static var defaultDifficulties:Array<String> = ['Easy', 'Normal', 'Hard'];
+	public static var defaultDifficulty:String = 'Normal'; // The chart that has no suffix and starting difficulty on Freeplay/Story Mode
 
 	public static var difficulties:Array<String> = [];
 
 	public static function getDifficultyFilePath(num:Null<Int> = null)
 	{
-		if(num == null) num = PlayState.storyDifficulty;
+		if (num == null)
+			num = PlayState.storyDifficulty;
 
 		var fileSuffix:String = difficulties[num];
-		if(fileSuffix != defaultDifficulty)
+		if (fileSuffix != defaultDifficulty)
 		{
 			fileSuffix = '-' + fileSuffix;
 		}
@@ -115,15 +111,15 @@ class CoolUtil
 		return num;
 	}
 
-	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey> 
+	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey>
 	{
 		var copiedArray:Array<FlxKey> = arrayToCopy.copy();
 		var i:Int = 0;
 		var len:Int = copiedArray.length;
 
-		while (i < len) 
+		while (i < len)
 		{
-			if(copiedArray[i] == NONE) 
+			if (copiedArray[i] == NONE)
 			{
 				copiedArray.remove(NONE);
 				--i;

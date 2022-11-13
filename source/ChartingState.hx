@@ -1,9 +1,5 @@
 package;
 
-import flixel.util.FlxSort;
-#if desktop
-import Discord.DiscordClient;
-#end
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -29,6 +25,7 @@ import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
 import flixel.util.FlxColor;
+import flixel.util.FlxSort;
 import haxe.Json;
 import haxe.format.JsonParser;
 import lime.utils.Assets;
@@ -40,6 +37,9 @@ import openfl.utils.Assets as OpenFlAssets;
 import openfl.utils.ByteArray;
 
 using StringTools;
+#if desktop
+import Discord.DiscordClient;
+#end
 
 class ChartingState extends MusicBeatState
 {

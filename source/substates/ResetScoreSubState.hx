@@ -1,11 +1,11 @@
 package substates;
 
-import flixel.util.FlxTimer;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 
 using StringTools;
 
@@ -86,7 +86,7 @@ class ResetScoreSubState extends MusicBeatSubstate
 
 	override function create()
 	{
-		//bruh
+		// bruh
 		new FlxTimer().start(0.5, function(tmr:FlxTimer)
 		{
 			blockInputs = false;

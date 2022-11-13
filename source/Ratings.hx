@@ -1,203 +1,200 @@
 package;
 
-import flixel.FlxG;
 import flixel.FlxCamera;
-import flixel.util.FlxColor;
+import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 
 using StringTools;
 
-//yeah dunno where to put these
 class Ratings
 {
-    //gotta add timings fuck
-    // follows the timings.hx judgementsMap structure on Forever Engine Legacy
-    public static var judgementsMap:Map<String, Array<Dynamic>> = 
-    [
-        "sick" => [0, ClientPrefs.sickWindow, 350, 1],
-        "good" => [1, ClientPrefs.goodWindow, 150, 0.75],
-        "bad" => [2, ClientPrefs.badWindow, 0, 0.5],
-        "shit" => [3, ClientPrefs.shitWindow, -50, 0.25], //-300 or 
-        "miss" => [4, 180, -100, -1], //no missWindow or smth so 180, idk if i should -1 on totalNotesHit uhh
-    ];
+	// follows the timings.hx judgementsMap structure on Forever Engine Legacy
+	public static var judgementsMap:Map<String, Array<Dynamic>> = [
+		"sick" => [0, SaveData.get(SICK_WINDOW), 350, 1],
+		"good" => [1, SaveData.get(GOOD_WINDOW), 150, 0.75],
+		"bad" => [2, SaveData.get(BAD_WINDOW), 0, 0.5],
+		"shit" => [3, SaveData.get(SHIT_WINDOW), -50, 0.25],
+		"miss" => [4, 180, -100, -1], // no missWindow or smth so 180, idk if i should -1 on totalNotesHit uhh
+	];
 
-    public static function generateCombo(number:String, allSicks:Bool, isPixel:Bool, negative:Bool, createdColor:FlxColor, scoreInt:Int):FlxSprite
-    {
-        var width = 100;
-        var height = 140;
-        var path = Paths.getLibraryPath('Forever/${ClientPrefs.ratingsStyle}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
-        var graphic = Paths.getGraphic(path);
+	// TODO: USE COOLTEXT POSITIONS FOR PROPER COMBO OFFSETS
+	public static function generateCombo(number:String, allSicks:Bool, isPixel:Bool, negative:Bool, createdColor:FlxColor, scoreInt:Int):FlxSprite
+	{
+		var width = 100;
+		var height = 140;
+		var path = Paths.getLibraryPath('Forever/${SaveData.get(RATINGS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
+		var graphic = Paths.getGraphic(path);
 
-        if (isPixel)
-        {
-            width = 10;
-            height = 12;
-        }
+		if (isPixel)
+		{
+			width = 10;
+			height = 12;
+		}
 
-        var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
-        newSprite.alpha = 1;
-        newSprite.screenCenter();
-        newSprite.x += (43 * scoreInt) + 20;
-        newSprite.y += 60;
+		var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
+		newSprite.alpha = 1;
+		newSprite.screenCenter();
+		newSprite.x += (43 * scoreInt) + 20;
+		newSprite.y += 60;
 
-        newSprite.visible = (!ClientPrefs.hideHud);
-        newSprite.x += ClientPrefs.comboOffset[2];
-        newSprite.y -= ClientPrefs.comboOffset[3];
+		newSprite.visible = (!SaveData.get(HIDE_HUD));
+		newSprite.x += SaveData.get(COMBO_OFFSET)[2];
+		newSprite.y -= SaveData.get(COMBO_OFFSET)[3];
 
-        newSprite.color = FlxColor.WHITE;
-        if (negative)
-            newSprite.color = createdColor;
+		newSprite.color = FlxColor.WHITE;
+		if (negative)
+			newSprite.color = createdColor;
 
-        newSprite.animation.add('base',
-        [
-            (Std.parseInt(number) != null ? Std.parseInt(number) + 1 : 0) + (!allSicks ? 0 : 11)
-        ], 0, false);
-        newSprite.animation.play('base');
+		newSprite.animation.add('base', [
+			(Std.parseInt(number) != null ? Std.parseInt(number) + 1 : 0) + (!allSicks ? 0 : 11)
+		], 0, false);
+		newSprite.animation.play('base');
 
-        if (isPixel)
-            newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
-        else
-        {
-            newSprite.antialiasing = ClientPrefs.globalAntialiasing;
-            newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
-        }
+		if (isPixel)
+			newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
+		else
+		{
+			newSprite.antialiasing = SaveData.get(ANTIALIASING);
+			newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
+		}
 
-        newSprite.updateHitbox();
-        newSprite.acceleration.y = FlxG.random.int(200, 300);
-        newSprite.velocity.x = FlxG.random.float(-5, 5);
-        newSprite.velocity.y -= FlxG.random.int(140, 160);
+		newSprite.updateHitbox();
+		newSprite.acceleration.y = FlxG.random.int(200, 300);
+		newSprite.velocity.x = FlxG.random.float(-5, 5);
+		newSprite.velocity.y -= FlxG.random.int(140, 160);
 
-        return newSprite;
-    }
+		return newSprite;
+	}
 
-    public static function generateLegacyCombo(number:Int, isPixel:Bool, daLoop:Int /* how the fuck do i call this */):FlxSprite
-    {
-        var path = Paths.image('${isPixel ? "pixelUI/" : ""}num$number${isPixel ? "-pixel" : ""}');
-        var graphic = Paths.getGraphic(path);
+	public static function generateLegacyCombo(number:Int, isPixel:Bool, daLoop:Int /* how the fuck do i call this */):FlxSprite
+	{
+		var path = Paths.image('${isPixel ? "pixelUI/" : ""}num$number${isPixel ? "-pixel" : ""}');
+		var graphic = Paths.getGraphic(path);
 
-        var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic);
-        newSprite.alpha = 1;
-        newSprite.screenCenter();
-        newSprite.x += (43 * daLoop) + 20;
-        newSprite.y += 60;
+		var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic);
+		newSprite.alpha = 1;
+		newSprite.screenCenter();
+		newSprite.x += (43 * daLoop) + 20;
+		newSprite.y += 60;
 
-        newSprite.visible = (!ClientPrefs.hideHud);
-        newSprite.x += ClientPrefs.comboOffset[2];
-        newSprite.y -= ClientPrefs.comboOffset[3];
+		newSprite.visible = (!SaveData.get(HIDE_HUD));
+		newSprite.x += SaveData.get(COMBO_OFFSET)[2];
+		newSprite.y -= SaveData.get(COMBO_OFFSET)[3];
 
-        if (isPixel)
-            newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
-        else
-        {
-            newSprite.antialiasing = ClientPrefs.globalAntialiasing;
-            newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
-        }
+		if (isPixel)
+			newSprite.setGraphicSize(Std.int(newSprite.width * PlayState.daPixelZoom));
+		else
+		{
+			newSprite.antialiasing = SaveData.get(ANTIALIASING);
+			newSprite.setGraphicSize(Std.int(newSprite.width * 0.5));
+		}
 
-        newSprite.updateHitbox();
-        newSprite.acceleration.y = FlxG.random.int(200, 300);
-        newSprite.velocity.x = FlxG.random.float(-5, 5);
-        newSprite.velocity.y -= FlxG.random.int(140, 160);
+		newSprite.updateHitbox();
+		newSprite.acceleration.y = FlxG.random.int(200, 300);
+		newSprite.velocity.x = FlxG.random.float(-5, 5);
+		newSprite.velocity.y -= FlxG.random.int(140, 160);
 
-        return newSprite;
-    }
-    public static function generateRating(ratingName:String, perfectSick:Bool, timing:String, isPixel:Bool):FlxSprite
-    {
-        var width = 500;
-        var height = 163;
-        var path = Paths.getLibraryPath('Forever/${ClientPrefs.ratingsStyle}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
-        var graphic = Paths.getGraphic(path);
+		return newSprite;
+	}
 
-        if (isPixel)
-        {
-            width = 72;
-            height = 32;
-        }
+	public static function generateRating(ratingName:String, perfectSick:Bool, timing:String, isPixel:Bool):FlxSprite
+	{
+		var width = 500;
+		var height = 163;
+		var path = Paths.getLibraryPath('Forever/${SaveData.get(RATINGS_STYLE)}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
+		var graphic = Paths.getGraphic(path);
 
-        var rating:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
-        rating.alpha = 1;
-        rating.screenCenter();
-        rating.x = (FlxG.width * 0.55) - 40;
-        rating.y -= 60;
+		if (isPixel)
+		{
+			width = 72;
+			height = 32;
+		}
 
-        rating.visible = (!ClientPrefs.hideHud);
-        rating.x += ClientPrefs.comboOffset[0];
-        rating.y -= ClientPrefs.comboOffset[1];
+		var rating:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
+		rating.alpha = 1;
+		rating.screenCenter();
+		rating.x = (FlxG.width * 0.55) - 40;
+		rating.y -= 60;
 
-        rating.animation.add('base',
-        [
-            Std.int((judgementsMap.get(ratingName)[0] * 2) + (perfectSick ? 0 : 2) + (timing == "late" ? 1 : 0))
-        ], 24, false);
-        rating.animation.play('base');
+		rating.visible = (!SaveData.get(HIDE_HUD));
+		rating.x += SaveData.get(COMBO_OFFSET)[0];
+		rating.y -= SaveData.get(COMBO_OFFSET)[1];
 
-        if (isPixel)
-            rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
-        else
-        {
-            rating.antialiasing = ClientPrefs.globalAntialiasing;
-            rating.setGraphicSize(Std.int(rating.width * 0.7));
-        }
+		rating.animation.add('base', [
+			Std.int((judgementsMap.get(ratingName)[0] * 2) + (perfectSick ? 0 : 2) + (timing == "late" ? 1 : 0))
+		], 24, false);
+		rating.animation.play('base');
 
-        rating.updateHitbox();
-        rating.acceleration.y = 550;
+		if (isPixel)
+			rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
+		else
+		{
+			rating.antialiasing = SaveData.get(ANTIALIASING);
+			rating.setGraphicSize(Std.int(rating.width * 0.7));
+		}
+
+		rating.updateHitbox();
+		rating.acceleration.y = 550;
 		rating.velocity.x -= FlxG.random.int(0, 10);
 		rating.velocity.y -= FlxG.random.int(140, 175);
 
-        return rating;
-    }
+		return rating;
+	}
 
-    public static function generateLegacyRating(ratingName:String, isPixel:Bool):FlxSprite
-    {
-        var path = Paths.getLibraryPath('${ClientPrefs.legacyRatingsStyle}/$ratingName${isPixel ? "-pixel" : ""}.png', "UILib");
-        var graphic = Paths.getGraphic(path);
+	public static function generateLegacyRating(ratingName:String, isPixel:Bool):FlxSprite
+	{
+		var path = Paths.getLibraryPath('${SaveData.get(LEGACY_RATINGS_STYLE)}/$ratingName${isPixel ? "-pixel" : ""}.png', "UILib");
+		var graphic = Paths.getGraphic(path);
 
-        var rating:FlxSprite = new FlxSprite().loadGraphic(graphic);
-        rating.alpha = 1;
-        rating.screenCenter();
-        rating.x = (FlxG.width * 0.55) - 40;
-        rating.y -= 60;
+		var rating:FlxSprite = new FlxSprite().loadGraphic(graphic);
+		rating.alpha = 1;
+		rating.screenCenter();
+		rating.x = (FlxG.width * 0.55) - 40;
+		rating.y -= 60;
 
-        rating.visible = (!ClientPrefs.hideHud);
-        rating.x += ClientPrefs.comboOffset[0];
-        rating.y -= ClientPrefs.comboOffset[1];
+		rating.visible = (!SaveData.get(HIDE_HUD));
+		rating.x += SaveData.get(COMBO_OFFSET)[0];
+		rating.y -= SaveData.get(COMBO_OFFSET)[1];
 
-        if (isPixel)
-            rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
-        else
-        {
-            rating.antialiasing = ClientPrefs.globalAntialiasing;
-            rating.setGraphicSize(Std.int(rating.width * 0.7));
-        }
+		if (isPixel)
+			rating.setGraphicSize(Std.int(rating.width * PlayState.daPixelZoom * 0.7));
+		else
+		{
+			rating.antialiasing = SaveData.get(ANTIALIASING);
+			rating.setGraphicSize(Std.int(rating.width * 0.7));
+		}
 
-        rating.updateHitbox();
-        rating.acceleration.y = 550;
+		rating.updateHitbox();
+		rating.acceleration.y = 550;
 		rating.velocity.x -= FlxG.random.int(0, 10);
 		rating.velocity.y -= FlxG.random.int(140, 175);
 
-        return rating;
-    }
+		return rating;
+	}
 
-    public static function judgeNote(ms:Float)
-    {
-        var ts:Float = Conductor.timeScale;
-        //dumb ass
-        var timingWindows = 
-        [
-            judgementsMap.get("sick")[1],
-            judgementsMap.get("good")[1],
-            judgementsMap.get("bad")[1],
-            judgementsMap.get("shit")[1],
-            judgementsMap.get("miss")[1],
-        ];
-        var ratings = ["sick", "good", "bad", "shit"];
+	public static function judgeNote(ms:Float)
+	{
+		var ts:Float = Conductor.timeScale;
+		// dumb ass
+		var timingWindows = [
+			judgementsMap.get("sick")[1],
+			judgementsMap.get("good")[1],
+			judgementsMap.get("bad")[1],
+			judgementsMap.get("shit")[1],
+			judgementsMap.get("miss")[1],
+		];
+		var ratings = ["sick", "good", "bad", "shit"];
 
-        for (i in 0...timingWindows.length)
-        {
-            if (ms <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))] * ts)
-            {
-                return ratings[i];
-            }
-        }
+		for (i in 0...timingWindows.length)
+		{
+			if (ms <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))] * ts)
+			{
+				return ratings[i];
+			}
+		}
 
-        return 'miss';
-    }
+		return 'miss';
+	}
 }

@@ -1,7 +1,6 @@
 package options;
 
 import Controls;
-import Discord.DiscordClient;
 import flash.text.TextField;
 import flash.text.TextField;
 import flash.text.TextField;
@@ -27,6 +26,10 @@ import haxe.Json;
 import lime.utils.Assets;
 
 using StringTools;
+
+#if desktop
+import Discord.DiscordClient;
+#end
 
 class OptionsState extends MusicBeatState
 {

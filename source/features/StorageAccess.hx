@@ -1,22 +1,23 @@
 package features;
 
-import StageData.StageFile;
-import flixel.graphics.frames.FlxAtlasFrames;
 import Character.CharacterFile;
-import flixel.graphics.FlxGraphic;
-import openfl.display.BitmapData;
+import StageData.StageFile;
 import flixel.FlxG;
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxAtlasFrames;
 import haxe.Json;
 import haxe.io.Path;
 import lime.system.System;
+import openfl.display.BitmapData;
 import openfl.media.Sound;
 import openfl.utils.Assets;
+
+using StringTools;
+
 #if STORAGE_ACCESS
 import sys.FileSystem;
 import sys.io.File;
 #end
-
-using StringTools;
 
 // made to access internal storage for target platform sys
 class StorageAccess
@@ -49,7 +50,7 @@ class StorageAccess
 		#end
 	}
 
-	//dumb shit
+	// dumb shit
 	public static function getFolderPath(folder:StorageFolders = MAIN)
 	{
 		#if STORAGE_ACCESS
@@ -122,9 +123,18 @@ class StorageAccess
 			var rawJSON = File.getContent(charJSONP);
 			var json:CharacterFile = cast Json.parse(rawJSON);
 
-			charGRAPHP = Path.join([getFolderPath(CHARACTERS_GRAPHICS), json.image.replace('characters/', "") + ".png"]);
-			charXMLP = Path.join([getFolderPath(CHARACTERS_GRAPHICS), json.image.replace('characters/', "") + ".xml"]);
-			charPACKERP = Path.join([getFolderPath(CHARACTERS_GRAPHICS), json.image.replace('characters/', "") + ".txt"]);
+			charGRAPHP = Path.join([
+				getFolderPath(CHARACTERS_GRAPHICS),
+				json.image.replace('characters/', "") + ".png"
+			]);
+			charXMLP = Path.join([
+				getFolderPath(CHARACTERS_GRAPHICS),
+				json.image.replace('characters/', "") + ".xml"
+			]);
+			charPACKERP = Path.join([
+				getFolderPath(CHARACTERS_GRAPHICS),
+				json.image.replace('characters/', "") + ".txt"
+			]);
 
 			if (exists(charGRAPHP))
 			{

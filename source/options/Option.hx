@@ -105,7 +105,7 @@ class Option
 
 	public function getValue():Dynamic
 	{
-		return SaveData.get(variable, "Antialiasing");
+		return SaveData.get(variable);
 	}
 
 	public function setValue(value:Dynamic)

@@ -50,7 +50,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		Conductor.changeBPM(100);
 		FlxG.camera.scroll.set();
 		FlxG.camera.target = null;
-		if (ClientPrefs.snapCameraOnGameover)
+		if (SaveData.get(SNAP_CAMERA_ON_GAMEOVER))
 			FlxG.camera.focusOn(camFollow);
 
 		boyfriend.playAnim('firstDeath');
@@ -109,7 +109,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			if (boyfriend.animation.curAnim.curFrame >= 12 && !isFollowingAlready)
 			{
 				FlxG.camera.follow(camFollowPos, LOCKON, 1);
-				updateCamera = (!ClientPrefs.snapCameraOnGameover);
+				updateCamera = (!SaveData.get(SNAP_CAMERA_ON_GAMEOVER));
 				isFollowingAlready = true;
 			}
 

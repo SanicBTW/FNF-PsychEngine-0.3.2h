@@ -1,12 +1,12 @@
 package;
 
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 
 class Prompt extends FlxSpriteGroup
@@ -14,6 +14,7 @@ class Prompt extends FlxSpriteGroup
 	// UI
 	public var titleTxt:FlxText;
 	public var infoTxt:FlxText;
+
 	private var okcBtns:FlxSprite;
 	private var okButtonReg:FlxSprite;
 	private var cancelButtonReg:FlxSprite;
@@ -22,7 +23,7 @@ class Prompt extends FlxSpriteGroup
 	private var downBtn:FlxSprite;
 
 	private var selector:FlxSprite;
-	private var selectorSine:Float = 0; //totally not from botplaysine
+	private var selectorSine:Float = 0; // totally not from botplaysine
 
 	// Functions on pressing buttons
 	// button 1 is the ok button or the up button
@@ -45,18 +46,18 @@ class Prompt extends FlxSpriteGroup
 		super();
 
 		var bg = new FlxSprite().loadGraphic(Paths.image("ui/promptbg"));
-		bg.antialiasing = ClientPrefs.globalAntialiasing;
+		bg.antialiasing = SaveData.get(ANTIALIASING);
 		add(bg);
 
 		// i didnt understand this one, why is it above 100 and the info text is below 50 :skull:
 		titleTxt = new FlxText(bg.x + 105, bg.y + 30, bg.width - 132, title, 25);
 		titleTxt.setFormat(Paths.font("vcr.ttf"), 25, FlxColor.BLACK, LEFT);
-		titleTxt.antialiasing = ClientPrefs.globalAntialiasing;
+		titleTxt.antialiasing = SaveData.get(ANTIALIASING);
 		add(titleTxt);
 
 		infoTxt = new FlxText(bg.x + 12, titleTxt.y + 50, bg.width - 32, info, 20);
 		infoTxt.setFormat(Paths.font("vcr.ttf"), 20, FlxColor.BLACK, LEFT);
-		infoTxt.antialiasing = ClientPrefs.globalAntialiasing;
+		infoTxt.antialiasing = SaveData.get(ANTIALIASING);
 		add(infoTxt);
 
 		switch (buttonType)
@@ -67,7 +68,7 @@ class Prompt extends FlxSpriteGroup
 				okcBtns.animation.addByIndices('but0', 'buttons', [0], '', 0);
 				okcBtns.animation.addByIndices('but1', 'buttons', [1], '', 0);
 				okcBtns.animation.play('but0', true);
-				okcBtns.antialiasing = ClientPrefs.globalAntialiasing;
+				okcBtns.antialiasing = SaveData.get(ANTIALIASING);
 				add(okcBtns);
 
 				okButtonReg = new FlxSprite(okcBtns.x, okcBtns.y).makeGraphic(Std.int(okcBtns.width / 2), Std.int(okcBtns.height), FlxColor.TRANSPARENT);
@@ -82,15 +83,6 @@ class Prompt extends FlxSpriteGroup
 				selector.alpha = 0.5;
 				add(selector);
 
-			/* rewrite
-			case UP_DOWN:
-				downBtn = new FlxSprite(bg.x + 15, bg.y + 275).loadGraphic(Paths.image("ui/butt_graph0001"));
-				downBtn.antialiasing = ClientPrefs.globalAntialiasing;
-				add(downBtn);
-
-				upBtn = new FlxSprite(downBtn.x + 285, downBtn.y).loadGraphic(Paths.image("ui/butt_graph0002"));
-				upBtn.antialiasing = ClientPrefs.globalAntialiasing;
-				add(upBtn);*/
 			case NONE:
 				// do nothing
 		}
@@ -150,87 +142,6 @@ class Prompt extends FlxSpriteGroup
 			}
 			#end
 		}
-
-		/* shit code needs to be rewritten
-		if (upBtn != null && downBtn != null)
-		{
-			#if !android
-			if (FlxG.mouse.overlaps(upBtn))
-			{
-				upBtn.alpha = 1;
-				// bruh wtf - its to avoid setting the execute callback to the same thing all the time lol
-				if (executeCb != b1Callback)
-					executeCb = b1Callback;
-
-				if (FlxG.mouse.justPressed)
-				{
-					executeCb(this.titleTxt.text);
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-				}
-			}
-			else
-			{
-				upBtn.alpha = 0.6;
-			}
-
-			if (FlxG.mouse.overlaps(downBtn))
-			{
-				downBtn.alpha = 1;
-				if (executeCb != b2Callback)
-					executeCb = b2Callback;
-
-				if (FlxG.mouse.justPressed)
-				{
-					executeCb(this.titleTxt.text);
-					FlxG.sound.play(Paths.sound('scrollMenu'));
-				}
-			}
-			else
-			{
-				downBtn.alpha = 0.6;
-			}
-			#else
-			for (touch in FlxG.touches.list)
-			{
-				if (touch.overlaps(upBtn))
-				{
-					upBtn.alpha = 1;
-
-					// i doubt its actually working
-					if (executeCb != b1Callback)
-						executeCb = b1Callback;
-
-					if (touch.justReleased)
-					{
-						executeCb(this.titleTxt.text);
-						FlxG.sound.play(Paths.sound('scrollMenu'));
-					}
-				}
-				else
-				{
-					upBtn.alpha = 0.6;
-				}
-
-				if (touch.overlaps(downBtn))
-				{
-					downBtn.alpha = 1;
-
-					if (executeCb != b2Callback)
-						executeCb = b2Callback;
-
-					if (touch.justReleased)
-					{
-						executeCb(this.titleTxt.text);
-						FlxG.sound.play(Paths.sound('scrollMenu'));
-					}
-				}
-				else
-				{
-					downBtn.alpha = 0.6;
-				}
-			}
-			#end
-		}*/
 
 		super.update(elapsed);
 	}

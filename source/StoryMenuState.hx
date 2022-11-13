@@ -31,6 +31,7 @@ class StoryMenuState extends MusicBeatState
 	var scoreText:FlxText;
 
 	private static var lastDifficultyName:String = '';
+
 	var curDifficulty:Int = 1;
 
 	var txtWeekTitle:FlxText;
@@ -55,7 +56,7 @@ class StoryMenuState extends MusicBeatState
 	override function create()
 	{
 		Paths.clearCache();
-		
+
 		PlayState.isStoryMode = true;
 		WeekData.reloadWeekFiles(true);
 
@@ -80,7 +81,7 @@ class StoryMenuState extends MusicBeatState
 		var ui_tex = Paths.getSparrowAtlas('campaign_menu_UI_assets');
 		var bgYellow:FlxSprite = new FlxSprite(0, 56).makeGraphic(FlxG.width, 386, 0xFFF9CF51);
 		bgSprite = new FlxSprite(0, 56);
-		bgSprite.antialiasing = ClientPrefs.globalAntialiasing;
+		bgSprite.antialiasing = SaveData.get(ANTIALIASING);
 
 		grpWeekText = new FlxTypedGroup<MenuItem>();
 		add(grpWeekText);
@@ -112,7 +113,7 @@ class StoryMenuState extends MusicBeatState
 				grpWeekText.add(weekThing);
 
 				weekThing.screenCenter(X);
-				weekThing.antialiasing = ClientPrefs.globalAntialiasing;
+				weekThing.antialiasing = SaveData.get(ANTIALIASING);
 				// weekThing.updateHitbox();
 
 				// Needs an offset thingie
@@ -123,7 +124,7 @@ class StoryMenuState extends MusicBeatState
 					lock.animation.addByPrefix('lock', 'lock');
 					lock.animation.play('lock');
 					lock.ID = i;
-					lock.antialiasing = ClientPrefs.globalAntialiasing;
+					lock.antialiasing = SaveData.get(ANTIALIASING);
 					grpLocks.add(lock);
 				}
 				num++;
@@ -146,18 +147,18 @@ class StoryMenuState extends MusicBeatState
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
 		leftArrow.animation.play('idle');
-		leftArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		leftArrow.antialiasing = SaveData.get(ANTIALIASING);
 		difficultySelectors.add(leftArrow);
 
 		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
-		if(lastDifficultyName == '')
+		if (lastDifficultyName == '')
 		{
 			lastDifficultyName = CoolUtil.defaultDifficulty;
 		}
 		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
-		
+
 		sprDifficulty = new FlxSprite(0, leftArrow.y);
-		sprDifficulty.antialiasing = ClientPrefs.globalAntialiasing;
+		sprDifficulty.antialiasing = SaveData.get(ANTIALIASING);
 		difficultySelectors.add(sprDifficulty);
 
 		rightArrow = new FlxSprite(leftArrow.x + 376, leftArrow.y);
@@ -165,7 +166,7 @@ class StoryMenuState extends MusicBeatState
 		rightArrow.animation.addByPrefix('idle', 'arrow right');
 		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
 		rightArrow.animation.play('idle');
-		rightArrow.antialiasing = ClientPrefs.globalAntialiasing;
+		rightArrow.antialiasing = SaveData.get(ANTIALIASING);
 		difficultySelectors.add(rightArrow);
 
 		add(bgYellow);
@@ -173,7 +174,7 @@ class StoryMenuState extends MusicBeatState
 		add(grpWeekCharacters);
 
 		var tracksSprite:FlxSprite = new FlxSprite(FlxG.width * 0.07, bgSprite.y + 425).loadGraphic(Paths.image('Menu_Tracks'));
-		tracksSprite.antialiasing = ClientPrefs.globalAntialiasing;
+		tracksSprite.antialiasing = SaveData.get(ANTIALIASING);
 		add(tracksSprite);
 
 		txtTracklist = new FlxText(FlxG.width * 0.05, tracksSprite.y + 60, 0, "", 32);
@@ -341,14 +342,14 @@ class StoryMenuState extends MusicBeatState
 		curDifficulty += change;
 
 		if (curDifficulty < 0)
-			curDifficulty = CoolUtil.difficulties.length-1;
+			curDifficulty = CoolUtil.difficulties.length - 1;
 		if (curDifficulty >= CoolUtil.difficulties.length)
 			curDifficulty = 0;
 
 		var diff:String = CoolUtil.difficulties[curDifficulty];
 		var newImage:FlxGraphic = Paths.getGraphic(Paths.image('menudifficulties/' + Paths.formatToSongPath(diff)));
 
-		if(sprDifficulty.graphic != newImage)
+		if (sprDifficulty.graphic != newImage)
 		{
 			sprDifficulty.loadGraphic(newImage);
 			sprDifficulty.x = leftArrow.x + 60;
@@ -356,11 +357,14 @@ class StoryMenuState extends MusicBeatState
 			sprDifficulty.alpha = 0;
 			sprDifficulty.y = leftArrow.y - 15;
 
-			if(tweenDifficulty != null) tweenDifficulty.cancel();
-			tweenDifficulty = FlxTween.tween(sprDifficulty, {y: leftArrow.y + 15, alpha: 1}, 0.07, {onComplete: function(twn:FlxTween)
-			{
-				tweenDifficulty = null;
-			}});
+			if (tweenDifficulty != null)
+				tweenDifficulty.cancel();
+			tweenDifficulty = FlxTween.tween(sprDifficulty, {y: leftArrow.y + 15, alpha: 1}, 0.07, {
+				onComplete: function(twn:FlxTween)
+				{
+					tweenDifficulty = null;
+				}
+			});
 		}
 		lastDifficultyName = diff;
 

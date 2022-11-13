@@ -11,11 +11,12 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import haxe.Constraints.Function;
+
+using StringTools;
+
 #if android
 import com.player03.android6.Permissions;
 #end
-
-using StringTools;
 
 class PermissionsPrompt extends MusicBeatState
 {
@@ -37,14 +38,15 @@ class PermissionsPrompt extends MusicBeatState
 		#end
 
 		#if (STORAGE_ACCESS || ONLINE_SONGS) // do the griddy if some feature was found enabled
-		if (!ClientPrefs.answeredReq)
+		if (!SaveData.get(ANSWERED))
 		{
 			var bg = new FlxSprite().loadGraphic(Paths.image("menuDesat"), false, FlxG.width, FlxG.height);
 			bg.screenCenter();
-			bg.antialiasing = ClientPrefs.globalAntialiasing;
+			bg.antialiasing = SaveData.get(ANTIALIASING);
 			add(bg);
 			#if ONLINE_SONGS
-			onlineSongsPrompt = new Prompt("Online Fetching", "Do you want to allow fetching songs from an online server? (Hosted by me), it can be offline sometimes, and it needs a good internet connection :(");
+			onlineSongsPrompt = new Prompt("Online Fetching",
+				"Do you want to allow fetching songs from an online server? (Hosted by me), it can be offline sometimes, and it needs a good internet connection :(");
 			onlineSongsPrompt.screenCenter();
 			onlineSongsPrompt.b1Callback = accepted;
 			onlineSongsPrompt.b2Callback = denied;
@@ -86,8 +88,8 @@ class PermissionsPrompt extends MusicBeatState
 	{
 		super.update(elapsed);
 
-		//because i want to kms so badly
-		if(!mapPrompts.exists("Online Fetching") && !mapPrompts.exists("FileSystem Access") && !transitioning)
+		// because i want to kms so badly
+		if (!mapPrompts.exists("Online Fetching") && !mapPrompts.exists("FileSystem Access") && !transitioning)
 		{
 			everythingDone();
 		}
@@ -95,23 +97,23 @@ class PermissionsPrompt extends MusicBeatState
 
 	function accepted(promptName:String)
 	{
-		switch(promptName)
+		switch (promptName)
 		{
 			case "Online Fetching":
-				promptShit(onlineSongsPrompt, storagePrompt, "allowOnlineFetching", true);
+				promptShit(onlineSongsPrompt, storagePrompt, ALLOW_ONLINE, true);
 			case "FileSystem Access":
 				#if !android
-				promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
+				promptShit(storagePrompt, onlineSongsPrompt, ALLOW_FILESYS, true);
 				#else
 				Permissions.requestPermissions([Permissions.READ_EXTERNAL_STORAGE, Permissions.WRITE_EXTERNAL_STORAGE]);
 				Permissions.onPermissionsDenied.add(function(args)
 				{
-					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", false);
+					promptShit(storagePrompt, onlineSongsPrompt, ALLOW_FILESYS, false);
 				});
 
 				Permissions.onPermissionsGranted.add(function(args)
 				{
-					promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", true);
+					promptShit(storagePrompt, onlineSongsPrompt, ALLOW_FILESYS, true);
 				});
 				#end
 		}
@@ -120,12 +122,12 @@ class PermissionsPrompt extends MusicBeatState
 	// dumb much??
 	function denied(promptName:String)
 	{
-		switch(promptName)
+		switch (promptName)
 		{
 			case "Online Fetching":
-				promptShit(onlineSongsPrompt, storagePrompt, "allowOnlineFetching", false);
+				promptShit(onlineSongsPrompt, storagePrompt, ALLOW_ONLINE, false);
 			case "FileSystem Access":
-				promptShit(storagePrompt, onlineSongsPrompt, "allowFileSys", false);
+				promptShit(storagePrompt, onlineSongsPrompt, ALLOW_FILESYS, false);
 		}
 	}
 
@@ -138,14 +140,14 @@ class PermissionsPrompt extends MusicBeatState
 	{
 		FlxTween.tween(prompt, {x: getNewXPos(prompt)}, 1, {ease: FlxEase.smoothStepInOut});
 	}
-	
+
 	function getNewXPos(prompt:Prompt):Float
 	{
 		var newX:Float = 0;
 
-		if(prompt.x == 675)
+		if (prompt.x == 675)
 			newX = prompt.x - 220;
-		else if(prompt.x == 235)
+		else if (prompt.x == 235)
 			newX = prompt.x + 220;
 
 		return newX;
@@ -154,23 +156,22 @@ class PermissionsPrompt extends MusicBeatState
 	function everythingDone()
 	{
 		transitioning = true;
-		ClientPrefs.answeredReq = true;
-		ClientPrefs.saveSettings();
+		SaveData.set(ANSWERED, true);
+		SaveData.saveSettings();
 		MusicBeatState.switchState(new TitleState());
 	}
 
-
 	// easier but hardcoded
-	function promptShit(curPrompt:Prompt, nextPrompt:Prompt, field:String, state:Bool)
+	function promptShit(curPrompt:Prompt, nextPrompt:Prompt, field:SaveData.Settings, state:Bool)
 	{
 		promptAlphaTween(curPrompt, function()
 		{
-			Reflect.setProperty(ClientPrefs, field, state);
+			SaveData.set(field, state);
 
 			mapPrompts.remove(curPrompt.titleTxt.text);
 			remove(curPrompt);
 
-			if(nextPrompt != null)
+			if (nextPrompt != null)
 				promptMoveTween(nextPrompt);
 		});
 	}

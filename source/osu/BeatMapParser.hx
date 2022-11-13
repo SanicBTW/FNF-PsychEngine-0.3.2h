@@ -1,220 +1,219 @@
 package osu;
 
-import flixel.system.FlxSound;
-import flixel.FlxG;
 import Song.SwagSong;
+import flixel.FlxG;
+import flixel.system.FlxSound;
 
 using StringTools;
 
-//this shit needs to get better maybe in another commit
+// this shit needs to get better maybe in another commit
 class BeatMapParser
 {
-    static var fnfChart:Song.SwagSong = 
-    {
-        song: 'placeholder',
-        notes: [],
-        events: [],
-        bpm: 200,
-        needsVoices: false,
-        speed: 3,
+	static var fnfChart:Song.SwagSong = {
+		song: 'placeholder',
+		notes: [],
+		events: [],
+		bpm: 200,
+		needsVoices: false,
+		speed: 3,
+		player1: 'bf',
+		player2: "bf",
+		player3: "gf",
+		gfVersion: "gf",
+		stage: "stage",
+		arrowSkin: "NOTE_assets",
+		splashSkin: "noteSplashes",
+		validScore: false
+	};
 
-        player1: 'bf',
-        player2: "bf",
-        player3: "gf",
-        gfVersion: "gf",
-        stage: "stage",
+	public static function parseBeatMap()
+	{
+		var testMapPath = Paths.getLibraryPath('beatmap1.osu', "osu!beatmaps");
+		var testMap = CoolUtil.coolTextFile(testMapPath);
 
-        arrowSkin: "NOTE_assets",
-        splashSkin: "noteSplashes",
-        validScore: false
-    };
+		trace('Found ' + (testMap.length - findLine(testMap, '[HitObjects]') + 1) + " notes");
 
-    public static function parseBeatMap()
-    {
-        var testMapPath = Paths.getLibraryPath('beatmap1.osu', "osu!beatmaps");
-        var testMap = CoolUtil.coolTextFile(testMapPath);
+		fnfChart.song = getBeatMapOptions(testMap, 'Title');
+		if (fnfChart.song == null)
+			fnfChart.song = getBeatMapOptions(testMap, 'TitleUnicode');
+		if (fnfChart.song == null)
+			fnfChart.song = "convertedBeatmap";
 
-        trace('Found ' + (testMap.length - findLine(testMap, '[HitObjects]') + 1) + " notes");
+		var curMode = Std.parseInt(getBeatMapOptions(testMap, 'Mode'));
+		if (curMode != 3)
+		{
+			trace("Not supported");
+			return;
+		}
 
-        fnfChart.song = getBeatMapOptions(testMap, 'Title');
-        if (fnfChart.song == null)
-            fnfChart.song = getBeatMapOptions(testMap, 'TitleUnicode');
-        if (fnfChart.song == null)
-            fnfChart.song = "convertedBeatmap";
+		var keyCount = Std.parseInt(getBeatMapOptions(testMap, 'CircleSize'));
+		if (keyCount > 4)
+		{
+			trace("Engine only supports 4k atm");
+			return;
+		}
 
-        var curMode = Std.parseInt(getBeatMapOptions(testMap, 'Mode'));
-        if (curMode != 3)
-        {
-            trace("Not supported");
-            return;
-        }
+		trace('Now parsing');
 
-        var keyCount = Std.parseInt(getBeatMapOptions(testMap, 'CircleSize'));
-        if (keyCount > 4)
-        {
-            trace("Engine only supports 4k atm");
-            return;
-        }
+		var i1 = findLine(testMap, '[HitObjects]') + 1;
+		var toData:Dynamic = [];
+		var what:Int = 0;
 
-        trace('Now parsing');
+		while (i1 < testMap.length)
+		{
+			if (i1 == testMap.length - 1)
+				break;
 
-        var i1 = findLine(testMap, '[HitObjects]') + 1;
-        var toData:Dynamic = [];
-        var what:Int = 0;
+			i1++;
 
-        while(i1 < testMap.length)
-        {
-            if (i1 == testMap.length - 1)
-                break;
+			toData[what] = [
+				Std.parseInt(osuLine(testMap[i1], 2, ',')),
+				convertNote(osuLine(testMap[i1], 0, ',')),
+				Std.parseFloat(osuLine(testMap[i1], 5, ',')) - Std.parseFloat(osuLine(testMap[i1], 2, ','))
+			];
 
-            i1++;
+			if (toData[what][2] < 0)
+				toData[what][2] = 0;
 
-            toData[what] = 
-            [
-                Std.parseInt(osuLine(testMap[i1], 2, ',')),
-                convertNote(osuLine(testMap[i1], 0, ',')),
-                Std.parseFloat(osuLine(testMap[i1], 5, ',')) - Std.parseFloat(osuLine(testMap[i1], 2, ','))
-            ];
+			what++;
+		}
+		what = 0;
 
-            if (toData[what][2] < 0)
-                toData[what][2] = 0;
+		if (#if html5 (findLine(testMap, '[TimingPoints]') + 1) != null #else Std.isOfType((findLine(testMap, '[TimingPoints]') + 1), null) #end)
+		{
+			trace("Calculating BPM");
+			var bpm:Float = 0;
+			var bpmCount:Float = 0;
 
-            what++;
-        }
-        what = 0;
+			var i:Int = findLine(testMap, '[TimingPoints]');
+			while (i < findLine(testMap, '[HitObjects]') - 2)
+			{
+				if (testMap[i].split(',')[6] == "1")
+				{
+					bpm = bpm + Std.parseFloat(testMap[i].split(',')[1]);
+					bpmCount++;
+				}
 
-        if (#if html5 (findLine(testMap, '[TimingPoints]') + 1) != null #else Std.isOfType((findLine(testMap, '[TimingPoints]') + 1), null) #end)
-        {
-            trace("Calculating BPM");
-            var bpm:Float = 0;
-            var bpmCount:Float = 0;
-            
-            var i:Int = findLine(testMap, '[TimingPoints]');
-            while (i < findLine(testMap, '[HitObjects]') - 2)
-            {
-                if(testMap[i].split(',')[6] == "1")
-                {
-                    bpm = bpm + Std.parseFloat(testMap[i].split(',')[1]);
-                    bpmCount++;
-                }
+				fnfChart.bpm = Std.parseFloat(Std.string(bpm / bpmCount));
 
-                fnfChart.bpm = Std.parseFloat(Std.string(bpm / bpmCount));
+				i++;
+			}
+		}
+		else
+		{
+			trace("Failed to calculate BPM");
+		}
 
-                i++;
-            }
-        }
-        else
-        {
-            trace("Failed to calculate BPM");
-        }
+		trace(fnfChart.bpm);
 
-        trace(fnfChart.bpm);
+		trace("Trying to place notes in chart");
 
-        trace("Trying to place notes in chart");
+		var i2 = 0;
+		var sectionNote:Int = 0;
+		var curSection:Int = 0;
+		while (i2 < toData.length)
+		{
+			fnfChart.notes[curSection] = {
+				typeOfSection: 0,
+				sectionBeats: 4,
+				sectionNotes: [],
+				mustHitSection: true,
+				gfSection: false,
+				altAnim: false,
+				changeBPM: false,
+				bpm: fnfChart.bpm
+			};
 
-        var i2 = 0;
-        var sectionNote:Int = 0;
-        var curSection:Int = 0;
-        while (i2 < toData.length)
-        {
-            fnfChart.notes[curSection] = 
-            {
-                typeOfSection: 0,
-                sectionBeats: 4,
-                sectionNotes: [],
-                mustHitSection: true,
-                gfSection: false,
-                altAnim: false,
-                changeBPM: false,
-                bpm: fnfChart.bpm
-            };
+			for (note in 0...toData.length)
+			{
+				if (toData[note][0] <= ((curSection + 1) * (4 * (1000 * 60 / fnfChart.bpm)))
+					&& toData[note][0] > ((curSection) * (4 * (1000 * 60 / fnfChart.bpm))))
+				{
+					fnfChart.notes[curSection].sectionNotes[sectionNote] = toData[note];
+					sectionNote++;
+				}
+			}
+			sectionNote = 0;
 
-            for (note in 0...toData.length)
-            {
-                if
-                (
-                    toData[note][0] <= ((curSection + 1) * (4 * (1000 * 60 / fnfChart.bpm))) &&
-                    toData[note][0] > ((curSection) * (4 * (1000 * 60 / fnfChart.bpm)))
-                )
-                {
-                    fnfChart.notes[curSection].sectionNotes[sectionNote] = toData[note];
-                    sectionNote++;
-                }
-            }
-            sectionNote = 0;
+			if (toData[Std.int(toData.length - 1)] == fnfChart.notes[curSection].sectionNotes[fnfChart.notes[curSection].sectionNotes.length - 1])
+				break;
 
-            if (toData[Std.int(toData.length - 1)] == 
-                fnfChart.notes[curSection].sectionNotes[fnfChart.notes[curSection].sectionNotes.length - 1])
-                break;
+			curSection++;
+			i2++;
+		}
 
-            curSection++;
-            i2++;
-        }
+		var beatMapShit = (getBeatMapOptions(testMap, 'Artist') != null ? getBeatMapOptions(testMap, 'Artist') : getBeatMapOptions(testMap, 'ArtistUnicode'))
+			+ " - "
+			+ (getBeatMapOptions(testMap, 'Title') != null ? getBeatMapOptions(testMap, 'Title') : getBeatMapOptions(testMap, 'TitleUnicode'))
+			+ ' ('
+			+ getBeatMapOptions(testMap, 'Creator')
+			+ ") ["
+			+ getBeatMapOptions(testMap, 'Version')
+			+ "]";
+		trace("Successfully converted " + beatMapShit + " from osu!Mania to FNF");
 
-        var beatMapShit = 
-        (getBeatMapOptions(testMap, 'Artist') != null ? getBeatMapOptions(testMap, 'Artist') : getBeatMapOptions(testMap, 'ArtistUnicode'))
-        + " - " + 
-        (getBeatMapOptions(testMap, 'Title') != null ? getBeatMapOptions(testMap, 'Title') : getBeatMapOptions(testMap, 'TitleUnicode'))
-        + ' (' + getBeatMapOptions(testMap, 'Creator') + ") [" + getBeatMapOptions(testMap, 'Version') + "]";
-        trace("Successfully converted " + beatMapShit + " from osu!Mania to FNF");
+		trace("Setting PlayState");
 
-        trace("Setting PlayState");
+		PlayState.SONG = fnfChart;
+		PlayState.storyDifficulty = 2;
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties;
+		PlayState.instSource = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
 
-        PlayState.SONG = fnfChart;
-        PlayState.storyDifficulty = 2;
-        CoolUtil.difficulties = CoolUtil.defaultDifficulties;
-        PlayState.instSource = Paths.getLibraryPath(getBeatMapOptions(testMap, 'AudioFilename'), "osu!beatmaps");
+		trace("Going to loading state");
 
-        trace("Going to loading state");
+		LoadingState.loadAndSwitchState(new PlayState(), false);
+	}
 
-        LoadingState.loadAndSwitchState(new PlayState(), false);
-    }
+	static function findLine(array:Array<String>, toFind:String, fromLine:Int = 0, toLine:Dynamic = null):Int
+	{
+		if (toLine == null)
+			toLine = array.length;
 
-    static function findLine(array:Array<String>, toFind:String, fromLine:Int = 0, toLine:Dynamic = null):Int
-    {
-        if (toLine == null)
-            toLine = array.length;
+		var i = fromLine;
 
-        var i = fromLine;
+		while (i < toLine)
+		{
+			if (array[i].contains(toFind))
+			{
+				trace("Found " + toFind + " at " + i);
+				return i;
+				break;
+			}
 
-        while (i < toLine)
-        {
-            if (array[i].contains(toFind))
-            {
-                trace("Found " + toFind + " at " + i);
-                return i;
-                break;
-            }
+			i++;
+		}
 
-            i++;
-        }
+		trace("Couldn't find " + toFind);
+		return -1;
+	}
 
-        trace("Couldn't find " + toFind);
-        return -1;
-    }
+	static function getBeatMapOptions(beatMap:Array<String>, btOpt:String)
+	{
+		var i = 0;
 
-    static function getBeatMapOptions(beatMap:Array<String>, btOpt:String)
-    {
-        var i = 0;
+		while (i < beatMap.length)
+		{
+			if (beatMap[i].toLowerCase().startsWith(btOpt.toLowerCase() + ":"))
+			{
+				trace("Found BeatMap Option ("
+					+ btOpt
+					+ ") at "
+					+ i
+					+ " returning as "
+					+ beatMap[i].substring(beatMap[i].lastIndexOf(":") + 1).trim());
+				return beatMap[i].substring(beatMap[i].lastIndexOf(":") + 1).trim();
+				break;
+			}
 
-        while (i < beatMap.length)
-        {
-            if (beatMap[i].toLowerCase().startsWith(btOpt.toLowerCase() + ":"))
-            {
-                trace("Found BeatMap Option (" + btOpt + ") at " + i + " returning as " + beatMap[i].substring(beatMap[i].lastIndexOf(":") + 1).trim());
-                return beatMap[i].substring(beatMap[i].lastIndexOf(":") + 1).trim();
-                break;
-            }
+			i++;
+		}
 
-            i++;
-        }
+		trace("Couldn't find " + btOpt + " on BeatMap");
+		return null;
+	}
 
-        trace("Couldn't find " + btOpt + " on BeatMap");
-        return null;
-    }
-
-    // copied from coolutil but actually done it right? (arguments)
-    static function numberArray(?min = 0, max:Int):Array<Int>
+	// copied from coolutil but actually done it right? (arguments)
+	static function numberArray(?min = 0, max:Int):Array<Int>
 	{
 		var dumbArray:Array<Int> = [];
 		for (i in min...max)
@@ -224,41 +223,40 @@ class BeatMapParser
 		return dumbArray;
 	}
 
-    //i thought on naming it a different way but uhhhhh
-    static function osuLine(string:String, index:Int, split:String)
-    {
-        if(string != null)
-        {
-            var array:Array<String> = string.split(split);
-            return array[index];
-        }
+	// i thought on naming it a different way but uhhhhh
+	static function osuLine(string:String, index:Int, split:String)
+	{
+		if (string != null)
+		{
+			var array:Array<String> = string.split(split);
+			return array[index];
+		}
 
-        trace("Oops string is null cannot split shit my man");
-        return "";
-    }
+		trace("Oops string is null cannot split shit my man");
+		return "";
+	}
 
-    static function convertNote(from_note:Dynamic)
-    {
-        from_note = Std.parseInt(from_note);
-        var noteArray =
-        [
+	static function convertNote(from_note:Dynamic)
+	{
+		from_note = Std.parseInt(from_note);
+		var noteArray = [
 			numberArray(0, 127), numberArray(128, 255), numberArray(256, 383), numberArray(384, 511),
 			numberArray(0, 127), numberArray(128, 255), numberArray(256, 383), numberArray(384, 511)
-        ];
+		];
 
-        for (i in 0...noteArray.length)
-        {
-            for (i2 in 0...noteArray[i].length)
-            {
-                if (noteArray[i][i2] == from_note)
-                {
-                    trace('Found note');
-                    return i;
-                }
-            }
-        }
+		for (i in 0...noteArray.length)
+		{
+			for (i2 in 0...noteArray[i].length)
+			{
+				if (noteArray[i][i2] == from_note)
+				{
+					trace('Found note');
+					return i;
+				}
+			}
+		}
 
-        trace("Couldn't find note " + from_note + ' in note array');
-        return 0;
-    }
+		trace("Couldn't find note " + from_note + ' in note array');
+		return 0;
+	}
 }

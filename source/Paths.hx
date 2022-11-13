@@ -1,11 +1,11 @@
 package;
 
-import flixel.graphics.FlxGraphic;
-import openfl.system.System;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import lime.utils.Assets;
+import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 
@@ -167,51 +167,51 @@ class Paths
 	{
 		#if STORAGE_ACCESS
 		@:privateAccess
-        for (key in features.StorageAccess.currentTrackedAssets.keys())
-        {
-            var obj = features.StorageAccess.currentTrackedAssets.get(key);
-            if (obj != null)
-            {
-                trace("cleared " + key + " from memory (graphic)");
-                openfl.Assets.cache.removeBitmapData(key);
-                FlxG.bitmap._cache.remove(key);
+		for (key in features.StorageAccess.currentTrackedAssets.keys())
+		{
+			var obj = features.StorageAccess.currentTrackedAssets.get(key);
+			if (obj != null)
+			{
+				trace("cleared " + key + " from memory (graphic)");
+				openfl.Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
 				features.StorageAccess.currentTrackedAssets.remove(key);
-                obj.destroy();
-            }
-        }
+				obj.destroy();
+			}
+		}
 		#end
 
 		@:privateAccess
-        for (key in currentTrackedAssets.keys())
-        {
-            var obj = currentTrackedAssets.get(key);
-            if (obj != null)
-            {
-                trace("cleared " + key + " from memory (graphic)");
-                openfl.Assets.cache.removeBitmapData(key);
-                FlxG.bitmap._cache.remove(key);
+		for (key in currentTrackedAssets.keys())
+		{
+			var obj = currentTrackedAssets.get(key);
+			if (obj != null)
+			{
+				trace("cleared " + key + " from memory (graphic)");
+				openfl.Assets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
 				currentTrackedAssets.remove(key);
-                obj.destroy();
-            }
-        }
+				obj.destroy();
+			}
+		}
 
 		if (clearLibraries)
-        {
-            for(i in 0...clearLibs.length)
-            {
-                Assets.cache.clear(clearLibs[i]);
-            }
+		{
+			for (i in 0...clearLibs.length)
+			{
+				Assets.cache.clear(clearLibs[i]);
+			}
 
-            clearLibs = ["shared", "UILib", "songs", "images"];
-        }
+			clearLibs = ["shared", "UILib", "songs", "images"];
+		}
 
-        if(setNulls)
-        {
+		if (setNulls)
+		{
 			PlayState.instSource = null;
 			PlayState.voicesSource = null;
-            PlayState.SONG = null;
-            PlayState.songEvents = null;
-        }
+			PlayState.SONG = null;
+			PlayState.songEvents = null;
+		}
 
 		System.gc();
 	}
