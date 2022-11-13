@@ -270,7 +270,7 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
-		Paths.clearCache(false, false);
+		//Paths.clearCache(false, false);
 
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
@@ -965,7 +965,7 @@ class PlayState extends MusicBeatState
 		add(timeTxt);
 		timeBarBG.sprTracker = timeBar;
 
-		generateSong(SONG.song);
+		generateSong();
 
 		camFollow = new FlxPoint();
 		camFollowPos = new FlxObject(0, 0, 1, 1);
@@ -1861,7 +1861,7 @@ class PlayState extends MusicBeatState
 		camZooming = true;
 	}
 
-	private function generateSong(dataPath:String):Void
+	private function generateSong():Void
 	{
 		System.gc();
 
@@ -1875,10 +1875,7 @@ class PlayState extends MusicBeatState
 				songSpeed = SaveData.getGameplaySetting('scrollspeed', 1);
 		}
 
-		var songData = SONG;
-		Conductor.changeBPM(songData.bpm);
-
-		curSong = songData.song;
+		curSong = SONG.song;
 
 		if (SONG.needsVoices)
 			vocals = new FlxSound().loadEmbedded(voicesSource);
@@ -1891,7 +1888,7 @@ class PlayState extends MusicBeatState
 		var noteData:Array<SwagSection>;
 
 		// NEW SHIT
-		noteData = songData.notes;
+		noteData = SONG.notes;
 
 		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
 
@@ -2030,7 +2027,7 @@ class PlayState extends MusicBeatState
 			daBeats += 1;
 		}
 
-		for (event in songData.events) // Event Notes
+		for (event in SONG.events) // Event Notes
 		{
 			for (i in 0...event[1].length)
 			{

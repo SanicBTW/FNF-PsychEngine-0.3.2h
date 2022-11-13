@@ -307,9 +307,8 @@ class FreeplayState extends MusicBeatState
 		{
 			MusicBeatState.switchState(new features.OnlineSongSelection());
 		}
-		else
-		#end if (accepted)
-	{
+		else #end if (accepted)
+		{
 			#if STORAGE_ACCESS
 			if (songs[curSelected].intStorage && SaveData.get(ALLOW_FILESYS))
 			{
@@ -338,9 +337,8 @@ class FreeplayState extends MusicBeatState
 
 				goToPlayState();
 			}
-			else
-			#end if (!songs[curSelected].intStorage)
-	{
+			else #end if (!songs[curSelected].intStorage)
+			{
 				var songLowercase:String = Paths.formatToSongPath(songs[curSelected].songName);
 				var poop:String = Highscore.formatSong(songLowercase, curDifficulty);
 				if (!OpenFlAssets.exists(Paths.json(songLowercase + '/' + poop)))
@@ -354,20 +352,20 @@ class FreeplayState extends MusicBeatState
 				PlayState.storyDifficulty = curDifficulty;
 				PlayState.storyWeek = songs[curSelected].week;
 				goToPlayState();
-	}
-	}
-	else if (controls.RESET)
-	{
-			persistentUpdate = false;
-			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-	}
-	else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
-	{
-			persistentUpdate = false;
-			openSubState(new GameplayChangersSubstate());
-			FlxG.sound.play(Paths.sound('scrollMenu'));
-	}
+			}
+		}
+		else if (controls.RESET)
+		{
+				persistentUpdate = false;
+				openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
+		else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
+		{
+				persistentUpdate = false;
+				openSubState(new GameplayChangersSubstate());
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		intendedRating = Highscore.getRating(songs[curSelected].songName, curDifficulty);
