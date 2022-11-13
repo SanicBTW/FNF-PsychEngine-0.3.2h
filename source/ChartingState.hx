@@ -43,7 +43,7 @@ import Discord.DiscordClient;
 
 class ChartingState extends MusicBeatState
 {
-	public static var noteTypeList:Array<String> = ['', 'Alt Animation', 'Hey!', 'GF Sing', 'No Animation', "Bullet Note", "EX Note"];
+	public static var noteTypeList:Array<String> = ['', 'Alt Animation', 'Hey!', 'GF Sing', 'No Animation'];
 	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
 	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
 	private var didAThing = false;

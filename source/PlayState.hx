@@ -1964,6 +1964,7 @@ class PlayState extends MusicBeatState
 					swagNote.mustPress = gottaHitNote;
 					swagNote.sustainLength = songNotes[2];
 					swagNote.gfNote = (section.gfSection && (songNotes[1] < 4));
+					trace(songNotes[3]);
 					swagNote.noteType = songNotes[3];
 					if (!Std.isOfType(songNotes[3], String))
 						swagNote.noteType = ChartingState.noteTypeList[songNotes[3]];
@@ -4642,6 +4643,15 @@ class PlayState extends MusicBeatState
 	{
 		switch (SaveData.get(SCORE_TEXT_STYLE))
 		{
+			case 'Forever':
+				if (ratingString == "N/A")
+				{
+					return 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
+				}
+				else
+				{
+					return 'Score: $songScore • Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
+				}
 			case 'Engine':
 				if (ratingString == 'N/A')
 				{
