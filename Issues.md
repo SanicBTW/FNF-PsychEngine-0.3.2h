@@ -3,3 +3,5 @@
 - Lime 8.0.0 seems to have issues with rendering sometimes (Some stuff like FlxText's might seem a little bit more pixelated)
 
 - Downscroll isn't working properly
+
+- When switching state in PlayState, strum lines will stay during transition

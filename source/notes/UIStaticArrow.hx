@@ -1,5 +1,7 @@
 package notes;
 
+import flixel.graphics.FlxGraphic;
+import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxSprite;
 
 // from forever engine legacy, modified
@@ -30,9 +32,9 @@ class UIStaticArrow extends FlxSprite
 		var skin:String = "NOTE_assets";
 		if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1)
 			skin = PlayState.SONG.arrowSkin;
-		if (Paths.getSparrowAtlas(skin) == null)
-			skin = "NOTE_assets";
-		texture = skin;
+		var daCheck = nullCheck(skin);
+		if (daCheck != "ext")
+			texture = daCheck;
 
 		scrollFactor.set();
 	}
@@ -87,6 +89,43 @@ class UIStaticArrow extends FlxSprite
 			var stringSect:String = getArrowFromNum(arrowType);
 
 			frames = Paths.getSparrowAtlas(texture);
+			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
+			animation.addByPrefix('pressed', '$stringSect press', 24, false);
+			animation.addByPrefix('confirm', '$stringSect confirm', 24, false);
+
+			antialiasing = SaveData.get(ANTIALIASING);
+			setGraphicSize(Std.int(width * 0.7));
+		}
+
+		updateHitbox();
+
+		if (lastAnim != null)
+			playAnim(lastAnim, true);
+	}
+
+	// its just reloadNote but with arguments to load from storage access, lame ik
+	public function reloadNoteRawGraphic(graphic:FlxGraphic, eframes:FlxAtlasFrames)
+	{
+		var lastAnim:String = null;
+		if (animation.curAnim != null)
+			lastAnim = animation.curAnim.name;
+
+		if (PlayState.isPixelStage)
+		{
+			loadGraphic(graphic, true, 17, 17);
+
+			animation.add('static', [arrowType]);
+			animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
+			animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
+
+			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			antialiasing = false;
+		}
+		else
+		{
+			var stringSect:String = getArrowFromNum(arrowType);
+
+			frames = eframes;
 			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
 			animation.addByPrefix('pressed', '$stringSect press', 24, false);
 			animation.addByPrefix('confirm', '$stringSect confirm', 24, false);
@@ -159,5 +198,40 @@ class UIStaticArrow extends FlxSprite
 				stringSex = "red";
 		}
 		return stringSex;
+	}
+
+	// goofy funcs lol
+	private function nullCheck(textureCheck:String)
+	{
+		var skin = "NOTE_assets";
+
+		#if STORAGE_ACCESS
+		if (SaveData.get(ALLOW_FILESYS))
+		{
+			var extArrows = features.StorageAccess.getArrowTexture(textureCheck);
+			if (extArrows != null)
+			{
+				reloadNoteRawGraphic(extArrows[0], extArrows[1]);
+				return "ext";
+			}
+			else
+				skin = nullCheckAssets(textureCheck);
+		}
+		else
+			skin = nullCheckAssets(textureCheck);
+		#else
+		skin = nullCheckAssets(textureCheck);
+		#end
+
+		return skin;
+	}
+
+	// tf dawg
+	public static function nullCheckAssets(textureCheck:String)
+	{
+		var skin = "NOTE_assets";
+		if (Paths.getSparrowAtlas(textureCheck) != null)
+			skin = textureCheck;
+		return skin;
 	}
 }

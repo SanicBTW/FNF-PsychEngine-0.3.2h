@@ -212,6 +212,30 @@ class StorageAccess
 		return null;
 		#end
 	}
+
+	public static function getArrowTexture(texture:String):Array<Dynamic>
+	{
+		#if STORAGE_ACCESS
+		var arrowPath = Path.join([getFolderPath(IMAGES), texture + ".png"]);
+		var xmlArrowPath = Path.join([getFolderPath(IMAGES), texture + ".xml"]);
+
+		if (exists(arrowPath))
+		{
+			if (exists(xmlArrowPath))
+			{
+				var graphic = getGraphic(arrowPath);
+				var frames = FlxAtlasFrames.fromSparrow(graphic, File.getContent(xmlArrowPath));
+				return [graphic, frames];
+			}
+			else
+				return null;
+		}
+		else
+			return null;
+
+		return null;
+		#end
+	}
 }
 
 enum abstract StorageFolders(String) to String
