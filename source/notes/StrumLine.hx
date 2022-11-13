@@ -69,9 +69,9 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 		if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0)
 			skin = PlayState.SONG.splashSkin;
 
-		var hue:Float = SaveData.get(ARROW_HSV)[data % 4][0] / 360;
-		var sat:Float = SaveData.get(ARROW_HSV)[data % 4][1] / 100;
-		var brt:Float = SaveData.get(ARROW_HSV)[data % 4][2] / 100;
+		var hue:Float = SaveData.getHSV(data % 4, 0) / 360;
+		var sat:Float = SaveData.getHSV(data % 4, 1) / 100;
+		var brt:Float = SaveData.getHSV(data % 4, 2) / 100;
 
 		if (note != null)
 		{

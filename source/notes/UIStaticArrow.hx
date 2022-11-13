@@ -106,9 +106,9 @@ class UIStaticArrow extends FlxSprite
 	{
 		if (AnimName == "confirm")
 		{
-			colorSwap.hue = SaveData.get(ARROW_HSV)[arrowType % 4][0] / 360;
-			colorSwap.saturation = SaveData.get(ARROW_HSV)[arrowType % 4][1] / 100;
-			colorSwap.brightness = SaveData.get(ARROW_HSV)[arrowType % 4][2] / 100;
+			colorSwap.hue = SaveData.getHSV(arrowType % 4, 0) / 360;
+			colorSwap.saturation = SaveData.getHSV(arrowType % 4, 1) / 100;
+			colorSwap.brightness = SaveData.getHSV(arrowType % 4, 2) / 100;
 			alpha = 1;
 
 			if (!PlayState.isPixelStage)

@@ -68,7 +68,7 @@ class NotesSubState extends MusicBeatSubstate
 			var yPos:Float = (165 * i) + 35;
 			for (j in 0...3)
 			{
-				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(SaveData.get(ARROW_HSV)[i][j]), true);
+				var optionText:Alphabet = new Alphabet(0, yPos + 60, Std.string(SaveData.getHSV(i, j)), true);
 				optionText.x = posX + (225 * j) + 250;
 				grpNumbers.add(optionText);
 			}
@@ -83,9 +83,9 @@ class NotesSubState extends MusicBeatSubstate
 
 			var newShader:ColorSwap = new ColorSwap();
 			note.shader = newShader.shader;
-			newShader.hue = SaveData.get(ARROW_HSV)[i][0] / 360;
-			newShader.saturation = SaveData.get(ARROW_HSV)[i][1] / 100;
-			newShader.brightness = SaveData.get(ARROW_HSV)[i][2] / 100;
+			newShader.hue = SaveData.getHSV(i, 0) / 360;
+			newShader.saturation = SaveData.getHSV(i, 1) / 100;
+			newShader.brightness = SaveData.getHSV(i, 2) / 100;
 			shaderArray.push(newShader);
 		}
 
@@ -246,7 +246,7 @@ class NotesSubState extends MusicBeatSubstate
 		if (curSelected >= Std.int(SaveData.get(ARROW_HSV).length))
 			curSelected = 0;
 
-		curValue = SaveData.get(ARROW_HSV)[curSelected][typeSelected];
+		curValue = SaveData.getHSV(curSelected, typeSelected);
 		updateValue();
 
 		for (i in 0...grpNumbers.length)
@@ -282,7 +282,7 @@ class NotesSubState extends MusicBeatSubstate
 		if (typeSelected > 2)
 			typeSelected = 0;
 
-		curValue = SaveData.get(ARROW_HSV)[curSelected][typeSelected];
+		curValue = SaveData.getHSV(curSelected, typeSelected);
 		updateValue();
 
 		for (i in 0...grpNumbers.length)
@@ -299,7 +299,7 @@ class NotesSubState extends MusicBeatSubstate
 	function resetValue(selected:Int, type:Int)
 	{
 		curValue = 0;
-		SaveData.set(ARROW_HSV, 0, selected, type);
+		SaveData.setHSV(selected, type, 0);
 		switch (type)
 		{
 			case 0:
@@ -335,7 +335,7 @@ class NotesSubState extends MusicBeatSubstate
 			curValue = max;
 		}
 		roundedValue = Math.round(curValue);
-		SaveData.set(ARROW_HSV, roundedValue, curSelected, typeSelected);
+		SaveData.setHSV(curSelected, typeSelected, roundedValue);
 
 		switch (typeSelected)
 		{

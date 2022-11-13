@@ -270,7 +270,7 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
-		//Paths.clearCache(false, false);
+		Paths.clearCache(false, false);
 
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
@@ -1961,7 +1961,6 @@ class PlayState extends MusicBeatState
 					swagNote.mustPress = gottaHitNote;
 					swagNote.sustainLength = songNotes[2];
 					swagNote.gfNote = (section.gfSection && (songNotes[1] < 4));
-					trace(songNotes[3]);
 					swagNote.noteType = songNotes[3];
 					if (!Std.isOfType(songNotes[3], String))
 						swagNote.noteType = ChartingState.noteTypeList[songNotes[3]];

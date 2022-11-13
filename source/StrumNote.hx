@@ -168,9 +168,9 @@ class StrumNote extends FlxSprite
 		}
 		else
 		{
-			colorSwap.hue = SaveData.get(ARROW_HSV)[noteData % 4][0] / 360;
-			colorSwap.saturation = SaveData.get(ARROW_HSV)[noteData % 4][1] / 100;
-			colorSwap.brightness = SaveData.get(ARROW_HSV)[noteData % 4][2] / 100;
+			colorSwap.hue = SaveData.getHSV(noteData % 4, 0) / 360;
+			colorSwap.saturation = SaveData.getHSV(noteData % 4, 1) / 100;
+			colorSwap.brightness = SaveData.getHSV(noteData % 4, 2) / 100;
 
 			if (animation.curAnim.name == 'confirm' && !PlayState.isPixelStage)
 				centerOrigin();

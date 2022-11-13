@@ -97,6 +97,13 @@ class SaveData
 	public static function get(setting:Settings)
 		return settings[setting];
 
+	// was unplayable thanks to the FUCKING ARROW HSV SHIT
+	public static function getHSV(index1:Int, index2:Int)
+		return (settings[ARROW_HSV][index1] == null ? 0 : settings[ARROW_HSV][index1][index2]);
+
+	public static function setHSV(index1:Int, index2:Int, value:Dynamic)
+		settings[ARROW_HSV][index1][index2] = value;
+
 	// goofy fix lol
 	public static function set(setting:Settings, value:Dynamic, index:Int = 0, index2:Int = 0)
 	{
@@ -106,11 +113,6 @@ class SaveData
 			return;
 		}
 
-		if (setting == ARROW_HSV)
-		{
-			settings[setting][index][index2] = value;
-			return;
-		}
 		settings[setting] = value;
 	}
 
