@@ -118,7 +118,6 @@ class SaveData
 	{
 		for (settingName => settingValue in settings)
 		{
-			trace('Saving $settingName with value $settingValue');
 			Reflect.setProperty(FlxG.save.data, settingName, settingValue);
 		}
 		FlxG.save.flush();
@@ -154,8 +153,6 @@ class SaveData
 			FlxG.drawFramerate = get(FPS);
 			FlxG.updateFramerate = get(FPS);
 		}
-
-		trace(get(ARROW_HSV).length);
 
 		var save:FlxSave = new FlxSave();
 		save.bind('essentials', 'sanicbtw');
