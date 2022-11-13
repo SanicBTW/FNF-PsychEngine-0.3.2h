@@ -19,7 +19,16 @@ class Ratings
 		"miss" => [4, 180, -100, -1], // no missWindow or smth so 180, idk if i should -1 on totalNotesHit uhh
 	];
 
-	// TODO: USE COOLTEXT POSITIONS FOR PROPER COMBO OFFSETS
+	// tf bruh ??? :sob:
+	public static function preparePos()
+	{
+		var coolText:FlxText = new FlxText(0, 0, 0, '', 32);
+		coolText.screenCenter();
+		coolText.x = FlxG.width * 0.35;
+		basePos = coolText.x;
+	}
+
+	private static var basePos:Float = 0;
 	public static function generateCombo(number:String, allSicks:Bool, isPixel:Bool, negative:Bool, createdColor:FlxColor, scoreInt:Int):FlxSprite
 	{
 		var width = 100;
@@ -36,8 +45,8 @@ class Ratings
 		var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
 		newSprite.alpha = 1;
 		newSprite.screenCenter();
-		newSprite.x += (43 * scoreInt) + 20;
-		newSprite.y += 60;
+		newSprite.x = basePos + (43 * scoreInt) - 90;
+		newSprite.y += 80;
 
 		newSprite.visible = (!SaveData.get(HIDE_HUD));
 		newSprite.x += SaveData.get(COMBO_OFFSET)[2];
@@ -76,8 +85,8 @@ class Ratings
 		var newSprite:FlxSprite = new FlxSprite().loadGraphic(graphic);
 		newSprite.alpha = 1;
 		newSprite.screenCenter();
-		newSprite.x += (43 * daLoop) + 20;
-		newSprite.y += 60;
+		newSprite.x = basePos + (43 * daLoop) - 90;
+		newSprite.y += 80;
 
 		newSprite.visible = (!SaveData.get(HIDE_HUD));
 		newSprite.x += SaveData.get(COMBO_OFFSET)[2];
@@ -115,7 +124,7 @@ class Ratings
 		var rating:FlxSprite = new FlxSprite().loadGraphic(graphic, true, width, height);
 		rating.alpha = 1;
 		rating.screenCenter();
-		rating.x = (FlxG.width * 0.55) - 40;
+		rating.x = basePos - 40;
 		rating.y -= 60;
 
 		rating.visible = (!SaveData.get(HIDE_HUD));
@@ -151,7 +160,7 @@ class Ratings
 		var rating:FlxSprite = new FlxSprite().loadGraphic(graphic);
 		rating.alpha = 1;
 		rating.screenCenter();
-		rating.x = (FlxG.width * 0.55) - 40;
+		rating.x = basePos - 40;
 		rating.y -= 60;
 
 		rating.visible = (!SaveData.get(HIDE_HUD));

@@ -274,6 +274,8 @@ class PlayState extends MusicBeatState
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
 
+		Ratings.preparePos();
+
 		if (FlxG.sound.music != null)
 			FlxG.sound.music.stop();
 

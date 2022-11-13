@@ -27,6 +27,11 @@ class GameplaySettingsSubState extends BaseOptionsMenu
 		var option:Option = new Option('Disable Reset Button', "If checked, pressing Reset won't do anything.", NO_RESET, 'bool', false);
 		addOption(option);
 
+		#if STORAGE_ACCESS
+		var option:Option = new Option('Override BF', "dunno were to put this one lol\nOverrides assets boyfriend with local storage bf", OVERRIDE_BF, 'bool', false);
+		addOption(option);
+		#end
+
 		super();
 	}
 }

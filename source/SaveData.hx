@@ -55,7 +55,8 @@ class SaveData
 		LEGACY_RATINGS_STYLE => "Classic",
 		USE_CLASSIC_COMBOS => false,
 		RATINGS_STYLE => "Default",
-		NO_RESET => false
+		NO_RESET => false,
+		OVERRIDE_BF => false
 	];
 
 	public static var gameplaySettings:Map<String, Dynamic> = [
@@ -255,4 +256,5 @@ enum abstract Settings(String) to String
 	var USE_CLASSIC_COMBOS = "UseClassicStyles";
 	var RATINGS_STYLE = "RatingsStyle";
 	var NO_RESET = "NoReset";
+	var OVERRIDE_BF = "OverrideBF";
 }

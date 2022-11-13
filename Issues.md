@@ -5,3 +5,5 @@
 - Downscroll isn't working properly
 
 - When switching state in PlayState, strum lines will stay during transition
+
+- Small Rating size option not working due to new rating code
