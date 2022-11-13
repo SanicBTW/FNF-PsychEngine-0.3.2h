@@ -1,5 +1,7 @@
 package notes;
 
+import flixel.util.FlxColor;
+import flixel.text.FlxText;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -15,7 +17,12 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 	public var holdsGroup:FlxTypedGroup<Note>;
 	public var allNotes:FlxTypedGroup<Note>;
 
-	public function new(x:Float = 0, keyAmount:Int = 4 /*, ?parent:StrumLine what is this for */)
+	// moving it here cuz layerin shit i dont understand lol
+	public var botPlayTxt:FlxText; // public cuz if not i cant modify alpha on update
+	private var botPlay:Bool = SaveData.getGameplaySetting('botplay', false);
+
+	// the worst workaround ive ever done :sob:
+	public function new(x:Float = 0, keyAmount:Int = 4, isDad:Bool /*, ?parent:StrumLine what is this for */)
 	{
 		super();
 
@@ -52,6 +59,18 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 		add(receptors);
 		add(notesGroup);
 		add(splashNotes);
+
+		// starting to hate the ! on boolean statements bruh
+		if (botPlay == true && isDad == false)
+		{
+			botPlayTxt = new FlxText(400, 100 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), FlxG.width - 800, "BOTPLAY", 32);
+			botPlayTxt.setFormat(PlayState.instance.curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+			botPlayTxt.scrollFactor.set();
+			botPlayTxt.borderSize = 1.25;
+			// bru
+			botPlayTxt.visible = true;
+			add(botPlayTxt);
+		}
 	}
 
 	public function push(newNote:Note)

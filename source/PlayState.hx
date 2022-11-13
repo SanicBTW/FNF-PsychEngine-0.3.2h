@@ -150,7 +150,6 @@ class PlayState extends MusicBeatState
 	public var practiceMode:Bool = false;
 
 	var botplaySine:Float = 0;
-	var botplayTxt:FlxText;
 
 	public var iconP1:HealthIcon;
 	public var iconP2:HealthIcon;
@@ -240,7 +239,7 @@ class PlayState extends MusicBeatState
 	// stores the last combo sprite object
 	public static var lastScore:Array<FlxSprite> = [];
 
-	var curFont = null; // to properly set the font on format
+	public var curFont = null; // to properly set the font on format
 
 	var camDisplaceX:Float = 0;
 	var camDisplaceY:Float = 0;
@@ -411,6 +410,8 @@ class PlayState extends MusicBeatState
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
+
+		strumLines = new FlxTypedGroup<StrumLine>();
 
 		if (curFont == null)
 			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
@@ -883,8 +884,6 @@ class PlayState extends MusicBeatState
 		startCharacterPos(boyfriend);
 		boyfriendGroup.add(boyfriend);
 
-		strumLines = new FlxTypedGroup<StrumLine>();
-
 		var camPos:FlxPoint = new FlxPoint(girlfriendCameraOffset[0], girlfriendCameraOffset[1]);
 		if (gf != null)
 		{
@@ -913,9 +912,9 @@ class PlayState extends MusicBeatState
 		Conductor.songPosition = -5000;
 
 		var placement = (FlxG.width / 2);
-		dadStrums = new StrumLine(placement - FlxG.width / 4, 4);
+		dadStrums = new StrumLine(placement - FlxG.width / 4, 4, true);
 		dadStrums.visible = (!SaveData.get(MIDDLE_SCROLL));
-		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4);
+		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4, false);
 
 		strumLines.add(dadStrums);
 		strumLines.add(boyfriendStrums);
@@ -1025,21 +1024,11 @@ class PlayState extends MusicBeatState
 		scoreTxt.visible = !SaveData.get(HIDE_HUD);
 		add(scoreTxt);
 
-		botplayTxt = new FlxText(400, timeBarBG.y + 55, FlxG.width - 800, "BOTPLAY", 32);
-		botplayTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		botplayTxt.scrollFactor.set();
-		botplayTxt.borderSize = 1.25;
-		botplayTxt.visible = cpuControlled;
-		add(botplayTxt);
-		if (SaveData.get(DOWN_SCROLL))
-			botplayTxt.y = timeBarBG.y - 78;
-
 		healthBar.cameras = [camHUD];
 		healthBarBG.cameras = [camHUD];
 		iconP1.cameras = [camHUD];
 		iconP2.cameras = [camHUD];
 		scoreTxt.cameras = [camHUD];
-		botplayTxt.cameras = [camHUD];
 		timeBar.cameras = [camHUD];
 		timeBarBG.cameras = [camHUD];
 		timeTxt.cameras = [camHUD];
@@ -2399,9 +2388,9 @@ class PlayState extends MusicBeatState
 		if (cpuControlled)
 		{
 			botplaySine += 180 * elapsed;
-			botplayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
+			// assuming the text isnt null
+			boyfriendStrums.botPlayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
 		}
-		botplayTxt.visible = cpuControlled;
 
 		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end)
 		{
@@ -2537,7 +2526,7 @@ class PlayState extends MusicBeatState
 		FlxG.watch.addQuick("speedShit", songSpeed);
 
 		// RESET = Quick Game Over Screen
-		if (controls.RESET && !inCutscene && !endingSong)
+		if (controls.RESET && !SaveData.get(NO_RESET) && !inCutscene && !endingSong)
 		{
 			health = 0;
 			trace("RESET = True");

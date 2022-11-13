@@ -21,7 +21,7 @@ class SaveData
 		CAMERA_ZOOMS => true,
 		HIDE_HUD => false,
 		NOTE_OFFSET => 0,
-		ARROW_HSV => [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		ARROW_HSV => [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]], // LMFAOOO I FORGOT THE LAST ARROW BRUHHHHH
 		GHOST_TAPPING => true,
 		HIDE_TIME => false,
 		SHOW_MEMORY => true,
@@ -118,6 +118,9 @@ class SaveData
 
 	public static function saveSettings()
 	{
+		// br
+		set(VOLUME, FlxG.sound.volume);
+		set(MUTED, FlxG.sound.muted);
 		for (settingName => settingValue in settings)
 		{
 			Reflect.setProperty(FlxG.save.data, settingName, settingValue);
