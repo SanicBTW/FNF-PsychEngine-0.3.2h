@@ -93,7 +93,6 @@ class WeekData
 		weeksList = [];
 		weeksLoaded.clear();
 		var directories:Array<String> = [Paths.getPreloadPath()];
-		var originalLength:Int = directories.length;
 
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));
 		for (i in 0...sexList.length)
@@ -107,13 +106,6 @@ class WeekData
 					if (week != null)
 					{
 						var weekFile:WeekData = new WeekData(week, sexList[i]);
-
-						#if MODS_ALLOWED
-						if (j >= originalLength)
-						{
-							weekFile.folder = directories[j].substring(Paths.mods().length, directories[j].length - 1);
-						}
-						#end
 
 						if (weekFile != null
 							&& (isStoryMode == null
@@ -137,12 +129,6 @@ class WeekData
 			if (week != null)
 			{
 				var weekFile:WeekData = new WeekData(week, weekToCheck);
-				if (i >= originalLength)
-				{
-					#if MODS_ALLOWED
-					weekFile.folder = directory.substring(Paths.mods().length, directory.length - 1);
-					#end
-				}
 				if ((PlayState.isStoryMode && !weekFile.hideStoryMode) || (!PlayState.isStoryMode && !weekFile.hideFreeplay))
 				{
 					weeksLoaded.set(weekToCheck, weekFile);
@@ -157,27 +143,19 @@ class WeekData
 		var rawJson:String = null;
 
 		if (OpenFlAssets.exists(path))
-		{
 			rawJson = Assets.getText(path);
-		}
 
 		if (rawJson != null && rawJson.length > 0)
-		{
 			return cast Json.parse(rawJson);
-		}
 		return null;
 	}
 
 	//   FUNCTIONS YOU WILL PROBABLY NEVER NEED TO USE
 	// To use on PlayState.hx or Highscore stuff
 	public static function getWeekFileName():String
-	{
 		return weeksList[PlayState.storyWeek];
-	}
 
 	// Used on LoadingState, nothing really too relevant
 	public static function getCurrentWeek():WeekData
-	{
 		return weeksLoaded.get(weeksList[PlayState.storyWeek]);
-	}
 }

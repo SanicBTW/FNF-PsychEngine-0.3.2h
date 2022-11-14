@@ -105,7 +105,7 @@
 
 	<!-- _____________________________ Engine Features ____________________________ -->
 
-	<define name="STORAGE_ACCESS" if="android || windows" />
+	<define name="STORAGE_ACCESS" if="android || windows || linux" />
 	<define name="ONLINE_SONGS"/>
 
 </project>

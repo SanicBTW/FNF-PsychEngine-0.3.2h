@@ -38,6 +38,7 @@ class StorageAccess
 		checkDirs.set("charactersGraphic", Path.join([checkDirs.get("images"), "characters"]));
 		checkDirs.set("icons", Path.join([checkDirs.get("images"), "icons"]));
 		checkDirs.set("stages", Path.join([checkDirs.get("main"), "stages"]));
+		checkDirs.set("weeks", Path.join([checkDirs.get("main"), "weeks"]));
 
 		for (varName => dirPath in checkDirs)
 		{
@@ -74,6 +75,8 @@ class StorageAccess
 		else if (exists(filePath) && returnPath == true)
 			return filePath;
 		return null;
+		#else
+		return null;
 		#end
 	}
 
@@ -85,6 +88,8 @@ class StorageAccess
 			return Sound.fromFile(filePath);
 		else if (exists(filePath) && returnPath == true)
 			return filePath;
+		return null;
+		#else
 		return null;
 		#end
 	}
@@ -161,6 +166,8 @@ class StorageAccess
 				return null;
 		}
 		return null;
+		#else
+		return null;
 		#end
 	}
 
@@ -188,6 +195,8 @@ class StorageAccess
 			return null;
 
 		return null;
+		#else
+		return null;
 		#end
 	}
 
@@ -209,6 +218,8 @@ class StorageAccess
 				return null;
 		}
 
+		return null;
+		#else
 		return null;
 		#end
 	}
@@ -234,6 +245,27 @@ class StorageAccess
 			return null;
 
 		return null;
+		#else
+		return null;
+		#end
+	}
+
+	// i dont know how im going to add this but just preparing stuff
+	public static function getWeeks():Null<Array<WeekData.WeekFile>>
+	{
+		#if STORAGE_ACCESS
+		var finalReturn:Array<WeekData.WeekFile> = [];
+		var files = getFolderFiles(WEEKS);
+		for (file in files)
+		{
+			if (file.endsWith(".json"))
+			{
+				finalReturn.push(cast Json.parse(File.getContent(file)));
+			}
+		}
+		return (finalReturn.length > 0 ? finalReturn : null);
+		#else
+		return null;
 		#end
 	}
 }
@@ -248,4 +280,5 @@ enum abstract StorageFolders(String) to String
 	var STAGES = "stages";
 	var CHARACTERS_GRAPHICS = "charactersGraphic";
 	var ICONS = "icons";
+	var WEEKS = "weeks";
 }
