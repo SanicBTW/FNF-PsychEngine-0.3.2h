@@ -91,7 +91,7 @@ class Main extends Sprite
 		}
 
 		// what
-		Lib.current.stage.align = "tl";
+		Lib.current.stage.align = TOP_LEFT;
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 
 		FlxG.fixedTimestep = false; // when going leaving playstate there is not set timestep back to true so lets just set it to false globally

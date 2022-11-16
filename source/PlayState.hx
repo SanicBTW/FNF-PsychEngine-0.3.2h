@@ -126,15 +126,9 @@ class PlayState extends MusicBeatState
 	private var camZooming:Bool = true;
 	private var curSong:String = "";
 	private var gfSpeed:Int = 1;
-	private var health:Float = 1;
+	public var health:Float = 1;
 	private var combo:Int = 0;
-	private var healthBarBG:AttachedSprite;
 
-	public var healthBar:FlxBar;
-
-	var songPercent:Float = 0;
-	private var timeBarBG:AttachedSprite;
-	private var timeBar:FlxBar;
 	private var generatedMusic:Bool = false;
 	private var endingSong:Bool = false;
 	private var startingSong:Bool = false;
@@ -151,8 +145,6 @@ class PlayState extends MusicBeatState
 
 	var botplaySine:Float = 0;
 
-	public var iconP1:HealthIcon;
-	public var iconP2:HealthIcon;
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
@@ -195,10 +187,6 @@ class PlayState extends MusicBeatState
 	public var songScore:Int = 0;
 	public var songHits:Int = 0;
 	public var songMisses:Int = 0;
-	public var scoreTxt:FlxText;
-
-	var timeTxt:FlxText;
-	var scoreTxtTween:FlxTween;
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -264,6 +252,7 @@ class PlayState extends MusicBeatState
 	public static var strumHUD:Array<FlxCamera> = [];
 
 	private var allUIs:Array<FlxCamera> = [];
+	public static var uiHUD:HUD;
 
 	override public function create()
 	{
@@ -274,6 +263,7 @@ class PlayState extends MusicBeatState
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
 
+		//wtf dwag
 		Ratings.preparePos();
 
 		if (FlxG.sound.music != null)
@@ -303,6 +293,31 @@ class PlayState extends MusicBeatState
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
 		allUIs.push(camHUD);
+
+		strumLines = new FlxTypedGroup<StrumLine>();
+
+		var placement = (FlxG.width / 2);
+		dadStrums = new StrumLine(placement - FlxG.width / 4, 4, true);
+		dadStrums.visible = (!SaveData.get(MIDDLE_SCROLL));
+		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4, false);
+
+		strumLines.add(dadStrums);
+		strumLines.add(boyfriendStrums);
+
+		strumHUD = [];
+		for (i in 0...strumLines.length)
+		{
+			strumHUD[i] = new FlxCamera();
+			strumHUD[i].bgColor.alpha = 0;
+
+			strumHUD[i].cameras = [camHUD];
+			allUIs.push(strumHUD[i]);
+			FlxG.cameras.add(strumHUD[i]);
+
+			strumLines.members[i].cameras = [strumHUD[i]];
+		}
+		add(strumLines);
+
 		FlxG.cameras.add(camOther);
 
 		FlxCamera.defaultCameras = [camGame];
@@ -412,8 +427,6 @@ class PlayState extends MusicBeatState
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
-
-		strumLines = new FlxTypedGroup<StrumLine>();
 
 		if (curFont == null)
 			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
@@ -913,58 +926,18 @@ class PlayState extends MusicBeatState
 
 		Conductor.songPosition = -5000;
 
-		var placement = (FlxG.width / 2);
-		dadStrums = new StrumLine(placement - FlxG.width / 4, 4, true);
-		dadStrums.visible = (!SaveData.get(MIDDLE_SCROLL));
-		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4, false);
-
-		strumLines.add(dadStrums);
-		strumLines.add(boyfriendStrums);
-
-		strumHUD = [];
-		for (i in 0...strumLines.length)
-		{
-			strumHUD[i] = new FlxCamera();
-			strumHUD[i].bgColor.alpha = 0;
-
-			strumHUD[i].cameras = [camHUD];
-			allUIs.push(strumHUD[i]);
-			FlxG.cameras.add(strumHUD[i]);
-
-			strumLines.members[i].cameras = [strumHUD[i]];
-		}
-		add(strumLines);
-
-		timeTxt = new FlxText(STRUM_X + (FlxG.width / 2) - 248, 20, 400, "", 32);
-		timeTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		timeTxt.scrollFactor.set();
-		timeTxt.alpha = 0;
-		timeTxt.borderSize = 2;
-		timeTxt.visible = !SaveData.get(HIDE_TIME);
-		if (SaveData.get(DOWN_SCROLL))
-			timeTxt.y = FlxG.height - 45;
-
-		timeBarBG = new AttachedSprite('timeBar');
-		timeBarBG.x = timeTxt.x;
-		timeBarBG.y = timeTxt.y + (timeTxt.height / 4);
-		timeBarBG.scrollFactor.set();
-		timeBarBG.alpha = 0;
-		timeBarBG.visible = !SaveData.get(HIDE_TIME);
-		timeBarBG.color = FlxColor.BLACK;
-		timeBarBG.xAdd = -4;
-		timeBarBG.yAdd = -4;
-		add(timeBarBG);
-
-		timeBar = new FlxBar(timeBarBG.x + 4, timeBarBG.y + 4, LEFT_TO_RIGHT, Std.int(timeBarBG.width - 8), Std.int(timeBarBG.height - 8), this,
-			'songPercent', 0, 1);
-		timeBar.scrollFactor.set();
-		timeBar.createFilledBar(0xFF000000, 0xFFFFFFFF);
-		timeBar.numDivisions = 800; // How much lag this causes?? Should i tone it down to idk, 400 or 200?
-		timeBar.alpha = 0;
-		timeBar.visible = !SaveData.get(HIDE_TIME);
-		add(timeBar);
-		add(timeTxt);
-		timeBarBG.sprTracker = timeBar;
+		uiHUD = new HUD(
+			{
+				name: boyfriend.healthIcon,
+				healthColors: boyfriend.healthColorArray
+			},
+			{
+				name: dad.healthIcon,
+				healthColors: dad.healthColorArray
+			}
+		);
+		add(uiHUD);
+		uiHUD.cameras = [camHUD];
 
 		generateSong();
 
@@ -990,50 +963,6 @@ class PlayState extends MusicBeatState
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
-		healthBarBG = new AttachedSprite('healthBar');
-		healthBarBG.y = FlxG.height * 0.89;
-		healthBarBG.screenCenter(X);
-		healthBarBG.scrollFactor.set();
-		healthBarBG.visible = !SaveData.get(HIDE_HUD);
-		healthBarBG.xAdd = -4;
-		healthBarBG.yAdd = -4;
-		add(healthBarBG);
-		if (SaveData.get(DOWN_SCROLL))
-			healthBarBG.y = 0.11 * FlxG.height;
-
-		healthBar = new FlxBar(healthBarBG.x + 4, healthBarBG.y + 4, RIGHT_TO_LEFT, Std.int(healthBarBG.width - 8), Std.int(healthBarBG.height - 8), this,
-			'health', 0, 2);
-		healthBar.scrollFactor.set();
-		healthBar.visible = !SaveData.get(HIDE_HUD);
-		add(healthBar);
-		healthBarBG.sprTracker = healthBar;
-
-		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
-		iconP1.y = healthBar.y - 75;
-		iconP1.visible = !SaveData.get(HIDE_HUD);
-		add(iconP1);
-
-		iconP2 = new HealthIcon(dad.healthIcon, false);
-		iconP2.y = healthBar.y - 75;
-		iconP2.visible = !SaveData.get(HIDE_HUD);
-		add(iconP2);
-		reloadHealthBarColors();
-
-		scoreTxt = new FlxText(0, healthBarBG.y + 36, FlxG.width, "", 20);
-		scoreTxt.setFormat(curFont, 20, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
-		scoreTxt.scrollFactor.set();
-		scoreTxt.borderSize = 1.25;
-		scoreTxt.visible = !SaveData.get(HIDE_HUD);
-		add(scoreTxt);
-
-		healthBar.cameras = [camHUD];
-		healthBarBG.cameras = [camHUD];
-		iconP1.cameras = [camHUD];
-		iconP2.cameras = [camHUD];
-		scoreTxt.cameras = [camHUD];
-		timeBar.cameras = [camHUD];
-		timeBarBG.cameras = [camHUD];
-		timeTxt.cameras = [camHUD];
 		doof.cameras = [camHUD];
 
 		#if android
@@ -1159,13 +1088,6 @@ class PlayState extends MusicBeatState
 		songSpeed = value;
 		noteKillOffset = 350 / songSpeed;
 		return value;
-	}
-
-	public function reloadHealthBarColors()
-	{
-		healthBar.createFilledBar(FlxColor.fromRGB(dad.healthColorArray[0], dad.healthColorArray[1], dad.healthColorArray[2]),
-			FlxColor.fromRGB(boyfriend.healthColorArray[0], boyfriend.healthColorArray[1], boyfriend.healthColorArray[2]));
-		healthBar.updateBar();
 	}
 
 	public function addCharacterToList(newCharacter:String, type:Int)
@@ -1840,9 +1762,7 @@ class PlayState extends MusicBeatState
 
 		// Song duration in a float, useful for the time left feature
 		songLength = FlxG.sound.music.length;
-		FlxTween.tween(timeBarBG, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
-		FlxTween.tween(timeBar, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
-		FlxTween.tween(timeTxt, {alpha: 1}, 0.5, {ease: FlxEase.circOut});
+		uiHUD.fadeInTime();
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
@@ -2385,8 +2305,6 @@ class PlayState extends MusicBeatState
 
 		super.update(elapsed);
 
-		scoreTxt.text = getScoreText();
-
 		if (cpuControlled)
 		{
 			botplaySine += 180 * elapsed;
@@ -2403,39 +2321,8 @@ class PlayState extends MusicBeatState
 			#end
 		}
 
-		var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
-		iconP1.scale.set(mult, mult);
-		iconP1.updateHitbox();
-
-		var mult:Float = FlxMath.lerp(1, iconP2.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
-		iconP2.scale.set(mult, mult);
-		iconP2.updateHitbox();
-
-		var iconOffset:Int = 26;
-
-		iconP1.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
-			+ (150 * iconP1.scale.x - 150) / 2
-			- iconOffset;
-		iconP2.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
-			- (150 * iconP2.scale.x) / 2
-			- iconOffset * 2;
-
 		if (health >= 2)
 			health = 2;
-		if (health <= 0)
-			health = 0;
-
-		if (healthBar.percent < 20)
-			iconP1.animation.curAnim.curFrame = 1;
-		else
-			iconP1.animation.curAnim.curFrame = 0;
-
-		if (healthBar.percent > 80)
-			iconP2.animation.curAnim.curFrame = 1;
-		else
-			iconP2.animation.curAnim.curFrame = 0;
 
 		if (startingSong)
 		{
@@ -2466,7 +2353,7 @@ class PlayState extends MusicBeatState
 					var curTime:Float = FlxG.sound.music.time - SaveData.get(NOTE_OFFSET);
 					if (curTime < 0)
 						curTime = 0;
-					songPercent = (curTime / songLength);
+					uiHUD.songPercent = (curTime / songLength);
 
 					var secondsTotal:Int = Math.floor((songLength - curTime) / 1000);
 					if (secondsTotal < 0)
@@ -2476,7 +2363,7 @@ class PlayState extends MusicBeatState
 					var secondsRemaining:String = '' + secondsTotal % 60;
 					if (secondsRemaining.length < 2)
 						secondsRemaining = '0' + secondsRemaining; // Dunno how to make it display a zero first in Haxe lol
-					timeTxt.text = minutesRemaining + ':' + secondsRemaining;
+					uiHUD.timeTxt.text = minutesRemaining + ':' + secondsRemaining;
 				}
 			}
 		}
@@ -3149,7 +3036,7 @@ class PlayState extends MusicBeatState
 								boyfriend.alreadyLoaded = true;
 							}
 							boyfriend.visible = true;
-							iconP1.changeIcon(boyfriend.healthIcon);
+							uiHUD.iconP1.changeIcon(boyfriend.healthIcon);
 						}
 
 					case 1:
@@ -3180,7 +3067,7 @@ class PlayState extends MusicBeatState
 								dad.alreadyLoaded = true;
 							}
 							dad.visible = true;
-							iconP2.changeIcon(dad.healthIcon);
+							uiHUD.iconP2.changeIcon(dad.healthIcon);
 						}
 
 					case 2:
@@ -3239,9 +3126,7 @@ class PlayState extends MusicBeatState
 
 	function endSong():Void
 	{
-		timeBarBG.visible = false;
-		timeBar.visible = false;
-		timeTxt.visible = false;
+		uiHUD.fadeOutTime();
 		canPause = false;
 		endingSong = true;
 		camZooming = false;
@@ -3365,7 +3250,7 @@ class PlayState extends MusicBeatState
 
 	private var createdColor = FlxColor.fromRGB(204, 66, 66);
 
-	private function popUpCombo(cache:Bool = false)
+	private function popUpCombo()
 	{
 		var comboString:String = Std.string(combo);
 		var negative:Bool = false;
@@ -3392,7 +3277,6 @@ class PlayState extends MusicBeatState
 
 			add(numScore);
 
-			add(numScore);
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
@@ -3401,16 +3285,12 @@ class PlayState extends MusicBeatState
 				startDelay: Conductor.crochet * 0.001
 			});
 
-			if (!cache)
-				numScore.cameras = [camHUD];
-
-			numScore.y += 50;
-			numScore.x += 100;
+			numScore.cameras = [camHUD];
 		}
 	}
 
 	// bruh
-	private function popUpLegacyCombo(cache:Bool = false)
+	private function popUpLegacyCombo()
 	{
 		var seperatedScore:Array<Int> = [];
 
@@ -3441,8 +3321,6 @@ class PlayState extends MusicBeatState
 
 			add(numScore);
 
-			// ??? forever had this way of doing it i dont understand
-			add(numScore);
 			FlxTween.tween(numScore, {alpha: 0}, 0.2, {
 				onComplete: function(tween:FlxTween)
 				{
@@ -3451,17 +3329,13 @@ class PlayState extends MusicBeatState
 				startDelay: Conductor.crochet * 0.001
 			});
 
-			if (!cache)
-				numScore.cameras = [camHUD];
-
-			numScore.y += 50;
-			numScore.x += 100;
+			numScore.cameras = [camHUD];
 
 			daLoop++;
 		}
 	}
 
-	private function displayRating(daRating:String, timing:String, cache:Bool = false)
+	private function displayRating(daRating:String, timing:String)
 	{
 		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), timing, isPixelStage);
 		add(rating);
@@ -3482,11 +3356,10 @@ class PlayState extends MusicBeatState
 			startDelay: Conductor.crochet * 0.00125
 		});
 
-		if (!cache)
-			rating.cameras = [camHUD];
+		rating.cameras = [camHUD];
 	}
 
-	private function displayLegacyRating(daRating:String, cache:Bool = false)
+	private function displayLegacyRating(daRating:String)
 	{
 		var rating = Ratings.generateLegacyRating(daRating, isPixelStage);
 		add(rating);
@@ -3507,8 +3380,7 @@ class PlayState extends MusicBeatState
 			startDelay: Conductor.crochet * 0.00125
 		});
 
-		if (!cache)
-			rating.cameras = [camHUD];
+		rating.cameras = [camHUD];
 	}
 
 	private function popUpScore(daNote:Note = null, timing:String)
@@ -3566,23 +3438,11 @@ class PlayState extends MusicBeatState
 		}
 
 		if (SaveData.get(SCORE_ZOOM))
-		{
 			if (!cpuControlled)
-			{
-				if (scoreTxtTween != null)
-					scoreTxtTween.cancel();
+				uiHUD.doScoreZoom();
 
-				scoreTxt.scale.set(1.075, 1.075);
-				scoreTxtTween = FlxTween.tween(scoreTxt.scale, {x: 1, y: 1}, 0.2, {
-					onComplete: function(twn:FlxTween)
-					{
-						scoreTxtTween = null;
-					}
-				});
-			}
-		}
-
-		if (SaveData.get(LEGACY_RATINGS_STYLE))
+		// oopsies
+		if (SaveData.get(USE_CLASSIC_COMBOS))
 		{
 			displayLegacyRating(daRating);
 			popUpLegacyCombo();
@@ -3684,7 +3544,7 @@ class PlayState extends MusicBeatState
 							{
 								if (mashViolations != 0)
 									mashViolations--;
-								scoreTxt.color = FlxColor.WHITE;
+								uiHUD.scoreTxt.color = FlxColor.WHITE;
 								goodNoteHit(coolNote);
 							}
 						}
@@ -3703,7 +3563,7 @@ class PlayState extends MusicBeatState
 						if (mashViolations > 4)
 						{
 							FlxG.log.add("mash violations " + mashViolations);
-							scoreTxt.color = FlxColor.RED;
+							uiHUD.scoreTxt.color = FlxColor.RED;
 							for (shit in 0...controlArray.length)
 							{
 								noteMissPress(shit);
@@ -3775,7 +3635,7 @@ class PlayState extends MusicBeatState
 							{
 								if (mashViolations != 0)
 									mashViolations--;
-								scoreTxt.color = FlxColor.WHITE;
+								uiHUD.scoreTxt.color = FlxColor.WHITE;
 								goodNoteHit(coolNote, true);
 							}
 						}
@@ -3786,7 +3646,7 @@ class PlayState extends MusicBeatState
 						if (mashViolations > 4)
 						{
 							FlxG.log.add("mash violations " + mashViolations);
-							scoreTxt.color = FlxColor.RED;
+							uiHUD.scoreTxt.color = FlxColor.RED;
 							for (shit in 0...releaseArray.length)
 							{
 								noteMissPress(shit);
@@ -4411,11 +4271,8 @@ class PlayState extends MusicBeatState
 			return;
 		}
 
-		iconP1.scale.set(1.2, 1.2);
-		iconP2.scale.set(1.2, 1.2);
-
-		iconP1.updateHitbox();
-		iconP2.updateHitbox();
+		// you might ask, why not just use uiHUD.iconPX? i dont know
+		uiHUD.beatHit();
 
 		if (gf != null
 			&& curBeat % Math.round(gfSpeed * gf.danceEveryNumBeats) == 0
@@ -4430,24 +4287,24 @@ class PlayState extends MusicBeatState
 				if (curBeat % gfSpeed == 0)
 				{
 					curBeat % (gfSpeed * 2) == 0 ? {
-						iconP1.scale.set(1.1, 0.8);
-						iconP2.scale.set(1.1, 1.3);
+						uiHUD.iconP1.scale.set(1.1, 0.8);
+						uiHUD.iconP2.scale.set(1.1, 1.3);
 
-						FlxTween.angle(iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(uiHUD.iconP1, -15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(uiHUD.iconP2, 15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
 					} : {
-						iconP1.scale.set(1.1, 1.3);
-						iconP2.scale.set(1.1, 0.8);
+						uiHUD.iconP1.scale.set(1.1, 1.3);
+						uiHUD.iconP2.scale.set(1.1, 0.8);
 
-						FlxTween.angle(iconP2, -15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
-						FlxTween.angle(iconP1, 15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(uiHUD.iconP2, -15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
+						FlxTween.angle(uiHUD.iconP1, 15, 0, Conductor.crochet / 1300 * gfSpeed, {ease: FlxEase.quadOut});
 						}
 
-					FlxTween.tween(iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed, {ease: FlxEase.quadOut});
-					FlxTween.tween(iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(uiHUD.iconP1, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed, {ease: FlxEase.quadOut});
+					FlxTween.tween(uiHUD.iconP2, {'scale.x': 1, 'scale.y': 1}, Conductor.crochet / 1250 * gfSpeed, {ease: FlxEase.quadOut});
 
-					iconP1.updateHitbox();
-					iconP2.updateHitbox();
+					uiHUD.iconP1.updateHitbox();
+					uiHUD.iconP2.updateHitbox();
 				}
 			}
 			gf.dance();
@@ -4624,41 +4481,6 @@ class PlayState extends MusicBeatState
 			ratingFC = "SDCB";
 		else if (songMisses >= 10)
 			ratingFC = "Clear";
-	}
-
-	function getScoreText():String
-	{
-		switch (SaveData.get(SCORE_TEXT_STYLE))
-		{
-			case 'Forever':
-				if (ratingString == "N/A")
-				{
-					return 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
-				}
-				else
-				{
-					return 'Score: $songScore • Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
-				}
-			case 'Engine':
-				if (ratingString == 'N/A')
-				{
-					return 'Score: $songScore | Misses: $songMisses | $ratingString';
-				}
-				else
-				{
-					return 'Score: $songScore | Misses: $songMisses | Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingString ($ratingFC)';
-				}
-			case 'Psych':
-				if (ratingString == '?')
-				{
-					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
-				}
-				else
-				{
-					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';
-				}
-		}
-		return "";
 	}
 
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
