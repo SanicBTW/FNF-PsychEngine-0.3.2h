@@ -215,7 +215,7 @@ class TitleState extends MusicBeatState
 		if (FlxG.keys.justPressed.F)
 		{
 			// FlxG.fullscreen = !FlxG.fullscreen;
-			// osu.BeatMapParser.parseBeatMap();
+			osu.BeatmapConverter.convertBeatmap();
 			// MusicBeatState.switchState(new ExpState());
 		}
 
