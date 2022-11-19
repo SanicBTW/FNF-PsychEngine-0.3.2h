@@ -1065,7 +1065,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence.
-		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 		#end
 
 		super.create();
@@ -1766,7 +1766,7 @@ class PlayState extends MusicBeatState
 
 		#if desktop
 		// Updating Discord Rich Presence (with Time Left)
-		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter(), true, songLength);
+		DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter(), true, songLength);
 		#end
 
 		camZooming = true;
@@ -2078,14 +2078,14 @@ class PlayState extends MusicBeatState
 				DiscordClient.changePresence(detailsText, displaySongName
 					+ " ("
 					+ storyDifficultyText
-					+ ")", iconP2.getCharacter(), true,
+					+ ")", uiHUD.iconP2.getCharacter(), true,
 					songLength
 					- Conductor.songPosition
 					- SaveData.get(NOTE_OFFSET));
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 			}
 			#end
 		}
@@ -2103,14 +2103,14 @@ class PlayState extends MusicBeatState
 				DiscordClient.changePresence(detailsText, displaySongName
 					+ " ("
 					+ storyDifficultyText
-					+ ")", iconP2.getCharacter(), true,
+					+ ")", uiHUD.iconP2.getCharacter(), true,
 					songLength
 					- Conductor.songPosition
 					- SaveData.get(NOTE_OFFSET));
 			}
 			else
 			{
-				DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+				DiscordClient.changePresence(detailsText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 			}
 		}
 		#end
@@ -2123,7 +2123,7 @@ class PlayState extends MusicBeatState
 		#if desktop
 		if (health > 0 && !paused)
 		{
-			DiscordClient.changePresence(detailsPausedText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence(detailsPausedText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 		}
 		#end
 
@@ -2317,7 +2317,7 @@ class PlayState extends MusicBeatState
 			openPauseMenu();
 
 			#if desktop
-			DiscordClient.changePresence(detailsPausedText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence(detailsPausedText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 			#end
 		}
 
@@ -2684,7 +2684,7 @@ class PlayState extends MusicBeatState
 
 			#if desktop
 			// Game Over doesn't get his own variable because it's only used here
-			DiscordClient.changePresence("Game Over - " + detailsText, displaySongName + " (" + storyDifficultyText + ")", iconP2.getCharacter());
+			DiscordClient.changePresence("Game Over - " + detailsText, displaySongName + " (" + storyDifficultyText + ")", uiHUD.iconP2.getCharacter());
 			#end
 			isDead = true;
 			return true;

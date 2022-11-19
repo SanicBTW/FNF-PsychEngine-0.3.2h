@@ -56,7 +56,8 @@ class SaveData
 		USE_CLASSIC_COMBOS => false,
 		RATINGS_STYLE => "Default",
 		NO_RESET => false,
-		OVERRIDE_BF => false
+		OLD_SONG_SYSTEM => false,
+		FULLSCREEN => false
 	];
 
 	public static var gameplaySettings:Map<String, Dynamic> = [
@@ -160,6 +161,8 @@ class SaveData
 			FlxG.updateFramerate = get(FPS);
 		}
 
+		FlxG.fullscreen = get(FULLSCREEN);
+
 		var save:FlxSave = new FlxSave();
 		save.bind('essentials', 'sanicbtw');
 		if (save != null)
@@ -256,5 +259,6 @@ enum abstract Settings(String) to String
 	var USE_CLASSIC_COMBOS = "UseClassicStyles";
 	var RATINGS_STYLE = "RatingsStyle";
 	var NO_RESET = "NoReset";
-	var OVERRIDE_BF = "OverrideBF";
+	var OLD_SONG_SYSTEM = "OldSongSystem";
+	var FULLSCREEN = "FullScreen";
 }

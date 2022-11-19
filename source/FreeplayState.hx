@@ -1,5 +1,6 @@
 package;
 
+import openfl.media.Sound;
 import WeekData;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -77,28 +78,18 @@ class FreeplayState extends MusicBeatState
 				continue;
 
 			var leWeek:WeekData = WeekData.weeksLoaded.get(WeekData.weeksList[i]);
-			var leSongs:Array<String> = [];
-			var leChars:Array<String> = [];
-
-			for (j in 0...leWeek.songs.length)
-			{
-				leSongs.push(leWeek.songs[j][0]);
-				leChars.push(leWeek.songs[j][1]);
-			}
 
 			for (song in leWeek.songs)
 			{
 				var colors:Array<Int> = song[2];
 				if (colors == null || colors.length < 3)
-				{
 					colors = [146, 113, 253];
-				}
-				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]));
+				addSong(song[0], i, song[1], FlxColor.fromRGB(colors[0], colors[1], colors[2]), leWeek.internal);
 			}
 		}
 
 		#if STORAGE_ACCESS
-		if (SaveData.get(ALLOW_FILESYS))
+		if (SaveData.get(ALLOW_FILESYS) && SaveData.get(OLD_SONG_SYSTEM))
 		{
 			var internalSongs = StorageAccess.getFolderFiles(SONGS);
 			var charts = StorageAccess.getFolderFiles(DATA);
@@ -108,9 +99,7 @@ class FreeplayState extends MusicBeatState
 				var songName = internalSongs[i];
 
 				if (charts.contains(songName))
-					addSong(songName, 0, "bf", FlxColor.fromRGB(146, 113, 253), true);
-
-				System.gc();
+					addSong(songName, 0, "face", FlxColor.fromRGB(146, 113, 253), true);
 			}
 		}
 		#end
@@ -331,8 +320,8 @@ class FreeplayState extends MusicBeatState
 
 				PlayState.isStoryMode = false;
 				PlayState.storyDifficulty = curDifficulty;
-				PlayState.instSource = StorageAccess.getInst(songs[curSelected].songName);
-				PlayState.voicesSource = StorageAccess.getVoices(songs[curSelected].songName);
+				PlayState.instSource = StorageAccess.getSong(songs[curSelected].songName, "Inst");
+				PlayState.voicesSource = StorageAccess.getSong(songs[curSelected].songName, "Voices");
 				PlayState.storyWeek = 0;
 
 				goToPlayState();

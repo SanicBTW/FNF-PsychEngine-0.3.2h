@@ -30,15 +30,16 @@ class StorageAccess
 		#if STORAGE_ACCESS
 		checkDirs.set("main", Path.join([System.userDirectory, 'sanicbtw_pe_files']));
 
-		// for songs shit
-		checkDirs.set("data", Path.join([checkDirs.get("main"), "data"]));
-		checkDirs.set("songs", Path.join([checkDirs.get("main"), "songs"]));
-		checkDirs.set("images", Path.join([checkDirs.get("main"), "images"]));
-		checkDirs.set("characters", Path.join([checkDirs.get("main"), "characters"]));
-		checkDirs.set("charactersGraphic", Path.join([checkDirs.get("images"), "characters"]));
-		checkDirs.set("icons", Path.join([checkDirs.get("images"), "icons"]));
-		checkDirs.set("stages", Path.join([checkDirs.get("main"), "stages"]));
-		checkDirs.set("weeks", Path.join([checkDirs.get("main"), "weeks"]));
+		setFolder("data");
+		setFolder("songs");
+		setFolder("images");
+		setFolder("characters");
+		setFolder("charactersGraphic", IMAGES, "characters");
+		setFolder("icons", IMAGES);
+		setFolder("stages");
+		setFolder("weeks");
+		setFolder("music");
+		setFolder("sounds");
 
 		for (varName => dirPath in checkDirs)
 		{
@@ -50,6 +51,9 @@ class StorageAccess
 		openfl.system.System.gc();
 		#end
 	}
+
+	private static function setFolder(folderName:String, baseDir:StorageFolders = MAIN, ?folderName2:Null<String> = null)
+		checkDirs.set(folderName, Path.join([checkDirs.get(baseDir), (folderName2 != null ? folderName2 : folderName)]));
 
 	// dumb shit
 	public static function getFolderPath(folder:StorageFolders = MAIN)
@@ -66,28 +70,51 @@ class StorageAccess
 		#end
 	}
 
-	public static function getInst(song:String, returnPath:Bool = false):Dynamic
+	/* gotta work on this one, maybe custom pause music, custom miss sounds, custom hit sounds, etc soon????
+	public static function getSound(folder:SoundFolders, file:String, ?query:String = "Inst")
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Inst.ogg']);
-		if (exists(filePath) && returnPath == false)
-			return Sound.fromFile(filePath);
-		else if (exists(filePath) && returnPath == true)
-			return filePath;
+		var filePath:String = "";
+		if (folder != SONGS)
+			filePath = Path.join([checkDirs.get(folder), file]);
+		else
+			filePath = Path.join([checkDirs.get(folder), Paths.formatToSongPath(file), query]);
+
+		var files = FileSystem.readDirectory(checkDirs.get(folder));
+		for (f in files)
+		{
+			trace(f);
+			if (f.contains(file))
+			{
+				trace(filePath);
+				trace(f.replace(file, ""));
+				trace(filePath + f.replace(file, ""));
+				return Sound.fromFile(filePath + f.replace(file, ""));
+				break;
+			}
+		}
 		return null;
 		#else
 		return null;
 		#end
-	}
+	}*/
 
-	public static function getVoices(song:String, returnPath:Bool = false):Dynamic
+	// just found out mp3 isnt supported on sys targets (apparently), just gonna leave it like that lol
+	// idea: tell user mp3 isnt supported
+	public static function getSong(song:String, file:String = "Inst")
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), song.toLowerCase(), 'Voices.ogg']);
-		if (exists(filePath) && returnPath == false)
-			return Sound.fromFile(filePath);
-		else if (exists(filePath) && returnPath == true)
-			return filePath;
+		var filePath = Path.join([getFolderPath(SONGS), Paths.formatToSongPath(song)]);
+
+		var files = FileSystem.readDirectory(filePath);
+		for (i in 0...files.length)
+		{
+			if (files[i].contains(file))
+			{
+				return Sound.fromFile(Path.join([filePath, file + files[i].replace(file, "")]));
+				break;
+			}
+		}
 		return null;
 		#else
 		return null;
@@ -250,20 +277,37 @@ class StorageAccess
 		#end
 	}
 
-	// i dont know how im going to add this but just preparing stuff
-	public static function getWeeks():Null<Array<WeekData.WeekFile>>
+	public static function getWeekFiles():Null<Array<WeekData.WeekFile>>
 	{
 		#if STORAGE_ACCESS
-		var finalReturn:Array<WeekData.WeekFile> = [];
+		var weeks:Array<WeekData.WeekFile> = [];
 		var files = getFolderFiles(WEEKS);
 		for (file in files)
 		{
 			if (file.endsWith(".json"))
 			{
-				finalReturn.push(cast Json.parse(File.getContent(file)));
+				var path = Path.join([getFolderPath(WEEKS), file]);
+				weeks.push(cast Json.parse(File.getContent(path)));
 			}
 		}
-		return (finalReturn.length > 0 ? finalReturn : null);
+		return (weeks.length > 0 ? weeks : null);
+		#else
+		return null;
+		#end
+	}
+
+	public static function getWeekNames():Null<Array<String>>
+	{
+		#if STORAGE_ACCESS
+		var names:Array<String> = [];
+		var files = getFolderFiles(WEEKS);
+		// to avoid getting some other stupid file
+		for (file in files)
+		{
+			if (file.endsWith(".json"))
+				names.push(file.replace(".json", ""));
+		}
+		return (names.length > 0 ? names : null);
 		#else
 		return null;
 		#end
@@ -281,4 +325,13 @@ enum abstract StorageFolders(String) to String
 	var CHARACTERS_GRAPHICS = "charactersGraphic";
 	var ICONS = "icons";
 	var WEEKS = "weeks";
+	var MUSIC = "music";
+	var SOUNDS = "sounds";
+}
+
+enum abstract SoundFolders(String) to String
+{
+	var SONGS = "songs";
+	var MUSIC = "music";
+	var SOUNDS = "sounds";
 }

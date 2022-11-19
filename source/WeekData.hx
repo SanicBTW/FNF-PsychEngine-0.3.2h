@@ -44,6 +44,7 @@ class WeekData
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
+	public var internal:Bool; // meant only for 
 
 	public var fileName:String;
 
@@ -84,6 +85,7 @@ class WeekData
 		hideStoryMode = weekFile.hideStoryMode;
 		hideFreeplay = weekFile.hideFreeplay;
 		difficulties = weekFile.difficulties;
+		internal = false;
 
 		this.fileName = fileName;
 	}
@@ -92,6 +94,44 @@ class WeekData
 	{
 		weeksList = [];
 		weeksLoaded.clear();
+
+		reloadFromAssets(isStoryMode);
+
+		#if STORAGE_ACCESS
+		// dumb ass support lol
+		if (SaveData.get(ALLOW_FILESYS) && !SaveData.get(OLD_SONG_SYSTEM))
+		{
+			reloadFromAssets(isStoryMode);
+			var weekFiles = features.StorageAccess.getWeekFiles();
+			var weekNames = features.StorageAccess.getWeekNames();
+			if (weekNames != null && weekFiles != null)
+			{
+				for (i in 0...weekNames.length)
+				{
+					if (!weeksLoaded.exists(weekNames[i]))
+					{
+						// i suppose there is the same amount of names and files
+						var week = weekFiles[i];
+						var weekShit:WeekData = new WeekData(week, weekNames[i]);
+						weekShit.internal = true;
+
+						if (weekShit != null
+							&& (isStoryMode == null
+								|| (isStoryMode && !weekShit.hideStoryMode)
+								|| (!isStoryMode && !weekShit.hideFreeplay)))
+						{
+							weeksLoaded.set(weekNames[i], weekShit);
+							weeksList.push(weekNames[i]);
+						}
+					}
+				}
+			}
+		}
+		#end
+	}
+
+	private static function reloadFromAssets(isStoryMode:Null<Bool> = false)
+	{
 		var directories:Array<String> = [Paths.getPreloadPath()];
 
 		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));

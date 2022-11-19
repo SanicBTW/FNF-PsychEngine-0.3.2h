@@ -33,6 +33,7 @@ import Discord.DiscordClient;
 
 class OptionsState extends MusicBeatState
 {
+	// this shit huge like yo mom haha
 	var options:Array<String> = [
 		'Note Colors',
 		'Controls',
@@ -44,6 +45,7 @@ class OptionsState extends MusicBeatState
 		'Visuals and UI',
 		'Audio',
 		'Ratings',
+		'Miscellaneous',
 		#if android 'Mobile Controls', #end
 		#if (STORAGE_ACCESS || ONLINE_SONGS) 'Revoke permissions' #end
 	];
@@ -74,6 +76,9 @@ class OptionsState extends MusicBeatState
 				openSubState(new AudioSettingsSubState());
 			case 'Ratings':
 				openSubState(new RatingsSubState());
+			// placeholder
+			case 'Miscellaneous':
+				openSubState(new MiscSettingsSubState());
 			case 'Adjust Delay and Combo':
 				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
 			#if android

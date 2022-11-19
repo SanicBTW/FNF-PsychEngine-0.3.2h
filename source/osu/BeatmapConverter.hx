@@ -62,7 +62,9 @@ class BeatmapConverter
             return;
 
         // i dont understand how notes are converted lol
+        #if js
         MainWorker.execute("Parse", [beatmap.findLine(map, '[HitObjects]') + 1, map.length - 1, map]);
+        #end
     }
 
     // lol
