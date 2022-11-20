@@ -21,9 +21,20 @@ class Beatmap
 
     public function getBeatmapOption(map:Array<String>, option:String)
     {
-        option = option.toLowerCase() + ":";
+        for (i in 0...map.length)
+        {
+            if (map[i].toLowerCase().startsWith(option.toLowerCase() + ":"))
+                return map[i].substring(map[i].lastIndexOf(":") + 1).trim();
+        }
+
+        return null;
+        /* had to use the old method but find line works fine wtf
+        option += ":";
+        trace(option);
         var index = map[map.indexOf(option)];
-        return (index != null ? index.substring(index.lastIndexOf(":") + 1).trim() : null);
+        trace(index);
+        trace(index.substring(index.lastIndexOf(":") + 1).trim());
+        return (index != null ? index.substring(index.lastIndexOf(":") + 1).trim() : null);*/
     }
 
     public function findLine(map:Array<String>, find:String)

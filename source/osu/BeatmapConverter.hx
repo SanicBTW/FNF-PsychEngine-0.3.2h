@@ -55,15 +55,63 @@ class BeatmapConverter
         beatmap.BREAKS = breaksPars; // maybe its a float, but hopefully these numbers are in strum time or stmh
 
         // this would literally break the whole script for some reason lol
-        if (Std.parseInt(beatmap.getBeatmapOption(map, "Mode")) != 3)
+        /*if (Std.parseInt(beatmap.getBeatmapOption(map, "Mode")) != 3)
             return;
 
         if (Std.parseInt(beatmap.getBeatmapOption(map, "CircleSize")) != 4)
-            return;
+            return;*/
 
         // i dont understand how notes are converted lol
+
         #if js
         MainWorker.execute("Parse", [beatmap.findLine(map, '[HitObjects]') + 1, map.length - 1, map]);
+        MainWorker.onMessageCB = (ret:Dynamic) -> 
+        {
+            // TODO: Move to worker maybe
+            var sectNote:Int = 0;
+            var curSection:Int = 0;
+
+            for (i in 0...ret.data.length)
+            {
+                fnfChart.notes[curSection] = 
+                {
+                    typeOfSection: 0,
+                    sectionBeats: 4,
+                    sectionNotes: [],
+                    mustHitSection: true,
+                    gfSection: false,
+                    altAnim: false,
+                    changeBPM: false,
+                    bpm: fnfChart.bpm
+                };
+
+                for (note in 0...ret.data.length)
+                {
+                    if (ret.data[note][0] <= ((curSection + 1) * (4 * (1000 * 60 / fnfChart.bpm)))
+                        && ret.data[note][0] > ((curSection) * (4 * (1000 * 60 / fnfChart.bpm))))
+                    {
+                        fnfChart.notes[curSection].sectionNotes[sectNote] = ret.data[note];
+                        sectNote++;
+                    }
+                }
+                sectNote = 0;
+
+                if (ret.data[Std.int(ret.data.length - 1)] == fnfChart.notes[curSection].sectionNotes[fnfChart.notes[curSection].sectionNotes.length - 1])
+                    break;
+
+                curSection++;
+            }
+
+            // finish setting up
+            fnfChart.song = beatmap.TITLE;
+
+            PlayState.SONG = fnfChart;
+            PlayState.storyDifficulty = 2;
+            CoolUtil.difficulties = CoolUtil.defaultDifficulties;
+            PlayState.instSource = Paths.getLibraryPath(beatmap.AUDIO_FILENAME, "osu!beatmaps");
+
+            LoadingState.loadAndSwitchState(new PlayState(), false);
+        };
         #end
     }
 

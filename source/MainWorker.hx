@@ -1,5 +1,6 @@
 package;
 
+import haxe.Timer;
 import js.html.ErrorEvent;
 import js.html.MessageEvent;
 import js.html.URL;
@@ -19,7 +20,6 @@ class MainWorker
             var toData = [];
             var int = 0;
             var map = e[2];
-            self.postMessage("Now parsing");
             for(let i = e[0]; i < e[1]; i++)
             {
                 toData[int] = 
@@ -74,8 +74,6 @@ class MainWorker
         self.onmessage = function(E)
         {
             var args = E.data.task.split(" ");
-            self.postMessage(args);
-            self.postMessage(E.data);
             switch(args[0])
             {
                 case "Execute":
@@ -97,6 +95,26 @@ class MainWorker
     ';
 
     private static var worker:Worker = null;
+
+    public static var onMessageCB(default, set):Dynamic = null;
+
+    private static function set_onMessageCB(value:Dynamic):Dynamic
+    {
+        if (worker != null)
+        {
+            // just to be sure
+            worker.removeEventListener('message', (onMessageCB != null ? onMessageCB : onMessage));
+            worker.addEventListener('message', value);
+            if (onMessageCB != value)
+            {
+                if (value == "r")
+                    onMessageCB = onMessage;
+                else
+                    onMessageCB = value;
+            }
+        }
+        return value;
+    }
 
     public static function startWorker()
     {
