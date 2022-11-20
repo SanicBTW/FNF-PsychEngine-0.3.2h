@@ -17,7 +17,6 @@ import sys.io.File;
 
 class CoolUtil
 {
-	// [Difficulty name, Chart file suffix]
 	public static var defaultDifficulties:Array<String> = ['Easy', 'Normal', 'Hard'];
 	public static var defaultDifficulty:String = 'Normal'; // The chart that has no suffix and starting difficulty on Freeplay/Story Mode
 
@@ -30,13 +29,9 @@ class CoolUtil
 
 		var fileSuffix:String = difficulties[num];
 		if (fileSuffix != defaultDifficulty)
-		{
 			fileSuffix = '-' + fileSuffix;
-		}
 		else
-		{
 			fileSuffix = '';
-		}
 		return Paths.formatToSongPath(fileSuffix);
 	}
 

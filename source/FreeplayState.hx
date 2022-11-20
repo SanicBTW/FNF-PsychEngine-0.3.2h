@@ -345,15 +345,15 @@ class FreeplayState extends MusicBeatState
 		}
 		else if (controls.RESET)
 		{
-				persistentUpdate = false;
-				openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+			persistentUpdate = false;
+			openSubState(new ResetScoreSubState(songs[curSelected].songName, curDifficulty, songs[curSelected].songCharacter));
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 		else if (FlxG.keys.justPressed.CONTROL #if android || virtualPad.buttonX.justPressed #end)
 		{
-				persistentUpdate = false;
-				openSubState(new GameplayChangersSubstate());
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+			persistentUpdate = false;
+			openSubState(new GameplayChangersSubstate());
+			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
 
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);

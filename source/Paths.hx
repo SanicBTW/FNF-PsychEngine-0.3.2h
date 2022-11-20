@@ -13,8 +13,8 @@ using StringTools;
 
 class Paths
 {
-	public static var clearLibs:Array<String> = ["shared", "UILib", "songs", "images"];
-	public static var loadLibs:Array<String> = ["shared", "UILib"];
+	public static var clearLibs:Array<String> = ["shared", "ClassicUILib", "UILib", "songs", "images"];
+	public static var loadLibs:Array<String> = ["shared"];
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
@@ -202,7 +202,7 @@ class Paths
 				Assets.cache.clear(clearLibs[i]);
 			}
 
-			clearLibs = ["shared", "UILib", "songs", "images"];
+			clearLibs = ["shared", "ClassicUILib", "UILib", "songs", "images"];
 		}
 
 		if (setNulls)
@@ -214,5 +214,14 @@ class Paths
 		}
 
 		System.gc();
+	}
+
+	// xd
+	public static function prepareLibraries()
+	{
+		if (SaveData.get(USE_CLASSIC_COMBOS))
+			loadLibs.push("ClassicUILib");
+		else
+			loadLibs.push("UILib");
 	}
 }

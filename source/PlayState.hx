@@ -6,7 +6,6 @@ import Section.SwagSection;
 import Song.SwagSong;
 import StageData.StageFile;
 import animateatlas.AtlasFrameMaker;
-import audio.AudioStream;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
 import flixel.FlxG;
@@ -4642,7 +4641,7 @@ class PlayState extends MusicBeatState
 			totalNotesHit -= 1;
 		}
 
-		if (!SaveData.get(LEGACY_RATINGS_STYLE))
+		if (!SaveData.get(USE_CLASSIC_COMBOS))
 		{
 			displayRating("miss", "late");
 			popUpCombo();

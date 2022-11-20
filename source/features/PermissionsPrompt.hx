@@ -33,6 +33,7 @@ class PermissionsPrompt extends MusicBeatState
 		#if js
 		MainWorker.startWorker();
 		#end
+		Paths.prepareLibraries();
 
 		#if (!STORAGE_ACCESS && !ONLINE_SONGS) // send to title state if none of the features are enabled
 		FlxTransitionableState.skipNextTransIn = true;

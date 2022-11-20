@@ -33,7 +33,7 @@ class Ratings
 	{
 		var width = 100;
 		var height = 140;
-		var path = Paths.getLibraryPath('Forever/${SaveData.get(RATINGS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
+		var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
 		var graphic = Paths.getGraphic(path);
 
 		if (isPixel)
@@ -112,7 +112,7 @@ class Ratings
 	{
 		var width = 500;
 		var height = 163;
-		var path = Paths.getLibraryPath('Forever/${SaveData.get(RATINGS_STYLE)}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
+		var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
 		var graphic = Paths.getGraphic(path);
 
 		if (isPixel)
@@ -154,7 +154,7 @@ class Ratings
 
 	public static function generateLegacyRating(ratingName:String, isPixel:Bool):FlxSprite
 	{
-		var path = Paths.getLibraryPath('${SaveData.get(LEGACY_RATINGS_STYLE)}/$ratingName${isPixel ? "-pixel" : ""}.png', "UILib");
+		var path = Paths.getLibraryPath('${SaveData.get(LEGACY_RATINGS_STYLE)}/$ratingName${isPixel ? "-pixel" : ""}.png', "ClassicUILib");
 		var graphic = Paths.getGraphic(path);
 
 		var rating:FlxSprite = new FlxSprite().loadGraphic(graphic);
@@ -187,7 +187,8 @@ class Ratings
 	{
 		var ts:Float = Conductor.timeScale;
 		// dumb ass
-		var timingWindows = [
+		var timingWindows = 
+		[
 			judgementsMap.get("sick")[1],
 			judgementsMap.get("good")[1],
 			judgementsMap.get("bad")[1],
