@@ -39,6 +39,49 @@ class MainWorker
             self.postMessage(toData);
         }
 
+        function makeChart(e)
+        {
+            var song = e[0];
+            var data = e[1];
+
+            var sectionNote = 0;
+            for (let section = 0;; section++)
+            {
+                song.notes[section] = 
+                {
+                    typeOfSection: 0,
+                    sectionBeats: 4,
+                    sectionNotes: [],
+                    mustHitSection: true,
+                    gfSection: false,
+                    altAnim: false,
+                    changeBPM: false,
+                    bpm: song.bpm
+                };
+
+                for (let note = 0; note < data.length; note++)
+                {
+                    if 
+                    (
+                        data[note][0] <= ((section + 1) * (4 * (1000 * 60 / song.bpm)))
+                        &&
+                        data[note][0] > ((section) * (4 * (1000 * 60 / song.bpm)))
+                    )
+                    {
+                        song.notes[section].sectionNotes[sectionNote] = data[note];
+                        sectionNote++;
+                    }
+                }
+                sectionNote = 0;
+
+                if (data[data.length - 1] == song.notes[section].sectionNotes[song.notes[section].sectionNotes.length - 1])
+                {
+                    self.postMessage(song);
+                    break;
+                }
+            }
+        }
+
         function numberArray(min, max)
         {
             var shit = [];
@@ -81,6 +124,9 @@ class MainWorker
                     {
                         case "Parse":
                             parseNotes(E.data.args);
+                            break;
+                        case "Make_Chart":
+                            makeChart(E.data.args);
                             break;
                         default:
                             self.postMessage("Couldnt find a function to execute (executing " + args[1] + ")");

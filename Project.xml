@@ -63,7 +63,7 @@
 		<library name="week7"			preload="false"/>
 		<library name="ClassicUILib"	preload="false"/>
 		<library name="UILib"			preload="false"/>
-		<library name="osu!beatmaps"	preload="false"/>
+		<library name="osu!beatmaps"	preload="true"/>
 	</section>
 
 	<!--<assets path="assets/charts"			library="charts"		/>-->
