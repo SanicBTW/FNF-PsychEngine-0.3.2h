@@ -34,7 +34,6 @@ class MainWorker
 
                 int++;
             }
-            int = 0;
 
             self.postMessage(toData);
         }
