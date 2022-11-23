@@ -120,6 +120,9 @@ class NoteOffsetState extends MusicBeatState
 		{
 			rating = Ratings.generateRating("sick", FlxG.random.bool(50), "late", false);
 			rating.cameras = [camHUD];
+			rating.acceleration.y = 0;
+			rating.velocity.x = 0;
+			rating.velocity.y = 0;
 		}
 
 		add(rating);
@@ -137,22 +140,13 @@ class NoteOffsetState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = null;
-			if (SaveData.get(USE_CLASSIC_COMBOS))
-			{
-				numScore = new FlxSprite(43 * daLoop).loadGraphic(Paths.image('num' + i));
-				numScore.cameras = [camHUD];
-				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-				numScore.updateHitbox();
-				numScore.antialiasing = SaveData.get(ANTIALIASING);
-			}
-			else
-			{
-				numScore = Ratings.generateCombo(Std.string(i), FlxG.random.bool(50), false, FlxG.random.bool(50), createdColor, daLoop);
-				numScore.cameras = [camHUD];
-			}
-
+			var numScore:FlxSprite = new FlxSprite(43 * daLoop).loadGraphic(Paths.image('num' + i));
+			numScore.cameras = [camHUD];
+			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+			numScore.updateHitbox();
+			numScore.antialiasing = SaveData.get(ANTIALIASING);
 			comboNums.add(numScore);
+
 			daLoop++;
 		}
 
