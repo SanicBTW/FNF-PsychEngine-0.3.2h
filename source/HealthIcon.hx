@@ -13,6 +13,8 @@ class HealthIcon extends FlxSprite
 	private var isPlayer:Bool = false;
 	private var char:String = '';
 
+	public var initialWidth:Float = 0;
+
 	public function new(char:String = 'bf', isPlayer:Bool = false)
 	{
 		super();
@@ -50,6 +52,7 @@ class HealthIcon extends FlxSprite
 			setupFromAssets(char);
 			#end
 
+			initialWidth = width;
 			animation.add(char, [0, 1], 0, false, isPlayer);
 			animation.play(char);
 			this.char = char;

@@ -25,11 +25,12 @@ class HUD extends FlxTypedGroup<FlxBasic>
 
 	public var scoreTxt:FlxText;
 	public var timeTxt:FlxText;
+    private var botPlayTxt:FlxText;
 
 	private var scoreTxtTween:FlxTween;
 
 	public var songPercent(default, set):Float = 0;
-    private var curFont:String = null;
+	private var botplaySine:Float = 0;
 
     private function set_songPercent(value:Float):Float
     {
@@ -45,10 +46,9 @@ class HUD extends FlxTypedGroup<FlxBasic>
         var hideHud = SaveData.get(HIDE_HUD);
         var downScroll = SaveData.get(DOWN_SCROLL);
 
-        curFont = (PlayState.isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
+        var curFont = PlayState.instance.curFont;
 
-        timeTxt = new FlxText(0, 20, 400, "", 32);
-        timeTxt.screenCenter(X);
+        timeTxt = new FlxText(42 + (FlxG.width / 2) - 248, 20, 400, "", 32);
         timeTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
         timeTxt.scrollFactor.set();
         timeTxt.alpha = 0;
@@ -63,6 +63,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
         timeBarBG.scrollFactor.set();
         timeBarBG.alpha = 0;
         timeBarBG.visible = !hideTime;
+        timeBarBG.color = FlxColor.BLACK;
         timeBarBG.xAdd = -4;
         timeBarBG.yAdd = -4;
         add(timeBarBG);
@@ -109,6 +110,13 @@ class HUD extends FlxTypedGroup<FlxBasic>
         scoreTxt.borderSize = 1.25;
         scoreTxt.visible = !hideHud;
         add(scoreTxt);
+
+        botPlayTxt = new FlxText(400, 100 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), FlxG.width - 800, "BOTPLAY", 32);
+		botPlayTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		botPlayTxt.scrollFactor.set();
+		botPlayTxt.borderSize = 1.25;
+		botPlayTxt.visible = SaveData.getGameplaySetting('botplay', false);
+		add(botPlayTxt);
     }
 
     private function reloadHealthBarColors(iconP1Det:IconDetails, iconP2Det:IconDetails)
@@ -155,6 +163,12 @@ class HUD extends FlxTypedGroup<FlxBasic>
         scoreTxt.text = getScoreFormat();
         healthBar.value = PlayState.instance.health;
 
+        if (botPlayTxt.visible)
+        {
+            botplaySine += 180 * elapsed;
+            botPlayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
+        }
+
         var mult:Float = FlxMath.lerp(1, iconP1.scale.x, CoolUtil.boundTo(1 - (elapsed * 9), 0, 1));
 		iconP1.scale.set(mult, mult);
 		iconP1.updateHitbox();
@@ -165,14 +179,8 @@ class HUD extends FlxTypedGroup<FlxBasic>
 
         var iconOffset:Int = 26;
 
-		iconP1.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
-			+ (150 * iconP1.scale.x - 150) / 2
-			- iconOffset;
-		iconP2.x = healthBar.x
-			+ (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01))
-			- (150 * iconP2.scale.x) / 2
-			- iconOffset * 2;
+        iconP1.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01) - iconOffset);
+        iconP2.x = healthBar.x + (healthBar.width * (FlxMath.remapToRange(healthBar.percent, 0, 100, 100, 0) * 0.01)) - (iconP2.width - iconOffset);
 
         if (healthBar.percent < 20)
 			iconP1.animation.curAnim.curFrame = 1;

@@ -41,7 +41,10 @@ class NoteOffsetState extends MusicBeatState
 
 	var changeModeText:FlxText;
 
+	private static var createdColor = FlxColor.fromRGB(204, 66, 66);
+
 	// TODO: REWRITE
+	// for the classic/legacy stuff i should use their method on ratings or stick to the one from here dunno
 	override public function create()
 	{
 		// Cameras
@@ -105,11 +108,19 @@ class NoteOffsetState extends MusicBeatState
 		coolText.screenCenter();
 		coolText.x = FlxG.width * 0.35;
 
-		rating = new FlxSprite().loadGraphic(Paths.getLibraryPath(SaveData.get(LEGACY_RATINGS_STYLE) + "/sick.png", "UILib"));
-		rating.cameras = [camHUD];
-		rating.setGraphicSize(Std.int(rating.width * 0.7));
-		rating.updateHitbox();
-		rating.antialiasing = SaveData.get(ANTIALIASING);
+		if (SaveData.get(USE_CLASSIC_COMBOS))
+		{
+			rating = new FlxSprite().loadGraphic(Paths.getLibraryPath(SaveData.get(LEGACY_RATINGS_STYLE) + "/sick.png", "ClassicUILib"));
+			rating.cameras = [camHUD];
+			rating.setGraphicSize(Std.int(rating.width * 0.7));
+			rating.updateHitbox();
+			rating.antialiasing = SaveData.get(ANTIALIASING);
+		}
+		else
+		{
+			rating = Ratings.generateRating("sick", FlxG.random.bool(50), "late", false);
+			rating.cameras = [camHUD];
+		}
 
 		add(rating);
 
@@ -126,11 +137,21 @@ class NoteOffsetState extends MusicBeatState
 		var daLoop:Int = 0;
 		for (i in seperatedScore)
 		{
-			var numScore:FlxSprite = new FlxSprite(43 * daLoop).loadGraphic(Paths.image('num' + i));
-			numScore.cameras = [camHUD];
-			numScore.setGraphicSize(Std.int(numScore.width * 0.5));
-			numScore.updateHitbox();
-			numScore.antialiasing = SaveData.get(ANTIALIASING);
+			var numScore:FlxSprite = null;
+			if (SaveData.get(USE_CLASSIC_COMBOS))
+			{
+				numScore = new FlxSprite(43 * daLoop).loadGraphic(Paths.image('num' + i));
+				numScore.cameras = [camHUD];
+				numScore.setGraphicSize(Std.int(numScore.width * 0.5));
+				numScore.updateHitbox();
+				numScore.antialiasing = SaveData.get(ANTIALIASING);
+			}
+			else
+			{
+				numScore = Ratings.generateCombo(Std.string(i), FlxG.random.bool(50), false, FlxG.random.bool(50), createdColor, daLoop);
+				numScore.cameras = [camHUD];
+			}
+
 			comboNums.add(numScore);
 			daLoop++;
 		}

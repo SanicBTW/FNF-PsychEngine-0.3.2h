@@ -1,5 +1,6 @@
 package;
 
+import lime.utils.Assets;
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -33,7 +34,9 @@ class Ratings
 	{
 		var width = 100;
 		var height = 140;
-		var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
+		var path = Paths.getLibraryPath('${SaveData.get(COMBOS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
+		if (!Assets.exists(path))
+			path = path.replace('-pixel', "");
 		var graphic = Paths.getGraphic(path);
 
 		if (isPixel)
@@ -113,6 +116,8 @@ class Ratings
 		var width = 500;
 		var height = 163;
 		var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
+		if (!Assets.exists(path))
+			path = path.replace('-pixel', "");
 		var graphic = Paths.getGraphic(path);
 
 		if (isPixel)
@@ -142,6 +147,11 @@ class Ratings
 		{
 			rating.antialiasing = SaveData.get(ANTIALIASING);
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
+			if (SaveData.get(SMALL_RATING_SIZE))
+			{
+				rating.updateHitbox();
+				rating.setGraphicSize(Std.int(rating.width * 0.7));
+			}
 		}
 
 		rating.updateHitbox();
@@ -173,6 +183,11 @@ class Ratings
 		{
 			rating.antialiasing = SaveData.get(ANTIALIASING);
 			rating.setGraphicSize(Std.int(rating.width * 0.7));
+			if (SaveData.get(SMALL_RATING_SIZE))
+			{
+				rating.updateHitbox();
+				rating.setGraphicSize(Std.int(rating.width * 0.7));
+			}
 		}
 
 		rating.updateHitbox();

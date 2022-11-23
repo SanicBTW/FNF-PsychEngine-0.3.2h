@@ -2,4 +2,3 @@
 
 - Move files into their proper folders (removal of features folder)
 - Add native comp for osu charts
-- Fix botplay font

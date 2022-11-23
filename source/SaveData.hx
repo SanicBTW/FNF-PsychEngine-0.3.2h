@@ -55,6 +55,7 @@ class SaveData
 		LEGACY_RATINGS_STYLE => "Classic",
 		USE_CLASSIC_COMBOS => false,
 		RATINGS_STYLE => "Default",
+		COMBOS_STYLE => "Default",
 		NO_RESET => false,
 		OLD_SONG_SYSTEM => false,
 		FULLSCREEN => false
@@ -258,6 +259,7 @@ enum abstract Settings(String) to String
 	var LEGACY_RATINGS_STYLE = "LegacyRatingStyle";
 	var USE_CLASSIC_COMBOS = "UseClassicStyles";
 	var RATINGS_STYLE = "RatingsStyle";
+	var COMBOS_STYLE = "CombosStyle";
 	var NO_RESET = "NoReset";
 	var OLD_SONG_SYSTEM = "OldSongSystem";
 	var FULLSCREEN = "FullScreen";

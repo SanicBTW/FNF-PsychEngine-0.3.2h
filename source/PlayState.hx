@@ -142,8 +142,6 @@ class PlayState extends MusicBeatState
 	public var cpuControlled:Bool = false;
 	public var practiceMode:Bool = false;
 
-	var botplaySine:Float = 0;
-
 	public var camHUD:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
@@ -296,9 +294,9 @@ class PlayState extends MusicBeatState
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		var placement = (FlxG.width / 2);
-		dadStrums = new StrumLine(placement - FlxG.width / 4, 4, true);
+		dadStrums = new StrumLine(placement - FlxG.width / 4, 4);
 		dadStrums.visible = (!SaveData.get(MIDDLE_SCROLL));
-		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4, false);
+		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4);
 
 		strumLines.add(dadStrums);
 		strumLines.add(boyfriendStrums);
@@ -316,6 +314,12 @@ class PlayState extends MusicBeatState
 			strumLines.members[i].cameras = [strumHUD[i]];
 		}
 		add(strumLines);
+
+		// for making hud over the notes, stupid but better tbh lol
+		var hudcam = new FlxCamera();
+		hudcam.bgColor.alpha = 0;
+		allUIs.push(hudcam);
+		FlxG.cameras.add(hudcam);
 
 		FlxG.cameras.add(camOther);
 
@@ -428,7 +432,7 @@ class PlayState extends MusicBeatState
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
 		if (curFont == null)
-			curFont = (isPixelStage ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
+			curFont = (isPixelStage == true ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
 
 		switch (curStage)
 		{
@@ -936,7 +940,7 @@ class PlayState extends MusicBeatState
 			}
 		);
 		add(uiHUD);
-		uiHUD.cameras = [camHUD];
+		uiHUD.cameras = [hudcam];
 
 		generateSong();
 
@@ -2303,13 +2307,6 @@ class PlayState extends MusicBeatState
 		}
 
 		super.update(elapsed);
-
-		if (cpuControlled)
-		{
-			botplaySine += 180 * elapsed;
-			// assuming the text isnt null
-			boyfriendStrums.botPlayTxt.alpha = 1 - Math.sin((Math.PI * botplaySine) / 180);
-		}
 
 		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end)
 		{
@@ -4598,6 +4595,21 @@ class PlayState extends MusicBeatState
 			CoolUtil.precacheMusic(PauseSubState.songName);
 		else if (SaveData.get(PAUSE_MUSIC) != null)
 			CoolUtil.precacheMusic(Paths.formatToSongPath(SaveData.get(PAUSE_MUSIC)));
+
+		if (!SaveData.get(USE_CLASSIC_COMBOS))
+		{
+			var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/judgements${isPixelStage ? "-pixel" : ""}.png', "UILib");
+			if (!Assets.exists(path))
+				path = path.replace('-pixel', "");
+	
+			Paths.getGraphic(path);
+
+			var path = Paths.getLibraryPath('${SaveData.get(COMBOS_STYLE)}/combo${isPixelStage ? "-pixel" : ""}.png', "UILib");
+			if (!Assets.exists(path))
+				path = path.replace('-pixel', "");
+
+			Paths.getGraphic(path);
+		}
 	}
 
 	function updateAccuracy(incrementTP:Bool = true)

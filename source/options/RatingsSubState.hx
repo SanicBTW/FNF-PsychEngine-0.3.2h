@@ -15,8 +15,12 @@ class RatingsSubState extends BaseOptionsMenu
 			'string', 'Classic', ['Classic', 'Kade New', 'Kade Old']);
 		addOption(option);
 
-		var option:Option = new Option('Combos&Ratings Style:', "The style of Combos and Ratings (Forever), this doesn't affect\nLegacy Ratings style",
+		var option:Option = new Option('Ratings Style:', "The style of Ratings",
 			RATINGS_STYLE, "string", "Default", ["Default", "SimplyLove"]);
+		addOption(option);
+
+		var option:Option = new Option('Combos Style:', "The style of Combos",
+			COMBOS_STYLE, "string", "Default", ["Default", "SimplyLove"]);
 		addOption(option);
 
 		super();
