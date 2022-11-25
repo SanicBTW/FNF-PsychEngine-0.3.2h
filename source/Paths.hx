@@ -221,11 +221,6 @@ class Paths
 	{
 		var find = (SaveData.get(USE_CLASSIC_COMBOS) ? "UILib" : "ClassicUILib");
 		var replaceWith = (SaveData.get(USE_CLASSIC_COMBOS) ? "ClassicUILib" : "UILib");
-		trace(find);
-		trace(replaceWith);
-		trace(loadLibs.contains(find));
-		trace(loadLibs.indexOf(find));
-		trace(loadLibs[loadLibs.indexOf(find)]);
 		if (loadLibs.contains(find))
 			loadLibs[loadLibs.indexOf(find)] = replaceWith;
 		else

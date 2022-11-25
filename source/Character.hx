@@ -27,6 +27,7 @@ typedef CharacterFile =
 	var flip_x:Bool;
 	var no_antialiasing:Bool;
 	var healthbar_colors:Array<Int>;
+	var zoomOffset:Float;
 }
 
 typedef AnimArray =
@@ -63,6 +64,7 @@ class Character extends FlxSprite
 
 	public var positionArray:Array<Float> = [0, 0];
 	public var cameraPosition:Array<Float> = [0, 0];
+	public var zoomOffset:Float = 0;
 
 	public var hasMissAnimations:Bool = false;
 
@@ -142,6 +144,7 @@ class Character extends FlxSprite
 
 				positionArray = json.position;
 				cameraPosition = json.camera_position;
+				zoomOffset = json.zoomOffset;
 
 				healthIcon = json.healthicon;
 				singDuration = json.sing_duration;

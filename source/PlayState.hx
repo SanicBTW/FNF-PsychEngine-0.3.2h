@@ -250,6 +250,7 @@ class PlayState extends MusicBeatState
 
 	private var allUIs:Array<FlxCamera> = [];
 	public static var uiHUD:HUD;
+	private var zoomOffset:Float = 0;
 
 	override public function create()
 	{
@@ -2389,14 +2390,13 @@ class PlayState extends MusicBeatState
 			// foreer stuff
 			if (SaveData.get(SMOOTH_CAMERA_ZOOMS))
 			{
-				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
+				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + zoomOffset, FlxG.camera.zoom,  CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 				for (hud in allUIs)
 					hud.zoom = FlxMath.lerp(1, hud.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 			}
 			else
 			{
-				// this from kade - idk if there is a notable difference tbh
-				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
+				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + zoomOffset, FlxG.camera.zoom, 0.95);
 				for (hud in allUIs)
 					hud.zoom = FlxMath.lerp(1, hud.zoom, 0.95);
 			}
@@ -4538,6 +4538,7 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX + char.cameraPosition[0] + opponentCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + opponentCameraOffset[1];
+			zoomOffset = char.zoomOffset;
 		}
 		else
 		{
@@ -4550,6 +4551,8 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
+
+			zoomOffset = char.zoomOffset;
 		}
 	}
 
@@ -4642,7 +4645,8 @@ class PlayState extends MusicBeatState
 		if (combo > 0)
 			combo = 0;
 		else
-			combo--;
+			if (!SaveData.get(USE_CLASSIC_COMBOS))
+				combo--;
 
 		if (!practiceMode)
 			songScore -= 5;
