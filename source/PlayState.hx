@@ -357,7 +357,6 @@ class PlayState extends MusicBeatState
 		var songName:String = Paths.formatToSongPath(SONG.song);
 
 		curStage = PlayState.SONG.stage;
-		trace('stage is: ' + curStage);
 		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
 		{
 			switch (songName)
@@ -3349,7 +3348,7 @@ class PlayState extends MusicBeatState
 			{
 				rating.destroy();
 			},
-			startDelay: Conductor.crochet * 0.00125
+			startDelay: Conductor.crochet * 0.001
 		});
 
 		rating.cameras = [camHUD];
@@ -3373,7 +3372,7 @@ class PlayState extends MusicBeatState
 			{
 				rating.destroy();
 			},
-			startDelay: Conductor.crochet * 0.00125
+			startDelay: Conductor.crochet * 0.001
 		});
 
 		rating.cameras = [camHUD];

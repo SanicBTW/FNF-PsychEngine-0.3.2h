@@ -47,6 +47,8 @@ class NoteOffsetState extends MusicBeatState
 	// for the classic/legacy stuff i should use their method on ratings or stick to the one from here dunno
 	override public function create()
 	{
+		Paths.clearCache(false, false);
+
 		// Cameras
 		camGame = new FlxCamera();
 		camHUD = new FlxCamera();
