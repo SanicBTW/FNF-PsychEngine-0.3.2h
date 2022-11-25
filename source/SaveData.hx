@@ -124,6 +124,7 @@ class SaveData
 		// br
 		set(VOLUME, FlxG.sound.volume);
 		set(MUTED, FlxG.sound.muted);
+		set(FULLSCREEN, FlxG.fullscreen);
 		for (settingName => settingValue in settings)
 		{
 			Reflect.setProperty(FlxG.save.data, settingName, settingValue);

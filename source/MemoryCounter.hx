@@ -21,7 +21,7 @@ class MemoryCounter extends TextField
 
 		selectable = false;
 
-		defaultTextFormat = new TextFormat("_sans", 12, 0xFFFFFF);
+		defaultTextFormat = new TextFormat("_sans", 16, 0xFFFFFF);
 		text = "";
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);

@@ -30,7 +30,6 @@ using StringTools;
 import Discord.DiscordClient;
 import sys.thread.Thread;
 #end
-// import flixel.graphics.FlxGraphic;
 #if android
 import com.player03.android6.Permissions;
 #end
@@ -211,13 +210,6 @@ class TitleState extends MusicBeatState
 	{
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
-
-		if (FlxG.keys.justPressed.F)
-		{
-			// FlxG.fullscreen = !FlxG.fullscreen;
-			osu.BeatmapConverter.convertBeatmap();
-			// MusicBeatState.switchState(new ExpState());
-		}
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER;
 

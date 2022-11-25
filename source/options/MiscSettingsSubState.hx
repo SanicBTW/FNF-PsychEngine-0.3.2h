@@ -12,11 +12,13 @@ class MiscSettingsSubState extends BaseOptionsMenu
             OLD_SONG_SYSTEM, 'bool', false);
         addOption(option);
 
+        #if desktop
         var option:Option = new Option('Fullscreen',
             'Fullscreen, name says it all',
             FULLSCREEN, 'bool', false);
         option.onChange = onChangeFull;
         addOption(option);
+        #end
 
         super();
     }

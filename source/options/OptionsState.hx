@@ -45,7 +45,7 @@ class OptionsState extends MusicBeatState
 		'Visuals and UI',
 		'Audio',
 		'Ratings',
-		'Miscellaneous',
+		#if (STORAGE_ACCESS) 'Miscellaneous', #end
 		#if android 'Mobile Controls', #end
 		#if (STORAGE_ACCESS || ONLINE_SONGS) 'Revoke permissions' #end
 	];
@@ -76,7 +76,6 @@ class OptionsState extends MusicBeatState
 				openSubState(new AudioSettingsSubState());
 			case 'Ratings':
 				openSubState(new RatingsSubState());
-			// placeholder
 			case 'Miscellaneous':
 				openSubState(new MiscSettingsSubState());
 			case 'Adjust Delay and Combo':
@@ -129,8 +128,8 @@ class OptionsState extends MusicBeatState
 			var optionText:Alphabet = new Alphabet(0, 0, options[i], true, false);
 			optionText.isMenuItem = true;
 			optionText.targetY = i;
-			optionText.screenCenter();
-			optionText.y += (100 * (i - (options.length / 2))) + 50;
+			optionText.screenCenter(X);
+			optionText.yMult = 90;
 			grpOptions.add(optionText);
 		}
 
