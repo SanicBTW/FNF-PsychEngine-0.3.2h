@@ -251,6 +251,7 @@ class StorageAccess
 		#end
 	}
 
+	// oops what if the notes are pixel??? fuckk
 	public static function getArrowTexture(texture:String):Array<Dynamic>
 	{
 		#if STORAGE_ACCESS

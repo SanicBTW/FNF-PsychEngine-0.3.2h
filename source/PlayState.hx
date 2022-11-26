@@ -52,6 +52,7 @@ import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import substates.*;
+import Note;
 
 using StringTools;
 
@@ -3399,8 +3400,8 @@ class PlayState extends MusicBeatState
 		totalNotesHit += judgementInfo[3];
 		songScore += score;
 
-		daNote.ratingMod = judgementInfo[3];
-		daNote.rating = daRating;
+		//daNote.ratingMod = judgementInfo[3];
+		//daNote.rating = daRating;
 
 		// make it more dynamic?
 		switch (daRating)

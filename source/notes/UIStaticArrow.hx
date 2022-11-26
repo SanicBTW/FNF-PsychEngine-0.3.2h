@@ -3,6 +3,7 @@ package notes;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxSprite;
+import notes.NoteUtils as NU;
 
 // from forever engine legacy, modified
 class UIStaticArrow extends FlxSprite
@@ -81,12 +82,12 @@ class UIStaticArrow extends FlxSprite
 			animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
 			animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
 
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			setGraphicSize(Std.int(width * NU.daPixelZoom));
 			antialiasing = false;
 		}
 		else
 		{
-			var stringSect:String = getArrowFromNum(arrowType);
+			var stringSect:String = NU.getArrowFromNum(arrowType);
 
 			frames = Paths.getSparrowAtlas(texture);
 			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
@@ -118,12 +119,12 @@ class UIStaticArrow extends FlxSprite
 			animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
 			animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
 
-			setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+			setGraphicSize(Std.int(width * NU.daPixelZoom));
 			antialiasing = false;
 		}
 		else
 		{
-			var stringSect:String = getArrowFromNum(arrowType);
+			var stringSect:String = NU.getArrowFromNum(arrowType);
 
 			frames = eframes;
 			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
@@ -164,40 +165,6 @@ class UIStaticArrow extends FlxSprite
 		animation.play(AnimName, Force);
 		centerOffsets();
 		centerOrigin();
-	}
-
-	public static function getArrowFromNum(num:Int)
-	{
-		var stringSex:String = "";
-		switch (num)
-		{
-			case 0:
-				stringSex = "left";
-			case 1:
-				stringSex = "down";
-			case 2:
-				stringSex = "up";
-			case 3:
-				stringSex = "right";
-		}
-		return stringSex;
-	}
-
-	public static function getColorFromNum(num:Int)
-	{
-		var stringSex:String = "";
-		switch (num)
-		{
-			case 0:
-				stringSex = "purple";
-			case 1:
-				stringSex = "blue";
-			case 2:
-				stringSex = "green";
-			case 3:
-				stringSex = "red";
-		}
-		return stringSex;
 	}
 
 	// goofy funcs lol
