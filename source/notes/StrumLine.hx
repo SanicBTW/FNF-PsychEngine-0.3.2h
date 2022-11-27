@@ -34,8 +34,8 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 			var staticArrow:UIStaticArrow = new UIStaticArrow(x, 60 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), i);
 			staticArrow.ID = i;
 
-			staticArrow.x -= ((keyAmount / 2) * Note.swagWidth);
-			staticArrow.x += (Note.swagWidth * i);
+			staticArrow.x -= ((keyAmount / 2) * NoteUtils.swagWidth);
+			staticArrow.x += (NoteUtils.swagWidth * i);
 			receptors.add(staticArrow);
 
 			staticArrow.initialX = Math.floor(staticArrow.x);

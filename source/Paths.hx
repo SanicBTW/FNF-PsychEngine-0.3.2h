@@ -154,6 +154,7 @@ class Paths
 
 	public static function getGraphic(file:String)
 	{
+		trace("Called from PATHS - Getting graphic from '" + file + "'");
 		if (!currentTrackedAssets.exists(file))
 		{
 			var newGraphic = FlxG.bitmap.add(file, false, file);

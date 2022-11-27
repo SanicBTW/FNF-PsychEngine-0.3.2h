@@ -1,5 +1,6 @@
 package;
 
+import notes.NoteUtils;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -131,7 +132,7 @@ class StrumNote extends FlxSprite
 	public function postAddedToGroup()
 	{
 		playAnim('static');
-		x += Note.swagWidth * noteData;
+		x += NoteUtils.swagWidth * noteData;
 		x += 50;
 		x += ((FlxG.width / 2) * player);
 		ID = noteData;

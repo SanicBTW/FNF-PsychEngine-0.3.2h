@@ -1,7 +1,8 @@
 package;
 
+import notes.NoteUtils;
 import DialogueBoxPsych;
-import Note.EventNote;
+import notes.Note.EventNote;
 import Section.SwagSection;
 import Song.SwagSong;
 import StageData.StageFile;
@@ -52,7 +53,7 @@ import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import substates.*;
-import Note;
+import notes.Note;
 
 using StringTools;
 
@@ -1852,7 +1853,8 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		for (section in noteData)
+		unspawnNotes = ChartLoader.generateChart(SONG, isPixelStage, songSpeed, FNF);
+		/*for (section in noteData)
 		{
 			for (songNotes in section.sectionNotes)
 			{
@@ -1939,7 +1941,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			daBeats += 1;
-		}
+		}*/
 
 		for (event in SONG.events) // Event Notes
 		{
@@ -2571,7 +2573,7 @@ class PlayState extends MusicBeatState
 								else
 									daNote.y -= 19;
 							}
-							daNote.y += (Note.swagWidth / 2) - (60.5 * (songSpeed - 1));
+							daNote.y += (NoteUtils.swagWidth / 2) - (60.5 * (songSpeed - 1));
 							daNote.y += 27.5 * ((SONG.bpm / 100) - 1) * (songSpeed - 1);
 						}
 					}
@@ -2597,7 +2599,7 @@ class PlayState extends MusicBeatState
 						}
 					}
 
-					var center:Float = strumY + Note.swagWidth / 2;
+					var center:Float = strumY + NoteUtils.swagWidth / 2;
 					if (strumGroup.receptors.members[daNote.noteData].sustainReduce
 						&& daNote.isSustainNote
 						&& (daNote.mustPress || !daNote.ignoreNote)
@@ -4584,14 +4586,14 @@ class PlayState extends MusicBeatState
 	function precache()
 	{
 		// precache if vol higher than 0
-		if (SaveData.get(MISS_VOL) > 0)
+		if (Std.parseInt(SaveData.get(MISS_VOL)) > 0)
 		{
 			CoolUtil.precacheSound('missnote1');
 			CoolUtil.precacheSound('missnote2');
 			CoolUtil.precacheSound('missnote3');
 		}
-
-		if (SaveData.get(HITSOUND_VOL) > 0)
+	
+		if (Std.parseInt(SaveData.get(HITSOUND_VOL)) > 0)
 			CoolUtil.precacheSound('hitsound');
 
 		if (PauseSubState.songName != null)

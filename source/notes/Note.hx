@@ -14,8 +14,7 @@ typedef EventNote =
 	value2:String
 }
 
-// renamed to keep it playable for now
-class NNote extends FlxSprite
+class Note extends FlxSprite
 {
 	public var strumTime:Float = 0;
 	public var mustPress:Bool = false;
@@ -25,7 +24,7 @@ class NNote extends FlxSprite
 	public var wasGoodHit:Bool = false;
 	public var ignoreNote:Bool = false;
 	public var hitByOpponent:Bool = false;
-	public var prevNote:NNote;
+	public var prevNote:Note;
 
 	public var sustainLength:Float = 0;
 	public var isSustainNote:Bool = false;
@@ -74,6 +73,11 @@ class NNote extends FlxSprite
 	public var hitsoundDisabled:Bool = false;
 	public var isLiftNote:Bool = false;
 
+	// for textures
+	public var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
+	public var originalHeightForCalcs:Float = 6;
+	public var texture:String = ''; // dumb fix?
+
 	private function set_multSpeed(value:Float):Float
 	{
 		resizeByRatio(value / multSpeed);
@@ -117,7 +121,7 @@ class NNote extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:NNote, ?sustainNote:Bool = false, ?inEditor:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false)
 	{
 		super();
 
