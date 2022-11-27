@@ -85,6 +85,14 @@ class MusicBeatSubstate extends FlxUISubState // why tf is musicbeatstate extend
 
 	override function update(elapsed:Float)
 	{
+		updateSB();
+		checkKeyFuncs();
+
+		super.update(elapsed);
+	}
+
+	private function updateSB() // update steps and beats
+	{
 		var oldStep:Int = curStep;
 
 		updateCurStep();
@@ -92,14 +100,19 @@ class MusicBeatSubstate extends FlxUISubState // why tf is musicbeatstate extend
 
 		if (oldStep != curStep && curStep > 0)
 			stepHit();
+	}
 
+	private function checkKeyFuncs()
+	{
 		if (FlxG.keys.pressed.CONTROL)
-		{
 			if (FlxG.mouse.wheel != 0)
 				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
-		}
 
-		super.update(elapsed);
+		if (FlxG.keys.justPressed.F11)
+		{
+			SaveData.set(FULLSCREEN, !SaveData.get(FULLSCREEN));
+			FlxG.fullscreen = SaveData.get(FULLSCREEN);
+		}
 	}
 
 	private function updateBeat():Void

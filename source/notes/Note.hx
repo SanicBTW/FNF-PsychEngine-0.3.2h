@@ -1,12 +1,13 @@
-package notes; 
+package notes;
 
-import flixel.FlxSprite;
+import haxe.exceptions.NotImplementedException;
 import notes.NoteUtils as NU;
-import PlayState;
+import flixel.FlxG;
+import flixel.FlxSprite;
 
 using StringTools;
 
-typedef EventNote = 
+typedef EventNote =
 {
 	strumTime:Float,
 	event:String,
@@ -63,20 +64,15 @@ class Note extends FlxSprite
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
 	public var ratingDisabled:Bool = false;
-	/* what are these for
-	public var rating:String = 'unknown';
-	public var ratingMod:Float = 0; //9 = unknown, 0.25 = shit, 0.5 = bad, 0.75 = good, 1 = sick*/
+
+	public var texture(default, set):String = null;
 
 	public var noAnimation:Bool = false;
 	public var distance:Float = 2000;
 
 	public var hitsoundDisabled:Bool = false;
 	public var isLiftNote:Bool = false;
-
-	// for textures
-	public var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
-	public var originalHeightForCalcs:Float = 6;
-	public var texture:String = ''; // dumb fix?
+	public var isPixel:Bool = false;
 
 	private function set_multSpeed(value:Float):Float
 	{
@@ -92,6 +88,14 @@ class Note extends FlxSprite
 			scale.y *= ratio;
 			updateHitbox();
 		}
+	}
+
+	private function set_texture(value:String):String
+	{
+		if (texture != value)
+			reloadNote('', value);
+		texture = value;
+		return value;
 	}
 
 	private function set_noteType(value:String):String
@@ -121,7 +125,7 @@ class Note extends FlxSprite
 		return value;
 	}
 
-	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false)
+	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inEditor:Bool = false, ?isPixel:Bool = false)
 	{
 		super();
 
@@ -135,11 +139,13 @@ class Note extends FlxSprite
 		this.inEditor = inEditor;
 		this.noteData = noteData;
 		this.strumTime = strumTime;
+		this.isPixel = isPixel;
 		if (!inEditor)
 			this.strumTime += SaveData.get(NOTE_OFFSET);
 
 		if (noteData > -1)
 		{
+			texture = '';
 			colorSwap = new ColorSwap();
 			shader = colorSwap.shader;
 
@@ -164,18 +170,18 @@ class Note extends FlxSprite
 
 			offsetX -= width / 2;
 
-			if (PlayState.isPixelStage)
+			if (isPixel)
 				offsetX += 30;
 
 			if (prevNote.isSustainNote)
 			{
-				animation.play('${NU.getColorFromNum(noteData)}holdend');
+				prevNote.animation.play('${NU.getColorFromNum(noteData)}hold');
 
 				prevNote.scale.y *= Conductor.stepCrochet / 100 * 1.05;
 				if (PlayState.instance != null)
 					prevNote.scale.y *= PlayState.instance.songSpeed;
 
-				if (PlayState.isPixelStage)
+				if (isPixel)
 				{
 					prevNote.scale.y *= 1.19;
 					prevNote.scale.y *= (6 / height);
@@ -184,7 +190,7 @@ class Note extends FlxSprite
 				prevNote.updateHitbox();
 			}
 
-			if (PlayState.isPixelStage)
+			if (isPixel)
 			{
 				scale.y *= NU.daPixelZoom;
 				updateHitbox();
@@ -193,6 +199,95 @@ class Note extends FlxSprite
 		else if (!isSustainNote)
 			earlyHitMult = 1;
 		x += offsetX;
+	}
+
+	public var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
+	public var originalHeightForCalcs:Float = 6;
+
+	// code still ugly but its playable
+	function reloadNote(?prefix:String = '', ?texture:String = '', ?suffix:String = '')
+	{
+		if (prefix == null)
+			prefix = '';
+		if (texture == null)
+			texture = '';
+		if (suffix == null)
+			suffix = '';
+
+		var skin:String = texture;
+		if (texture.length < 1)
+		{
+			skin = PlayState.SONG.arrowSkin;
+			if (skin == null || skin.length < 1)
+				skin = 'NOTE_assets';
+		}
+
+		var lastScaleY:Float = scale.y;
+
+		var animName:String = null;
+		if (animation.curAnim != null)
+			animName = animation.curAnim.name;
+
+		var daCheck:Dynamic = NU.nullCheck(skin);
+		if (daCheck[0] != "ext")
+		{
+			skin = daCheck;
+			var arraySkin:Array<String> = skin.split('/');
+			arraySkin[arraySkin.length - 1] = prefix + arraySkin[arraySkin.length - 1] + suffix;
+	
+			var blahblah:String = arraySkin.join('/');
+			if (isPixel)
+			{
+				if (isSustainNote)
+				{
+					loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'));
+					NU.setupPixelWidth(this, true);
+					loadGraphic(Paths.image('pixelUI/' + blahblah + 'ENDS'), true, Math.floor(width), Math.floor(height));
+				}
+				else
+				{
+					loadGraphic(Paths.image('pixelUI/' + blahblah));
+					NU.setupPixelWidth(this, false);
+					loadGraphic(Paths.image('pixelUI/' + blahblah), true, Math.floor(width), Math.floor(height));
+				}
+				setGraphicSize(Std.int(width * NU.daPixelZoom));
+				NU.loadPixelNoteAnims(this, noteData, isSustainNote);
+				antialiasing = false;
+	
+				if (isSustainNote)
+					NU.setupSusOffsets(this);
+			}
+			else
+			{
+				frames = Paths.getSparrowAtlas(blahblah);
+				NU.loadNoteAnims(this, noteData, isSustainNote);
+				antialiasing = SaveData.get(ANTIALIASING);
+			}
+		}
+		else
+		{
+			if (isPixel)
+				throw new NotImplementedException();
+			else
+			{
+				frames = daCheck[2];
+				NU.loadNoteAnims(this, noteData, isSustainNote);
+				antialiasing = SaveData.get(ANTIALIASING);
+			}
+		}
+		
+		if (isSustainNote)
+			scale.y = lastScaleY;
+		updateHitbox();
+
+		if (animName != null)
+			animation.play(animName, true);
+
+		if (inEditor)
+		{
+			setGraphicSize(ChartingState.GRID_SIZE, ChartingState.GRID_SIZE);
+			updateHitbox();
+		}
 	}
 
 	override function update(elapsed:Float)

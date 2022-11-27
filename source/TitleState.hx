@@ -89,7 +89,9 @@ class TitleState extends MusicBeatState
 
 		Highscore.load();
 
-		setupFonts();
+		Main.setFonts();
+
+		curBeat = 0; //just in case
 
 		if (FlxG.save.data.weekCompleted != null)
 		{
@@ -369,29 +371,5 @@ class TitleState extends MusicBeatState
 			remove(credGroup);
 			skippedIntro = true;
 		}
-	}
-
-	function setupFonts()
-	{
-		var formatSize:Int = 12;
-		var propername:String = SaveData.get(COUNTERS_FONT);
-		switch (SaveData.get(COUNTERS_FONT))
-		{
-			case "Funkin":
-				formatSize = 18;
-			case "VCR OSD Mono":
-				formatSize = 16;
-			case "Pixel":
-				formatSize = 10;
-				propername = "Pixel Arial 11 Bold";
-			case "Sans":
-				propername = "_sans";
-		}
-
-		Main.fpsVar.defaultTextFormat = new TextFormat(propername, formatSize, 0xFFFFFF);
-		Main.fpsVar.embedFonts = true;
-
-		Main.memoryVar.defaultTextFormat = new TextFormat(propername, formatSize, 0xFFFFFF);
-		Main.memoryVar.embedFonts = true;
 	}
 }

@@ -226,8 +226,6 @@ class PlayState extends MusicBeatState
 	// stores the last combo sprite object
 	public static var lastScore:Array<FlxSprite> = [];
 
-	public var curFont = null; // to properly set the font on format
-
 	var camDisplaceX:Float = 0;
 	var camDisplaceY:Float = 0;
 
@@ -262,6 +260,8 @@ class PlayState extends MusicBeatState
 
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
+		GameOverSubstate.resetVariables();
+		var stageData = setupStageData(Paths.formatToSongPath(SONG.song));
 
 		//wtf dwag
 		Ratings.preparePos();
@@ -297,9 +297,9 @@ class PlayState extends MusicBeatState
 		strumLines = new FlxTypedGroup<StrumLine>();
 
 		var placement = (FlxG.width / 2);
-		dadStrums = new StrumLine(placement - FlxG.width / 4, 4);
+		dadStrums = new StrumLine(placement - FlxG.width / 4, 4, isPixelStage);
 		dadStrums.visible = (!SaveData.get(MIDDLE_SCROLL));
-		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4);
+		boyfriendStrums = new StrumLine(placement + (!SaveData.get(MIDDLE_SCROLL) ? (FlxG.width / 4) : 0), 4, isPixelStage);
 
 		strumLines.add(dadStrums);
 		strumLines.add(boyfriendStrums);
@@ -355,86 +355,9 @@ class PlayState extends MusicBeatState
 		detailsPausedText = "Paused - " + detailsText;
 		#end
 
-		GameOverSubstate.resetVariables();
-		var songName:String = Paths.formatToSongPath(SONG.song);
-
-		curStage = PlayState.SONG.stage;
-		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
-		{
-			switch (songName)
-			{
-				case 'spookeez' | 'south' | 'monster':
-					curStage = 'spooky';
-				case 'pico' | 'blammed' | 'philly' | 'philly-nice':
-					curStage = 'philly';
-				case 'milf' | 'satin-panties' | 'high':
-					curStage = 'limo';
-				case 'cocoa' | 'eggnog':
-					curStage = 'mall';
-				case 'winter-horrorland':
-					curStage = 'mallEvil';
-				case 'senpai' | 'roses':
-					curStage = 'school';
-				case 'thorns':
-					curStage = 'schoolEvil';
-				case 'ugh' | 'guns' | 'stress':
-					curStage = 'tank';
-				default:
-					curStage = 'stage';
-			}
-		}
-		PlayState.SONG.stage = curStage;
-
-		var stageData:StageFile = StageData.getStageFile(curStage);
-		if (stageData == null)
-		{ // Stage couldn't be found, create a dummy stage for preventing a crash
-			stageData = {
-				directory: "",
-				defaultZoom: 0.9,
-				isPixelStage: false,
-
-				boyfriend: [770, 100],
-				girlfriend: [400, 130],
-				opponent: [100, 100],
-				hide_girlfriend: false,
-
-				camera_boyfriend: [0, 0],
-				camera_opponent: [0, 0],
-				camera_girlfriend: [0, 0],
-				camera_speed: 1
-			};
-		}
-
-		defaultCamZoom = stageData.defaultZoom;
-		isPixelStage = stageData.isPixelStage;
-		BF_X = stageData.boyfriend[0];
-		BF_Y = stageData.boyfriend[1];
-		GF_X = stageData.girlfriend[0];
-		GF_Y = stageData.girlfriend[1];
-		DAD_X = stageData.opponent[0];
-		DAD_Y = stageData.opponent[1];
-
-		if (stageData.camera_speed != null)
-			cameraSpeed = stageData.camera_speed;
-
-		boyfriendCameraOffset = stageData.camera_boyfriend;
-		if (boyfriendCameraOffset == null) // Fucks sake should have done it since the start :rolling_eyes:
-			boyfriendCameraOffset = [0, 0];
-
-		opponentCameraOffset = stageData.camera_opponent;
-		if (opponentCameraOffset == null)
-			opponentCameraOffset = [0, 0];
-
-		girlfriendCameraOffset = stageData.camera_girlfriend;
-		if (girlfriendCameraOffset == null)
-			girlfriendCameraOffset = [0, 0];
-
 		boyfriendGroup = new FlxSpriteGroup(BF_X, BF_Y);
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
-
-		if (curFont == null)
-			curFont = (isPixelStage == true ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
 
 		switch (curStage)
 		{
@@ -804,9 +727,7 @@ class PlayState extends MusicBeatState
 		}
 
 		if (isPixelStage)
-		{
 			introSoundsSuffix = '-pixel';
-		}
 
 		add(gfGroup);
 
@@ -939,7 +860,8 @@ class PlayState extends MusicBeatState
 			{
 				name: dad.healthIcon,
 				healthColors: dad.healthColorArray
-			}
+			},
+			isPixelStage
 		);
 		add(uiHUD);
 		uiHUD.cameras = [hudcam];
@@ -1806,8 +1728,6 @@ class PlayState extends MusicBeatState
 		// NEW SHIT
 		noteData = SONG.notes;
 
-		var daBeats:Int = 0; // Not exactly representative of 'daBeats' lol, just how much it has looped
-
 		if (songEvents != null)
 		{
 			for (event in songEvents)
@@ -1853,8 +1773,7 @@ class PlayState extends MusicBeatState
 			}
 		}
 
-		unspawnNotes = ChartLoader.generateChart(SONG, isPixelStage, songSpeed, FNF);
-		/*for (section in noteData)
+		for (section in noteData)
 		{
 			for (songNotes in section.sectionNotes)
 			{
@@ -1874,7 +1793,7 @@ class PlayState extends MusicBeatState
 					else
 						oldNote = null;
 
-					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote);
+					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, isPixelStage);
 					swagNote.mustPress = gottaHitNote;
 					swagNote.sustainLength = songNotes[2];
 					swagNote.gfNote = (section.gfSection && (songNotes[1] < 4));
@@ -1900,7 +1819,7 @@ class PlayState extends MusicBeatState
 							var sustainNote:Note = new Note(daStrumTime
 								+ (Conductor.stepCrochet * susNote)
 								+ (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData,
-								oldNote, true);
+								oldNote, true, false, isPixelStage);
 							sustainNote.mustPress = gottaHitNote;
 							sustainNote.gfNote = (section.gfSection && (songNotes[1] < 4));
 							sustainNote.noteType = swagNote.noteType;
@@ -1940,8 +1859,7 @@ class PlayState extends MusicBeatState
 					}
 				}
 			}
-			daBeats += 1;
-		}*/
+		}
 
 		for (event in SONG.events) // Event Notes
 		{
@@ -1962,9 +1880,7 @@ class PlayState extends MusicBeatState
 
 		unspawnNotes.sort(sortByShit);
 		if (eventNotes.length > 1)
-		{ // No need to sort if there's a single one or none at all
 			eventNotes.sort(sortByTime);
-		}
 		checkEventNote();
 		generatedMusic = true;
 	}
@@ -2403,8 +2319,6 @@ class PlayState extends MusicBeatState
 					hud.zoom = FlxMath.lerp(1, hud.zoom, 0.95);
 			}
 		}
-
-		// add angle suppotr or ???
 
 		FlxG.watch.addQuick("secShit", curSection);
 		FlxG.watch.addQuick("beatShit", curBeat);
@@ -3515,7 +3429,7 @@ class PlayState extends MusicBeatState
 						destroyNote(boyfriendStrums, note);
 					}
 
-					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+					possibleNotes.sort(sortHitNotes);
 
 					var dontCheck = false;
 
@@ -3615,7 +3529,7 @@ class PlayState extends MusicBeatState
 						destroyNote(boyfriendStrums, note);
 					}
 
-					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+					possibleNotes.sort(sortHitNotes);
 
 					var dontCheck = false;
 
@@ -3756,7 +3670,7 @@ class PlayState extends MusicBeatState
 									canMiss = true;
 								}
 							});
-							sortedNotesList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
+							sortedNotesList.sort(sortHitNotes);
 
 							if (sortedNotesList.length > 0)
 							{
@@ -4673,6 +4587,93 @@ class PlayState extends MusicBeatState
 			combo = 0;
 		else
 			combo++;
+	}
+
+	function sortHitNotes(a:Note, b:Note):Int
+	{
+		if (a.lowPriority && !b.lowPriority)
+			return 1;
+		else if (!a.lowPriority && b.lowPriority)
+			return -1;
+
+		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);
+	}
+
+	function setupStageData(songName:String):StageFile
+	{
+		curStage = PlayState.SONG.stage;
+		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
+		{
+			switch (songName)
+			{
+				case 'spookeez' | 'south' | 'monster':
+					curStage = 'spooky';
+				case 'pico' | 'blammed' | 'philly' | 'philly-nice':
+					curStage = 'philly';
+				case 'milf' | 'satin-panties' | 'high':
+					curStage = 'limo';
+				case 'cocoa' | 'eggnog':
+					curStage = 'mall';
+				case 'winter-horrorland':
+					curStage = 'mallEvil';
+				case 'senpai' | 'roses':
+					curStage = 'school';
+				case 'thorns':
+					curStage = 'schoolEvil';
+				case 'ugh' | 'guns' | 'stress':
+					curStage = 'tank';
+				default:
+					curStage = 'stage';
+			}
+		}
+		PlayState.SONG.stage = curStage;
+
+		var stageData:StageFile = StageData.getStageFile(curStage);
+		if (stageData == null)
+		{ // Stage couldn't be found, create a dummy stage for preventing a crash
+			stageData = 
+			{
+				directory: "",
+				defaultZoom: 0.9,
+				isPixelStage: false,
+
+				boyfriend: [770, 100],
+				girlfriend: [400, 130],
+				opponent: [100, 100],
+				hide_girlfriend: false,
+
+				camera_boyfriend: [0, 0],
+				camera_opponent: [0, 0],
+				camera_girlfriend: [0, 0],
+				camera_speed: 1
+			};
+		}
+
+		defaultCamZoom = stageData.defaultZoom;
+		isPixelStage = stageData.isPixelStage;
+		BF_X = stageData.boyfriend[0];
+		BF_Y = stageData.boyfriend[1];
+		GF_X = stageData.girlfriend[0];
+		GF_Y = stageData.girlfriend[1];
+		DAD_X = stageData.opponent[0];
+		DAD_Y = stageData.opponent[1];
+
+		if (stageData.camera_speed != null)
+			cameraSpeed = stageData.camera_speed;
+
+		boyfriendCameraOffset = stageData.camera_boyfriend;
+		if (boyfriendCameraOffset == null) // Fucks sake should have done it since the start :rolling_eyes:
+			boyfriendCameraOffset = [0, 0];
+
+		opponentCameraOffset = stageData.camera_opponent;
+		if (opponentCameraOffset == null)
+			opponentCameraOffset = [0, 0];
+
+		girlfriendCameraOffset = stageData.camera_girlfriend;
+		if (girlfriendCameraOffset == null)
+			girlfriendCameraOffset = [0, 0];
+
+		return stageData;
 	}
 
 	var curLight:Int = 0;

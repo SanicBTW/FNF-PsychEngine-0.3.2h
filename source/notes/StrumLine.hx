@@ -18,7 +18,7 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 	public var allNotes:FlxTypedGroup<Note>;
 
 	// the worst workaround ive ever done :sob:
-	public function new(x:Float = 0, keyAmount:Int = 4/*, ?parent:StrumLine what is this for */)
+	public function new(x:Float = 0, keyAmount:Int = 4, isPixel:Bool = false/*, ?parent:StrumLine what is this for */)
 	{
 		super();
 
@@ -31,7 +31,7 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 
 		for (i in 0...keyAmount)
 		{
-			var staticArrow:UIStaticArrow = new UIStaticArrow(x, 60 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), i);
+			var staticArrow:UIStaticArrow = new UIStaticArrow(x, 60 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), i, isPixel);
 			staticArrow.ID = i;
 
 			staticArrow.x -= ((keyAmount / 2) * NoteUtils.swagWidth);

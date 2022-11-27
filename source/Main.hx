@@ -12,6 +12,7 @@ import openfl.display.Sprite;
 import openfl.display.StageScaleMode;
 import openfl.events.Event;
 import openfl.system.System;
+import openfl.text.TextFormat;
 
 class Main extends Sprite
 {
@@ -75,6 +76,7 @@ class Main extends Sprite
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);
+		fpsVar.width = gameWidth; //lmfao what
 		addChild(fpsVar);
 		if (fpsVar != null)
 		{
@@ -83,6 +85,7 @@ class Main extends Sprite
 		}
 
 		memoryVar = new MemoryCounter(10, 20);
+		memoryVar.width = gameWidth; //lmfao what
 		addChild(memoryVar);
 		if (memoryVar != null)
 		{
@@ -131,5 +134,30 @@ class Main extends Sprite
 				FlxTween.tween(memoryVar, {alpha: 0}, duration);
 			}
 		}
+	}
+
+	// goofy name "counters_font" tf bro
+	public static function setFonts()
+	{
+		var size:Int = 12;
+		var name:String = SaveData.get(COUNTERS_FONT);
+		switch (SaveData.get(COUNTERS_FONT))
+		{
+			case "Funkin":
+				size = 18;
+			case "VCR OSD Mono":
+				size = 18;
+			case "Pixel":
+				size = 10;
+				name = "Pixel Arial 11 Bold";
+			case "Sans":
+				name = "_sans";
+		}
+
+		fpsVar.defaultTextFormat = new TextFormat(name, size, 0xFFFFFF);
+		fpsVar.embedFonts = true;
+
+		memoryVar.defaultTextFormat = new TextFormat(name, size, 0xFFFFFF);
+		memoryVar.embedFonts = true;
 	}
 }

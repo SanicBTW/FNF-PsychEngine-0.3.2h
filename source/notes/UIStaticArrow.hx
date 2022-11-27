@@ -1,5 +1,6 @@
 package notes;
 
+import haxe.exceptions.NotImplementedException;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxSprite;
@@ -21,22 +22,18 @@ class UIStaticArrow extends FlxSprite
 	public var setAlpha:Float = 0.8;
 	public var resetAnim:Float = 0;
 	public var direction:Float = 90;
+	public var isPixel:Bool = false;
 
-	public function new(x:Float, y:Float, arrowType:Int = 0)
+	public function new(x:Float, y:Float, arrowType:Int = 0, isPixel:Bool = false)
 	{
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;
 
 		this.arrowType = arrowType;
+		this.isPixel = isPixel;
 		super(x, y);
 
-		var skin:String = "NOTE_assets";
-		if (PlayState.SONG.arrowSkin != null && PlayState.SONG.arrowSkin.length > 1)
-			skin = PlayState.SONG.arrowSkin;
-		var daCheck = nullCheck(skin);
-		if (daCheck != "ext")
-			texture = daCheck;
-
+		texture = '';
 		scrollFactor.set();
 	}
 
@@ -52,7 +49,7 @@ class UIStaticArrow extends FlxSprite
 			}
 		}
 
-		if (animation.curAnim.name == "confirm" && !PlayState.isPixelStage)
+		if (animation.curAnim.name == "confirm" && !isPixel)
 			centerOrigin();
 
 		super.update(elapsed);
@@ -61,41 +58,55 @@ class UIStaticArrow extends FlxSprite
 	private function set_texture(value:String):String
 	{
 		if (texture != value)
-		{
-			texture = value;
 			reloadNote();
-		}
+		texture = value;
 		return value;
 	}
 
 	public function reloadNote()
 	{
+		var skin:String = texture;
+		if (texture.length < 1)
+		{
+			skin = PlayState.SONG.arrowSkin;
+			if (skin == null || skin.length < 1)
+				skin = "NOTE_assets";
+		}
+
 		var lastAnim:String = null;
 		if (animation.curAnim != null)
 			lastAnim = animation.curAnim.name;
 
-		if (PlayState.isPixelStage)
+		var check:Dynamic = NU.nullCheck(skin);
+		if (check[0] != "ext")
 		{
-			loadGraphic(Paths.image('pixelUI/$texture'), true, 17, 17);
-
-			animation.add('static', [arrowType]);
-			animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
-			animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
-
-			setGraphicSize(Std.int(width * NU.daPixelZoom));
-			antialiasing = false;
+			skin = check;
+			if (isPixel)
+			{
+				loadGraphic(Paths.image('pixelUI/$skin'), true, 17, 17);
+				loadPixelAnims();
+				setGraphicSize(Std.int(width * NU.daPixelZoom));
+				antialiasing = false;
+			}
+			else
+			{
+				frames = Paths.getSparrowAtlas(skin);
+				loadAnims();
+				setGraphicSize(Std.int(width * 0.7));
+				antialiasing = SaveData.get(ANTIALIASING);
+			}
 		}
 		else
 		{
-			var stringSect:String = NU.getArrowFromNum(arrowType);
-
-			frames = Paths.getSparrowAtlas(texture);
-			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
-			animation.addByPrefix('pressed', '$stringSect press', 24, false);
-			animation.addByPrefix('confirm', '$stringSect confirm', 24, false);
-
-			antialiasing = SaveData.get(ANTIALIASING);
-			setGraphicSize(Std.int(width * 0.7));
+			if (isPixel)
+				throw new NotImplementedException();
+			else
+			{
+				frames = check[2];
+				loadAnims();
+				setGraphicSize(Std.int(width * 0.7));
+				antialiasing = SaveData.get(ANTIALIASING);
+			}
 		}
 
 		updateHitbox();
@@ -104,54 +115,32 @@ class UIStaticArrow extends FlxSprite
 			playAnim(lastAnim, true);
 	}
 
-	// its just reloadNote but with arguments to load from storage access, lame ik
-	public function reloadNoteRawGraphic(graphic:FlxGraphic, eframes:FlxAtlasFrames)
+	private function loadPixelAnims()
 	{
-		var lastAnim:String = null;
-		if (animation.curAnim != null)
-			lastAnim = animation.curAnim.name;
-
-		if (PlayState.isPixelStage)
-		{
-			loadGraphic(graphic, true, 17, 17);
-
-			animation.add('static', [arrowType]);
-			animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
-			animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
-
-			setGraphicSize(Std.int(width * NU.daPixelZoom));
-			antialiasing = false;
-		}
-		else
-		{
-			var stringSect:String = NU.getArrowFromNum(arrowType);
-
-			frames = eframes;
-			animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
-			animation.addByPrefix('pressed', '$stringSect press', 24, false);
-			animation.addByPrefix('confirm', '$stringSect confirm', 24, false);
-
-			antialiasing = SaveData.get(ANTIALIASING);
-			setGraphicSize(Std.int(width * 0.7));
-		}
-
-		updateHitbox();
-
-		if (lastAnim != null)
-			playAnim(lastAnim, true);
+		animation.add('static', [arrowType]);
+		animation.add('pressed', [4 + arrowType, 8 + arrowType], 12, false);
+		animation.add('confirm', [12 + arrowType, 16 + arrowType], 24, false);
 	}
 
-	// % 4 should be % keyAmount or stmh
+	private function loadAnims()
+	{
+		var stringSect:String = NU.getArrowFromNum(arrowType);
+		animation.addByPrefix('static', 'arrow${stringSect.toUpperCase()}');
+		animation.addByPrefix('pressed', '$stringSect press', 24, false);
+		animation.addByPrefix('confirm', '$stringSect confirm', 24, false);
+	}
+
+	// % 4 should be % keyAmount or stmh - soon
 	public function playAnim(AnimName:String, Force:Bool = false)
 	{
 		if (AnimName == "confirm")
 		{
-			colorSwap.hue = SaveData.getHSV(arrowType % 4, 0) / 360;
-			colorSwap.saturation = SaveData.getHSV(arrowType % 4, 1) / 100;
-			colorSwap.brightness = SaveData.getHSV(arrowType % 4, 2) / 100;
+			colorSwap.hue = SaveData.getHSV(arrowType, 0) / 360;
+			colorSwap.saturation = SaveData.getHSV(arrowType, 1) / 100;
+			colorSwap.brightness = SaveData.getHSV(arrowType, 2) / 100;
 			alpha = 1;
 
-			if (!PlayState.isPixelStage)
+			if (!isPixel)
 				centerOrigin();
 		}
 		else
@@ -165,40 +154,5 @@ class UIStaticArrow extends FlxSprite
 		animation.play(AnimName, Force);
 		centerOffsets();
 		centerOrigin();
-	}
-
-	// goofy funcs lol
-	private function nullCheck(textureCheck:String)
-	{
-		var skin = "NOTE_assets";
-
-		#if STORAGE_ACCESS
-		if (SaveData.get(ALLOW_FILESYS))
-		{
-			var extArrows = features.StorageAccess.getArrowTexture(textureCheck);
-			if (extArrows != null)
-			{
-				reloadNoteRawGraphic(extArrows[0], extArrows[1]);
-				return "ext";
-			}
-			else
-				skin = nullCheckAssets(textureCheck);
-		}
-		else
-			skin = nullCheckAssets(textureCheck);
-		#else
-		skin = nullCheckAssets(textureCheck);
-		#end
-
-		return skin;
-	}
-
-	// tf dawg
-	public static function nullCheckAssets(textureCheck:String)
-	{
-		var skin = "NOTE_assets";
-		if (Paths.getSparrowAtlas(textureCheck) != null)
-			skin = textureCheck;
-		return skin;
 	}
 }

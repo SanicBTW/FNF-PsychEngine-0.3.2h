@@ -16,12 +16,11 @@ class MemoryCounter extends TextField
 
 		x = xPos;
 		y = yPos;
-		width = 200;
 		height = 70;
 
 		selectable = false;
 
-		defaultTextFormat = new TextFormat("_sans", 16, 0xFFFFFF);
+		defaultTextFormat = new TextFormat("_sans", 12, 0xFFFFFF);
 		text = "";
 
 		addEventListener(Event.ENTER_FRAME, onEnterFrame);

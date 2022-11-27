@@ -227,6 +227,12 @@ class MusicBeatState extends FlxUIState
 		if (FlxG.keys.pressed.CONTROL)
 			if (FlxG.mouse.wheel != 0)
 				FlxG.sound.changeVolume(FlxG.mouse.wheel * 0.1);
+
+		if (FlxG.keys.justPressed.F11)
+		{
+			SaveData.set(FULLSCREEN, !SaveData.get(FULLSCREEN));
+			FlxG.fullscreen = SaveData.get(FULLSCREEN);
+		}
 	}
 
 	private function updateSection():Void

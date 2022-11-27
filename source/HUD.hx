@@ -38,7 +38,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
         return value;
     }
 
-    public function new(iconP1Det:IconDetails, iconP2Det:IconDetails)
+    public function new(iconP1Det:IconDetails, iconP2Det:IconDetails, isPixel:Bool)
     {
         super();
 
@@ -46,7 +46,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
         var hideHud = SaveData.get(HIDE_HUD);
         var downScroll = SaveData.get(DOWN_SCROLL);
 
-        var curFont = PlayState.instance.curFont;
+        var curFont = (isPixel == true ? Paths.font("pixel.otf") : Paths.font("vcr.ttf"));
 
         timeTxt = new FlxText(42 + (FlxG.width / 2) - 248, 20, 400, "", 32);
         timeTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
