@@ -58,7 +58,6 @@ class SaveData
 		COMBOS_STYLE => "Default",
 		NO_RESET => false,
 		OLD_SONG_SYSTEM => false,
-		FULLSCREEN => false
 	];
 
 	public static var gameplaySettings:Map<String, Dynamic> = [
@@ -124,7 +123,6 @@ class SaveData
 		// br
 		set(VOLUME, FlxG.sound.volume);
 		set(MUTED, FlxG.sound.muted);
-		set(FULLSCREEN, FlxG.fullscreen);
 		for (settingName => settingValue in settings)
 		{
 			Reflect.setProperty(FlxG.save.data, settingName, settingValue);
@@ -162,8 +160,6 @@ class SaveData
 			FlxG.drawFramerate = get(FPS);
 			FlxG.updateFramerate = get(FPS);
 		}
-
-		FlxG.fullscreen = get(FULLSCREEN);
 
 		var save:FlxSave = new FlxSave();
 		save.bind('essentials', 'sanicbtw');
@@ -263,5 +259,4 @@ enum abstract Settings(String) to String
 	var COMBOS_STYLE = "CombosStyle";
 	var NO_RESET = "NoReset";
 	var OLD_SONG_SYSTEM = "OldSongSystem";
-	var FULLSCREEN = "FullScreen";
 }
