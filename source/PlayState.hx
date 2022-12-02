@@ -285,12 +285,11 @@ class PlayState extends MusicBeatState
 
 		practiceMode = false;
 		camGame = new FlxCamera();
-		camHUD = new FlxCamera();
-		camOther = new FlxCamera();
-		camHUD.bgColor.alpha = 0;
-		camOther.bgColor.alpha = 0;
-
 		FlxG.cameras.reset(camGame);
+		FlxCamera.defaultCameras = [camGame];
+
+		camHUD = new FlxCamera();
+		camHUD.bgColor.alpha = 0;
 		FlxG.cameras.add(camHUD);
 		allUIs.push(camHUD);
 
@@ -324,9 +323,9 @@ class PlayState extends MusicBeatState
 		allUIs.push(hudcam);
 		FlxG.cameras.add(hudcam);
 
+		camOther = new FlxCamera();
+		camOther.bgColor.alpha = 0;
 		FlxG.cameras.add(camOther);
-
-		FlxCamera.defaultCameras = [camGame];
 		CustomFadeTransition.nextCamera = camOther;
 
 		persistentUpdate = true;
@@ -4320,11 +4319,11 @@ class PlayState extends MusicBeatState
 
 			if (SONG.notes[curSection].changeBPM)
 			{
-				// var lastBPM = Conductor.bpm;
 				Conductor.changeBPM(SONG.notes[curSection].bpm);
 
 				if (songSpeedType == "constant")
 					return;
+
 				var baseSpeed = SONG.speed * SaveData.getGameplaySetting('scrollspeed', 1);
 				var newSpeed = baseSpeed + (baseSpeed * ((Conductor.bpm / SONG.bpm) / 10));
 				songSpeed = newSpeed;

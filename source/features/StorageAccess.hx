@@ -251,8 +251,8 @@ class StorageAccess
 		#end
 	}
 
-	// oops what if the notes are pixel??? fuckk
-	public static function getArrowTexture(texture:String):Array<Dynamic>
+	// why the fuck do i return the graphic too :skull:?
+	public static function getArrowTexture(texture:String, isPixel:Bool = false):Array<Dynamic>
 	{
 		#if STORAGE_ACCESS
 		var arrowPath = Path.join([getFolderPath(IMAGES), texture + ".png"]);
@@ -286,10 +286,7 @@ class StorageAccess
 		for (file in files)
 		{
 			if (file.endsWith(".json"))
-			{
-				var path = Path.join([getFolderPath(WEEKS), file]);
-				weeks.push(cast Json.parse(File.getContent(path)));
-			}
+				weeks.push(cast Json.parse(File.getContent(makePath(WEEKS, file))));
 		}
 		return (weeks.length > 0 ? weeks : null);
 		#else
@@ -309,6 +306,61 @@ class StorageAccess
 				names.push(file.replace(".json", ""));
 		}
 		return (names.length > 0 ? names : null);
+		#else
+		return null;
+		#end
+	}
+
+	// shitass function
+	public static function makePath(folder:StorageFolders = MAIN, path:String):String
+	{
+		#if STORAGE_ACCESS
+		return Path.join([checkDirs.get(folder), path]);
+		#else
+		return null;
+		#end
+	}
+
+	public static function getNoteSplashes(texture:String)
+	{
+		#if STORAGE_ACCESS
+		var graphicPath = makePath(IMAGES, '$texture.png');
+		var xmlPath = makePath(IMAGES, '$texture.xml');
+
+		if (!exists(graphicPath))
+			return null;
+		else
+		{
+			if (!exists(xmlPath))
+				return null;
+			else
+			{
+				var graphic = getGraphic(graphicPath);
+				var frames = FlxAtlasFrames.fromSparrow(graphic, File.getContent(xmlPath));
+				return frames;
+			}
+		}
+		return null;
+		#else
+		return null;
+		#end
+	}
+
+	public static function getNoteSplashOffset(texture:String):Array<Dynamic>
+	{
+		#if STORAGE_ACCESS
+		var offsetPath = makePath(IMAGES, '${texture}_offset.txt');
+		
+		if (!exists(offsetPath))
+			return null;
+		else
+		{
+			var content = File.getContent(offsetPath);
+			var split = content.split('|');
+			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
+		}
+
+		return null;
 		#else
 		return null;
 		#end

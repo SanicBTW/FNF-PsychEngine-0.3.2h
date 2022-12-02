@@ -58,13 +58,16 @@ class UIStaticArrow extends FlxSprite
 	private function set_texture(value:String):String
 	{
 		if (texture != value)
-			reloadNote();
+			reloadNote(value);
 		texture = value;
 		return value;
 	}
 
-	public function reloadNote()
+	public function reloadNote(?texture:String = '')
 	{
+		if (texture == null)
+			texture = '';
+
 		var skin:String = texture;
 		if (texture.length < 1)
 		{

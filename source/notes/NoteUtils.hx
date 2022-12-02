@@ -7,6 +7,7 @@ import flixel.FlxSprite;
 
 using StringTools;
 
+// istg these goofy names
 class NoteUtils
 {
     public static var swagWidth:Float = 160 * 0.7;
@@ -123,5 +124,65 @@ class NoteUtils
         sprite.offsetX += sprite.lastNoteOffsetXForPixelAutoAdjusting;
         sprite.lastNoteOffsetXForPixelAutoAdjusting = (sprite.width - 7) * (daPixelZoom / 2);
         sprite.offsetX -= sprite.lastNoteOffsetXForPixelAutoAdjusting;
+    }
+
+    public static function setNSplAnims(sprite:NoteSplash)
+    {
+        for (i in 1...3)
+        {
+			sprite.animation.addByPrefix("note0-" + i, "note impact " + i + " purple", 24, false);
+            sprite.animation.addByPrefix("note1-" + i, "note impact " + i + " blue", 24, false);
+			sprite.animation.addByPrefix("note2-" + i, "note impact " + i + " green", 24, false);
+			sprite.animation.addByPrefix("note3-" + i, "note impact " + i + " red", 24, false);
+        }
+    }
+
+    public static function setPsychNSplAnims(sprite:NoteSplash)
+    {
+        for (i in 1...3) 
+        {
+			sprite.animation.addByPrefix("note0-" + i, "note splash purple " + i, 24, false);
+			sprite.animation.addByPrefix("note1-" + i, "note splash blue " + i, 24, false);
+			sprite.animation.addByPrefix("note2-" + i, "note splash green " + i, 24, false);
+			sprite.animation.addByPrefix("note3-" + i, "note splash red " + i, 24, false);
+		}
+    }
+
+    public static function getSplashType(data:String):String
+    {
+        var ret:String = "engine";
+        if (data.contains("splash"))
+            ret = "psych";
+        return ret;
+    }
+
+    public static function noteSplashNullCheck(textureCheck:String)
+    {
+        var skin:String = "noteSplashes";
+        #if STORAGE_ACCESS
+        if (SaveData.get(ALLOW_FILESYS))
+        {
+            var extSplashes = features.StorageAccess.getNoteSplashes(textureCheck);
+            if (extSplashes != null)
+            {
+                var splashesOffset = features.StorageAccess.getNoteSplashOffset(textureCheck);
+                
+            }
+        }
+        else
+            skin = assetNoteSplashNullCheck(textureCheck);
+        #else
+        skin = assetNoteSplashNullCheck(textureCheck);
+        #end
+
+        return skin;
+    }
+
+    public static function assetNoteSplashNullCheck(textureCheck:String)
+    {
+        var fullPath = Paths.image(textureCheck);
+        if (Assets.exists(fullPath))
+            return textureCheck;
+        return "noteSplashes";
     }
 }

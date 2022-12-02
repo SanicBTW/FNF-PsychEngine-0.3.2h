@@ -20,7 +20,8 @@ class NoteSplash extends FlxSprite
 		if (PlayState.SONG.splashSkin != null && PlayState.SONG.splashSkin.length > 0)
 			skin = PlayState.SONG.splashSkin;
 
-		loadAnims(skin);
+		
+		NoteUtils.setNSplAnims(this);
 
 		colorSwap = new ColorSwap();
 		shader = colorSwap.shader;

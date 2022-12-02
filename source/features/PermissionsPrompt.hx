@@ -30,9 +30,6 @@ class PermissionsPrompt extends MusicBeatState
 
 		FlxG.save.bind('funkin', 'sanicbtw');
 		SaveData.loadSettings();
-		#if js
-		MainWorker.startWorker();
-		#end
 		Paths.prepareLibraries();
 
 		#if (!STORAGE_ACCESS && !ONLINE_SONGS) // send to title state if none of the features are enabled
