@@ -58,6 +58,7 @@ class SaveData
 		COMBOS_STYLE => "Default",
 		NO_RESET => false,
 		OLD_SONG_SYSTEM => false,
+		HOLDS_OVER_RECEPTORS => false
 	];
 
 	public static var gameplaySettings:Map<String, Dynamic> = [
@@ -259,4 +260,5 @@ enum abstract Settings(String) to String
 	var COMBOS_STYLE = "CombosStyle";
 	var NO_RESET = "NoReset";
 	var OLD_SONG_SYSTEM = "OldSongSystem";
+	var HOLDS_OVER_RECEPTORS = "HoldsOverReceptors";
 }

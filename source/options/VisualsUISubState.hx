@@ -55,6 +55,9 @@ class VisualsUISubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = Main.setFonts;
 
+		var option:Option = new Option('Holds over receptors', 'Makes the holds appear over the receptors like classic FNF', HOLDS_OVER_RECEPTORS, 'bool', false);
+		addOption(option);
+
 		super();
 	}
 

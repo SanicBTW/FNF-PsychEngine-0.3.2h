@@ -51,8 +51,9 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 			splashNotes.add(splash);
 		}
 
-		add(holdsGroup);
+		if (SaveData.get(HOLDS_OVER_RECEPTORS) == false) add(holdsGroup);
 		add(receptors);
+		if (SaveData.get(HOLDS_OVER_RECEPTORS) == true) add(holdsGroup);
 		add(notesGroup);
 		add(splashNotes);
 	}
