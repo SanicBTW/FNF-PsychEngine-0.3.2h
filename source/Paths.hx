@@ -172,7 +172,7 @@ class Paths
 			var obj = features.StorageAccess.currentTrackedAssets.get(key);
 			if (obj != null)
 			{
-				trace("cleared " + key + " from memory (graphic)");
+				trace("cleared " + key + " from memory (graphic - storage access)");
 				openfl.Assets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
 				features.StorageAccess.currentTrackedAssets.remove(key);
@@ -187,7 +187,7 @@ class Paths
 			var obj = currentTrackedAssets.get(key);
 			if (obj != null)
 			{
-				trace("cleared " + key + " from memory (graphic)");
+				trace("cleared " + key + " from memory (graphic - paths)");
 				openfl.Assets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
 				currentTrackedAssets.remove(key);

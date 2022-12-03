@@ -308,8 +308,12 @@ class FreeplayState extends MusicBeatState
 				var eventPath = haxe.io.Path.join([StorageAccess.checkDirs.get("data"), songLowercase, "events"]) + ".json";
 				if (!StorageAccess.exists(chartPath))
 				{
-					notificationGroup.add(new Notification("Oops! That chart doesn't exists", "Check if it has the proper spelling in the storage", Error));
-					return;
+					chartPath = haxe.io.Path.join([StorageAccess.checkDirs.get("songs"), songLowercase, poop]) + ".json";
+					if (!StorageAccess.exists(chartPath))
+					{
+						notificationGroup.add(new Notification("Oops! That chart doesn't exists", "Check if it has the proper spelling in the storage", Error));
+						return;
+					}
 				}
 
 				PlayState.SONG = Song.loadFromRaw(File.getContent(chartPath));

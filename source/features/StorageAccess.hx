@@ -24,6 +24,7 @@ class StorageAccess
 {
 	public static var checkDirs:Map<String, String> = new Map();
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
+	//public static var currentTrackedSounds:Map<String, Sound> = new Map();
 
 	public static function checkStorage()
 	{
@@ -38,8 +39,8 @@ class StorageAccess
 		setFolder("icons", IMAGES);
 		setFolder("stages");
 		setFolder("weeks");
-		setFolder("music");
-		setFolder("sounds");
+		//setFolder("music");
+		//setFolder("sounds");
 
 		for (varName => dirPath in checkDirs)
 		{
@@ -70,52 +71,37 @@ class StorageAccess
 		#end
 	}
 
-	/* gotta work on this one, maybe custom pause music, custom miss sounds, custom hit sounds, etc soon????
-	public static function getSound(folder:SoundFolders, file:String, ?query:String = "Inst")
+	/*
+	public static function getSound(folder:SoundFolders, file:String)
 	{
 		#if STORAGE_ACCESS
-		var filePath:String = "";
-		if (folder != SONGS)
-			filePath = Path.join([checkDirs.get(folder), file]);
-		else
-			filePath = Path.join([checkDirs.get(folder), Paths.formatToSongPath(file), query]);
-
-		var files = FileSystem.readDirectory(checkDirs.get(folder));
-		for (f in files)
+		var filePath:String = Path.join([checkDirs.get(folder), file]);
+		trace(filePath);
+		if (!currentTrackedSounds.exists(filePath))
 		{
-			trace(f);
-			if (f.contains(file))
+			var files = FileSystem.readDirectory(checkDirs.get(folder));
+			trace(files);
+			for (i in 0...files.length)
 			{
-				trace(filePath);
-				trace(f.replace(file, ""));
-				trace(filePath + f.replace(file, ""));
-				return Sound.fromFile(filePath + f.replace(file, ""));
-				break;
+				trace(files[i]);
+				if (files[i].contains(file))
+				{
+					currentTrackedSounds.set(filePath, Sound.fromFile(Path.join([filePath, file + files[i].replace(file, "")])));
+					break;
+				}
 			}
 		}
-		return null;
+		return currentTrackedSounds.get(filePath);
 		#else
 		return null;
 		#end
 	}*/
 
-	// just found out mp3 isnt supported on sys targets (apparently), just gonna leave it like that lol
-	// idea: tell user mp3 isnt supported
 	public static function getSong(song:String, file:String = "Inst")
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), Paths.formatToSongPath(song)]);
-
-		var files = FileSystem.readDirectory(filePath);
-		for (i in 0...files.length)
-		{
-			if (files[i].contains(file))
-			{
-				return Sound.fromFile(Path.join([filePath, file + files[i].replace(file, "")]));
-				break;
-			}
-		}
-		return null;
+		var filePath = Path.join([getFolderPath(SONGS), Paths.formatToSongPath(song), '$file.ogg']);
+		return Sound.fromFile(filePath);
 		#else
 		return null;
 		#end
@@ -142,15 +128,8 @@ class StorageAccess
 		var charXMLP:String = "";
 		var charPACKERP:String = "";
 
-		// shit checks
-		var jsonExists:Bool = false;
-
-		// checkin fr
-		if (exists(charJSONP))
-			jsonExists = true;
-
 		// we do shit now
-		if (jsonExists)
+		if (exists(charJSONP))
 		{
 			var rawJSON = File.getContent(charJSONP);
 			var json:CharacterFile = cast Json.parse(rawJSON);
@@ -251,7 +230,6 @@ class StorageAccess
 		#end
 	}
 
-	// why the fuck do i return the graphic too :skull:?
 	public static function getArrowTexture(texture:String, isPixel:Bool = false, isSustain:Bool = false):Dynamic
 	{
 		#if STORAGE_ACCESS
@@ -364,26 +342,6 @@ class StorageAccess
 		return null;
 		#end
 	}
-
-	// woah what, an asset based function on a class that is meant to manage files inside the internal storage???
-	/*public static function assetNSPOffset(texture:String) moved to noteutils lol
-	{
-		var defOffset:String = "-26.2|-17"; // default offset if not found
-		var offsetPath:String = Paths.image('${texture}_offset');
-		offsetPath.replace("png", "txt");
-
-		if (!Assets.exists(offsetPath))
-		{
-			var split = defOffset.split('|');
-			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
-		}
-		else
-		{
-			var content = Assets.getText(offsetPath);
-			var split = content.split('|');
-			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
-		}
-	}*/
 }
 
 enum abstract StorageFolders(String) to String
@@ -403,7 +361,6 @@ enum abstract StorageFolders(String) to String
 
 enum abstract SoundFolders(String) to String
 {
-	var SONGS = "songs";
 	var MUSIC = "music";
 	var SOUNDS = "sounds";
 }

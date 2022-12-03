@@ -4325,7 +4325,7 @@ class PlayState extends MusicBeatState
 					return;
 
 				var baseSpeed = SONG.speed * SaveData.getGameplaySetting('scrollspeed', 1);
-				var newSpeed = baseSpeed + (baseSpeed * ((Conductor.bpm / SONG.bpm) / 10));
+				var newSpeed = baseSpeed + (((Conductor.bpm / 60) / songSpeed) * (Conductor.stepCrochet / 1000));
 				songSpeed = newSpeed;
 			}
 		}
