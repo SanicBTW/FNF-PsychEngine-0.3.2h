@@ -252,19 +252,38 @@ class StorageAccess
 	}
 
 	// why the fuck do i return the graphic too :skull:?
-	public static function getArrowTexture(texture:String, isPixel:Bool = false):Array<Dynamic>
+	public static function getArrowTexture(texture:String, isPixel:Bool = false, isSustain:Bool = false):Dynamic
 	{
 		#if STORAGE_ACCESS
-		var arrowPath = Path.join([getFolderPath(IMAGES), texture + ".png"]);
-		var xmlArrowPath = Path.join([getFolderPath(IMAGES), texture + ".xml"]);
+		var arrowPath = makePath(IMAGES, '$texture.png');
+		var xmlArrowPath = makePath(IMAGES, '$texture.xml');
 
 		if (exists(arrowPath))
 		{
-			if (exists(xmlArrowPath))
+			if (exists(xmlArrowPath) && isPixel == false)
 			{
 				var graphic = getGraphic(arrowPath);
 				var frames = FlxAtlasFrames.fromSparrow(graphic, File.getContent(xmlArrowPath));
-				return [graphic, frames];
+				return frames;
+			}
+			else if ((!exists(xmlArrowPath) || exists(xmlArrowPath)) && isPixel == true)
+			{
+				if (isSustain)
+				{
+					var arrowPixNote = makePath(IMAGES, '${texture}ENDS-pixel.png');
+					if (exists(arrowPixNote))
+						return getGraphic(arrowPixNote);
+					else
+						return null;
+				}
+				else
+				{
+					var arrowPixNote = makePath(IMAGES, '$texture-pixel.png');
+					if (exists(arrowPixNote))
+						return getGraphic(arrowPixNote);
+					else
+						return null;
+				}
 			}
 			else
 				return null;
@@ -346,25 +365,25 @@ class StorageAccess
 		#end
 	}
 
-	public static function getNoteSplashOffset(texture:String):Array<Dynamic>
+	// woah what, an asset based function on a class that is meant to manage files inside the internal storage???
+	/*public static function assetNSPOffset(texture:String) moved to noteutils lol
 	{
-		#if STORAGE_ACCESS
-		var offsetPath = makePath(IMAGES, '${texture}_offset.txt');
-		
-		if (!exists(offsetPath))
-			return null;
+		var defOffset:String = "-26.2|-17"; // default offset if not found
+		var offsetPath:String = Paths.image('${texture}_offset');
+		offsetPath.replace("png", "txt");
+
+		if (!Assets.exists(offsetPath))
+		{
+			var split = defOffset.split('|');
+			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
+		}
 		else
 		{
-			var content = File.getContent(offsetPath);
+			var content = Assets.getText(offsetPath);
 			var split = content.split('|');
 			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
 		}
-
-		return null;
-		#else
-		return null;
-		#end
-	}
+	}*/
 }
 
 enum abstract StorageFolders(String) to String

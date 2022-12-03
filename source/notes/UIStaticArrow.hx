@@ -80,7 +80,7 @@ class UIStaticArrow extends FlxSprite
 		if (animation.curAnim != null)
 			lastAnim = animation.curAnim.name;
 
-		var check:Dynamic = NU.nullCheck(skin);
+		var check:Dynamic = NU.nullCheck(skin, isPixel);
 		if (check[0] != "ext")
 		{
 			skin = check;
@@ -102,10 +102,15 @@ class UIStaticArrow extends FlxSprite
 		else
 		{
 			if (isPixel)
-				throw new NotImplementedException();
+			{
+				loadGraphic(check[1], true, 17, 17);
+				loadPixelAnims();
+				setGraphicSize(Std.int(width * NU.daPixelZoom));
+				antialiasing = false;
+			}
 			else
 			{
-				frames = check[2];
+				frames = check[1];
 				loadAnims();
 				setGraphicSize(Std.int(width * 0.7));
 				antialiasing = SaveData.get(ANTIALIASING);

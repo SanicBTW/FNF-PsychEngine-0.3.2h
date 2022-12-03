@@ -228,7 +228,7 @@ class Note extends FlxSprite
 		if (animation.curAnim != null)
 			animName = animation.curAnim.name;
 
-		var daCheck:Dynamic = NU.nullCheck(skin);
+		var daCheck:Dynamic = NU.nullCheck(skin, isPixel, isSustainNote);
 		if (daCheck[0] != "ext")
 		{
 			skin = daCheck;
@@ -267,10 +267,21 @@ class Note extends FlxSprite
 		else
 		{
 			if (isPixel)
-				throw new NotImplementedException();
+			{
+				loadGraphic(daCheck[1]);
+				NU.setupPixelWidth(this, isSustainNote);
+				loadGraphic(daCheck[1], true, Math.floor(width), Math.floor(height));
+
+				setGraphicSize(Std.int(width * NU.daPixelZoom));
+				NU.loadPixelNoteAnims(this, noteData, isSustainNote);
+				antialiasing = false;
+
+				if (isSustainNote)
+					NU.setupSusOffsets(this);
+			}
 			else
 			{
-				frames = daCheck[2];
+				frames = daCheck[1];
 				NU.loadNoteAnims(this, noteData, isSustainNote);
 				antialiasing = SaveData.get(ANTIALIASING);
 			}

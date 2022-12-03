@@ -74,31 +74,31 @@ class NoteUtils
             sprite.animation.add('${getColorFromNum(noteData)}Scroll', [pixelInt[noteData] + 4]);
     }
 
-    public static function assetNullCheck(textureCheck:String)
+    public static function assetCheck(textureCheck:String, isSplash:Bool = false)
     {
         var fullPath = Paths.image(textureCheck);
         if (Assets.exists(fullPath)) //gonna check for the png file
             return textureCheck;
-        return "NOTE_assets";
+        return (isSplash == true ? "noteSplashes" : "NOTE_assets");
     }
 
     //maybe check if shit is pixel??
-    public static function nullCheck(textureCheck:String):Dynamic
+    public static function nullCheck(textureCheck:String, isPixel:Bool = false, isSustain:Bool = false):Dynamic
     {
         var skin:String = "NOTE_assets";
         #if STORAGE_ACCESS
         if (SaveData.get(ALLOW_FILESYS))
         {
-            var extArrows = features.StorageAccess.getArrowTexture(textureCheck);
+            var extArrows = features.StorageAccess.getArrowTexture(textureCheck, isPixel, isSustain);
             if (extArrows != null)
-                return ["ext", extArrows[0], extArrows[1]];
+                return ["ext", extArrows];
             else
-                skin = assetNullCheck(textureCheck);
+                skin = assetCheck(textureCheck);
         }
         else
-            skin = assetNullCheck(textureCheck);
+            skin = assetCheck(textureCheck);
         #else
-        skin = assetNullCheck(textureCheck);
+        skin = assetCheck(textureCheck);
         #end
 
         return skin;
@@ -126,7 +126,7 @@ class NoteUtils
         sprite.offsetX -= sprite.lastNoteOffsetXForPixelAutoAdjusting;
     }
 
-    public static function setNSplAnims(sprite:NoteSplash)
+    public static function setSplashAnims(sprite:NoteSplash)
     {
         for (i in 1...3)
         {
@@ -137,7 +137,7 @@ class NoteUtils
         }
     }
 
-    public static function setPsychNSplAnims(sprite:NoteSplash)
+    public static function setPSplashAnims(sprite:NoteSplash)
     {
         for (i in 1...3) 
         {
@@ -156,7 +156,7 @@ class NoteUtils
         return ret;
     }
 
-    public static function noteSplashNullCheck(textureCheck:String)
+    public static function noteSplashNullCheck(textureCheck:String):Dynamic
     {
         var skin:String = "noteSplashes";
         #if STORAGE_ACCESS
@@ -164,25 +164,57 @@ class NoteUtils
         {
             var extSplashes = features.StorageAccess.getNoteSplashes(textureCheck);
             if (extSplashes != null)
-            {
-                var splashesOffset = features.StorageAccess.getNoteSplashOffset(textureCheck);
-                
-            }
+                return ["ext", extSplashes];
+            else
+                skin = assetCheck(textureCheck, true);
         }
         else
-            skin = assetNoteSplashNullCheck(textureCheck);
+            skin = assetCheck(textureCheck, true);
         #else
-        skin = assetNoteSplashNullCheck(textureCheck);
+        skin = assetCheck(textureCheck, true);
         #end
 
         return skin;
     }
 
-    public static function assetNoteSplashNullCheck(textureCheck:String)
+	public static function getNoteSplashOffset(texture:String):Array<Dynamic>
     {
-        var fullPath = Paths.image(textureCheck);
-        if (Assets.exists(fullPath))
-            return textureCheck;
-        return "noteSplashes";
+        #if STORAGE_ACCESS
+        if (SaveData.get(ALLOW_FILESYS))
+        {
+            var offsetPath = features.StorageAccess.makePath(IMAGES, '${texture}_offset.txt');
+
+            if (!features.StorageAccess.exists(offsetPath))
+                return assetNSPOffset(texture);
+            else
+            {
+                var content = sys.io.File.getContent(offsetPath);
+                var split = content.split('|');
+                return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
+            }
+        }
+        else
+            return assetNSPOffset(texture);
+        #else
+        return assetNSPOffset(texture);
+        #end
+    }
+    public static function assetNSPOffset(texture:String)
+    {
+        var defOffset:String = "-26.2|-17"; // default offset if not found
+		var offsetPath:String = Paths.image('${texture}_offset');
+		offsetPath.replace("png", "txt");
+
+		if (!Assets.exists(offsetPath))
+		{
+			var split = defOffset.split('|');
+			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
+		}
+		else
+		{
+			var content = Assets.getText(offsetPath);
+			var split = content.split('|');
+			return [Std.parseFloat(split[0]), Std.parseFloat(split[1])];
+		}
     }
 }
