@@ -1,5 +1,6 @@
 package;
 
+import openfl.Lib;
 import Controls.KeyboardScheme;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
@@ -7,7 +8,8 @@ import flixel.util.FlxSave;
 
 class SaveData
 {
-	private static var settings:Map<Settings, Dynamic> = [
+	private static var settings:Map<Settings, Dynamic> = 
+	[
 		VOLUME => 1,
 		MUTED => false,
 		DOWN_SCROLL => false,
@@ -61,7 +63,8 @@ class SaveData
 		HOLDS_OVER_RECEPTORS => false
 	];
 
-	public static var gameplaySettings:Map<String, Dynamic> = [
+	public static var gameplaySettings:Map<String, Dynamic> = 
+	[
 		'scrollspeed' => 1.0,
 		'scrolltype' => 'multiplicative',
 		'songspeed' => 1.0,
@@ -72,7 +75,8 @@ class SaveData
 		'botplay' => false
 	];
 
-	public static var keyBinds:Map<String, Array<FlxKey>> = [
+	public static var keyBinds:Map<String, Array<FlxKey>> = 
+	[
 		'note_left' => [A, LEFT],
 		'note_down' => [S, DOWN],
 		'note_up' => [W, UP],

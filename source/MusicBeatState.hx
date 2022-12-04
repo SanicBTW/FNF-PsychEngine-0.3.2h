@@ -349,21 +349,4 @@ class MusicBeatState extends FlxUIState
 			val = PlayState.SONG.notes[curSection].sectionBeats;
 		return val == null ? 4 : val;
 	}
-
-	#if android
-	override public function onFocus()
-	{
-		if (SaveData.get(FPS) > FlxG.drawFramerate)
-		{
-			FlxG.updateFramerate = SaveData.get(FPS);
-			FlxG.drawFramerate = SaveData.get(FPS);
-		}
-		else
-		{
-			FlxG.drawFramerate = SaveData.get(FPS);
-			FlxG.updateFramerate = SaveData.get(FPS);
-		}
-		super.onFocus();
-	}
-	#end
 }
