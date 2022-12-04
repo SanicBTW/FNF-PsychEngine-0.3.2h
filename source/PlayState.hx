@@ -145,7 +145,6 @@ class PlayState extends MusicBeatState
 	public var practiceMode:Bool = false;
 
 	public var camHUD:FlxCamera;
-	public var camHUD2:FlxCamera; //fuck
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
@@ -251,7 +250,6 @@ class PlayState extends MusicBeatState
 
 	private var allUIs:Array<FlxCamera> = [];
 	public static var uiHUD:HUD;
-	private var zoomOffset:Float = 0;
 
 	override public function create()
 	{
@@ -318,14 +316,16 @@ class PlayState extends MusicBeatState
 		add(strumLines);
 
 		// for making hud over the notes, stupid but better tbh lol
-		camHUD2 = new FlxCamera();
-		camHUD2.bgColor.alpha = 0;
-		allUIs.push(camHUD2);
-		FlxG.cameras.add(camHUD2);
+		var hudcam = new FlxCamera();
+		hudcam.bgColor.alpha = 0;
+		allUIs.push(hudcam);
+		FlxG.cameras.add(hudcam);
 
 		camOther = new FlxCamera();
 		camOther.bgColor.alpha = 0;
 		FlxG.cameras.add(camOther);
+
+		FlxCamera.defaultCameras = [camGame];
 		CustomFadeTransition.nextCamera = camOther;
 
 		persistentUpdate = true;
@@ -863,7 +863,7 @@ class PlayState extends MusicBeatState
 			isPixelStage
 		);
 		add(uiHUD);
-		uiHUD.cameras = [camHUD2];
+		uiHUD.cameras = [hudcam];
 
 		generateSong();
 
@@ -1585,7 +1585,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-					ready.cameras = [camHUD2];
+					ready.cameras = [camHUD];
 					ready.scrollFactor.set();
 					ready.updateHitbox();
 
@@ -1605,7 +1605,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-					set.cameras = [camHUD2];
+					set.cameras = [camHUD];
 					set.scrollFactor.set();
 					set.updateHitbox();
 
@@ -1625,7 +1625,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
-					go.cameras = [camHUD2];
+					go.cameras = [camHUD];
 					go.scrollFactor.set();
 					go.updateHitbox();
 
@@ -2307,13 +2307,13 @@ class PlayState extends MusicBeatState
 			// foreer stuff
 			if (SaveData.get(SMOOTH_CAMERA_ZOOMS))
 			{
-				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + zoomOffset, FlxG.camera.zoom,  CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
+				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 				for (hud in allUIs)
 					hud.zoom = FlxMath.lerp(1, hud.zoom, CoolUtil.boundTo(1 - (elapsed * 3.125), 0, 1));
 			}
 			else
 			{
-				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom + zoomOffset, FlxG.camera.zoom, 0.95);
+				FlxG.camera.zoom = FlxMath.lerp(defaultCamZoom, FlxG.camera.zoom, 0.95);
 				for (hud in allUIs)
 					hud.zoom = FlxMath.lerp(1, hud.zoom, 0.95);
 			}
@@ -4453,7 +4453,6 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX + char.cameraPosition[0] + opponentCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + opponentCameraOffset[1];
-			zoomOffset = char.zoomOffset;
 		}
 		else
 		{
@@ -4466,7 +4465,6 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
-			zoomOffset = char.zoomOffset;
 		}
 	}
 
@@ -4504,7 +4502,7 @@ class PlayState extends MusicBeatState
 			CoolUtil.precacheSound('missnote2');
 			CoolUtil.precacheSound('missnote3');
 		}
-	
+
 		if (Std.parseInt(SaveData.get(HITSOUND_VOL)) > 0)
 			CoolUtil.precacheSound('hitsound');
 
@@ -4551,7 +4549,7 @@ class PlayState extends MusicBeatState
 			combo = 0;
 		else
 			if (!SaveData.get(USE_CLASSIC_COMBOS))
-				combo--;
+			combo--;
 
 		if (!practiceMode)
 			songScore -= 5;
