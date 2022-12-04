@@ -148,14 +148,6 @@ class NoteUtils
 		}
     }
 
-    public static function getSplashType(data:String):String
-    {
-        var ret:String = "engine";
-        if (data.contains("splash"))
-            ret = "psych";
-        return ret;
-    }
-
     public static function noteSplashNullCheck(textureCheck:String):Dynamic
     {
         var skin:String = "noteSplashes";

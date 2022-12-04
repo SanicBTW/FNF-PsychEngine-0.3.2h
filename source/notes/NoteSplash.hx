@@ -60,18 +60,19 @@ class NoteSplash extends FlxSprite
 			animation.curAnim.frameRate = 24 + FlxG.random.int(-2, 2);
 	}
 
+	// will implement a check soon (if the anim is uh psych or engine)
 	function loadAnims(skin:String)
 	{
 		var check:Dynamic = NoteUtils.noteSplashNullCheck(skin);
-		if (check[0] != null)
-		{
-			frames = check[1];
-			NoteUtils.setPSplashAnims(this); // forced, probably the universal is the psych anims
-		}
-		else
+		if (check[0] != "ext") // dumbass
 		{
 			frames = Paths.getSparrowAtlas(check);
 			NoteUtils.setSplashAnims(this);
+		}
+		else
+		{
+			frames = check[1];
+			NoteUtils.setPSplashAnims(this); // forced, probably the universal is the psych anims
 		}
 	}
 
