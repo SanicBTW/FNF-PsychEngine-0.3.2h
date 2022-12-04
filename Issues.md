@@ -5,3 +5,5 @@
 - HTML5 only shows hud elements but on sys targets it works fine, looking into it (no section hit either)
 
 - Downscroll
+
+- When switching back and coming back to game, FPS are capped to 60 (mobile)

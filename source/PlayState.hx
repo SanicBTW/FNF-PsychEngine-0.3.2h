@@ -4515,17 +4515,8 @@ class PlayState extends MusicBeatState
 
 		if (!SaveData.get(USE_CLASSIC_COMBOS))
 		{
-			var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/judgements${isPixelStage ? "-pixel" : ""}.png', "UILib");
-			if (!Assets.exists(path))
-				path = path.replace('-pixel', "");
-	
-			Paths.getGraphic(path);
-
-			var path = Paths.getLibraryPath('${SaveData.get(COMBOS_STYLE)}/combo${isPixelStage ? "-pixel" : ""}.png', "UILib");
-			if (!Assets.exists(path))
-				path = path.replace('-pixel', "");
-
-			Paths.getGraphic(path);
+			Ratings.generateCombo("0", true, isPixelStage, false, createdColor, 0);
+			Ratings.generateRating("sick", true, "late", isPixelStage);
 		}
 	}
 

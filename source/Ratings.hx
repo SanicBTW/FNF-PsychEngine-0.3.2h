@@ -35,6 +35,8 @@ class Ratings
 		var width = 100;
 		var height = 140;
 		var path = Paths.getLibraryPath('${SaveData.get(COMBOS_STYLE)}/combo${isPixel ? "-pixel" : ""}.png', "UILib");
+		if (SaveData.get(COMBOS_STYLE) == "SimplyLove" && isPixel)
+			path = Paths.getLibraryPath('Default/combo-pixel.png', "UILib");
 		if (!Assets.exists(path))
 			path = path.replace('-pixel', "");
 		var graphic = Paths.getGraphic(path);
@@ -116,6 +118,8 @@ class Ratings
 		var width = 500;
 		var height = 163;
 		var path = Paths.getLibraryPath('${SaveData.get(RATINGS_STYLE)}/judgements${isPixel ? "-pixel" : ""}.png', "UILib");
+		if (SaveData.get(RATINGS_STYLE) == "SimplyLove" && isPixel)
+			path = Paths.getLibraryPath('Default/judgements-pixel.png', "UILib");
 		if (!Assets.exists(path))
 			path = path.replace('-pixel', "");
 		var graphic = Paths.getGraphic(path);

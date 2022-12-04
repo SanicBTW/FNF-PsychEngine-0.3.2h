@@ -173,7 +173,9 @@ class MusicBeatState extends FlxUIState
 	{
 		updateSB();
 		updateNotifications();
+		#if !android
 		checkKeyFuncs();
+		#end
 
 		super.update(elapsed);
 	}

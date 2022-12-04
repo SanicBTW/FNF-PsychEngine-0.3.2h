@@ -86,7 +86,9 @@ class MusicBeatSubstate extends FlxUISubState // why tf is musicbeatstate extend
 	override function update(elapsed:Float)
 	{
 		updateSB();
+		#if !android
 		checkKeyFuncs();
+		#end
 
 		super.update(elapsed);
 	}
