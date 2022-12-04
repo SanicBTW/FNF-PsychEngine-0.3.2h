@@ -8,6 +8,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 {
 	public function new()
 	{
+		Paths.clearCache(false, false);
 		title = 'Graphics';
 		rpcTitle = 'Graphics Settings Menu';
 

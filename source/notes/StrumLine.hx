@@ -31,8 +31,9 @@ class StrumLine extends FlxTypedGroup<FlxBasic>
 
 		for (i in 0...keyAmount)
 		{
-			var staticArrow:UIStaticArrow = new UIStaticArrow(x, 60 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), i, isPixel);
+			var staticArrow:UIStaticArrow = new UIStaticArrow(x, 60 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 205 : 0), i, isPixel); // dumb shit i dont understand help
 			staticArrow.ID = i;
+			staticArrow.downScroll = SaveData.get(DOWN_SCROLL); // DUDE I CANT BELIEVE I SPENT A BUNCH OF TIME THINKING OF A FIX TO DOWNSCROLL AND THE ISSUE WAS THAT I FORGOT TO ADD THIS LINEEEE
 
 			staticArrow.x -= ((keyAmount / 2) * NoteUtils.swagWidth);
 			staticArrow.x += (NoteUtils.swagWidth * i);

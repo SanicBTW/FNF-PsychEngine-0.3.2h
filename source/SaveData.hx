@@ -122,12 +122,12 @@ class SaveData
 	public static function saveSettings()
 	{
 		// br
-		set(VOLUME, FlxG.sound.volume);
-		set(MUTED, FlxG.sound.muted);
 		for (settingName => settingValue in settings)
 		{
 			Reflect.setProperty(FlxG.save.data, settingName, settingValue);
 		}
+		set(VOLUME, FlxG.sound.volume);
+		set(MUTED, FlxG.sound.muted);
 		FlxG.save.flush();
 
 		var save:FlxSave = new FlxSave();
