@@ -145,6 +145,7 @@ class PlayState extends MusicBeatState
 	public var practiceMode:Bool = false;
 
 	public var camHUD:FlxCamera;
+	public var camHUD2:FlxCamera; //fuck
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
@@ -260,7 +261,6 @@ class PlayState extends MusicBeatState
 
 		PauseSubState.songName = null; // Reset to default
 		Conductor.recalculateTimings();
-		GameOverSubstate.resetVariables();
 		var stageData = setupStageData(Paths.formatToSongPath(SONG.song));
 
 		//wtf dwag
@@ -318,10 +318,10 @@ class PlayState extends MusicBeatState
 		add(strumLines);
 
 		// for making hud over the notes, stupid but better tbh lol
-		var hudcam = new FlxCamera();
-		hudcam.bgColor.alpha = 0;
-		allUIs.push(hudcam);
-		FlxG.cameras.add(hudcam);
+		camHUD2 = new FlxCamera();
+		camHUD2.bgColor.alpha = 0;
+		allUIs.push(camHUD2);
+		FlxG.cameras.add(camHUD2);
 
 		camOther = new FlxCamera();
 		camOther.bgColor.alpha = 0;
@@ -863,7 +863,7 @@ class PlayState extends MusicBeatState
 			isPixelStage
 		);
 		add(uiHUD);
-		uiHUD.cameras = [hudcam];
+		uiHUD.cameras = [camHUD2];
 
 		generateSong();
 
@@ -1585,7 +1585,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro3' + introSoundsSuffix), 0.6);
 				case 1:
 					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-					ready.cameras = [camHUD];
+					ready.cameras = [camHUD2];
 					ready.scrollFactor.set();
 					ready.updateHitbox();
 
@@ -1605,7 +1605,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro2' + introSoundsSuffix), 0.6);
 				case 2:
 					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
-					set.cameras = [camHUD];
+					set.cameras = [camHUD2];
 					set.scrollFactor.set();
 					set.updateHitbox();
 
@@ -1625,7 +1625,7 @@ class PlayState extends MusicBeatState
 					FlxG.sound.play(Paths.sound('intro1' + introSoundsSuffix), 0.6);
 				case 3:
 					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
-					go.cameras = [camHUD];
+					go.cameras = [camHUD2];
 					go.scrollFactor.set();
 					go.updateHitbox();
 
@@ -4395,7 +4395,7 @@ class PlayState extends MusicBeatState
 	}
 
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
-	var camDisp:Float = 8;
+	var camDisp:Float = 10;
 
 	function cameraDisplacement(character:Character, mustHit:Bool)
 	{
@@ -4422,7 +4422,7 @@ class PlayState extends MusicBeatState
 							case 'singRIGHT':
 								camDisplaceX += camDisp;
 
-							// funky - move to the opposite direction as it missed, would be cool to get the note direction to move in that direction lol
+							// funky - move to the opposite direction as it missed
 							case 'singUPmiss':
 								camDisplaceY += camDisp;
 							case "singDOWNmiss":
@@ -4466,7 +4466,6 @@ class PlayState extends MusicBeatState
 
 			camFollow.x += camDisplaceX - char.cameraPosition[0] + boyfriendCameraOffset[0];
 			camFollow.y += camDisplaceY + char.cameraPosition[1] + boyfriendCameraOffset[1];
-
 			zoomOffset = char.zoomOffset;
 		}
 	}
@@ -4600,6 +4599,8 @@ class PlayState extends MusicBeatState
 
 	function setupStageData(songName:String):StageFile
 	{
+		GameOverSubstate.resetVariables();
+
 		curStage = PlayState.SONG.stage;
 		if (PlayState.SONG.stage == null || PlayState.SONG.stage.length < 1)
 		{
