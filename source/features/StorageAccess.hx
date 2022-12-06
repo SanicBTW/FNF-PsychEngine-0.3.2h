@@ -235,34 +235,23 @@ class StorageAccess
 		#if STORAGE_ACCESS
 		var arrowPath = makePath(IMAGES, '$texture.png');
 		var xmlArrowPath = makePath(IMAGES, '$texture.xml');
+		var arrowPixPath = makePath(IMAGES, '${texture}${isSustain ? "ENDS" : ""}-pixel.png');
 
-		if (exists(arrowPath))
+		if (exists(arrowPath) && isPixel == false)
 		{
-			if (exists(xmlArrowPath) && isPixel == false)
+			if (exists(xmlArrowPath))
 			{
 				var graphic = getGraphic(arrowPath);
 				var frames = FlxAtlasFrames.fromSparrow(graphic, File.getContent(xmlArrowPath));
 				return frames;
 			}
-			else if ((!exists(xmlArrowPath) || exists(xmlArrowPath)) && isPixel == true)
-			{
-				if (isSustain)
-				{
-					var arrowPixNote = makePath(IMAGES, '${texture}ENDS-pixel.png');
-					if (exists(arrowPixNote))
-						return getGraphic(arrowPixNote);
-					else
-						return null;
-				}
-				else
-				{
-					var arrowPixNote = makePath(IMAGES, '$texture-pixel.png');
-					if (exists(arrowPixNote))
-						return getGraphic(arrowPixNote);
-					else
-						return null;
-				}
-			}
+			else
+				return null;
+		}
+		else if (exists(arrowPixPath) && isPixel == true)
+		{
+			if (exists(arrowPixPath))
+				return getGraphic(arrowPixPath);
 			else
 				return null;
 		}

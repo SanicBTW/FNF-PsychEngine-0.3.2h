@@ -3312,9 +3312,6 @@ class PlayState extends MusicBeatState
 		totalNotesHit += judgementInfo[3];
 		songScore += score;
 
-		//daNote.ratingMod = judgementInfo[3];
-		//daNote.rating = daRating;
-
 		// make it more dynamic?
 		switch (daRating)
 		{
@@ -3425,7 +3422,7 @@ class PlayState extends MusicBeatState
 						destroyNote(boyfriendStrums, note);
 					}
 
-					possibleNotes.sort(sortHitNotes);
+					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 
 					var dontCheck = false;
 
@@ -3525,7 +3522,7 @@ class PlayState extends MusicBeatState
 						destroyNote(boyfriendStrums, note);
 					}
 
-					possibleNotes.sort(sortHitNotes);
+					possibleNotes.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 
 					var dontCheck = false;
 
@@ -3666,7 +3663,7 @@ class PlayState extends MusicBeatState
 									canMiss = true;
 								}
 							});
-							sortedNotesList.sort(sortHitNotes);
+							sortedNotesList.sort((a, b) -> Std.int(a.strumTime - b.strumTime));
 
 							if (sortedNotesList.length > 0)
 							{
@@ -4573,17 +4570,6 @@ class PlayState extends MusicBeatState
 		else
 			combo++;
 	}
-
-	function sortHitNotes(a:Note, b:Note):Int
-	{
-		if (a.lowPriority && !b.lowPriority)
-			return 1;
-		else if (!a.lowPriority && b.lowPriority)
-			return -1;
-
-		return FlxSort.byValues(FlxSort.ASCENDING, a.strumTime, b.strumTime);
-	}
-
 	function setupStageData(songName:String):StageFile
 	{
 		GameOverSubstate.resetVariables();

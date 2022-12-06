@@ -42,7 +42,6 @@ class Note extends FlxSprite
 	public var gfNote:Bool = false;
 	public var earlyHitMult:Float = 0.5;
 	public var lateHitMult:Float = 1;
-	public var lowPriority:Bool = false;
 
 	public var noteSplashDisabled:Bool = false;
 	public var noteSplashTexture:String = null;
@@ -317,7 +316,7 @@ class Note extends FlxSprite
 			}
 			else
 			{
-				if (strumTime > Conductor.songPosition - Conductor.safeZoneOffset
+				if (strumTime > Conductor.songPosition - (Conductor.safeZoneOffset * lateHitMult)
 					&& strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
 					canBeHit = true;
 				else
@@ -331,7 +330,7 @@ class Note extends FlxSprite
 		{
 			canBeHit = false;
 
-			if (strumTime <= Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
+			if (strumTime < Conductor.songPosition + (Conductor.safeZoneOffset * earlyHitMult))
 				if ((isSustainNote && prevNote.wasGoodHit) || strumTime <= Conductor.songPosition)
 					wasGoodHit = true;
 		}
