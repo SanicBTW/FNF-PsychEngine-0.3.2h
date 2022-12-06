@@ -111,7 +111,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
         scoreTxt.visible = !hideHud;
         add(scoreTxt);
 
-        botPlayTxt = new FlxText(400, 100 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 150 : 0), FlxG.width - 800, "BOTPLAY", 32);
+        botPlayTxt = new FlxText(400, 100 + (SaveData.get(DOWN_SCROLL) ? FlxG.height - 220 : 0), FlxG.width - 800, "BOTPLAY", 32);
 		botPlayTxt.setFormat(curFont, 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		botPlayTxt.scrollFactor.set();
 		botPlayTxt.borderSize = 1.25;

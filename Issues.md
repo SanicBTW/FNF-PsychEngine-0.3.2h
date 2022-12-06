@@ -4,4 +4,4 @@
 
 - When switching to another app and coming back to game framerate is capped to 60
 
-- Week 7 Cutscenes are no longer synced
+- FPS cap seems to get lower whenever ending songs or leaving them

@@ -249,7 +249,7 @@ class PlayState extends MusicBeatState
 	public static var strumHUD:Array<FlxCamera> = [];
 
 	private var allUIs:Array<FlxCamera> = [];
-	public static var uiHUD:HUD;
+	public var uiHUD:HUD;
 
 	override public function create()
 	{
@@ -332,7 +332,7 @@ class PlayState extends MusicBeatState
 		Conductor.mapBPMChanges(SONG);
 		Conductor.changeBPM(SONG.bpm);
 
-		var songName:String = SONG.song;
+		var songName:String = Paths.formatToSongPath(SONG.song);
 		displaySongName = StringTools.replace(songName, '-', ' ');
 
 		#if desktop
@@ -887,7 +887,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
-		doof.cameras = [camHUD];
+		doof.cameras = [hudcam];
 
 		#if android
 		addAndroidControls();
@@ -912,7 +912,10 @@ class PlayState extends MusicBeatState
 					add(whiteScreen);
 					whiteScreen.scrollFactor.set();
 					whiteScreen.blend = ADD;
-					camHUD.visible = false;
+					for (cam in allUIs)
+					{
+						cam.visible = false;
+					}
 					snapCamFollowToPos(dad.getMidpoint().x + 150, dad.getMidpoint().y - 100);
 					inCutscene = true;
 
@@ -921,7 +924,10 @@ class PlayState extends MusicBeatState
 						ease: FlxEase.linear,
 						onComplete: function(twn:FlxTween)
 						{
-							camHUD.visible = true;
+							for (cam in allUIs)
+							{
+								cam.visible = true;
+							}
 							remove(whiteScreen);
 							startCountdown();
 						}
@@ -937,7 +943,10 @@ class PlayState extends MusicBeatState
 					var blackScreen:FlxSprite = new FlxSprite().makeGraphic(Std.int(FlxG.width * 2), Std.int(FlxG.height * 2), FlxColor.BLACK);
 					add(blackScreen);
 					blackScreen.scrollFactor.set();
-					camHUD.visible = false;
+					for (cam in allUIs)
+					{
+						cam.visible = false;
+					}
 					inCutscene = true;
 
 					FlxTween.tween(blackScreen, {alpha: 0}, 0.7, {
@@ -954,7 +963,10 @@ class PlayState extends MusicBeatState
 
 					new FlxTimer().start(0.8, function(tmr:FlxTimer)
 					{
-						camHUD.visible = true;
+						for (cam in allUIs)
+						{
+							cam.visible = true;
+						}
 						remove(blackScreen);
 						FlxTween.tween(FlxG.camera, {zoom: defaultCamZoom}, 2.5, {
 							ease: FlxEase.quadInOut,
@@ -1103,7 +1115,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			psychDialogue.nextDialogueThing = startNextDialogue;
-			psychDialogue.cameras = [camHUD];
+			psychDialogue.cameras = [allUIs[3]];
 			add(psychDialogue);
 		}
 		else
@@ -1147,7 +1159,10 @@ class PlayState extends MusicBeatState
 			if (songName == 'thorns')
 			{
 				add(red);
-				camHUD.visible = false;
+				for (cam in allUIs)
+				{
+					cam.visible = false;
+				}
 			}
 		}
 
@@ -1184,7 +1199,10 @@ class PlayState extends MusicBeatState
 									FlxG.camera.fade(FlxColor.WHITE, 0.01, true, function()
 									{
 										add(dialogueBox);
-										camHUD.visible = true;
+										for (cam in allUIs)
+										{
+											cam.visible = true;
+										}
 									}, true);
 								});
 								new FlxTimer().start(3.2, function(deadTime:FlxTimer)
@@ -1213,7 +1231,10 @@ class PlayState extends MusicBeatState
 
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		dadGroup.alpha = 0.00001;
-		camHUD.visible = false;
+		for (cam in allUIs)
+		{
+			cam.visible = false;
+		}
 
 		var tankman:FlxSprite = new FlxSprite(-20, 320);
 		tankman.frames = Paths.getSparrowAtlas('cutscenes/' + songName);
@@ -1246,7 +1267,10 @@ class PlayState extends MusicBeatState
 			startCountdown();
 
 			dadGroup.alpha = 1;
-			camHUD.visible = true;
+			for (cam in allUIs)
+			{
+				cam.visible = true;
+			}
 			boyfriend.animation.finishCallback = null;
 			gf.animation.finishCallback = null;
 			gf.dance();

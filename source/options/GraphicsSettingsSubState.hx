@@ -27,7 +27,7 @@ class GraphicsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 
 		option.minValue = 60;
-		option.maxValue = 350;
+		option.maxValue = 500;
 		option.displayFormat = '%v FPS';
 		option.onChange = onChangeFramerate;
 		#end
