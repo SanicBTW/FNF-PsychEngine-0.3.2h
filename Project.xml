@@ -33,9 +33,6 @@
 	<define name="PRELOAD_ALL" unless="web"/>
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 	
-	<!-- library revamp update is here bois -->
-	<!-- osu!beatmaps lib is meant to only give support to html5 beatmap conversion though it will probably get changed for online chart support -->
-
 	<section if="PRELOAD_ALL">
 		<library name="songs"			preload="true"/>
 		<library name="shared"			preload="true"/>
@@ -62,7 +59,6 @@
 		<library name="UILib"			preload="false"/>
 	</section>
 
-	<!--<assets path="assets/charts"			library="charts"		/>-->
 	<assets path="assets/songs"				library="songs"				exclude="*.mp3"/>
 	<assets path="assets/shared"			library="shared"			exclude="*.mp3"/>
 	<assets path="assets/week2"				library="week2"				exclude="*.mp3"/>
@@ -94,8 +90,6 @@
 
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
-	<haxedef name="HXCPP_GC_BIG_BLOCKS"/>
-
 	<!-- _________________________________ Custom _______________________________ -->
 
 	<icon path="icons/icon16.png" size='16'/>
@@ -106,6 +100,6 @@
 	<!-- _____________________________ Engine Features ____________________________ -->
 
 	<define name="STORAGE_ACCESS" if="android || windows || linux" />
-	<define name="ONLINE_SONGS" if="web"/>
+	<define name="ONLINE_SONGS"/>
 
 </project>
