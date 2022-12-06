@@ -97,10 +97,12 @@ class HUD extends FlxTypedGroup<FlxBasic>
 
         iconP1 = new HealthIcon(iconP1Det.name, true);
         iconP1.y = healthBar.y - (iconP1.height / 2);
+        iconP1.visible = !hideHud;
         add(iconP1);
 
         iconP2 = new HealthIcon(iconP2Det.name, false);
         iconP2.y = healthBar.y - (iconP2.height / 2);
+        iconP2.visible = !hideHud;
         add(iconP2);
         reloadHealthBarColors(iconP1Det, iconP2Det);
 
