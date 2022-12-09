@@ -81,8 +81,7 @@
 	<haxelib name="flixel-ui" />
 	<haxelib name="discord_rpc" if="desktop"/>
 
-	<haxelib name="hscript" />
-	<!--<haxelib name="hxjs-fengari"/>-->
+	<haxelib name="hxjs-fengari"/>
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

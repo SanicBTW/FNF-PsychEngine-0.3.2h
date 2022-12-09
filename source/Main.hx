@@ -1,6 +1,5 @@
 package;
 
-import hxs.ScriptHandler;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -75,7 +74,6 @@ class Main extends Sprite
 
 		SaveData.loadDefaultKeys();
 		FlxGraphic.defaultPersist = true;
-		ScriptHandler.initialize();
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);
