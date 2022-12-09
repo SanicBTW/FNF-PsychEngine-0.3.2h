@@ -82,7 +82,6 @@
 	<haxelib name="discord_rpc" if="desktop"/>
 
 	<haxelib name="android6permissions" if="android"/>
-	<!--<haxelib name="hxjs-fengari"/>-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
