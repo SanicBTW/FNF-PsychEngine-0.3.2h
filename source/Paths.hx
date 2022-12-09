@@ -17,7 +17,10 @@ class Paths
 	public static var loadLibs:Array<String> = ["shared"];
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
+
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
+	public static var localTrackedAssets:Array<String> = [];
+
 	static var currentLevel:String;
 
 	static public function setCurrentLevel(name:String)
@@ -161,45 +164,56 @@ class Paths
 	{
 		if (!currentTrackedAssets.exists(file))
 		{
-			var newGraphic = FlxG.bitmap.add(file, false, file);
-			newGraphic.persist = true;
+			var newBitmap = OpenFlAssets.getBitmapData(file, false);
+            var newGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
 			currentTrackedAssets.set(file, newGraphic);
 		}
+		localTrackedAssets.push(file);
 		return currentTrackedAssets.get(file);
+	}
+
+	public static function clearUnusedMemory()
+	{
+		for (key in currentTrackedAssets.keys())
+		{
+			if (!localTrackedAssets.contains(key))
+			{
+				var obj = currentTrackedAssets.get(key);
+				@:privateAccess
+				if (obj != null)
+				{
+					trace("cleared " + key + " from unused memory (graphic)");
+					OpenFlAssets.cache.removeBitmapData(key);
+					FlxG.bitmap._cache.remove(key);
+					currentTrackedAssets.remove(key);
+					obj.destroy();
+				}
+			}
+		}
+
+		System.gc();
+	}
+
+	public static function clearStoredMemory()
+	{
+		@:privateAccess
+		for (key in FlxG.bitmap._cache.keys())
+		{
+			var obj = FlxG.bitmap._cache.get(key);
+			if (obj != null && !currentTrackedAssets.exists(key))
+			{
+				trace("cleared " + key + " from stored memory (graphic)");
+				OpenFlAssets.cache.removeBitmapData(key);
+				FlxG.bitmap._cache.remove(key);
+				obj.destroy();
+			}
+		}
+
+		localTrackedAssets = [];
 	}
 
 	public static function clearCache(clearLibraries:Bool = true, setNulls:Bool = true)
 	{
-		#if STORAGE_ACCESS
-		@:privateAccess
-		for (key in features.StorageAccess.currentTrackedAssets.keys())
-		{
-			var obj = features.StorageAccess.currentTrackedAssets.get(key);
-			if (obj != null)
-			{
-				trace("cleared " + key + " from memory (graphic - storage access)");
-				openfl.Assets.cache.removeBitmapData(key);
-				FlxG.bitmap._cache.remove(key);
-				features.StorageAccess.currentTrackedAssets.remove(key);
-				obj.destroy();
-			}
-		}
-		#end
-
-		@:privateAccess
-		for (key in currentTrackedAssets.keys())
-		{
-			var obj = currentTrackedAssets.get(key);
-			if (obj != null)
-			{
-				trace("cleared " + key + " from memory (graphic - paths)");
-				openfl.Assets.cache.removeBitmapData(key);
-				FlxG.bitmap._cache.remove(key);
-				currentTrackedAssets.remove(key);
-				obj.destroy();
-			}
-		}
-
 		if (clearLibraries)
 		{
 			for (i in 0...clearLibs.length)
@@ -217,8 +231,6 @@ class Paths
 			PlayState.SONG = null;
 			PlayState.songEvents = null;
 		}
-
-		System.gc();
 	}
 
 	// xd

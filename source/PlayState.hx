@@ -255,6 +255,7 @@ class PlayState extends MusicBeatState
 	{
 		instance = this;
 
+		Paths.clearStoredMemory();
 		Paths.clearCache(false, false);
 
 		PauseSubState.songName = null; // Reset to default
@@ -648,6 +649,7 @@ class PlayState extends MusicBeatState
 
 		super.create();
 
+		Paths.clearUnusedMemory();
 		CustomFadeTransition.nextCamera = camOther;
 	}
 
