@@ -81,7 +81,7 @@
 	<haxelib name="flixel-ui" />
 	<haxelib name="discord_rpc" if="desktop"/>
 
-	<haxelib name="android6permissions" if="android"/>
+	<haxelib name="hscript" />
 	<!--<haxelib name="hxjs-fengari"/>-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
@@ -96,10 +96,5 @@
 	<icon path="icons/icon32.png" size='32'/>
 	<icon path="icons/icon64.png" size='64'/>
 	<icon path="icons/iconOG.png" />
-
-	<!-- _____________________________ Engine Features ____________________________ -->
-
-	<define name="STORAGE_ACCESS" if="android || windows || linux" />
-	<define name="ONLINE_SONGS"/>
 
 </project>

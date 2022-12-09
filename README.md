@@ -4,3 +4,6 @@
 
 - Q: Why not Lua? Lua is coming all the way from 0.3.2h probably and supports more mods from Psych
 - A: Well I wanted to make this actually different from every other fork, maybe there is a fork about adding advanced hscript  support to the latest Psych version but I wanted to test out if I could port more Forever stuff into Psych
+- Lua will be added as well but in future updates
+
+# All credits go to Yoshubs and everyone who has worked on "Forever Engine" or "Forever Engine Legacy"

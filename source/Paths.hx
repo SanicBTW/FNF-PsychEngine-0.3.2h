@@ -88,6 +88,11 @@ class Paths
 		return getPath('$key.lua', TEXT, library);
 	}
 
+	inline static public function module(key:String, ?library:String)
+	{
+		return getPath('$key.hxs', TEXT, library);
+	}
+
 	static public function sound(key:String, ?library:String)
 	{
 		return getPath('sounds/$key.$SOUND_EXT', SOUND, library);
