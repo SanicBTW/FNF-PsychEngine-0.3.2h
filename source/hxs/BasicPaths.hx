@@ -26,7 +26,7 @@ class BasicPaths
 
     public function getGraphic(file:String, isStorage:Bool = false)
 	{
-		if (!Paths.currentTrackedAssets.exists(file))
+		if (Paths.currentTrackedAssets.exists(file) == false)
 		{
             trace(isStorage);
             trace(!isStorage);
@@ -47,11 +47,11 @@ class BasicPaths
 		return Paths.currentTrackedAssets.get(file);
 	}
 
-    public function getAsset(file:String, type:AssetType, isStorage:Bool = false):Dynamic
+    public function getAsset(file:String, type:String, isStorage:Bool = false):Dynamic
     {
         switch(type)
         {
-            case IMAGE:
+            case "image":
                 return getGraphic(file, isStorage);
             default:
                 return file;

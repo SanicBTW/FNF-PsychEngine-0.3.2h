@@ -125,7 +125,7 @@ class ForeverModule
     public function exists(field:String):Bool
         return interp.variables.exists(field);
 
-    public function getAsset(file:String, type:AssetType):Dynamic
+    public function getAsset(file:String, type:String):Dynamic
     {
         var path = paths.getPath(file, isStorage);
         trace('Module trying to get asset at $path');
