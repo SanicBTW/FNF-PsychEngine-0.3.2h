@@ -6,4 +6,6 @@
 - A: Well I wanted to make this actually different from every other fork, maybe there is a fork about adding advanced hscript  support to the latest Psych version but I wanted to test out if I could port more Forever stuff into Psych
 - Lua will be added as well but in future updates
 
+- Currently works only on sys targets, seems to be that HTML5 has issues trying to run the same function twice
+
 # All credits go to Yoshubs and everyone who has worked on "Forever Engine" or "Forever Engine Legacy"
