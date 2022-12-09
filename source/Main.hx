@@ -73,6 +73,7 @@ class Main extends Sprite
 		}
 
 		SaveData.loadDefaultKeys();
+		FlxGraphic.defaultPersist = true;
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
 		fpsVar = new FPS(10, 8, 0xFFFFFF);

@@ -23,7 +23,6 @@ import sys.io.File;
 class StorageAccess
 {
 	public static var checkDirs:Map<String, String> = new Map();
-	public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
 	//public static var currentTrackedSounds:Map<String, Sound> = new Map();
 
 	public static function checkStorage()
@@ -180,13 +179,14 @@ class StorageAccess
 	public static function getGraphic(file:String)
 	{
 		#if STORAGE_ACCESS
-		if (!currentTrackedAssets.exists(file))
+		if (!Paths.currentTrackedAssets.exists(file))
 		{
 			var newBitmap:BitmapData = BitmapData.fromFile(file);
 			var newGraphic:FlxGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
-			currentTrackedAssets.set(file, newGraphic);
+			Paths.currentTrackedAssets.set(file, newGraphic);
 		}
-		return currentTrackedAssets.get(file);
+		Paths.localTrackedAssets.push(file);
+		return Paths.currentTrackedAssets.get(file);
 		#end
 	}
 
