@@ -1,5 +1,6 @@
 package hxs;
 
+import flixel.math.FlxPoint;
 import openfl.Assets;
 import openfl.utils.AssetType;
 import hscript.Expr;
@@ -30,6 +31,9 @@ class ScriptHandler
         exp.set("FlxG", FlxG);
         exp.set("FlxSprite", FlxSprite);
         exp.set("FlxMath", FlxMath);
+        exp.set("FlxPoint", FlxPoint);
+
+        exp.set("Conductor", Conductor);
 
         parser.allowTypes = true;
     }
@@ -37,9 +41,53 @@ class ScriptHandler
     public static function loadModule(path:String, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
     {
         trace('Loading Module $path');
-        var modulePath:String = Paths.module(path);
-        trace(modulePath);
-        return new ForeverModule(parser.parseString(Assets.getText(modulePath), modulePath), currentDir, extraParams);
+        var shit = getModule(path);
+        return new ForeverModule(parser.parseString(shit[0], shit[1]), currentDir, extraParams, shit[2]);
+    }
+
+    private static function getModule(path:String):Array<Dynamic>
+    {
+        var modulePath:String = "";
+        var content:String = "";
+        var isStorage:Bool = false;
+        #if STORAGE_ACCESS
+        if (SaveData.get(ALLOW_FILESYS))
+        {
+            var stpath = features.StorageAccess.makePath(MAIN, '$path.hxs');
+            if (!features.StorageAccess.exists(stpath))
+            {
+                var ass = getAssetModule(path);
+                content = ass[0]; modulePath = ass[1];
+            }
+            else
+            {
+                content = sys.io.File.getContent(stpath);
+                modulePath = stpath;
+                isStorage = true;
+            }
+        }
+        else
+        {
+            var ass = getAssetModule(path);
+            content = ass[0]; modulePath = ass[1];
+        }
+        #else
+        var ass = getAssetModule(path);
+        content = ass[0]; modulePath = ass[1];
+        #end
+
+        return [content, modulePath, isStorage];
+    }
+
+    private static function getAssetModule(path:String)
+    {
+        var modulePath:String = "";
+        var content:String = "";
+
+        modulePath = Paths.module(path);
+        content = Assets.getText(modulePath);
+
+        return [content, modulePath];
     }
 }
 
@@ -47,8 +95,9 @@ class ForeverModule
 {
     public var interp:Interp;
     public var paths:BasicPaths;
+    public var isStorage:Bool = false;
 
-    public function new(?contents:Expr, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
+    public function new(?contents:Expr, ?currentDir:String, ?extraParams:StringMap<Dynamic>, isStorage:Bool)
     {
         interp = new Interp();
         for (i in ScriptHandler.exp.keys())
@@ -60,6 +109,7 @@ class ForeverModule
                 interp.variables.set(i, extraParams.get(i));
         }
 
+        this.isStorage = isStorage;
         interp.variables.set('getAsset', getAsset);
         this.paths = new BasicPaths(currentDir);
         interp.variables.set("Paths", this.paths);
@@ -77,14 +127,8 @@ class ForeverModule
 
     public function getAsset(file:String, type:AssetType):Dynamic
     {
-        var path = paths.getPath(file);
+        var path = paths.getPath(file, isStorage);
         trace('Module trying to get asset at $path');
-        if (Assets.exists(path))
-            return paths.getAsset(path, type);
-        else
-        {
-            trace('Module path failed');
-            return null;
-        }
+        return paths.getAsset(path, type, isStorage);
     }
 }

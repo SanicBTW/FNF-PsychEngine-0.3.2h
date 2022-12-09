@@ -8,24 +8,27 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 
 class Stage extends FlxTypedGroup<FlxBasic>
 {
+    private var stageBuild:ForeverModule;
     public function new(stage:String)
     {
         super();
 
         var exposure:StringMap<Dynamic> = new StringMap<Dynamic>();
-        exposure.set("add", addTo);
+        exposure.set("add", function(object:FlxBasic)
+        {
+            if (object is FlxSprite) cast(object, FlxSprite).antialiasing = SaveData.get(ANTIALIASING);
+            add(object);
+        });
         exposure.set("stage", this);
-        var stageBuild:ForeverModule = ScriptHandler.loadModule('stages/$stage/$stage', 'stages/$stage', exposure);
+        stageBuild = ScriptHandler.loadModule('stages/$stage/$stage', 'stages/$stage', exposure);
         if (stageBuild.exists("onCreate"))
             stageBuild.get("onCreate")();
         trace('Module Stage $stage loaded');
     }
 
-    public function addTo(object:FlxBasic)
+    override public function update(elapsed:Float)
     {
-        trace("adding");
-        if (object is FlxSprite)
-            cast(object, FlxSprite).antialiasing = SaveData.get(ANTIALIASING);
-        add(object);
+        if (stageBuild.exists("onUpdate"))
+            stageBuild.get("onUpdate")(elapsed);
     }
 }

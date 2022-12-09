@@ -1,6 +1,7 @@
 
 var bg;
 var stageFront;
+var stageLight;
 var stageCurtains;
 
 function onCreate() {
@@ -24,6 +25,19 @@ function onCreate() {
 	// add to the final array
 	add(stageFront);
 
+	stageLight = new FlxSprite(-125, -100);
+	stageLight.loadGraphic(getAsset('images/stage_light.png', 'image'));
+	stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
+	stageLight.updateHitbox();
+	add(stageLight);
+
+	stageLight = new FlxSprite(1225, -100);
+	stageLight.loadGraphic(getAsset('images/stage_light.png', 'image'));
+	stageLight.setGraphicSize(Std.int(stageLight.width * 1.1));
+	stageLight.updateHitbox();
+	stageLight.flipX = true;
+	add(stageLight);
+
 	stageCurtains = new FlxSprite(-500, -300);
 	stageCurtains.loadGraphic(getAsset('images/stagecurtains.png', 'image'));
 	stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
@@ -36,6 +50,6 @@ function onCreate() {
 	add(stageCurtains);
 }
 
-function onUpdate(elapsed) {
-    
+function onUpdate(elapsed) 
+{
 }

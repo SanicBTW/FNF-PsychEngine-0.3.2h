@@ -1,5 +1,6 @@
 package hxs;
 
+import openfl.display.BitmapData;
 import openfl.system.System;
 import flixel.FlxG;
 import openfl.utils.AssetType;
@@ -10,7 +11,6 @@ import flixel.graphics.FlxGraphic;
 // might need a couple of extra work
 class BasicPaths
 {
-    public static var currentTrackedAssets:Map<String, FlxGraphic> = new Map();
     public static var localTrackedAssets:Array<String> = [];
     public var currentDir:String;
 
@@ -19,76 +19,40 @@ class BasicPaths
         this.currentDir = currentDir;
     }
 
-	inline public function getPath(file:String = '')
+	inline public function getPath(file:String = '', isStorage:Bool = false)
 	{
-		return 'assets/$currentDir/$file';
+		return (isStorage == false ? 'assets/$currentDir/$file' : features.StorageAccess.makePath(MAIN, '$currentDir/$file'));
 	}
 
-    public function image(key:String)
-    {
-        var path = getPath('$key.png');
-        return getGraphic(path);
-    }
-
-    public function getGraphic(file:String)
-    {
-        if (!currentTrackedAssets.exists(file))
-        {
-            var newBitmap = Assets.getBitmapData(file, false);
-            var newGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
-            newGraphic.persist = true;
-            currentTrackedAssets.set(file, newGraphic);
-        }
-        return currentTrackedAssets.get(file);
-    }
-
-    // make these functions on normal paths
-    public static function clearUnusedMemory()
-    {
-        for (key in currentTrackedAssets.keys())
-        {
-            if (!localTrackedAssets.contains(key))
+    public function getGraphic(file:String, isStorage:Bool = false)
+	{
+		if (!Paths.currentTrackedAssets.exists(file))
+		{
+            trace(isStorage);
+            trace(!isStorage);
+            var newBitmap:BitmapData = null;
+            var newGraphic:FlxGraphic = null;
+            if (isStorage)
             {
-                var obj = currentTrackedAssets.get(key);
-                @:privateAccess
-                if (obj != null)
-                {
-                    Assets.cache.removeBitmapData(key);
-                    FlxG.bitmap._cache.remove(key);
-                    currentTrackedAssets.remove(key);
-                    obj.destroy();
-                }
+                newBitmap = BitmapData.fromFile(file);
             }
-        }
-
-        System.gc();
-    }
-
-    public static function clearStoredMemory()
-    {
-        @:privateAccess
-        for (key in FlxG.bitmap._cache.keys())
-        {
-            var obj = FlxG.bitmap._cache.get(key);
-            if (obj != null && !currentTrackedAssets.exists(key))
+            else
             {
-                Assets.cache.removeBitmapData(key);
-                FlxG.bitmap._cache.remove(key);
-                obj.destroy();
+                newBitmap = Assets.getBitmapData(file, false);
             }
-        }
+            newGraphic = FlxGraphic.fromBitmapData(newBitmap, false, file);
+			Paths.currentTrackedAssets.set(file, newGraphic);
+		}
+		Paths.localTrackedAssets.push(file);
+		return Paths.currentTrackedAssets.get(file);
+	}
 
-        localTrackedAssets = [];
-    }
-
-    public function getAsset(file:String, type:AssetType):Dynamic
+    public function getAsset(file:String, type:AssetType, isStorage:Bool = false):Dynamic
     {
         switch(type)
         {
             case IMAGE:
-                return getGraphic(file);
-            case TEXT:
-                return Assets.getText(file);
+                return getGraphic(file, isStorage);
             default:
                 return file;
         }

@@ -82,7 +82,7 @@
 	<haxelib name="discord_rpc" if="desktop"/>
 
 	<haxelib name="hscript" />
-	<!--<haxelib name="hxjs-fengari"/>-->
+	<haxelib name="android6permissions" if="android"/>
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
@@ -97,4 +97,7 @@
 	<icon path="icons/icon64.png" size='64'/>
 	<icon path="icons/iconOG.png" />
 
+	<!-- _____________________________ Engine Features ____________________________ -->
+
+	<define name="STORAGE_ACCESS" if="android || windows || linux" />
 </project>

@@ -30,6 +30,12 @@ using StringTools;
 import Discord.DiscordClient;
 import sys.thread.Thread;
 #end
+#if android
+import com.player03.android6.Permissions;
+#end
+#if STORAGE_ACCESS
+import features.StorageAccess;
+#end
 
 class TitleState extends MusicBeatState
 {
@@ -57,18 +63,26 @@ class TitleState extends MusicBeatState
 		FlxG.sound.muteKeys = muteKeys;
 		FlxG.sound.volumeDownKeys = volumeDownKeys;
 		FlxG.sound.volumeUpKeys = volumeUpKeys;
+		#if STORAGE_ACCESS
 		#if android
 		FlxG.android.preventDefaultKeys = [BACK];
+		if (Permissions.hasPermission(Permissions.READ_EXTERNAL_STORAGE)
+			&& Permissions.hasPermission(Permissions.WRITE_EXTERNAL_STORAGE)
+			&& SaveData.get(ALLOW_FILESYS))
+		{
+			StorageAccess.checkStorage();
+		}
+		#end
+		#if windows
+		if (SaveData.get(ALLOW_FILESYS))
+		{
+			StorageAccess.checkStorage();
+		}
+		#end
 		#end
 
 		FlxG.keys.preventDefaultKeys = [TAB];
 		FlxG.mouse.visible = false;
-
-		PlayerSettings.init();
-
-		FlxG.save.bind('funkin', 'sanicbtw');
-		SaveData.loadSettings();
-		Paths.prepareLibraries();
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 

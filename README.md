@@ -8,4 +8,8 @@
 
 - Currently works only on sys targets, seems to be that HTML5 has issues trying to run the same function twice
 
+TODO:
+
+- Improve assets code
+
 # All credits go to Yoshubs and everyone who has worked on "Forever Engine" or "Forever Engine Legacy"
