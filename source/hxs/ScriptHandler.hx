@@ -41,53 +41,8 @@ class ScriptHandler
     public static function loadModule(path:String, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
     {
         trace('Loading Module $path');
-        var shit = getModule(path);
-        return new ForeverModule(parser.parseString(shit[0], shit[1]), currentDir, extraParams, shit[2]);
-    }
-
-    private static function getModule(path:String):Array<Dynamic>
-    {
-        var modulePath:String = "";
-        var content:String = "";
-        var isStorage:Bool = false;
-        #if STORAGE_ACCESS
-        if (SaveData.get(ALLOW_FILESYS))
-        {
-            var stpath = features.StorageAccess.makePath(MAIN, '$path.hxs');
-            if (!features.StorageAccess.exists(stpath))
-            {
-                var ass = getAssetModule(path);
-                content = ass[0]; modulePath = ass[1];
-            }
-            else
-            {
-                content = sys.io.File.getContent(stpath);
-                modulePath = stpath;
-                isStorage = true;
-            }
-        }
-        else
-        {
-            var ass = getAssetModule(path);
-            content = ass[0]; modulePath = ass[1];
-        }
-        #else
-        var ass = getAssetModule(path);
-        content = ass[0]; modulePath = ass[1];
-        #end
-
-        return [content, modulePath, isStorage];
-    }
-
-    private static function getAssetModule(path:String)
-    {
-        var modulePath:String = "";
-        var content:String = "";
-
-        modulePath = Paths.module(path);
-        content = Assets.getText(modulePath);
-
-        return [content, modulePath];
+        var modulePath:String = Paths.module(path);
+        return new ForeverModule(parser.parseString(Assets.getText(modulePath), modulePath), currentDir, extraParams, false);
     }
 }
 
@@ -95,9 +50,8 @@ class ForeverModule
 {
     public var interp:Interp;
     public var paths:BasicPaths;
-    public var isStorage:Bool = false;
 
-    public function new(?contents:Expr, ?currentDir:String, ?extraParams:StringMap<Dynamic>, isStorage:Bool)
+    public function new(?contents:Expr, ?currentDir:String, ?extraParams:StringMap<Dynamic>, internalStorage:Bool)
     {
         interp = new Interp();
         for (i in ScriptHandler.exp.keys())
@@ -109,9 +63,7 @@ class ForeverModule
                 interp.variables.set(i, extraParams.get(i));
         }
 
-        this.isStorage = isStorage;
-        interp.variables.set('getAsset', getAsset);
-        this.paths = new BasicPaths(currentDir);
+        this.paths = new BasicPaths(currentDir, internalStorage);
         interp.variables.set("Paths", this.paths);
         interp.execute(contents);
     }
@@ -124,11 +76,4 @@ class ForeverModule
 
     public function exists(field:String):Bool
         return interp.variables.exists(field);
-
-    public function getAsset(file:String, type:String):Dynamic
-    {
-        var path = paths.getPath(file, isStorage);
-        trace('Module trying to get asset at $path');
-        return paths.getAsset(path, type, isStorage);
-    }
 }

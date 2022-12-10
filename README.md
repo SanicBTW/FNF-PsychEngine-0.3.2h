@@ -8,8 +8,17 @@
 
 - Currently works only on sys targets, seems to be that HTML5 has issues trying to run the same function twice
 
-TODO:
+## Current Progress
 
-- Improve assets code
+- Module Code:
+- - Works fine but I might need to change some stuff
+- - Assets access needs to be improved
+- - Local storage access was written but removed to improve it
+
+- Stage:
+- - Works fine on all targets except HTML5, currently working on a fix
+
+- Notes:
+- - This part will use Forever Engine implementation as it seems to be more softcoded
 
 # All credits go to Yoshubs and everyone who has worked on "Forever Engine" or "Forever Engine Legacy"
