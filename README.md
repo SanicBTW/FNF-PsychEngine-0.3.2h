@@ -12,13 +12,21 @@
 
 - Module Code:
 - - Works fine but I might need to change some stuff
-- - Assets access needs to be improved
-- - Local storage access was written but removed to improve it
+- - Needs null check everywhere to avoid crashes
+- - Paths need to access libraries
 
-- Stage:
+- Stage: (ON HOLD)
 - - Works fine on all targets except HTML5, currently working on a fix
+- - When the stage isn't found it won't crash
+- - Extended usage (added Lullaby's code and mixed with default one)
 
 - Notes:
 - - This part will use Forever Engine implementation as it seems to be more softcoded
+
+- Events:
+- - Might use Lullaby's implementation
+
+- Lyrics: 
+- - Why not, it will use Lullaby's implementation
 
 # All credits go to Yoshubs and everyone who has worked on "Forever Engine" or "Forever Engine Legacy"

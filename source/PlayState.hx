@@ -1,6 +1,8 @@
 package;
 
-import hxs.Stage;
+import hxs.ScriptHandler.ForeverModule;
+import hxs.ChartLoader;
+import hxs.Events;
 import notes.NoteUtils;
 import DialogueBoxPsych;
 import notes.Note.EventNote;
@@ -54,7 +56,7 @@ import openfl.media.Video;
 import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import substates.*;
-import hxs.Note;
+import notes.Note;
 
 using StringTools;
 
@@ -146,6 +148,7 @@ class PlayState extends MusicBeatState
 	public var practiceMode:Bool = false;
 
 	public var camHUD:FlxCamera;
+	public var camHUD2:FlxCamera;
 	public var camGame:FlxCamera;
 	public var camOther:FlxCamera;
 	public var cameraSpeed:Float = 1;
@@ -250,12 +253,14 @@ class PlayState extends MusicBeatState
 	public static var strumHUD:Array<FlxCamera> = [];
 
 	private var allUIs:Array<FlxCamera> = [];
-	public var uiHUD:HUD;
-	#if !html5 private var stageBuild:Stage; #end
+	public static var uiHUD:HUD;
+	public var eventList:Array<PlacedEvent> = [];
 
 	override public function create()
 	{
 		instance = this;
+		Events.obtainEvents();
+		eventList = [];
 
 		Paths.clearStoredMemory();
 		Paths.clearCache(false, false);
@@ -319,10 +324,10 @@ class PlayState extends MusicBeatState
 		add(strumLines);
 
 		// for making hud over the notes, stupid but better tbh lol
-		var hudcam = new FlxCamera();
-		hudcam.bgColor.alpha = 0;
-		allUIs.push(hudcam);
-		FlxG.cameras.add(hudcam);
+		camHUD2 = new FlxCamera();
+		camHUD2.bgColor.alpha = 0;
+		allUIs.push(camHUD2);
+		FlxG.cameras.add(camHUD2);
 
 		camOther = new FlxCamera();
 		camOther.bgColor.alpha = 0;
@@ -359,12 +364,6 @@ class PlayState extends MusicBeatState
 		dadGroup = new FlxSpriteGroup(DAD_X, DAD_Y);
 		gfGroup = new FlxSpriteGroup(GF_X, GF_Y);
 
-		#if !html5
-		stageBuild = new hxs.Stage(curStage);
-		add(stageBuild);
-		#end
-
-		#if html5
 		switch (curStage)
 		{
 			case 'stage': // Week 1
@@ -723,7 +722,6 @@ class PlayState extends MusicBeatState
 				if (!SaveData.get(LOW_QUALITY))
 					foregroundSprites.add(new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']));
 		}
-        #end
 
 		switch (Paths.formatToSongPath(SONG.song))
 		{
@@ -869,7 +867,7 @@ class PlayState extends MusicBeatState
 			isPixelStage
 		);
 		add(uiHUD);
-		uiHUD.cameras = [hudcam];
+		uiHUD.cameras = [camHUD2];
 
 		generateSong();
 
@@ -895,7 +893,7 @@ class PlayState extends MusicBeatState
 
 		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
-		doof.cameras = [hudcam];
+		doof.cameras = [camHUD2];
 
 		#if android
 		addAndroidControls();
@@ -1124,7 +1122,7 @@ class PlayState extends MusicBeatState
 				}
 			}
 			psychDialogue.nextDialogueThing = startNextDialogue;
-			psychDialogue.cameras = [allUIs[3]];
+			psychDialogue.cameras = [camHUD2];
 			add(psychDialogue);
 		}
 		else
@@ -1753,159 +1751,13 @@ class PlayState extends MusicBeatState
 		FlxG.sound.list.add(vocals);
 		FlxG.sound.list.add(new FlxSound().loadEmbedded(instSource));
 
-		var noteData:Array<SwagSection>;
-
-		// NEW SHIT
-		noteData = SONG.notes;
-
-		if (songEvents != null)
+		unspawnNotes = ChartLoader.generateChart(SONG, "Chart", this, isPixelStage);
+		var songName:String = Paths.formatToSongPath(SONG.song);
+		var file:String = Paths.json(songName + "/events");
+		if (OpenFlAssets.exists(file))
 		{
-			for (event in songEvents)
-			{
-				for (i in 0...event[1].length)
-				{
-					var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
-					var subEvent:EventNote = {
-						strumTime: newEventNote[0] + SaveData.get(NOTE_OFFSET),
-						event: newEventNote[1],
-						value1: newEventNote[2],
-						value2: newEventNote[3]
-					};
-					subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
-					eventNotes.push(subEvent);
-					eventPushed(subEvent);
-				}
-			}
-		}
-		else
-		{
-			var songName:String = Paths.formatToSongPath(SONG.song);
-			var file:String = Paths.json(songName + '/events');
-			if (OpenFlAssets.exists(file))
-			{
-				var eventsData:Array<Dynamic> = Song.loadFromJson('events', songName).events;
-				for (event in eventsData) // Event Notes
-				{
-					for (i in 0...event[1].length)
-					{
-						var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
-						var subEvent:EventNote = {
-							strumTime: newEventNote[0] + SaveData.get(NOTE_OFFSET),
-							event: newEventNote[1],
-							value1: newEventNote[2],
-							value2: newEventNote[3]
-						};
-						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
-						eventNotes.push(subEvent);
-						eventPushed(subEvent);
-					}
-				}
-			}
-		}
-
-		for (section in noteData)
-		{
-			for (songNotes in section.sectionNotes)
-			{
-				if (songNotes[1] > -1) // REAL NOTES FFS I HATE MY LIFE SO MUCH
-				{
-					var daStrumTime:Float = songNotes[0];
-					var daNoteData:Int = Std.int(songNotes[1] % 4);
-
-					var gottaHitNote:Bool = section.mustHitSection;
-
-					if (songNotes[1] > 3)
-						gottaHitNote = !section.mustHitSection;
-
-					var oldNote:Note;
-					if (unspawnNotes.length > 0)
-						oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-					else
-						oldNote = null;
-
-					var swagNote:Note = new Note(daStrumTime, daNoteData, oldNote, false, false, isPixelStage);
-					swagNote.mustPress = gottaHitNote;
-					swagNote.sustainLength = songNotes[2];
-					swagNote.gfNote = (section.gfSection && (songNotes[1] < 4));
-					swagNote.noteType = songNotes[3];
-					if (!Std.isOfType(songNotes[3], String))
-						swagNote.noteType = ChartingState.noteTypeList[songNotes[3]];
-
-					swagNote.scrollFactor.set();
-
-					var susLength:Float = swagNote.sustainLength;
-
-					susLength = susLength / Conductor.stepCrochet;
-					unspawnNotes.push(swagNote);
-
-					var floorSus:Int = Math.floor(susLength);
-
-					if (floorSus > 0)
-					{
-						for (susNote in 0...floorSus + 2)
-						{
-							oldNote = unspawnNotes[Std.int(unspawnNotes.length - 1)];
-
-							var sustainNote:Note = new Note(daStrumTime
-								+ (Conductor.stepCrochet * susNote)
-								+ (Conductor.stepCrochet / FlxMath.roundDecimal(songSpeed, 2)), daNoteData,
-								oldNote, true, false, isPixelStage);
-							sustainNote.mustPress = gottaHitNote;
-							sustainNote.gfNote = (section.gfSection && (songNotes[1] < 4));
-							sustainNote.noteType = swagNote.noteType;
-							sustainNote.scrollFactor.set();
-
-							unspawnNotes.push(sustainNote);
-
-							if (sustainNote.mustPress)
-								sustainNote.x += FlxG.width / 2;
-
-							if (SaveData.get(OSU_MANIA_SIMULATION) && susLength < susNote)
-								sustainNote.isLiftNote = true;
-						}
-					}
-
-					swagNote.mustPress = gottaHitNote;
-
-					if (swagNote.mustPress)
-					{
-						swagNote.x += FlxG.width / 2; // general offset
-					}
-				}
-				else // THE FUCKING STUPID EVENT NOTES GOD
-				{
-					for (i in 0...songNotes[1].length)
-					{
-						var newEventNote:Array<Dynamic> = [songNotes[0], songNotes[1][i][0], songNotes[1][i][1], songNotes[1][i][2]];
-						var subEvent:EventNote = {
-							strumTime: newEventNote[0] + SaveData.get(NOTE_OFFSET),
-							event: newEventNote[1],
-							value1: newEventNote[2],
-							value2: newEventNote[3]
-						};
-						subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
-						eventNotes.push(subEvent);
-						eventPushed(subEvent);
-					}
-				}
-			}
-		}
-
-		for (event in SONG.events) // Event Notes
-		{
-			for (i in 0...event[1].length)
-			{
-				var newEventNote:Array<Dynamic> = [event[0], event[1][i][0], event[1][i][1], event[1][i][2]];
-				var subEvent:EventNote = {
-					strumTime: newEventNote[0] + SaveData.get(NOTE_OFFSET),
-					event: newEventNote[1],
-					value1: newEventNote[2],
-					value2: newEventNote[3]
-				};
-				subEvent.strumTime -= eventNoteEarlyTrigger(subEvent);
-				eventNotes.push(subEvent);
-				eventPushed(subEvent);
-			}
+			var eventsData:SwagSong = Song.loadFromJson('events', songName);
+			eventList = ChartLoader.generateChart(eventsData, 'event', this, isPixelStage);
 		}
 
 		unspawnNotes.sort(sortByShit);
@@ -2636,6 +2488,20 @@ class PlayState extends MusicBeatState
 
 	public function checkEventNote()
 	{
+		if (eventList.length > 0)
+		{
+			for (i in 0...eventList.length)
+			{
+				if (eventList[i] != null && Conductor.songPosition >= eventList[i].timestamp)
+				{
+					var module:ForeverModule = Events.loadedModules.get(eventList[i].eventName);
+					if (module.exists("eventFunction"))
+						module.get("eventFunction")(eventList[i].params);
+					trace(eventList.splice(i, 1));
+				}
+			}
+		}
+		/*
 		while (eventNotes.length > 0)
 		{
 			var leStrumTime:Float = eventNotes[0].strumTime;
@@ -2654,7 +2520,7 @@ class PlayState extends MusicBeatState
 
 			triggerEventNote(eventNotes[0].event, value1, value2);
 			eventNotes.shift();
-		}
+		}*/
 	}
 
 	public function triggerEventNote(eventName:String, value1:String, value2:String, ?onLua:Bool = false)

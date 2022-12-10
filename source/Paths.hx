@@ -13,8 +13,8 @@ using StringTools;
 
 class Paths
 {
-	public static var clearLibs:Array<String> = ["shared", "ClassicUILib", "UILib", "songs", "images"];
-	public static var loadLibs:Array<String> = ["shared"];
+	public static var clearLibs:Array<String> = ["shared", "ClassicUILib", "UILib", "songs", "images", "events"];
+	public static var loadLibs:Array<String> = ["shared", "events"];
 	inline public static var SOUND_EXT = "ogg";
 	inline public static var VIDEO_EXT = "mp4";
 
@@ -182,7 +182,6 @@ class Paths
 				@:privateAccess
 				if (obj != null)
 				{
-					trace("cleared " + key + " from unused memory (graphic)");
 					OpenFlAssets.cache.removeBitmapData(key);
 					FlxG.bitmap._cache.remove(key);
 					currentTrackedAssets.remove(key);
@@ -202,7 +201,6 @@ class Paths
 			var obj = FlxG.bitmap._cache.get(key);
 			if (obj != null && !currentTrackedAssets.exists(key))
 			{
-				trace("cleared " + key + " from stored memory (graphic)");
 				OpenFlAssets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
 				obj.destroy();
@@ -221,7 +219,7 @@ class Paths
 				Assets.cache.clear(clearLibs[i]);
 			}
 
-			clearLibs = ["shared", "ClassicUILib", "UILib", "songs", "images"];
+			clearLibs = ["shared", "ClassicUILib", "UILib", "songs", "images", "events"];
 		}
 
 		if (setNulls)

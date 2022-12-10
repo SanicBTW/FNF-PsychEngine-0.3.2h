@@ -1,11 +1,14 @@
 package hxs;
 
+import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.display.BitmapData;
 import openfl.system.System;
 import flixel.FlxG;
 import openfl.utils.AssetType;
 import openfl.Assets;
 import flixel.graphics.FlxGraphic;
+
+using StringTools;
 
 // based on paths but removes all the useless stuff for modules
 // might need a couple of extra work
@@ -20,16 +23,24 @@ class BasicPaths
         this.internalStorage = internalStorage;
     }
 
-	inline public function getPath(file:String = '')
+	private function getPath(file:String = '', ?library:Null<String> = null)
 	{
+        if (library != null)
+            return '$library:assets/$library/$file';
+
 		return (internalStorage == false ? 'assets/$currentDir/$file' : features.StorageAccess.makePath(MAIN, '$currentDir/$file'));
 	}
 
-    public function image(key:String)
+    public function image(key:String, ?library:String)
     {
-        var path = getPath('$key.png');
-        trace('Module trying to get asset $path');
+        var path = getPath(checkExtension(key, 'png'), library);
+        trace('Module trying to get asset $path as image');
         return getGraphic(path);
+    }
+
+    public function getSparrowAtlas(key:String, ?library:String)
+    {
+        return FlxAtlasFrames.fromSparrow(image(key, library), getText(checkExtension(key, 'xml'), library));
     }
 
     private function getGraphic(file:String)
@@ -43,4 +54,20 @@ class BasicPaths
 		Paths.localTrackedAssets.push(file);
 		return Paths.currentTrackedAssets.get(file);
 	}
+
+    private function getText(file:String, ?library:String)
+    {
+        var path = getPath(file, library);
+        trace('Module trying to get asset $path as text');
+        return (internalStorage == false ? Assets.getText(path) : sys.io.File.getContent(path));
+    }
+
+    // nah bro wtf
+    private function checkExtension(string:String, extension:String)
+    {
+        if (string.endsWith(extension))
+            return string;
+        else
+            return '$string.$extension';
+    }
 }

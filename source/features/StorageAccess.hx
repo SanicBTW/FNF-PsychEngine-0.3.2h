@@ -37,8 +37,7 @@ class StorageAccess
 		setFolder("icons", IMAGES);
 		setFolder("stages");
 		setFolder("weeks");
-		//setFolder("music");
-		//setFolder("sounds");
+		setFolder("events");
 
 		for (varName => dirPath in checkDirs)
 		{
@@ -72,7 +71,7 @@ class StorageAccess
 	public static function getSong(song:String, file:String = "Inst")
 	{
 		#if STORAGE_ACCESS
-		var filePath = Path.join([getFolderPath(SONGS), Paths.formatToSongPath(song), '$file.ogg']);
+		var filePath = makePath(SONGS, Path.join([Paths.formatToSongPath(song), '$file.ogg']));
 		return Sound.fromFile(filePath);
 		#else
 		return null;
@@ -94,7 +93,7 @@ class StorageAccess
 	{
 		#if STORAGE_ACCESS
 		// paths
-		var charJSONP:String = Path.join([getFolderPath(CHARACTERS), char + ".json"]);
+		var charJSONP:String = makePath(CHARACTERS, '$char.json');
 		// we settin these paths if json exists
 		var charGRAPHP:String = "";
 		var charXMLP:String = "";
@@ -106,18 +105,9 @@ class StorageAccess
 			var rawJSON = File.getContent(charJSONP);
 			var json:CharacterFile = cast Json.parse(rawJSON);
 
-			charGRAPHP = Path.join([
-				getFolderPath(CHARACTERS_GRAPHICS),
-				json.image.replace('characters/', "") + ".png"
-			]);
-			charXMLP = Path.join([
-				getFolderPath(CHARACTERS_GRAPHICS),
-				json.image.replace('characters/', "") + ".xml"
-			]);
-			charPACKERP = Path.join([
-				getFolderPath(CHARACTERS_GRAPHICS),
-				json.image.replace('characters/', "") + ".txt"
-			]);
+			charGRAPHP = makePath(CHARACTERS_GRAPHICS, '${json.image.replace('characters/', "")}.png');
+			charXMLP = makePath(CHARACTERS_GRAPHICS, '${json.image.replace('characters/', "")}.xml');
+			charPACKERP = makePath(CHARACTERS_GRAPHICS, '${json.image.replace('characters/', "")}.txt');
 
 			if (exists(charGRAPHP))
 			{
@@ -166,12 +156,18 @@ class StorageAccess
 	public static function getStage(stage:String):Null<StageFile>
 	{
 		#if STORAGE_ACCESS
-		var stageJSON:String = Path.join([getFolderPath(STAGES), stage + ".json"]);
+		var stageJSON:String = makePath(STAGES, Path.join([stage, '$stage.json']));
+		var psychPath:String = makePath(STAGES, '$stage.json');
 
 		if (exists(stageJSON))
 			return cast Json.parse(File.getContent(stageJSON));
 		else
-			return null;
+		{
+			if (exists(psychPath))
+				return cast Json.parse(File.getContent(psychPath));
+			else
+				return null;
+		}
 
 		return null;
 		#else
@@ -182,15 +178,14 @@ class StorageAccess
 	public static function getIcon(character:String)
 	{
 		#if STORAGE_ACCESS
-		var iconName:String = character;
-		var iconPath:String = Path.join([getFolderPath(ICONS), iconName + ".png"]);
+		var iconPath:String = makePath(ICONS, '$character.png');
 
 		if (exists(iconPath))
 			return getGraphic(iconPath);
 		else
 		{
-			var second = "icon-" + iconName;
-			iconPath = Path.join([getFolderPath(ICONS), second + ".png"]);
+			var second = "icon-" + character;
+			iconPath = makePath(ICONS, '$second.png');
 			if (exists(iconPath))
 				return getGraphic(iconPath)
 			else
@@ -317,6 +312,5 @@ enum abstract StorageFolders(String) to String
 	var CHARACTERS_GRAPHICS = "charactersGraphic";
 	var ICONS = "icons";
 	var WEEKS = "weeks";
-	var MUSIC = "music";
-	var SOUNDS = "sounds";
+	var EVENTS = "events";
 }

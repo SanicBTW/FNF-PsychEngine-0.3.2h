@@ -1,0 +1,37 @@
+function returnDescription()
+    return "Plays the \"Hey!\" animation from Bopeebo,\nValue 1: 0 = Only Boyfriend, 1 = Only Girlfriend,\nSomething else = Both.\nValue 2: Custom animation duration,\nleave it blank for 0.6s";
+
+function eventFunction(params)
+{
+    var value:Int = Std.parseInt(params[0]);
+    var time:Float = Std.parseFloat(params[1]);
+    if (Math.isNaN(time) || time <= 0)
+        time = 0.6;
+
+    if (value != 0)
+    {
+        if (dad.curCharacter == "gf")
+        {
+            dad.playAnim('cheer', true);
+            dad.specialAnim = true;
+            dad.heyTimer = time;
+        }
+        else
+        {
+            gf.playAnim('cheer', true);
+            gf.specialAnim = true;
+            gf.heyTimer = time;
+        }
+    }
+    if (value != 1)
+    {
+        boyfriend.playAnim('hey', true);
+        boyfriend.specialAnim = true;
+        boyfriend.heyTimer = time;
+    }
+}
+
+function initFunction(params)
+{
+    trace("sex");
+}

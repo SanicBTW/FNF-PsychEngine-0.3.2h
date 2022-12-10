@@ -82,6 +82,8 @@ class StageData
 			var extStage = features.StorageAccess.getStage(stage);
 			if (extStage != null)
 				return extStage;
+			else
+				return getStageFromAssets(stage);
 		}
 		else
 			return getStageFromAssets(stage);
@@ -94,11 +96,17 @@ class StageData
 
 	private static function getStageFromAssets(stage:String)
 	{
-		var path = Paths.getPreloadPath('stages/' + stage + '.json');
+		var path:String = Paths.getPreloadPath('stages/$stage/$stage.json');
+		var psychPath:String = Paths.getPreloadPath('stages/$stage.json');
 
 		if (Assets.exists(path))
 			return cast Json.parse(Assets.getText(path));
 		else
-			return null;
+		{
+			if (Assets.exists(psychPath))
+				return cast Json.parse(Assets.getText(psychPath))
+			else
+				return null;
+		}
 	}
 }

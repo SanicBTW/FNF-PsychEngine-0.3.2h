@@ -1,5 +1,10 @@
 package hxs;
 
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.util.FlxTimer;
+import flixel.math.FlxRect;
+import flixel.util.FlxColor;
 import flixel.math.FlxPoint;
 import openfl.Assets;
 import openfl.utils.AssetType;
@@ -12,6 +17,13 @@ import hscript.Parser;
 import haxe.ds.StringMap;
 
 using StringTools;
+
+// this coming too from them lol
+class ColorShit
+{
+    public static function fromRGB(Red:Int, Green:Int, Blue:Int, Alpha:Int = 255):FlxColor
+        return FlxColor.fromRGB(Red, Green, Blue, Alpha);
+}
 
 // im using the same class functions to give them credit for their work
 class ScriptHandler
@@ -32,17 +44,65 @@ class ScriptHandler
         exp.set("FlxSprite", FlxSprite);
         exp.set("FlxMath", FlxMath);
         exp.set("FlxPoint", FlxPoint);
+        exp.set("FlxRect", FlxRect);
+		exp.set("FlxTween", FlxTween);
+		exp.set("FlxTimer", FlxTimer);
+		exp.set("FlxEase", FlxEase);
+        exp.set("FlxColor", ColorShit);
 
         exp.set("Conductor", Conductor);
-
+        exp.set("Events", Events);
+        exp.set("Character", Character);
+        exp.set("Boyfriend", Boyfriend);
+        exp.set("HealthIcon", HealthIcon);
+        exp.set("PlayState", PlayState);
+        
         parser.allowTypes = true;
     }
 
     public static function loadModule(path:String, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
     {
         trace('Loading Module $path');
-        var modulePath:String = Paths.module(path);
-        return new ForeverModule(parser.parseString(Assets.getText(modulePath), modulePath), currentDir, extraParams, false);
+        var modulePath:String = "";
+        var moduleContent:String = "";
+        var internalStorage:Bool = false;
+        #if STORAGE_ACCESS
+        if (SaveData.get(ALLOW_FILESYS))
+        {
+            var intPath = features.StorageAccess.makePath(MAIN, '$path.hxs');
+            if (features.StorageAccess.exists(intPath))
+            {
+                modulePath = intPath;
+                moduleContent = sys.io.File.getContent(modulePath);
+                internalStorage = true;
+            }
+            else
+            {
+                modulePath = Paths.module(path);
+                moduleContent = moduleAssetCheck(modulePath);
+            }
+        }
+        else
+        {
+            modulePath = Paths.module(path);
+            moduleContent = moduleAssetCheck(modulePath);
+        }
+        #else
+        modulePath = Paths.module(path);
+        moduleContent = moduleAssetCheck(modulePath);
+        #end
+        if (moduleContent != null)
+            return new ForeverModule(parser.parseString(moduleContent, modulePath), currentDir, extraParams, internalStorage);
+        else
+            return null;
+    }
+
+    private static function moduleAssetCheck(path:String)
+    {
+        if (Assets.exists(path))
+            return Assets.getText(path);
+        else
+            return null;
     }
 }
 
@@ -51,6 +111,7 @@ class ForeverModule
     public var interp:Interp;
     public var paths:BasicPaths;
 
+    public var alive:Bool = true;
     public function new(?contents:Expr, ?currentDir:String, ?extraParams:StringMap<Dynamic>, internalStorage:Bool)
     {
         interp = new Interp();
@@ -67,6 +128,9 @@ class ForeverModule
         interp.variables.set("Paths", this.paths);
         interp.execute(contents);
     }
+
+    public function dispose():Dynamic
+        return this.alive = false;
 
     public function get(field:String):Dynamic
         return interp.variables.get(field);
