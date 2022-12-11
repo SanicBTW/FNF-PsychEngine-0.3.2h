@@ -14,6 +14,7 @@
 - - Works fine but I might need to change some stuff
 - - Needs null check everywhere to avoid crashes
 - - Paths need to access libraries
+- - Have to properly parse the path
 
 - Stage: (ON HOLD)
 - - Works fine on all targets except HTML5, currently working on a fix

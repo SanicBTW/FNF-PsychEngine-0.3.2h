@@ -69,7 +69,12 @@ class ScriptHandler
         #if STORAGE_ACCESS
         if (SaveData.get(ALLOW_FILESYS))
         {
-            var intPath = features.StorageAccess.makePath(MAIN, '$path.hxs');
+            var intPath:String = "";
+            if (path.contains("sanicbtw_pe_files"))
+                intPath = '$path.hxs';
+            else
+                intPath = features.StorageAccess.makePath(MAIN, '$path.hxs');
+
             if (features.StorageAccess.exists(intPath))
             {
                 modulePath = intPath;
@@ -91,8 +96,6 @@ class ScriptHandler
         modulePath = Paths.module(path, library);
         moduleContent = moduleAssetCheck(modulePath);
         #end
-        trace(modulePath);
-        trace(moduleContent);
         if (moduleContent != null)
             return new ForeverModule(parser.parseString(moduleContent, modulePath), currentDir, extraParams, internalStorage);
         else

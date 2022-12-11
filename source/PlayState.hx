@@ -2493,28 +2493,6 @@ class PlayState extends MusicBeatState
 
 	public function checkEventNote()
 	{
-		/*
-		if (eventList.length > 0)
-		{
-			for (i in 0...eventList.length)
-			{
-				if (eventList[i] != null && Conductor.songPosition >= eventList[i].strumTime)
-				{
-					var module:ForeverModule = Events.loadedModules.get(eventList[i].event);
-
-					var value1:String = "";
-					if (eventList[i].value1 != null)
-						value1 = eventList[i].value1;
-
-					var value2:String = "";
-					if (eventList[i].value2 != null)
-						value2 = eventList[i].value2;
-
-					if (module.exists("eventFunction"))
-						module.get("eventFunction")(value1, value2);
-				}
-			}
-		}*/
 		while (eventList.length > 0)
 		{
 			var leStrumTime:Float = eventList[0].strumTime;
