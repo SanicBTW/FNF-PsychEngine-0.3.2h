@@ -23,7 +23,7 @@ jobs:
           ndk-version: r15c
 
       - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2.0.2
+        uses: amyu/setup-android@v2
 
       - name: Setup Java JDK
         uses: actions/setup-java@v2.3.1
