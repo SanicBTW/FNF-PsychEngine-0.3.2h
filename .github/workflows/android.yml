@@ -22,17 +22,18 @@ jobs:
         with:
           ndk-version: r15c
 
-      - name: Setup Java JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: 11
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2.0.2
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v2
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2.3.1
+        with:
+          distribution: 'zulu'
+          java-version: '11'
 
       - uses: krdlab/setup-haxe@master
         with:
-          haxe-version: 4.2.5
+          haxe-version: 4.2.3
       # Runs a set of commands using the runners shell
       - name: Install Haxelib
         run: |
