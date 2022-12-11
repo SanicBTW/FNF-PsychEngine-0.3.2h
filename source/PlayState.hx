@@ -128,7 +128,7 @@ class PlayState extends MusicBeatState
 
 	private var camZooming:Bool = true;
 	private var curSong:String = "";
-	private var gfSpeed:Int = 1;
+	public var gfSpeed:Int = 1;
 	public var health:Float = 1;
 	private var combo:Int = 0;
 
@@ -180,7 +180,7 @@ class PlayState extends MusicBeatState
 	var heyTimer:Float;
 	var bgGirls:BackgroundGirls;
 	var wiggleShit:WiggleEffect = new WiggleEffect();
-	var bgGhouls:BGSprite;
+	public var bgGhouls:BGSprite;
 	var tankWatchtower:BGSprite;
 	var tankGround:BGSprite;
 	var tankmanRun:FlxTypedGroup<TankmenBG>;

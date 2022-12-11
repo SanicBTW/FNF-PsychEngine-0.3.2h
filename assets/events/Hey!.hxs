@@ -23,6 +23,7 @@ function eventFunction(value1, value2)
             PlayState.instance.gf.heyTimer = time;
         }
     }
+
     if (value != 1)
     {
         PlayState.instance.boyfriend.playAnim('hey', true);

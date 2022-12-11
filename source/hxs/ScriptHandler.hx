@@ -56,6 +56,7 @@ class ScriptHandler
         exp.set("Boyfriend", Boyfriend);
         exp.set("HealthIcon", HealthIcon);
         exp.set("PlayState", PlayState);
+        exp.set("SaveData", SaveData);
         
         parser.allowTypes = true;
     }
