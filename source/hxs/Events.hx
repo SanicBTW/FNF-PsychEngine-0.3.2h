@@ -26,17 +26,13 @@ class Events
 
         var futureEvents:Array<String> = [];
         var futureSubEvents:Array<String> = [];
-        var exposure:StringMap<Dynamic> = new StringMap<Dynamic>();
-		exposure.set("boyfriend", PlayState.instance.boyfriend);
-		exposure.set("dad", PlayState.instance.dad);
-		exposure.set("girlfriend", PlayState.instance.dad);
 
         for (event in tempEventArray)
         {
             if (event.contains("."))
             {
                 event = event.substring(0, event.indexOf('.', 0));
-                loadedModules.set(getName(event), ScriptHandler.loadModule('$event', "events", "", exposure));
+                loadedModules.set(getName(event), ScriptHandler.loadModule('$event', "events", ""));
                 futureEvents.push(getName(event));
             }
             else
@@ -47,7 +43,7 @@ class Events
                     for (subEvent in internalEvents)
                     {
                         subEvent = subEvent.substring(0, subEvent.indexOf('.', 0));
-                        loadedModules.set(getName(subEvent), ScriptHandler.loadModule('$event/$subEvent', "events", "", exposure));
+                        loadedModules.set(getName(subEvent), ScriptHandler.loadModule('$event/$subEvent', "events", ""));
                         futureSubEvents.push(getName(subEvent));
                     }
                 }

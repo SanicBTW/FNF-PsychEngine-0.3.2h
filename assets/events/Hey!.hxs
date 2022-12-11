@@ -3,30 +3,30 @@ function returnDescription()
 
 function eventFunction(value1, value2)
 {
-    var value:Int = Std.parseInt(value1);
-    var time:Float = Std.parseFloat(value2);
+    var value = Std.parseInt(value1);
+    var time = Std.parseFloat(value2);
     if (Math.isNaN(time) || time <= 0)
         time = 0.6;
 
     if (value != 0)
     {
-        if (dad.curCharacter == "gf")
+        if (PlayState.instance.dad.curCharacter == "gf")
         {
-            dad.playAnim('cheer', true);
-            dad.specialAnim = true;
-            dad.heyTimer = time;
+            PlayState.instance.dad.playAnim('cheer', true);
+            PlayState.instance.dad.specialAnim = true;
+            PlayState.instance.dad.heyTimer = time;
         }
         else
         {
-            gf.playAnim('cheer', true);
-            gf.specialAnim = true;
-            gf.heyTimer = time;
+            PlayState.instance.gf.playAnim('cheer', true);
+            PlayState.instance.gf.specialAnim = true;
+            PlayState.instance.gf.heyTimer = time;
         }
     }
     if (value != 1)
     {
-        boyfriend.playAnim('hey', true);
-        boyfriend.specialAnim = true;
-        boyfriend.heyTimer = time;
+        PlayState.instance.boyfriend.playAnim('hey', true);
+        PlayState.instance.boyfriend.specialAnim = true;
+        PlayState.instance.boyfriend.heyTimer = time;
     }
 }
