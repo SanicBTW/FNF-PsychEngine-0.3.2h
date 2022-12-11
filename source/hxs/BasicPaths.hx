@@ -28,7 +28,7 @@ class BasicPaths
         if (library != null)
             return '$library:assets/$library/$file';
 
-		return (internalStorage == false ? 'assets/$currentDir/$file' : features.StorageAccess.makePath(MAIN, '$currentDir/$file'));
+		return #if sys (internalStorage == false ? 'assets/$currentDir/$file' : features.StorageAccess.makePath(MAIN, '$currentDir/$file')); #else 'assets/$currentDir/$file'; #end
 	}
 
     public function image(key:String, ?library:String)
@@ -59,7 +59,7 @@ class BasicPaths
     {
         var path = getPath(file, library);
         trace('Module trying to get asset $path as text');
-        return (internalStorage == false ? Assets.getText(path) : sys.io.File.getContent(path));
+        return #if sys (internalStorage == false ? Assets.getText(path) : sys.io.File.getContent(path) ); #else Assets.getText(path); #end
     }
 
     // nah bro wtf

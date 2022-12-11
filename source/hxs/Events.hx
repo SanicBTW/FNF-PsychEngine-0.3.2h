@@ -5,12 +5,13 @@ import lime.utils.Assets;
 import hxs.ScriptHandler.ForeverModule;
 using StringTools;
 
-typedef PlacedEvent = 
+typedef EventNote =
 {
-    var timestamp:Float;
-    var params:Array<Dynamic>;
-    var eventName:String;
-}; 
+    strumTime:Float,
+    event:String,
+    value1:String,
+    value2:String
+}
 
 class Events
 {
@@ -35,8 +36,8 @@ class Events
             if (event.contains("."))
             {
                 event = event.substring(0, event.indexOf('.', 0));
-                loadedModules.set(event, ScriptHandler.loadModule('$event', "", exposure));
-                futureEvents.push(event);
+                loadedModules.set(getName(event), ScriptHandler.loadModule('$event', "events", "", exposure));
+                futureEvents.push(getName(event));
             }
             else
             {
@@ -46,8 +47,8 @@ class Events
                     for (subEvent in internalEvents)
                     {
                         subEvent = subEvent.substring(0, subEvent.indexOf('.', 0));
-                        loadedModules.set(subEvent, ScriptHandler.loadModule('$event/$subEvent', "", exposure));
-                        futureSubEvents.push(subEvent);
+                        loadedModules.set(getName(subEvent), ScriptHandler.loadModule('$event/$subEvent', "events", "", exposure));
+                        futureSubEvents.push(getName(subEvent));
                     }
                 }
             }
@@ -134,14 +135,13 @@ class Events
     // to return the event name instead of the path to it
     private static function getName(fullString:String)
     {
-        var returnString = fullString;
         if (fullString.contains("assets/"))
-            returnString = fullString.replace("assets/events/", "");
+            return fullString.replace("assets/events/", "");
+        #if STORAGE_ACCESS
         else
-            #if STORAGE_ACCESS
-            returnString = fullString.replace('${features.StorageAccess.getFolderPath(EVENTS)}/', "");
-            #end
+            return fullString.replace('${features.StorageAccess.getFolderPath(EVENTS)}/', "");
+        #end
 
-        return returnString;
+        return '';
     }
 }

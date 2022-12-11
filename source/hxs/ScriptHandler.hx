@@ -60,7 +60,7 @@ class ScriptHandler
         parser.allowTypes = true;
     }
 
-    public static function loadModule(path:String, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
+    public static function loadModule(path:String, ?library:String, ?currentDir:String, ?extraParams:StringMap<Dynamic>)
     {
         trace('Loading Module $path');
         var modulePath:String = "";
@@ -78,19 +78,21 @@ class ScriptHandler
             }
             else
             {
-                modulePath = Paths.module(path);
+                modulePath = Paths.module(path, library);
                 moduleContent = moduleAssetCheck(modulePath);
             }
         }
         else
         {
-            modulePath = Paths.module(path);
+            modulePath = Paths.module(path, library);
             moduleContent = moduleAssetCheck(modulePath);
         }
         #else
-        modulePath = Paths.module(path);
+        modulePath = Paths.module(path, library);
         moduleContent = moduleAssetCheck(modulePath);
         #end
+        trace(modulePath);
+        trace(moduleContent);
         if (moduleContent != null)
             return new ForeverModule(parser.parseString(moduleContent, modulePath), currentDir, extraParams, internalStorage);
         else

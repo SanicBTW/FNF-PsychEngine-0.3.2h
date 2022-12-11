@@ -91,9 +91,13 @@ class Paths
 		return getPath('$key.lua', TEXT, library);
 	}
 
-	inline static public function module(key:String, ?library:String)
+	// TODO: Parse on script handler
+	static public function module(key:String, ?library:String)
 	{
-		return getPath('$key.hxs', TEXT, library);
+		if (library != null)
+			return (key.contains("assets/") ? '$library:$key.hxs' : '$library:assets/$library/$key.hxs');
+
+		return (key.contains("assets/") ? '$key.hxs' : 'assets/$key.hxs');
 	}
 
 	static public function sound(key:String, ?library:String)

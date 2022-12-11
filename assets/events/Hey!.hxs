@@ -1,10 +1,10 @@
 function returnDescription()
     return "Plays the \"Hey!\" animation from Bopeebo,\nValue 1: 0 = Only Boyfriend, 1 = Only Girlfriend,\nSomething else = Both.\nValue 2: Custom animation duration,\nleave it blank for 0.6s";
 
-function eventFunction(params)
+function eventFunction(value1, value2)
 {
-    var value:Int = Std.parseInt(params[0]);
-    var time:Float = Std.parseFloat(params[1]);
+    var value:Int = Std.parseInt(value1);
+    var time:Float = Std.parseFloat(value2);
     if (Math.isNaN(time) || time <= 0)
         time = 0.6;
 
@@ -29,9 +29,4 @@ function eventFunction(params)
         boyfriend.specialAnim = true;
         boyfriend.heyTimer = time;
     }
-}
-
-function initFunction(params)
-{
-    trace("sex");
 }

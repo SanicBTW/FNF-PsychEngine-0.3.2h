@@ -24,7 +24,7 @@
 - - This part will use Forever Engine implementation as it seems to be more softcoded
 
 - Events:
-- - Might use Lullaby's implementation
+- - Finished, needs to improve - Doesn't work on HTML5
 
 - Lyrics: 
 - - Why not, it will use Lullaby's implementation

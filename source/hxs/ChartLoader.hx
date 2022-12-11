@@ -1,7 +1,7 @@
 package hxs;
 
 import hxs.ScriptHandler.ForeverModule;
-import hxs.Events.PlacedEvent;
+import hxs.Events.EventNote;
 import flixel.FlxG;
 import flixel.math.FlxMath;
 import Section.SwagSection;
@@ -84,7 +84,7 @@ class ChartLoader
                                 if (swagNote.mustPress)
                                     swagNote.x += FlxG.width / 2;
                             case -1:
-                                pushEvent(songNotes, state.eventList);
+                                pushEvent(songNotes, state.eventList, state);
                         }
                     }
                 }
@@ -92,45 +92,48 @@ class ChartLoader
                     trace(eventCount);
 
             case 'event':
-                var eventList:Array<PlacedEvent> = [];
-                for (section in noteData)
+                var eventsList:Array<EventNote> = [];
+                for (event in songData.events)
                 {
-                    for (songNotes in section.sectionNotes)
-                    {
-                        pushEvent(songNotes, eventList);
-                    }
+                    pushEvent(event, eventsList, state);
                 }
-                return eventList;
+                return eventsList;
         }
 
         return unspawnNotes;
     }
 
-    // make compatible with psych events shit
-    public static function pushEvent(note:Array<Dynamic>, myEventList:Array<PlacedEvent>)
+    public static function pushEvent(eventShit:Array<Dynamic>, myEventList:Array<EventNote>, state:PlayState)
     {
-        var daStrumTime:Float = note[0] + SaveData.get(NOTE_OFFSET);
-        if (Events.eventList.contains(note[2]))
+        for (i in 0...eventShit[1].length)
         {
-            var mySelectedEvent:String = Events.eventList[Events.eventList.indexOf(note[2])];
-            if (mySelectedEvent != null)
+            var newEventNote:Array<Dynamic> = [eventShit[0], eventShit[1][i][0], eventShit[1][i][1], eventShit[1][i][2]];
+            var subEvent:EventNote =
             {
-                var module:ForeverModule = Events.loadedModules.get(note[2]);
-                var delay:Float = 0;
-                if (module.exists("returnDelay"))
-                    delay = module.get("returnDelay")();
+                strumTime: newEventNote[0] + SaveData.get(NOTE_OFFSET),
+                event: newEventNote[1],
+                value1: newEventNote[2],
+                value2: newEventNote[3]
+            };
 
-                var myEvent:PlacedEvent =
+            if (Events.eventList.contains(subEvent.event))
+            {
+                var mySelectedEvent:String = Events.eventList[Events.eventList.indexOf(subEvent.event)];
+                if (mySelectedEvent != null)
                 {
-                    timestamp: daStrumTime + (delay * Conductor.stepCrochet),
-                    params: [note[3], note[4]],
-                    eventName: note[2]
-                };
+                    var module:ForeverModule = Events.loadedModules.get(subEvent.event);
+                    var delay:Float = 0;
+                    if (module.exists("returnDelay"))
+                        delay = module.get("returnDelay")();
 
-                if (module.exists("initFunction"))
-                    module.get("initFunction")(myEvent.params);
+                    subEvent.strumTime -= delay;
 
-                myEventList.push(myEvent);
+                    if (module.exists("initFunction"))
+                        module.get("initFunction")(subEvent.value1, subEvent.value2);
+                    
+                    myEventList.push(subEvent);
+                    state.eventPushed(subEvent);
+                }
             }
         }
     }

@@ -5,7 +5,6 @@ import hxs.ChartLoader;
 import hxs.Events;
 import notes.NoteUtils;
 import DialogueBoxPsych;
-import notes.Note.EventNote;
 import Section.SwagSection;
 import Song.SwagSong;
 import StageData.StageFile;
@@ -57,6 +56,7 @@ import openfl.system.System;
 import openfl.utils.Assets as OpenFlAssets;
 import substates.*;
 import notes.Note;
+import hxs.Events.EventNote;
 
 using StringTools;
 
@@ -118,7 +118,6 @@ class PlayState extends MusicBeatState
 	public var gf:Character;
 	public var boyfriend:Character;
 	public var unspawnNotes:Array<Note> = [];
-	public var eventNotes:Array<Dynamic> = [];
 
 	private var lastSection:Int = 0;
 	private var camFollow:FlxPoint;
@@ -254,13 +253,14 @@ class PlayState extends MusicBeatState
 
 	private var allUIs:Array<FlxCamera> = [];
 	public static var uiHUD:HUD;
-	public var eventList:Array<PlacedEvent> = [];
+	public var eventList:Array<EventNote> = [];
 
 	override public function create()
 	{
 		instance = this;
-		Events.obtainEvents();
 		eventList = [];
+
+		Events.obtainEvents();
 
 		Paths.clearStoredMemory();
 		Paths.clearCache(false, false);
@@ -1751,7 +1751,7 @@ class PlayState extends MusicBeatState
 		FlxG.sound.list.add(vocals);
 		FlxG.sound.list.add(new FlxSound().loadEmbedded(instSource));
 
-		unspawnNotes = ChartLoader.generateChart(SONG, "Chart", this, isPixelStage);
+		// wtf is this
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + "/events");
 		if (OpenFlAssets.exists(file))
@@ -1759,15 +1759,20 @@ class PlayState extends MusicBeatState
 			var eventsData:SwagSong = Song.loadFromJson('events', songName);
 			eventList = ChartLoader.generateChart(eventsData, 'event', this, isPixelStage);
 		}
+		unspawnNotes = ChartLoader.generateChart(SONG, "Chart", this, isPixelStage);
+
+		var songEventList:Array<EventNote> = ChartLoader.generateChart(SONG, 'event', this, isPixelStage);
+		for (ev in songEventList)
+			eventList.push(ev);
 
 		unspawnNotes.sort(sortByShit);
-		if (eventNotes.length > 1)
-			eventNotes.sort(sortByTime);
+		if (eventList.length > 1)
+			eventList.sort(sortByTime);
 		checkEventNote();
 		generatedMusic = true;
 	}
 
-	function eventPushed(event:EventNote)
+	public function eventPushed(event:EventNote)
 	{
 		switch (event.event)
 		{
@@ -2492,12 +2497,20 @@ class PlayState extends MusicBeatState
 		{
 			for (i in 0...eventList.length)
 			{
-				if (eventList[i] != null && Conductor.songPosition >= eventList[i].timestamp)
+				if (eventList[i] != null && Conductor.songPosition >= eventList[i].strumTime)
 				{
-					var module:ForeverModule = Events.loadedModules.get(eventList[i].eventName);
+					var module:ForeverModule = Events.loadedModules.get(eventList[i].event);
+
+					var value1:String = "";
+					if (eventList[i].value1 != null)
+						value1 = eventList[i].value1;
+
+					var value2:String = "";
+					if (eventList[i].value2 != null)
+						value2 = eventList[i].value2;
+
 					if (module.exists("eventFunction"))
-						module.get("eventFunction")(eventList[i].params);
-					trace(eventList.splice(i, 1));
+						module.get("eventFunction")(value1, value2);
 				}
 			}
 		}
@@ -3050,7 +3063,7 @@ class PlayState extends MusicBeatState
 			destroyNote(boyfriendStrums, boyfriendStrums.allNotes.members[0]);
 		}
 		unspawnNotes = [];
-		eventNotes = [];
+		eventList = [];
 	}
 
 	public var totalPlayed:Int = 0;
