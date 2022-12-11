@@ -48,6 +48,8 @@ jobs:
           haxelib install flixel-addons 2.11.0 --quiet
           haxelib install android6permissions --quiet
           haxelib install hscript --quiet
+          haxelib set lime 7.9.0
+          haxelib set flixel-addons 2.11.0
           haxelib list
       - name: Setup Lime
         run: |
