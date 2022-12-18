@@ -411,7 +411,9 @@ class FreeplayState extends MusicBeatState
 		if (curSelected >= songs.length)
 			curSelected = 0;
 
-		var newColor:Int = songs[curSelected].color;
+		var newColor:Int = CoolUtil.dominantColor(iconArray[curSelected]);
+		trace(newColor);
+		trace(FlxColor.fromInt(CoolUtil.dominantColor(iconArray[curSelected])));
 		if (newColor != intendedColor)
 		{
 			if (colorTween != null)
