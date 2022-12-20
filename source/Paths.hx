@@ -177,7 +177,6 @@ class Paths
 				@:privateAccess
 				if (obj != null)
 				{
-					trace("cleared " + key + " from unused memory (graphic)");
 					OpenFlAssets.cache.removeBitmapData(key);
 					FlxG.bitmap._cache.remove(key);
 					currentTrackedAssets.remove(key);
@@ -197,7 +196,6 @@ class Paths
 			var obj = FlxG.bitmap._cache.get(key);
 			if (obj != null && !currentTrackedAssets.exists(key))
 			{
-				trace("cleared " + key + " from stored memory (graphic)");
 				OpenFlAssets.cache.removeBitmapData(key);
 				FlxG.bitmap._cache.remove(key);
 				obj.destroy();
