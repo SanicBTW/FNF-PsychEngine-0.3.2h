@@ -1,5 +1,7 @@
 # Psych Engine 0.3.2h - HXS-Forever Branch
 
+# Currently the branch is on hold due to the lack of active development and motivation on it, there's currently not a bunch of errors but not stable
+
 ## This branch focuses on porting "Forever Engine" WIP Rewrite Modding system to Psych Engine
 
 - Q: Why not Lua? Lua is coming all the way from 0.3.2h probably and supports more mods from Psych

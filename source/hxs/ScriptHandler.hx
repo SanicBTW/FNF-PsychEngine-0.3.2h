@@ -67,6 +67,10 @@ class ScriptHandler
         var modulePath:String = "";
         var moduleContent:String = "";
         var internalStorage:Bool = false;
+
+        modulePath = Paths.module(path, library);
+        moduleContent = moduleAssetCheck(modulePath);
+
         #if STORAGE_ACCESS
         if (SaveData.get(ALLOW_FILESYS))
         {
@@ -82,25 +86,9 @@ class ScriptHandler
                 moduleContent = sys.io.File.getContent(modulePath);
                 internalStorage = true;
             }
-            else
-            {
-                modulePath = Paths.module(path, library);
-                moduleContent = moduleAssetCheck(modulePath);
-            }
         }
-        else
-        {
-            modulePath = Paths.module(path, library);
-            moduleContent = moduleAssetCheck(modulePath);
-        }
-        #else
-        modulePath = Paths.module(path, library);
-        moduleContent = moduleAssetCheck(modulePath);
         #end
-        if (moduleContent != null)
-            return new ForeverModule(parser.parseString(moduleContent, modulePath), currentDir, extraParams, internalStorage);
-        else
-            return null;
+        return moduleContent != null ? new ForeverModule(parser.parseString(moduleContent, modulePath), currentDir, extraParams, internalStorage) : null;
     }
 
     private static function moduleAssetCheck(path:String)
