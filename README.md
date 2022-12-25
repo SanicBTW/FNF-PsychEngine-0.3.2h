@@ -45,7 +45,7 @@
     </div>
     <div align="left">
         <h1>Special thanks</h1>
-        <div align="center">
+        <div align="left">
             <h3>Dulce</h3>
             <p>For beta testing the Android version, helping, giving ideas and reporting issues</p>
         </div>
