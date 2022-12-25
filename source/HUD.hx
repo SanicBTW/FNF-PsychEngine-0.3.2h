@@ -199,10 +199,10 @@ class HUD extends FlxTypedGroup<FlxBasic>
     {
         // :P
         var songScore = PlayState.instance.songScore;
-        var songMisses = PlayState.instance.songMisses;
-        var ratingString = PlayState.instance.ratingString;
-        var ratingFC = PlayState.instance.ratingFC;
-        var ratingPercent = PlayState.instance.ratingPercent;
+        var songMisses = Ratings.misses;
+        var ratingString = Ratings.ratingString;
+        var ratingFC = Ratings.ratingFC;
+        var ratingPercent = Highscore.floorDecimal((Ratings.trueAccuracy * 100) / 100, 2);
 
         switch (SaveData.get(SCORE_TEXT_STYLE))
 		{
@@ -213,7 +213,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
 				}
 				else
 				{
-					return 'Score: $songScore • Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
+					return 'Score: $songScore • Accuracy: $ratingPercent% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
 				}
 			case 'Engine':
 				if (ratingString == 'N/A')
@@ -222,7 +222,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
 				}
 				else
 				{
-					return 'Score: $songScore | Misses: $songMisses | Accuracy: ${Highscore.floorDecimal(ratingPercent * 100, 2)}% | $ratingString ($ratingFC)';
+					return 'Score: $songScore | Misses: $songMisses | Accuracy: $ratingPercent% | $ratingString ($ratingFC)';
 				}
 			case 'Psych':
 				if (ratingString == '?')
@@ -231,7 +231,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
 				}
 				else
 				{
-					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString (${Highscore.floorDecimal(ratingPercent * 100, 2)}%) - $ratingFC';
+					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString ($ratingPercent%) - $ratingFC';
 				}
 		}
 		return "";

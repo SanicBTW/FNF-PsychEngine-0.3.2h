@@ -65,18 +65,6 @@ class PlayState extends MusicBeatState
 {
 	public static var STRUM_X = 42;
 	public static var STRUM_X_MIDDLESCROLL = -278;
-	public static var ratingStuff:Array<Dynamic> = [
-		['You Suck!', 0.2], // From 0% to 19%
-		['Shit', 0.4], // From 20% to 39%
-		['Bad', 0.5], // From 40% to 49%
-		['Bruh', 0.6], // From 50% to 59%
-		['Meh', 0.69], // From 60% to 68%
-		['Nice', 0.7], // 69%
-		['Good', 0.8], // From 70% to 79%
-		['Great', 0.9], // From 80% to 89%
-		['Sick!', 1], // From 90% to 99%
-		['Perfect!', 1] // The value on this one isn't used actually, since Perfect is always "1"
-	];
 
 	// event variables
 	private var isCameraOnForcedPos:Bool = false;
@@ -184,8 +172,6 @@ class PlayState extends MusicBeatState
 	var foregroundSprites:FlxTypedGroup<BGSprite>;
 
 	public var songScore:Int = 0;
-	public var songHits:Int = 0;
-	public var songMisses:Int = 0;
 
 	public static var campaignScore:Int = 0;
 	public static var campaignMisses:Int = 0;
@@ -210,11 +196,6 @@ class PlayState extends MusicBeatState
 	var detailsText:String = "";
 	var detailsPausedText:String = "";
 	#end
-
-	public var sicks:Int = 0;
-	public var goods:Int = 0;
-	public var bads:Int = 0;
-	public var shits:Int = 0;
 
 	public var boyfriendCameraOffset:Array<Float> = null;
 	public var opponentCameraOffset:Array<Float> = null;
@@ -254,6 +235,8 @@ class PlayState extends MusicBeatState
 	override public function create()
 	{
 		instance = this;
+
+		Ratings.callReset();
 
 		Paths.clearStoredMemory();
 		Paths.clearCache(false, false);
@@ -998,7 +981,6 @@ class PlayState extends MusicBeatState
 		{
 			startCountdown();
 		}
-		RecalculateRating();
 
 		#if desktop
 		// Updating Discord Rich Presence.
@@ -2480,10 +2462,12 @@ class PlayState extends MusicBeatState
 					strumAngle += daNote.offsetAngle;
 					strumAlpha *= daNote.multAlpha;
 
-					if (strumScroll)
-						daNote.distance = (0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed * daNote.multSpeed);
-					else
-						daNote.distance = (-0.45 * (Conductor.songPosition - daNote.strumTime) * songSpeed * daNote.multSpeed);
+					daNote.distance = 
+					(
+						(strumScroll ? 0.45 : -0.45) *
+						(Conductor.songPosition - daNote.strumTime) *
+						songSpeed * daNote.multSpeed
+					);
 
 					var angleDir = strumDirection * Math.PI / 180;
 					if (daNote.copyAngle)
@@ -3080,7 +3064,7 @@ class PlayState extends MusicBeatState
 			if (SONG.validScore && practice == false && botplay == false)
 			{
 				#if !switch
-				var percent:Float = ratingPercent;
+				var percent:Float = Ratings.trueAccuracy;
 				if (Math.isNaN(percent))
 					percent = 0;
 				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
@@ -3090,7 +3074,7 @@ class PlayState extends MusicBeatState
 			if (isStoryMode)
 			{
 				campaignScore += songScore;
-				campaignMisses += songMisses;
+				campaignMisses += Ratings.misses;
 
 				storyPlaylist.remove(storyPlaylist[0]);
 
@@ -3204,7 +3188,7 @@ class PlayState extends MusicBeatState
 
 		for (scoreInt in 0...stringArray.length)
 		{
-			var numScore:FlxSprite = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative,
+			var numScore:FlxSprite = Ratings.generateCombo(stringArray[scoreInt], (!negative ? Ratings.ratingFC.contains("SFC") : false), isPixelStage, negative,
 				createdColor, scoreInt);
 
 			if (!SaveData.get(COMBO_STACKING))
@@ -3271,7 +3255,7 @@ class PlayState extends MusicBeatState
 
 	private function displayRating(daRating:String, timing:String)
 	{
-		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), timing, isPixelStage);
+		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? Ratings.ratingFC.contains("SFC") : false), timing, isPixelStage);
 		add(rating);
 
 		if (!SaveData.get(COMBO_STACKING))
@@ -3291,6 +3275,12 @@ class PlayState extends MusicBeatState
 		});
 
 		rating.cameras = [camHUD];
+
+		if (Ratings.smallestRating != daRating)
+		{
+			if (Ratings.judgementsMap.get(Ratings.smallestRating)[0] < Ratings.judgementsMap.get(daRating)[0])
+				Ratings.smallestRating = daRating;
+		}
 	}
 
 	private function displayLegacyRating(daRating:String)
@@ -3315,18 +3305,20 @@ class PlayState extends MusicBeatState
 		});
 
 		rating.cameras = [camHUD];
+
+		if (Ratings.smallestRating != daRating)
+		{
+			if (Ratings.judgementsMap.get(Ratings.smallestRating)[0] < Ratings.judgementsMap.get(daRating)[0])
+				Ratings.smallestRating = daRating;
+		}
 	}
 
-	private function popUpScore(daNote:Note = null, timing:String)
+	private function popUpScore(daNote:Note = null, timing:String, daRating:String)
 	{
-		var noteDiff:Float = Math.abs(daNote.strumTime - Conductor.songPosition + SaveData.get(RATING_OFFSET));
 		if (SONG.needsVoices)
 			vocals.volume = 1;
 
-		var score:Int = 350;
-		var daRating = Ratings.judgeNote(noteDiff);
-
-		// look into this
+		// look into this - bruh wtf
 		if (daRating == "miss")
 		{
 			noteMiss(daNote);
@@ -3334,39 +3326,28 @@ class PlayState extends MusicBeatState
 		}
 
 		var judgementInfo = Ratings.judgementsMap.get(daRating);
-		score = judgementInfo[2];
-		totalNotesHit += judgementInfo[3];
-		songScore += score;
+		songScore += judgementInfo[2];
+		Ratings.updateAccuracy(judgementInfo[3]);
 
 		// make it more dynamic?
 		switch (daRating)
 		{
 			case "shit":
 				combo = 0;
-				songMisses++;
+				Ratings.misses++;
 				health -= 0.2;
-				if (!daNote.ratingDisabled)
-					shits++;
+				Ratings.shits++;
 			case "bad":
 				health -= 0.06;
-				if (!daNote.ratingDisabled)
-					bads++;
+				Ratings.bads++;
 			case "good":
-				if (!daNote.ratingDisabled)
-					goods++;
+				Ratings.goods++;
 			case "sick":
-				if (!daNote.ratingDisabled)
-					sicks++;
+				Ratings.sicks++;
 		}
 
 		if (daRating == "sick" && !daNote.noteSplashDisabled)
 			spawnNoteSplashOnNote(daNote);
-
-		if (!daNote.ratingDisabled)
-		{
-			songHits++;
-			updateAccuracy(false);
-		}
 
 		if (SaveData.get(SCORE_ZOOM))
 			if (!cpuControlled)
@@ -3797,8 +3778,6 @@ class PlayState extends MusicBeatState
 
 					if (SaveData.get(MISS_VOL) > 0)
 						FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), SaveData.get(MISS_VOL));
-
-					updateAccuracy();
 			}
 		}
 	}
@@ -3825,37 +3804,41 @@ class PlayState extends MusicBeatState
 
 			if (SaveData.get(MISS_VOL) > 0)
 				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), SaveData.get(MISS_VOL));
-
-			updateAccuracy();
 		}
 	}
 
-	function goodNoteHit(note:Note, released:Bool = false):Void // i hate myself
+	function goodNoteHit(note:Note, released:Bool = false):Void
 	{
-		var timing = "";
-
 		if (!note.wasGoodHit)
 		{
 			if (SaveData.get(HITSOUND_VOL) > 0 && !note.hitsoundDisabled)
 				FlxG.sound.play(Paths.sound('hitsound'), SaveData.get(HITSOUND_VOL));
 
-			if (!note.ratingDisabled)
-			{
-				if (note.strumTime < Conductor.songPosition + SaveData.get(RATING_OFFSET))
-					timing = "late";
-				else
-					timing = "early";
-			}
+			var timing = "";
+			var noteDiff:Float = Math.abs(note.strumTime - Conductor.songPosition + SaveData.get(RATING_OFFSET));
+			var noteRating = Ratings.judgeNote(noteDiff);
+
+			if (note.strumTime < Conductor.songPosition + SaveData.get(RATING_OFFSET))
+				timing = "late";
+			else
+				timing = "early";
 
 			if (!note.isSustainNote || released && note.isLiftNote)
 			{
-				increaseCombo();
-				popUpScore(note, timing);
+				increaseCombo(noteRating, note.noteData);
+				popUpScore(note, timing, noteRating);
+				if (note.childrenNotes.length > 0)
+					Ratings.notesHit++;
 				if (combo > 9999)
 					combo = 9999;
 			}
 			else if (note.isSustainNote)
-				totalNotesHit++;
+			{
+				if (note.parentNote != null)
+				{
+					Ratings.updateAccuracy(100, true, note.parentNote.childrenNotes.length);
+				}
+			}
 
 			health += note.hitHealth * healthGain;
 
@@ -3925,21 +3908,17 @@ class PlayState extends MusicBeatState
 				if (boyfriend.holdTimer + 0.2 > targetHold)
 					boyfriend.holdTimer = targetHold - 0.2;
 			}
-
-			updateAccuracy();
 		}
 	}
 
 	function opponentNoteHit(note:Note):Void
 	{
-		if (note.noteType == 'Hey!' && dad.animOffsets.exists('hey'))
+		if (note.noteType == 'Hey!' && dad.animOffsets.exists('hey') && boyfriend.animOffsets.exists('hey'))
 		{
 			dad.playAnim('hey', true);
 			dad.specialAnim = true;
 			dad.heyTimer = 0.6;
-		}
-		else if (note.noteType == 'Hey!' && boyfriend.animOffsets.exists('hey'))
-		{
+
 			boyfriend.playAnim('hey', true);
 			boyfriend.specialAnim = true;
 			boyfriend.heyTimer = 0.6;
@@ -4367,54 +4346,6 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	public var ratingString:String;
-	public var ratingPercent:Float;
-	public var ratingFC:String;
-
-	public function RecalculateRating()
-	{
-		if (totalPlayed < 1)
-		{
-			switch (SaveData.get(SCORE_TEXT_STYLE))
-			{
-				case 'Engine' | 'Forever':
-					ratingString = "N/A";
-				case 'Psych':
-					ratingString = "?";
-			}
-		}
-		else
-		{
-			if (ratingPercent >= 1)
-			{
-				ratingString = ratingStuff[ratingStuff.length - 1][0];
-			}
-			else
-			{
-				for (i in 0...ratingStuff.length - 1)
-				{
-					if (ratingPercent < ratingStuff[i][1])
-					{
-						ratingString = ratingStuff[i][0];
-						break;
-					}
-				}
-			}
-		}
-
-		ratingFC = "";
-		if (sicks > 0)
-			ratingFC = "SFC";
-		if (goods > 0)
-			ratingFC = "GFC";
-		if (bads > 0 || shits > 0)
-			ratingFC = "FC";
-		if (songMisses > 0 && songMisses < 10)
-			ratingFC = "SDCB";
-		else if (songMisses >= 10)
-			ratingFC = "Clear";
-	}
-
 	// no way is this from sonic.exe v2.5?????¿?¿?!?!?!??!?=?=?=?!?!1
 	var camDisp:Float = 10;
 
@@ -4539,14 +4470,6 @@ class PlayState extends MusicBeatState
 		}
 	}
 
-	function updateAccuracy(incrementTP:Bool = true)
-	{
-		if (incrementTP)
-			totalPlayed++;
-		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
-		RecalculateRating();
-	}
-
 	function openPauseMenu()
 	{
 		if (!paused && startedCountdown && canPause && !inCutscene)
@@ -4570,15 +4493,15 @@ class PlayState extends MusicBeatState
 			combo = 0;
 		else
 			if (!SaveData.get(USE_CLASSIC_COMBOS))
-			combo--;
+				combo--;
 
 		if (!practiceMode)
 			songScore -= 5;
 		if (!endingSong)
 		{
-			songMisses++;
+			Ratings.misses++;
 			songScore -= 15;
-			totalNotesHit -= 1;
+			Ratings.updateAccuracy(Ratings.judgementsMap.get("miss")[3]);
 		}
 
 		if (!SaveData.get(USE_CLASSIC_COMBOS))
@@ -4589,13 +4512,20 @@ class PlayState extends MusicBeatState
 	}
 
 	// wtf
-	function increaseCombo()
+	function increaseCombo(?baseRating:String, direction:Int = 0)
 	{
-		if (combo < 0)
-			combo = 0;
-		else
-			combo++;
+		if (baseRating != null)
+		{
+			if (Ratings.judgementsMap.get(baseRating)[3] > 0)
+			{
+				if (combo < 0) combo = 0;
+				combo++;
+			}
+			else
+				noteMissPress(direction);
+		}
 	}
+
 	function setupStageData(songName:String):StageFile
 	{
 		GameOverSubstate.resetVariables();

@@ -11,14 +11,163 @@ using StringTools;
 
 class Ratings
 {
+	// actual rating and timing shit
+
 	// follows the timings.hx judgementsMap structure on Forever Engine Legacy
-	public static var judgementsMap:Map<String, Array<Dynamic>> = [
-		"sick" => [0, SaveData.get(SICK_WINDOW), 350, 1],
-		"good" => [1, SaveData.get(GOOD_WINDOW), 150, 0.75],
-		"bad" => [2, SaveData.get(BAD_WINDOW), 0, 0.5],
-		"shit" => [3, SaveData.get(SHIT_WINDOW), -50, 0.25],
-		"miss" => [4, 180, -100, -1], // no missWindow or smth so 180, idk if i should -1 on totalNotesHit uhh
+	public static var judgementsMap:Map<String, Array<Dynamic>> = 
+	[
+		"sick" => 
+			[	
+				0, 
+				SaveData.get(SICK_WINDOW), 
+				350, 
+				100, 
+				'SFC'
+			],
+		"good" => 
+			[
+				1, 
+				SaveData.get(GOOD_WINDOW), 
+				150, 
+				75, 
+				'GFC'
+			],
+		"bad" => 
+			[
+				2, 
+				SaveData.get(BAD_WINDOW), 
+				0, 
+				50, 
+				'FC'
+			],
+		"shit" => 
+			[
+				3, 
+				SaveData.get(SHIT_WINDOW), 
+				-50, 
+				25,
+			],
+		"miss" => 
+			[
+				4, 
+				180, // no missWindow or smth so 180,
+				-100, 
+				-100, //idk if i should -1 on totalNotesHit uhh
+			],
 	];
+
+	public static var ratingsMap:Map<String, Float> =
+	[
+		"You suck!" => 0.2,
+		"Shit" => 0.4,
+		"Bad" => 0.5,
+		"Bruh" => 0.6,
+		"Meh" => 0.69,
+		"Nice" => 0.7,
+		"Good" => 0.8,
+		"Great" => 0.9,
+		"Sick!" => 1,
+		"Perfect!" => 1
+	];
+
+	public static var accuracy:Float;
+	public static var trueAccuracy:Float;
+
+	public static var smallestRating:String;
+	public static var ratingString:String;
+	public static var ratingFC:String;
+
+	public static var notesHit:Int = 0;
+
+	public static var sicks:Int = 0;
+	public static var goods:Int = 0;
+	public static var bads:Int = 0;
+	public static var shits:Int = 0;
+	public static var misses:Int = 0;
+
+	// lets fucking go, simplified af
+	public static function judgeNote(ms:Float)
+	{
+		for (judgement => judgementValues in judgementsMap)
+		{
+			if (ms <= judgementValues[1] * Conductor.timeScale)
+			{
+				return judgement;
+			}
+		}
+
+		return 'miss';
+	}
+
+	public static function callReset()
+	{
+		sicks = 0;
+		goods = 0;
+		bads = 0;
+		shits = 0;
+		misses = 0;
+
+		accuracy = 0.001;
+		trueAccuracy = 0;
+
+		smallestRating = "sick";
+
+		switch (SaveData.get(SCORE_TEXT_STYLE))
+		{
+			case 'Engine' | 'Forever':
+				ratingString = "N/A";
+			case 'Psych':
+				ratingString = "?";
+		}
+
+		ratingFC = "";
+
+		notesHit = 0;
+	}
+
+	public static function updateAccuracy(judgement:Int, isSus:Bool = false, susCount:Int = 1)
+	{
+		if (!isSus)
+		{
+			notesHit++;
+			accuracy += (Math.max(0, judgement));
+		}
+		else
+			accuracy += (Math.max(0, judgement) / susCount);
+
+		trueAccuracy = (accuracy / notesHit);
+
+		updateFC();
+		updateRating();
+	}
+
+	public static function updateFC()
+	{
+		ratingFC = "";
+		if (judgementsMap.get(smallestRating)[4] != null)
+			ratingFC = judgementsMap.get(smallestRating)[4];
+		else
+		{
+			if (misses > 0 && misses < 10)
+				ratingFC = "SDCB";
+			else if (misses >= 10)
+				ratingFC = "Clear";
+		}
+	}
+
+	public static function updateRating()
+	{
+		for (rating => threshold in ratingsMap)
+		{
+			if (trueAccuracy / 100 < threshold)
+			{
+				ratingString = rating;
+				break;
+			}
+		}
+	}
+
+	// this manages sprite shit too
 
 	// tf bruh ??? :sob:
 	public static function preparePos()
@@ -200,30 +349,5 @@ class Ratings
 		rating.velocity.y -= FlxG.random.int(140, 175);
 
 		return rating;
-	}
-
-	public static function judgeNote(ms:Float)
-	{
-		var ts:Float = Conductor.timeScale;
-		// dumb ass
-		var timingWindows = 
-		[
-			judgementsMap.get("sick")[1],
-			judgementsMap.get("good")[1],
-			judgementsMap.get("bad")[1],
-			judgementsMap.get("shit")[1],
-			judgementsMap.get("miss")[1],
-		];
-		var ratings = ["sick", "good", "bad", "shit"];
-
-		for (i in 0...timingWindows.length)
-		{
-			if (ms <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))] * ts)
-			{
-				return ratings[i];
-			}
-		}
-
-		return 'miss';
 	}
 }

@@ -62,7 +62,6 @@ class Note extends FlxSprite
 
 	public var hitHealth:Float = 0.023;
 	public var missHealth:Float = 0.0475;
-	public var ratingDisabled:Bool = false;
 
 	public var texture(default, set):String = null;
 
@@ -72,6 +71,9 @@ class Note extends FlxSprite
 	public var hitsoundDisabled:Bool = false;
 	public var isLiftNote:Bool = false;
 	public var isPixel:Bool = false;
+
+	public var parentNote:Note;
+	public var childrenNotes:Array<Note> = [];
 
 	private function set_multSpeed(value:Float):Float
 	{
@@ -198,6 +200,16 @@ class Note extends FlxSprite
 		else if (!isSustainNote)
 			earlyHitMult = 1;
 		x += offsetX;
+
+		if (isSustainNote && prevNote != null)
+		{
+			parentNote = prevNote;
+			while (parentNote.parentNote != null)
+				parentNote = parentNote.parentNote;
+			parentNote.childrenNotes.push(this);
+		}
+		else if (!isSustainNote)
+			parentNote = null;
 	}
 
 	public var lastNoteOffsetXForPixelAutoAdjusting:Float = 0;
@@ -335,7 +347,7 @@ class Note extends FlxSprite
 					wasGoodHit = true;
 		}
 
-		if (tooLate && !inEditor)
+		if (tooLate && !inEditor || (parentNote != null && parentNote.tooLate))
 		{
 			if (alpha > 0.3)
 				alpha = 0.3;
