@@ -119,6 +119,8 @@ class HUD extends FlxTypedGroup<FlxBasic>
 		botPlayTxt.borderSize = 1.25;
 		botPlayTxt.visible = SaveData.getGameplaySetting('botplay', false);
 		add(botPlayTxt);
+
+        updateScore();
     }
 
     private function reloadHealthBarColors(iconP1Det:IconDetails, iconP2Det:IconDetails)
@@ -162,7 +164,6 @@ class HUD extends FlxTypedGroup<FlxBasic>
 
     override public function update(elapsed:Float)
     {
-        scoreTxt.text = getScoreFormat();
         healthBar.value = PlayState.instance.health;
 
         if (botPlayTxt.visible)
@@ -193,6 +194,12 @@ class HUD extends FlxTypedGroup<FlxBasic>
 			iconP2.animation.curAnim.curFrame = 1;
 		else
 			iconP2.animation.curAnim.curFrame = 0;
+    }
+
+    // what the fuck lmao
+    public function updateScore()
+    {
+        scoreTxt.text = getScoreFormat();
     }
 
     private function getScoreFormat():String

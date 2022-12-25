@@ -3326,8 +3326,8 @@ class PlayState extends MusicBeatState
 		}
 
 		var judgementInfo = Ratings.judgementsMap.get(daRating);
-		songScore += judgementInfo[2];
-		Ratings.updateAccuracy(judgementInfo[3]);
+		songScore += judgementInfo[1];
+		Ratings.updateAccuracy(judgementInfo[2]);
 
 		// make it more dynamic?
 		switch (daRating)
@@ -4501,7 +4501,7 @@ class PlayState extends MusicBeatState
 		{
 			Ratings.misses++;
 			songScore -= 15;
-			Ratings.updateAccuracy(Ratings.judgementsMap.get("miss")[3]);
+			Ratings.updateAccuracy(Ratings.judgementsMap.get("miss")[2]);
 		}
 
 		if (!SaveData.get(USE_CLASSIC_COMBOS))
@@ -4516,7 +4516,7 @@ class PlayState extends MusicBeatState
 	{
 		if (baseRating != null)
 		{
-			if (Ratings.judgementsMap.get(baseRating)[3] > 0)
+			if (Ratings.judgementsMap.get(baseRating)[2] > 0)
 			{
 				if (combo < 0) combo = 0;
 				combo++;

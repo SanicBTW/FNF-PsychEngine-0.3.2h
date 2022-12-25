@@ -19,7 +19,6 @@ class Ratings
 		"sick" => 
 			[	
 				0, 
-				SaveData.get(SICK_WINDOW), 
 				350, 
 				100, 
 				'SFC'
@@ -27,7 +26,6 @@ class Ratings
 		"good" => 
 			[
 				1, 
-				SaveData.get(GOOD_WINDOW), 
 				150, 
 				75, 
 				'GFC'
@@ -35,7 +33,6 @@ class Ratings
 		"bad" => 
 			[
 				2, 
-				SaveData.get(BAD_WINDOW), 
 				0, 
 				50, 
 				'FC'
@@ -43,14 +40,12 @@ class Ratings
 		"shit" => 
 			[
 				3, 
-				SaveData.get(SHIT_WINDOW), 
 				-50, 
 				25,
 			],
 		"miss" => 
 			[
 				4, 
-				180, // no missWindow or smth so 180,
 				-100, 
 				-100, //idk if i should -1 on totalNotesHit uhh
 			],
@@ -68,6 +63,15 @@ class Ratings
 		"Great" => 0.9,
 		"Sick!" => 1,
 		"Perfect!" => 1
+	];
+
+	public static var timingWindows:Array<Dynamic> = 
+	[
+		[SaveData.get(SICK_WINDOW), "sick"],
+		[SaveData.get(GOOD_WINDOW), "good"],
+		[SaveData.get(BAD_WINDOW), "bad"],
+		[SaveData.get(SHIT_WINDOW), "shit"],
+		[180, "miss"]
 	];
 
 	public static var accuracy:Float;
@@ -88,11 +92,11 @@ class Ratings
 	// lets fucking go, simplified af
 	public static function judgeNote(ms:Float)
 	{
-		for (judgement => judgementValues in judgementsMap)
+		for (i in 0...timingWindows.length)
 		{
-			if (ms <= judgementValues[1] * Conductor.timeScale)
+			if (ms <= timingWindows[Math.round(Math.min(i, timingWindows.length - 1))][0] * Conductor.timeScale)
 			{
-				return judgement;
+				return timingWindows[Math.round(Math.min(i, timingWindows.length - 1))][1];
 			}
 		}
 
@@ -144,8 +148,8 @@ class Ratings
 	public static function updateFC()
 	{
 		ratingFC = "";
-		if (judgementsMap.get(smallestRating)[4] != null)
-			ratingFC = judgementsMap.get(smallestRating)[4];
+		if (judgementsMap.get(smallestRating)[3] != null)
+			ratingFC = judgementsMap.get(smallestRating)[3];
 		else
 		{
 			if (misses > 0 && misses < 10)
@@ -153,6 +157,8 @@ class Ratings
 			else if (misses >= 10)
 				ratingFC = "Clear";
 		}
+
+		PlayState.instance.uiHUD.updateScore();
 	}
 
 	public static function updateRating()
