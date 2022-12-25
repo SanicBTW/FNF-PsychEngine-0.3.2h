@@ -23,31 +23,32 @@
     </ul>
     <div align="left">
         <h1>Credits</h1>
-        <div align="center">
-            <h2>Psych Engine</h2>
-            <p>For being literally the base of the whole engine</p>
-            <h2>Forever Engine, Legacy Forever Engine and Lullaby team</h2>
-            <li>Rating sprites, timings and accuracy code</li>
-            <li>Note, strum line and receptor code</li>
-            <li>HUD Code</li>
-            <li>Module code (on <a href="https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h/tree/hxs-forever">HXS Forever</a> branch, some code will soon join master branch...)</li>
-            <h2>Plasma Engine</h2>
-            <p>For the notification code</p>
-            <h2>FNFNet</h2>
-            <p>For the online song fetching code on sys targets</p>
-            <h2>Kade Engine</h2>
-            <p>For the amazing input from 1.5.3 and Etterna stuff</p>
-            <h2>Modding Plus</h2>
-            <p>For the OSU!Mania lift simulation code</p>
+        <div>
+            <h3>Psych Engine</h3>
+            <h4>For being literally the base of the whole engine</h4>
+            <h3>Forever Engine, Legacy Forever Engine and Lullaby team</h3>
+            <ul>
+                <li>Rating sprites, timings and accuracy code</li>
+                <li>Note, strum line and receptor code</li>
+                <li>HUD Code</li>
+                <li>Module code (on <a href="https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h/tree/hxs-forever">HXS Forever</a> branch, some code will soon join master branch...)</li>
+            </ul>
+            <h3>Plasma Engine</h3>
+            <h4>For the notification code</h4>
+            <h3>FNFNet</h3>
+            <h4>For the online song fetching code on sys targets</h4>
+            <h3>Kade Engine</h3>
+            <h4>For the amazing input from 1.5.3 and Etterna stuff</h4>
+            <h3>Modding Plus</h3>
+            <h4>For the OSU!Mania lift simulation code</h4>
         </div>
     </div>
     <div align="left">
         <h1>Special thanks</h1>
         <div align="center">
-            <h2>Dulce</h2>
-            <p>For beta testing the Android version, helping, giving ideas and reporting issues</p>
+            <h3>Dulce</h3>
+            <h4>For beta testing the Android version, helping, giving ideas and reporting issues</h4>
         </div>
     </div>
-    <p style="opacity: 0.25; position: fixed; bottom: 0; left: 1rem;">1.3.0 Revamped (Not released)</p>
-    <p style="opacity: 0.25; position: fixed; bottom: 0; right: 1rem;">© 2022 Team Porters</p>
+    <p align="right">1.3.0 Revamped (Not released) - © 2022 Team Porters</p>
 </div>
