@@ -998,10 +998,11 @@ class PlayState extends MusicBeatState
 		if (generatedMusic)
 		{
 			var ratio:Float = value / songSpeed; // funny word huh
-			for (note in dadStrums.allNotes)
-				note.resizeByRatio(ratio);
-			for (note in boyfriendStrums.allNotes)
-				note.resizeByRatio(ratio);
+			for (strumLine in strumLines)
+			{
+				for (note in strumLine.allNotes)
+					note.resizeByRatio(ratio);
+			}
 			for (note in unspawnNotes)
 				note.resizeByRatio(ratio);
 		}
@@ -2345,8 +2346,6 @@ class PlayState extends MusicBeatState
 			var time:Float = spawnTime;
 			if (songSpeed < 1)
 				time /= songSpeed;
-			if (unspawnNotes[0].multSpeed < 1)
-				time /= unspawnNotes[0].multSpeed;
 
 			while (unspawnNotes.length > 0 && unspawnNotes[0].strumTime - Conductor.songPosition < time)
 			{
@@ -2466,7 +2465,7 @@ class PlayState extends MusicBeatState
 					(
 						(strumScroll ? 0.45 : -0.45) *
 						(Conductor.songPosition - daNote.strumTime) *
-						songSpeed * daNote.multSpeed
+						songSpeed
 					);
 
 					var angleDir = strumDirection * Math.PI / 180;

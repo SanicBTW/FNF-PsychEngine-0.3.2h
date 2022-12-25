@@ -53,7 +53,6 @@ class Note extends FlxSprite
 	public var offsetY:Float = 0;
 	public var offsetAngle:Float = 0;
 	public var multAlpha:Float = 1;
-	public var multSpeed(default, set):Float = 1;
 
 	public var copyX:Bool = true;
 	public var copyY:Bool = true;
@@ -74,13 +73,6 @@ class Note extends FlxSprite
 
 	public var parentNote:Note;
 	public var childrenNotes:Array<Note> = [];
-
-	private function set_multSpeed(value:Float):Float
-	{
-		resizeByRatio(value / multSpeed);
-		multSpeed = value;
-		return value;
-	}
 
 	public function resizeByRatio(ratio:Float)
 	{
