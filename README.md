@@ -25,7 +25,7 @@
         <h1>Credits</h1>
         <div>
             <h3>Psych Engine</h3>
-            <h4>For being literally the base of the whole engine</h4>
+            <p>For being literally the base of the whole engine</p>
             <h3>Forever Engine, Legacy Forever Engine and Lullaby team</h3>
             <ul>
                 <li>Rating sprites, timings and accuracy code</li>
@@ -34,20 +34,20 @@
                 <li>Module code (on <a href="https://github.com/SanicBTW/FNF-PsychEngine-0.3.2h/tree/hxs-forever">HXS Forever</a> branch, some code will soon join master branch...)</li>
             </ul>
             <h3>Plasma Engine</h3>
-            <h4>For the notification code</h4>
+            <p>For the notification code</p>
             <h3>FNFNet</h3>
-            <h4>For the online song fetching code on sys targets</h4>
+            <p>For the online song fetching code on sys targets</p>
             <h3>Kade Engine</h3>
-            <h4>For the amazing input from 1.5.3 and Etterna stuff</h4>
+            <p>For the amazing input from 1.5.3 and Etterna stuff</p>
             <h3>Modding Plus</h3>
-            <h4>For the OSU!Mania lift simulation code</h4>
+            <p>For the OSU!Mania lift simulation code</p>
         </div>
     </div>
     <div align="left">
         <h1>Special thanks</h1>
         <div align="center">
             <h3>Dulce</h3>
-            <h4>For beta testing the Android version, helping, giving ideas and reporting issues</h4>
+            <p>For beta testing the Android version, helping, giving ideas and reporting issues</p>
         </div>
     </div>
     <p align="right">1.3.0 Revamped (Not released) - © 2022 Team Porters</p>
