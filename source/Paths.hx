@@ -211,7 +211,13 @@ class Paths
 		{
 			for (i in 0...clearLibs.length)
 			{
-				Assets.cache.clear(clearLibs[i]);
+				/*
+				var library = Assets.getLibrary(clearLibs[i]);
+				for (asset in library.list(null))
+				{
+					Assets.cache.clear(asset);
+				}*/
+				//Assets.cache.clear(clearLibs[i]);
 			}
 
 			clearLibs = ["shared", "ClassicUILib", "UILib", "songs", "images"];

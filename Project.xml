@@ -33,6 +33,7 @@
 	<define name="PRELOAD_ALL" unless="web"/>
 	<define name="NO_PRELOAD_ALL" unless="PRELOAD_ALL"/>
 	
+	<library name="weeks" preload="true"/>
 	<section if="PRELOAD_ALL">
 		<library name="songs"			preload="true"/>
 		<library name="shared"			preload="true"/>
@@ -69,6 +70,7 @@
 	<assets path="assets/week7"				library="week7"				exclude="*.mp3"/>
 	<assets path="assets/ClassicUILib"		library="ClassicUILib"	/>
 	<assets path="assets/UILib"				library="UILib"			/>
+	<assets path="assets/weeks"				library="weeks"			/>
 	<assets path="assets/android"			if="android"			/>
 	<assets path="assets/fonts" 			embed='true'			/>
 

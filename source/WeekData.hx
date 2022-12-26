@@ -44,7 +44,7 @@ class WeekData
 	public var hideStoryMode:Bool;
 	public var hideFreeplay:Bool;
 	public var difficulties:String;
-	public var internal:Bool; // meant only for 
+	public var internal:Bool; // meant only for internal usage
 
 	public var fileName:String;
 
@@ -130,33 +130,34 @@ class WeekData
 		#end
 	}
 
+	// me when spend half an hour trying to fix path issue while library :troll:
 	private static function reloadFromAssets(isStoryMode:Null<Bool> = false)
 	{
-		var directories:Array<String> = [Paths.getPreloadPath()];
-
-		var sexList:Array<String> = CoolUtil.coolTextFile(Paths.getPreloadPath('weeks/weekList.txt'));
-		for (i in 0...sexList.length)
+		// smartass code
+		var library = Assets.getLibrary("weeks");
+		for(asset in library.list(null))
 		{
-			for (j in 0...directories.length)
-			{
-				var fileToCheck:String = directories[j] + 'weeks/' + sexList[i] + '.json';
-				if (!weeksLoaded.exists(sexList[i]))
-				{
-					var week:WeekFile = getWeekFile(fileToCheck);
-					if (week != null)
-					{
-						var weekFile:WeekData = new WeekData(week, sexList[i]);
+			if (!asset.endsWith(".json"))
+				return;
 
-						if (weekFile != null
-							&& (isStoryMode == null
-								|| (isStoryMode && !weekFile.hideStoryMode)
-								|| (!isStoryMode && !weekFile.hideFreeplay)))
-						{
-							weeksLoaded.set(sexList[i], weekFile);
-							weeksList.push(sexList[i]);
-						}
-					}
-				}
+			var weekName = asset.replace("assets/weeks/", "").replace(".json", "");
+			if (weeksLoaded.exists(weekName))
+				return;
+
+			// shit wasnt workin alone with assets/weeks/week.json, it needed the library path too :skull:
+			var weekPath = Paths.getLibraryPath('$weekName.json', 'weeks');
+			var week:WeekFile = getWeekFile(weekPath);
+			if (week == null)
+				return;
+
+			var weekFile:WeekData = new WeekData(week, weekName);
+			if (weekFile != null
+				&& (isStoryMode == null 
+					|| (isStoryMode && !weekFile.hideStoryMode) 
+					|| (!isStoryMode && !weekFile.hideFreeplay)))
+			{
+				weeksLoaded.set(weekName, weekFile);
+				weeksList.push(weekName);
 			}
 		}
 	}
