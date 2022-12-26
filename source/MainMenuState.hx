@@ -126,7 +126,6 @@ class MainMenuState extends MusicBeatState
 		addVirtualPad(UP_DOWN, A);
 		#end
 
-		WeekData.reloadWeekFiles(false);
 		super.create();
 	}
 

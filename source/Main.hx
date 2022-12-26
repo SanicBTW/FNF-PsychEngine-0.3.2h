@@ -104,7 +104,6 @@ class Main extends Sprite
 		#if !android
 		FlxG.autoPause = false;
 		#end
-		FlxG.log.redirectTraces = true;
 	}
 
 	// deez comin from fof repo, i liked it
