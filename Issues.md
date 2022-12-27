@@ -5,3 +5,7 @@
 - When switching to another app and coming back to game framerate is capped to 60
 
 - FPS cap seems to get lower whenever ending songs or leaving them
+
+- Incorrect accuracy
+
+- HUD Score text not updating
