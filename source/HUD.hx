@@ -196,13 +196,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
 			iconP2.animation.curAnim.curFrame = 0;
     }
 
-    // what the fuck lmao
     public function updateScore()
-    {
-        scoreTxt.text = getScoreFormat();
-    }
-
-    private function getScoreFormat():String
     {
         // :P
         var songScore = PlayState.instance.songScore;
@@ -216,32 +210,31 @@ class HUD extends FlxTypedGroup<FlxBasic>
 			case 'Forever':
 				if (ratingString == "N/A")
 				{
-					return 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
+					scoreTxt.text = 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
 				}
 				else
 				{
-					return 'Score: $songScore • Accuracy: $ratingPercent% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
+					scoreTxt.text = 'Score: $songScore • Accuracy: $ratingPercent% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
 				}
 			case 'Engine':
 				if (ratingString == 'N/A')
 				{
-					return 'Score: $songScore | Misses: $songMisses | $ratingString';
+					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | $ratingString';
 				}
 				else
 				{
-					return 'Score: $songScore | Misses: $songMisses | Accuracy: $ratingPercent% | $ratingString ($ratingFC)';
+					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Accuracy: $ratingPercent% | $ratingString ($ratingFC)';
 				}
 			case 'Psych':
 				if (ratingString == '?')
 				{
-					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
+					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
 				}
 				else
 				{
-					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString ($ratingPercent%) - $ratingFC';
+					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingString ($ratingPercent%) - $ratingFC';
 				}
 		}
-		return "";
     }
 
     // stuff from forever lol 

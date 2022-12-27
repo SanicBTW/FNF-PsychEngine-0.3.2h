@@ -139,7 +139,8 @@ class Ratings
 		else
 			accuracy += (Math.max(0, judgement) / susCount);
 
-		trueAccuracy = (accuracy / notesHit);
+		// THIS SHIT WOULD GO ABOVE 100% FUCK
+		trueAccuracy = CoolUtil.boundTo(accuracy / notesHit, 0, 100);
 
 		updateFC();
 		updateRating();
