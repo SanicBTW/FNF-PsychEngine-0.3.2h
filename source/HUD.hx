@@ -119,8 +119,6 @@ class HUD extends FlxTypedGroup<FlxBasic>
 		botPlayTxt.borderSize = 1.25;
 		botPlayTxt.visible = SaveData.getGameplaySetting('botplay', false);
 		add(botPlayTxt);
-
-        updateScore();
     }
 
     private function reloadHealthBarColors(iconP1Det:IconDetails, iconP2Det:IconDetails)
@@ -164,6 +162,7 @@ class HUD extends FlxTypedGroup<FlxBasic>
 
     override public function update(elapsed:Float)
     {
+        scoreTxt.text = updateScore();
         healthBar.value = PlayState.instance.health;
 
         if (botPlayTxt.visible)
@@ -196,45 +195,46 @@ class HUD extends FlxTypedGroup<FlxBasic>
 			iconP2.animation.curAnim.curFrame = 0;
     }
 
-    public function updateScore()
+    public function updateScore():String
     {
         // :P
         var songScore = PlayState.instance.songScore;
-        var songMisses = Ratings.misses;
-        var ratingString = Ratings.ratingString;
-        var ratingFC = Ratings.ratingFC;
-        var ratingPercent = Highscore.floorDecimal((Ratings.trueAccuracy * 100) / 100, 2);
+        var songMisses = PlayState.instance.songMisses;
+        var ratingString = PlayState.instance.ratingString;
+        var ratingFC = PlayState.instance.ratingFC;
+        var ratingPercent = Highscore.floorDecimal(PlayState.instance.ratingPercent * 100, 2);
 
         switch (SaveData.get(SCORE_TEXT_STYLE))
 		{
 			case 'Forever':
 				if (ratingString == "N/A")
 				{
-					scoreTxt.text = 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
+					return 'Score: $songScore • Accuracy: 0% • Combo Breaks: $songMisses • Rank: N/A';
 				}
 				else
 				{
-					scoreTxt.text = 'Score: $songScore • Accuracy: $ratingPercent% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
+					return 'Score: $songScore • Accuracy: $ratingPercent% [$ratingFC] • Combo Breaks: $songMisses • Rank: $ratingString';
 				}
 			case 'Engine':
 				if (ratingString == 'N/A')
 				{
-					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | $ratingString';
+					return 'Score: $songScore | Misses: $songMisses | $ratingString';
 				}
 				else
 				{
-					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Accuracy: $ratingPercent% | $ratingString ($ratingFC)';
+					return 'Score: $songScore | Misses: $songMisses | Accuracy: $ratingPercent% | $ratingString ($ratingFC)';
 				}
 			case 'Psych':
 				if (ratingString == '?')
 				{
-					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
+					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString';
 				}
 				else
 				{
-					scoreTxt.text = 'Score: $songScore | Misses: $songMisses | Rating: $ratingString ($ratingPercent%) - $ratingFC';
+					return 'Score: $songScore | Misses: $songMisses | Rating: $ratingString ($ratingPercent%) - $ratingFC';
 				}
 		}
+        return "";
     }
 
     // stuff from forever lol 

@@ -232,11 +232,18 @@ class PlayState extends MusicBeatState
 	private var allUIs:Array<FlxCamera> = [];
 	public var uiHUD:HUD;
 
+	public var sicks:Int = 0;
+	public var goods:Int = 0;
+	public var bads:Int = 0;
+	public var shits:Int = 0;
+	public var ratingString:String;
+	public var ratingPercent:Float;
+	public var ratingFC:String;
+	public var songMisses:Int = 0;
+
 	override public function create()
 	{
 		instance = this;
-
-		Ratings.callReset();
 
 		Paths.clearStoredMemory();
 		Paths.clearCache(false, false);
@@ -981,6 +988,7 @@ class PlayState extends MusicBeatState
 		{
 			startCountdown();
 		}
+		RecalculateRating();
 
 		#if desktop
 		// Updating Discord Rich Presence.
@@ -3063,7 +3071,7 @@ class PlayState extends MusicBeatState
 			if (SONG.validScore && practice == false && botplay == false)
 			{
 				#if !switch
-				var percent:Float = Ratings.trueAccuracy;
+				var percent:Float = ratingPercent;
 				if (Math.isNaN(percent))
 					percent = 0;
 				Highscore.saveScore(SONG.song, songScore, storyDifficulty, percent);
@@ -3073,7 +3081,7 @@ class PlayState extends MusicBeatState
 			if (isStoryMode)
 			{
 				campaignScore += songScore;
-				campaignMisses += Ratings.misses;
+				campaignMisses += songMisses;
 
 				storyPlaylist.remove(storyPlaylist[0]);
 
@@ -3187,7 +3195,7 @@ class PlayState extends MusicBeatState
 
 		for (scoreInt in 0...stringArray.length)
 		{
-			var numScore:FlxSprite = Ratings.generateCombo(stringArray[scoreInt], (!negative ? Ratings.ratingFC.contains("SFC") : false), isPixelStage, negative,
+			var numScore:FlxSprite = Ratings.generateCombo(stringArray[scoreInt], (!negative ? ratingFC.contains("SFC") : false), isPixelStage, negative,
 				createdColor, scoreInt);
 
 			if (!SaveData.get(COMBO_STACKING))
@@ -3254,7 +3262,7 @@ class PlayState extends MusicBeatState
 
 	private function displayRating(daRating:String, timing:String)
 	{
-		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? Ratings.ratingFC.contains("SFC") : false), timing, isPixelStage);
+		var rating = Ratings.generateRating('$daRating', (daRating == "sick" ? ratingFC.contains("SFC") : false), timing, isPixelStage);
 		add(rating);
 
 		if (!SaveData.get(COMBO_STACKING))
@@ -3326,23 +3334,24 @@ class PlayState extends MusicBeatState
 
 		var judgementInfo = Ratings.judgementsMap.get(daRating);
 		songScore += judgementInfo[1];
-		Ratings.updateAccuracy(judgementInfo[2]);
+		totalNotesHit += judgementInfo[2];
+		updateAccuracy(false);
 
 		// make it more dynamic?
 		switch (daRating)
 		{
 			case "shit":
 				combo = 0;
-				Ratings.misses++;
+				songMisses++;
 				health -= 0.2;
-				Ratings.shits++;
+				shits++;
 			case "bad":
 				health -= 0.06;
-				Ratings.bads++;
+				bads++;
 			case "good":
-				Ratings.goods++;
+				goods++;
 			case "sick":
-				Ratings.sicks++;
+				sicks++;
 		}
 
 		if (daRating == "sick" && !daNote.noteSplashDisabled)
@@ -3363,6 +3372,53 @@ class PlayState extends MusicBeatState
 			displayRating(daRating, timing);
 			popUpCombo();
 		}
+	}
+
+	function RecalculateRating()
+	{
+		if (totalPlayed < 1)
+		{
+			Ratings.smallestRating = "sick";
+
+			switch (SaveData.get(SCORE_TEXT_STYLE))
+			{
+				case 'Engine' | 'Forever':
+					ratingString = "N/A";
+				case 'Psych':
+					ratingString = "?";
+			}
+		}
+		else
+		{
+			for (rating => threshold in Ratings.ratingsMap)
+			{
+				if (ratingPercent < threshold)
+				{
+					ratingString = rating;
+					break;
+				}
+			}
+
+			ratingFC = "";
+			if (Ratings.judgementsMap.get(Ratings.smallestRating)[3] != null)
+				ratingFC = Ratings.judgementsMap.get(Ratings.smallestRating)[3];
+			else
+			{
+				if (songMisses > 0 && songMisses < 10)
+					ratingFC = "SDCB";
+				else if (songMisses >= 10)
+					ratingFC = "Clear";
+			}
+		}
+	}
+
+	function updateAccuracy(incrementTP:Bool = true)
+	{
+		if (incrementTP)
+			totalPlayed++;
+		ratingPercent = Math.min(1, Math.max(0, totalNotesHit / totalPlayed));
+
+		RecalculateRating();
 	}
 
 	private function keyShit():Void
@@ -3777,6 +3833,8 @@ class PlayState extends MusicBeatState
 
 					if (SaveData.get(MISS_VOL) > 0)
 						FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), SaveData.get(MISS_VOL));
+
+					updateAccuracy(true);
 			}
 		}
 	}
@@ -3803,6 +3861,8 @@ class PlayState extends MusicBeatState
 
 			if (SaveData.get(MISS_VOL) > 0)
 				FlxG.sound.play(Paths.soundRandom('missnote', 1, 3), SaveData.get(MISS_VOL));
+
+			updateAccuracy(true);
 		}
 	}
 
@@ -3827,7 +3887,7 @@ class PlayState extends MusicBeatState
 				increaseCombo(noteRating, note.noteData);
 				popUpScore(note, timing, noteRating);
 				if (note.childrenNotes.length > 0)
-					Ratings.notesHit++;
+					totalPlayed++;
 				if (combo > 9999)
 					combo = 9999;
 			}
@@ -3835,7 +3895,7 @@ class PlayState extends MusicBeatState
 			{
 				if (note.parentNote != null)
 				{
-					Ratings.updateAccuracy(100, true, note.parentNote.childrenNotes.length);
+					totalNotesHit += note.parentNote.childrenNotes.length / 10;
 				}
 			}
 
@@ -3907,20 +3967,18 @@ class PlayState extends MusicBeatState
 				if (boyfriend.holdTimer + 0.2 > targetHold)
 					boyfriend.holdTimer = targetHold - 0.2;
 			}
+
+			updateAccuracy();
 		}
 	}
 
 	function opponentNoteHit(note:Note):Void
 	{
-		if (note.noteType == 'Hey!' && dad.animOffsets.exists('hey') && boyfriend.animOffsets.exists('hey'))
+		if (note.noteType == 'Hey!' && dad.animOffsets.exists('hey'))
 		{
 			dad.playAnim('hey', true);
 			dad.specialAnim = true;
 			dad.heyTimer = 0.6;
-
-			boyfriend.playAnim('hey', true);
-			boyfriend.specialAnim = true;
-			boyfriend.heyTimer = 0.6;
 		}
 		else if (!note.noAnimation)
 		{
@@ -4498,9 +4556,9 @@ class PlayState extends MusicBeatState
 			songScore -= 5;
 		if (!endingSong)
 		{
-			Ratings.misses++;
+			songMisses++;
 			songScore -= 15;
-			Ratings.updateAccuracy(Ratings.judgementsMap.get("miss")[2]);
+			totalNotesHit += Ratings.judgementsMap.get("miss")[2];
 		}
 
 		if (!SaveData.get(USE_CLASSIC_COMBOS))

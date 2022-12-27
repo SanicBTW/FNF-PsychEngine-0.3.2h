@@ -20,34 +20,34 @@ class Ratings
 			[	
 				0, 
 				350, 
-				100, 
+				1, 
 				'SFC'
 			],
 		"good" => 
 			[
 				1, 
 				150, 
-				75, 
+				0.75, 
 				'GFC'
 			],
 		"bad" => 
 			[
 				2, 
 				0, 
-				50, 
+				0.5, 
 				'FC'
 			],
 		"shit" => 
 			[
 				3, 
 				-50, 
-				25,
+				0.25,
 			],
 		"miss" => 
 			[
 				4, 
 				-100, 
-				-100, //idk if i should -1 on totalNotesHit uhh
+				-1, //idk if i should -1 on totalNotesHit uhh
 			],
 	];
 
@@ -83,12 +83,6 @@ class Ratings
 
 	public static var notesHit:Int = 0;
 
-	public static var sicks:Int = 0;
-	public static var goods:Int = 0;
-	public static var bads:Int = 0;
-	public static var shits:Int = 0;
-	public static var misses:Int = 0;
-
 	// lets fucking go, simplified af
 	public static function judgeNote(ms:Float)
 	{
@@ -101,77 +95,6 @@ class Ratings
 		}
 
 		return 'miss';
-	}
-
-	public static function callReset()
-	{
-		sicks = 0;
-		goods = 0;
-		bads = 0;
-		shits = 0;
-		misses = 0;
-
-		accuracy = 0.001;
-		trueAccuracy = 0;
-
-		smallestRating = "sick";
-
-		switch (SaveData.get(SCORE_TEXT_STYLE))
-		{
-			case 'Engine' | 'Forever':
-				ratingString = "N/A";
-			case 'Psych':
-				ratingString = "?";
-		}
-
-		ratingFC = "";
-
-		notesHit = 0;
-	}
-
-	public static function updateAccuracy(judgement:Int, isSus:Bool = false, susCount:Int = 1)
-	{
-		if (!isSus)
-		{
-			notesHit++;
-			accuracy += (Math.max(0, judgement));
-		}
-		else
-			accuracy += (Math.max(0, judgement) / susCount);
-
-		// THIS SHIT WOULD GO ABOVE 100% FUCK
-		trueAccuracy = CoolUtil.boundTo(accuracy / notesHit, 0, 100);
-
-		updateFC();
-		updateRating();
-	}
-
-	public static function updateFC()
-	{
-		ratingFC = "";
-		if (judgementsMap.get(smallestRating)[3] != null)
-			ratingFC = judgementsMap.get(smallestRating)[3];
-		else
-		{
-			if (misses > 0 && misses < 10)
-				ratingFC = "SDCB";
-			else if (misses >= 10)
-				ratingFC = "Clear";
-		}
-
-		PlayState.instance.uiHUD.updateScore();
-	}
-
-	public static function updateRating()
-	{
-		for (rating => threshold in ratingsMap)
-		{
-			if (trueAccuracy / 100 < threshold)
-			{
-				ratingString = rating;
-				break;
-			}
-		}
 	}
 
 	// this manages sprite shit too
